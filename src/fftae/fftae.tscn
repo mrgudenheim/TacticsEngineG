@@ -1,12 +1,12 @@
 [gd_scene load_steps=10 format=3 uid="uid://dgp4s8ucc0j6n"]
 
 [ext_resource type="Theme" uid="uid://bhwwwa4jiaiop" path="res://src/ui_theme.tres" id="1_kwydp"]
-[ext_resource type="Script" path="res://src/main.gd" id="2_2hqs7"]
-[ext_resource type="PackedScene" uid="uid://t3xjefep2ne1" path="res://src/row_animation.tscn" id="3_n0tn6"]
-[ext_resource type="PackedScene" uid="uid://cxr41bg8c7dir" path="res://src/row_frame.tscn" id="4_omu1g"]
-[ext_resource type="Script" path="res://src/ui_manager.gd" id="5_1m40y"]
-[ext_resource type="Script" path="res://src/preview_manager.gd" id="6_4j3la"]
-[ext_resource type="PackedScene" uid="uid://g0s3vevocg3" path="res://src/preview_subviewport_container.tscn" id="7_aevi7"]
+[ext_resource type="Script" path="res://src/fftae/fftae.gd" id="2_2hqs7"]
+[ext_resource type="PackedScene" uid="uid://t3xjefep2ne1" path="res://src/fftae/row_animation.tscn" id="3_n0tn6"]
+[ext_resource type="PackedScene" uid="uid://cxr41bg8c7dir" path="res://src/fftae/row_frame.tscn" id="4_omu1g"]
+[ext_resource type="Script" path="res://src/fftae/ui_manager.gd" id="5_1m40y"]
+[ext_resource type="Script" path="res://src/fftae/preview_manager.gd" id="6_4j3la"]
+[ext_resource type="PackedScene" uid="uid://g0s3vevocg3" path="res://src/fftae/preview_subviewport_container.tscn" id="7_aevi7"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_8s6nw"]
 font_size = 14

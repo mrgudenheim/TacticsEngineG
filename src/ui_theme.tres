@@ -1,0 +1,20 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://bhwwwa4jiaiop"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_snuud"]
+bg_color = Color(0.09, 0.09, 0.09, 1)
+
+[resource]
+Button/font_sizes/font_size = 14
+Button/styles/pressed = SubResource("StyleBoxFlat_snuud")
+HBoxContainer/constants/separation = 5
+Label/font_sizes/font_size = 14
+LineEdit/constants/minimum_character_width = 2
+LineEdit/font_sizes/font_size = 14
+MarginContainer/constants/margin_bottom = 10
+MarginContainer/constants/margin_left = 10
+MarginContainer/constants/margin_right = 10
+MarginContainer/constants/margin_top = 10
+OptionButton/font_sizes/font_size = 14
+TabBar/font_sizes/font_size = 12
+TabContainer/font_sizes/font_size = 14
+TextEdit/font_sizes/font_size = 14

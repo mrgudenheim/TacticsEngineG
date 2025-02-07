@@ -1,0 +1,677 @@
+[gd_scene load_steps=10 format=3 uid="uid://dgp4s8ucc0j6n"]
+
+[ext_resource type="Theme" uid="uid://bhwwwa4jiaiop" path="res://src/ui_theme.tres" id="1_kwydp"]
+[ext_resource type="Script" path="res://src/main.gd" id="2_2hqs7"]
+[ext_resource type="PackedScene" uid="uid://t3xjefep2ne1" path="res://src/row_animation.tscn" id="3_n0tn6"]
+[ext_resource type="PackedScene" uid="uid://cxr41bg8c7dir" path="res://src/row_frame.tscn" id="4_omu1g"]
+[ext_resource type="Script" path="res://src/ui_manager.gd" id="5_1m40y"]
+[ext_resource type="Script" path="res://src/preview_manager.gd" id="6_4j3la"]
+[ext_resource type="PackedScene" uid="uid://g0s3vevocg3" path="res://src/preview_subviewport_container.tscn" id="7_aevi7"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_8s6nw"]
+font_size = 14
+
+[sub_resource type="LabelSettings" id="LabelSettings_bugng"]
+font_size = 14
+
+[node name="Main" type="Control" node_paths=PackedStringArray("ui_manager", "preview_manager", "load_rom_dialog", "load_file_dialog", "save_xml_button", "save_xml_dialog", "save_seq_button", "save_seq_dialog", "animation_list_container", "opcode_list_container", "frame_list_container")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_kwydp")
+script = ExtResource("2_2hqs7")
+ui_manager = NodePath("HBoxContainer/PatchPanel")
+preview_manager = NodePath("HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer")
+load_rom_dialog = NodePath("HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/LoadRom/LoadRomDialog")
+load_file_dialog = NodePath("HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/LoadSEQ/LoadFileDialog")
+save_xml_button = NodePath("HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SaveAsXml")
+save_xml_dialog = NodePath("HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SaveAsXml/SaveXmlDialog")
+save_seq_button = NodePath("HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SaveAsSEQ")
+save_seq_dialog = NodePath("HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SaveAsSEQ/SaveSeqDialog")
+animation_list_container = NodePath("HBoxContainer/TabContainer/Animations/VBoxContainer/AnimationListScroll/AnimationList")
+animation_list_row_tscn = ExtResource("3_n0tn6")
+opcode_list_container = NodePath("HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer/ScrollContainer/Opcodes")
+frame_list_container = NodePath("HBoxContainer/TabContainer/Frames/VBoxContainer/FrameListScroll/FrameList")
+frame_list_row_tscn = ExtResource("4_omu1g")
+item_frames_csv_filepath = "res://src/frame_data_item.txt"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="PatchPanel" type="PanelContainer" parent="HBoxContainer" node_paths=PackedStringArray("seq_options", "animations_pointers_text", "animations_bytes_text", "shp_options", "sprite_options", "animation_scroll_container", "patch_name_edit", "author_name_edit", "patch_description_edit", "animation_id_spinbox", "animation_name_options", "row_spinbox", "pointer_index_spinbox", "create_animation", "delete_animation", "create_opcode", "delete_opcode", "create_pointer", "delete_pointer", "preview_viewport")]
+layout_mode = 2
+script = ExtResource("5_1m40y")
+seq_options = NodePath("../SettingsPanel/MarginContainer/VBoxContainer/Settings/SeqFileOptions")
+animations_pointers_text = NodePath("../SettingsPanel/MarginContainer/VBoxContainer/Settings/NumEmptyAnimationPointers")
+animations_bytes_text = NodePath("../SettingsPanel/MarginContainer/VBoxContainer/Settings/NumEmptySeqBytes")
+shp_options = NodePath("../SettingsPanel/MarginContainer/VBoxContainer/Settings/ShpFileOptions")
+sprite_options = NodePath("../SettingsPanel/MarginContainer/VBoxContainer/Settings/SpriteOptions")
+animation_scroll_container = NodePath("../TabContainer/Animations/VBoxContainer/AnimationListScroll")
+patch_name_edit = NodePath("MarginContainer/VBoxContainer/GridContainer/PatchNameLineEdit")
+author_name_edit = NodePath("MarginContainer/VBoxContainer/GridContainer/AuthorLineEdit")
+patch_description_edit = NodePath("MarginContainer/VBoxContainer/DescriptionTextEdit")
+animation_id_spinbox = NodePath("../AnimationEditor/MarginContainer/VBoxContainer/Options/IdSpinBox")
+animation_name_options = NodePath("../AnimationEditor/MarginContainer/VBoxContainer/Options/AnimationOptionButton")
+row_spinbox = NodePath("../AnimationEditor/MarginContainer/VBoxContainer/Functions/RowSpinBox")
+pointer_index_spinbox = NodePath("../TabContainer/Animations/VBoxContainer/Functions/PointerSpinBox")
+create_animation = NodePath("../AnimationEditor/MarginContainer/VBoxContainer/HBoxContainer/NewAnimation")
+delete_animation = NodePath("../AnimationEditor/MarginContainer/VBoxContainer/HBoxContainer/DeleteAnimation")
+create_opcode = NodePath("../AnimationEditor/MarginContainer/VBoxContainer/Functions/InsertOpcode")
+delete_opcode = NodePath("../AnimationEditor/MarginContainer/VBoxContainer/Functions/DeleteOpcode")
+create_pointer = NodePath("../TabContainer/Animations/VBoxContainer/AddPointer")
+delete_pointer = NodePath("../TabContainer/Animations/VBoxContainer/Functions/DeletePointer")
+preview_viewport = NodePath("MarginContainer/VBoxContainer/PreviewContainer/PreviewSubViewportContainer")
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/PatchPanel"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/PatchPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="LoadRom" type="Button" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Load ROM
+"
+
+[node name="LoadRomDialog" type="FileDialog" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/LoadRom"]
+auto_translate_mode = 1
+title = "Open a File"
+initial_position = 1
+size = Vector2i(500, 400)
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.bin")
+use_native_dialog = true
+
+[node name="LoadSEQ" type="Button" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+text = "Load SEQ
+"
+
+[node name="LoadFileDialog" type="FileDialog" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/LoadSEQ"]
+title = "Open a File"
+initial_position = 1
+size = Vector2i(500, 400)
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.seq")
+use_native_dialog = true
+
+[node name="GridContainer" type="GridContainer" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+columns = 2
+
+[node name="PatchNameLabel" type="Label" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Patch Name: "
+horizontal_alignment = 2
+
+[node name="PatchNameLineEdit" type="LineEdit" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+placeholder_text = "default_patch_name"
+
+[node name="AuthorLabel" type="Label" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Author: "
+horizontal_alignment = 2
+
+[node name="AuthorLineEdit" type="LineEdit" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/GridContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Default Author Name"
+
+[node name="DescriptionLabel" type="Label" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Patch Description: "
+horizontal_alignment = 1
+
+[node name="DescriptionTextEdit" type="TextEdit" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_vertical = 3
+placeholder_text = "Patch description goes here..."
+wrap_mode = 1
+
+[node name="PreviewLabel" type="Label" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Preview:"
+
+[node name="PreviewContainer" type="PanelContainer" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer" node_paths=PackedStringArray("ui_manager", "preview_viewport", "weapon_options", "item_options", "other_type_options", "submerged_depth_options", "face_right_check", "is_playing_check", "is_back_facing_check", "animation_slider", "opcode_text")]
+layout_mode = 2
+script = ExtResource("6_4j3la")
+ui_manager = NodePath("../../..")
+preview_viewport = NodePath("PreviewSubViewportContainer")
+weapon_options = NodePath("../../../../SettingsPanel/MarginContainer/VBoxContainer/Settings/WeaponOptions")
+item_options = NodePath("../../../../SettingsPanel/MarginContainer/VBoxContainer/Settings/ItemOptions")
+other_type_options = NodePath("../../../../SettingsPanel/MarginContainer/VBoxContainer/Settings/OtherTypeOptions")
+submerged_depth_options = NodePath("../../../../SettingsPanel/MarginContainer/VBoxContainer/Settings/SubmergedOptions")
+face_right_check = NodePath("../../../../SettingsPanel/MarginContainer/VBoxContainer/Settings/FaceRightCheckBox")
+is_playing_check = NodePath("../SliderContainer/PlayCheckBox")
+is_back_facing_check = NodePath("../../../../SettingsPanel/MarginContainer/VBoxContainer/GridContainer/FaceBackCheck")
+layer_priority_table_filepath = "res://src/layer_priority_table.txt"
+weapon_table_filepath = "res://src/weapons.txt"
+item_list_filepath = "res://src/item_list.txt"
+animation_slider = NodePath("../SliderContainer/HSlider")
+opcode_text = NodePath("../Opcode")
+
+[node name="PreviewSubViewportContainer" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer" instance=ExtResource("7_aevi7")]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+
+[node name="SliderContainer" type="HBoxContainer" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="PlayLabel" type="Label" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SliderContainer"]
+layout_mode = 2
+text = "Play?"
+
+[node name="PlayCheckBox" type="CheckBox" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SliderContainer"]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+disabled = true
+button_pressed = true
+
+[node name="HSlider" type="HSlider" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SliderContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+rounded = true
+editable = false
+ticks_on_borders = true
+
+[node name="Opcode" type="LineEdit" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "Opcode"
+editable = false
+
+[node name="SaveAsXml" type="Button" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+disabled = true
+text = "Save XML Patch
+"
+
+[node name="SaveXmlDialog" type="FileDialog" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SaveAsXml"]
+initial_position = 1
+size = Vector2i(500, 400)
+access = 2
+filters = PackedStringArray("*.xml")
+use_native_dialog = true
+
+[node name="SaveAsSEQ" type="Button" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+disabled = true
+text = "Save as SEQ
+"
+
+[node name="SaveSeqDialog" type="FileDialog" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SaveAsSEQ"]
+auto_translate_mode = 1
+initial_position = 1
+size = Vector2i(500, 400)
+access = 2
+filters = PackedStringArray("*.seq")
+use_native_dialog = true
+
+[node name="SettingsPanel" type="PanelContainer" parent="HBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/SettingsPanel"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/SettingsPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="SettingsLabel" type="Label" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Settings"
+horizontal_alignment = 1
+
+[node name="Settings" type="GridContainer" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+columns = 2
+
+[node name="SeqFile" type="Label" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
+layout_mode = 2
+text = "SEQ: "
+horizontal_alignment = 2
+
+[node name="SeqFileOptions" type="OptionButton" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
+layout_mode = 2
+
+[node name="EmptyAnimationPointers" type="Label" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
+layout_mode = 2
+text = "Pointers: "
+horizontal_alignment = 2
+
+[node name="NumEmptyAnimationPointers" type="Label" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
+layout_mode = 2
+text = "0/256"
+label_settings = SubResource("LabelSettings_8s6nw")
+
+[node name="EmptySeqBytes" type="Label" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
+layout_mode = 2
+text = "Bytes: "
+horizontal_alignment = 2
+
+[node name="NumEmptySeqBytes" type="Label" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
+layout_mode = 2
+text = "2048/2048"
+label_settings = SubResource("LabelSettings_bugng")
+
+[node name="ShpFile" type="Label" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
+layout_mode = 2
+text = "SHP: "
+horizontal_alignment = 2
+
+[node name="ShpFileOptions" type="OptionButton" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
+layout_mode = 2
+
+[node name="EmptyFramePointers" type="Label" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
+visible = false
+layout_mode = 2
+text = "Pointers: "
+horizontal_alignment = 2
+
+[node name="NumEmptyFramePoitners" type="Label" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
+visible = false
+layout_mode = 2
+text = "0/256"
+label_settings = SubResource("LabelSettings_8s6nw")
+
+[node name="EmptyShpBytes" type="Label" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
+visible = false
+layout_mode = 2
+text = "Bytes: "
+horizontal_alignment = 2
+
+[node name="NumEmptyShpBytes" type="Label" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
+visible = false
+layout_mode = 2
+text = "2048/2048"
+label_settings = SubResource("LabelSettings_bugng")
+
+[node name="Sprite" type="Label" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
+layout_mode = 2
+text = "Sprite:"
+horizontal_alignment = 2
+
+[node name="SpriteOptions" type="OptionButton" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
+layout_mode = 2
+
+[node name="WeaponLabel" type="Label" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
+layout_mode = 2
+text = "Weapon:"
+horizontal_alignment = 2
+
+[node name="WeaponOptions" type="OptionButton" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
+layout_mode = 2
+disabled = true
+
+[node name="ItemLabel" type="Label" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
+layout_mode = 2
+text = "Item:"
+horizontal_alignment = 2
+
+[node name="ItemOptions" type="OptionButton" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
+layout_mode = 2
+disabled = true
+
+[node name="OtherTypeLabel" type="Label" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
+layout_mode = 2
+text = "Other Type:"
+horizontal_alignment = 2
+
+[node name="OtherTypeOptions" type="OptionButton" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
+layout_mode = 2
+disabled = true
+selected = 0
+item_count = 3
+popup/item_0/text = "Chicken/Chest"
+popup/item_1/text = "Frog"
+popup/item_1/id = 1
+popup/item_2/text = "Crystal"
+popup/item_2/id = 2
+
+[node name="SubmergedLabel" type="Label" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
+layout_mode = 2
+text = "Submerged:"
+horizontal_alignment = 2
+
+[node name="SubmergedOptions" type="OptionButton" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
+layout_mode = 2
+disabled = true
+selected = 0
+item_count = 3
+popup/item_0/text = "0"
+popup/item_1/text = "1"
+popup/item_1/id = 1
+popup/item_2/text = "2"
+popup/item_2/id = 2
+
+[node name="FaceRightLabel" type="Label" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
+layout_mode = 2
+text = "Face Right:"
+horizontal_alignment = 2
+
+[node name="FaceRightCheckBox" type="CheckBox" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
+layout_mode = 2
+size_flags_horizontal = 0
+disabled = true
+
+[node name="Animation Rewrite" type="Label" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "----- Animation Rewrite ASM -----"
+horizontal_alignment = 1
+
+[node name="GridContainer" type="GridContainer" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+columns = 2
+
+[node name="UseAnimationRewrite" type="Label" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Rewrite Opcodes: "
+horizontal_alignment = 2
+
+[node name="AnimationRewriteCheck" type="CheckBox" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+tooltip_text = "WARNING: Uses new opcode definitions from the Animation Rewrite ASM."
+
+[node name="FaceBack" type="Label" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Face Back: "
+horizontal_alignment = 2
+
+[node name="FaceBackCheck" type="CheckBox" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+
+[node name="TabContainer" type="TabContainer" parent="HBoxContainer"]
+layout_mode = 2
+current_tab = 0
+
+[node name="Animations" type="MarginContainer" parent="HBoxContainer/TabContainer"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/TabContainer/Animations"]
+layout_mode = 2
+
+[node name="AddPointer" type="Button" parent="HBoxContainer/TabContainer/Animations/VBoxContainer"]
+layout_mode = 2
+disabled = true
+text = "Add Pointer"
+
+[node name="Functions" type="HBoxContainer" parent="HBoxContainer/TabContainer/Animations/VBoxContainer"]
+layout_mode = 2
+
+[node name="DeletePointer" type="Button" parent="HBoxContainer/TabContainer/Animations/VBoxContainer/Functions"]
+layout_mode = 2
+disabled = true
+text = "Delete Pointer"
+
+[node name="PointerSpinBox" type="SpinBox" parent="HBoxContainer/TabContainer/Animations/VBoxContainer/Functions"]
+layout_mode = 2
+editable = false
+select_all_on_focus = true
+
+[node name="Headers" type="HBoxContainer" parent="HBoxContainer/TabContainer/Animations/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Pointer ID" type="Label" parent="HBoxContainer/TabContainer/Animations/VBoxContainer/Headers"]
+custom_minimum_size = Vector2(85, 0)
+layout_mode = 2
+text = "Pointer ID"
+horizontal_alignment = 1
+
+[node name="VSeparator" type="VSeparator" parent="HBoxContainer/TabContainer/Animations/VBoxContainer/Headers"]
+layout_mode = 2
+
+[node name="Anim ID" type="Label" parent="HBoxContainer/TabContainer/Animations/VBoxContainer/Headers"]
+custom_minimum_size = Vector2(70, 0)
+layout_mode = 2
+text = "Anim ID"
+horizontal_alignment = 1
+
+[node name="VSeparator2" type="VSeparator" parent="HBoxContainer/TabContainer/Animations/VBoxContainer/Headers"]
+layout_mode = 2
+
+[node name="Desription" type="Label" parent="HBoxContainer/TabContainer/Animations/VBoxContainer/Headers"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+text = "Description"
+horizontal_alignment = 1
+
+[node name="VSeparator3" type="VSeparator" parent="HBoxContainer/TabContainer/Animations/VBoxContainer/Headers"]
+layout_mode = 2
+
+[node name="Opcodes" type="Label" parent="HBoxContainer/TabContainer/Animations/VBoxContainer/Headers"]
+custom_minimum_size = Vector2(205, 0)
+layout_mode = 2
+text = "Opcodes"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="HBoxContainer/TabContainer/Animations/VBoxContainer"]
+visible = false
+layout_mode = 2
+
+[node name="AnimationListScroll" type="ScrollContainer" parent="HBoxContainer/TabContainer/Animations/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+follow_focus = true
+horizontal_scroll_mode = 0
+
+[node name="AnimationList" type="VBoxContainer" parent="HBoxContainer/TabContainer/Animations/VBoxContainer/AnimationListScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="Frames" type="MarginContainer" parent="HBoxContainer/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/TabContainer/Frames"]
+layout_mode = 2
+
+[node name="Headers" type="HBoxContainer" parent="HBoxContainer/TabContainer/Frames/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Frame ID" type="Label" parent="HBoxContainer/TabContainer/Frames/VBoxContainer/Headers"]
+custom_minimum_size = Vector2(85, 0)
+layout_mode = 2
+text = "Frame  ID"
+horizontal_alignment = 1
+
+[node name="VSeparator" type="VSeparator" parent="HBoxContainer/TabContainer/Frames/VBoxContainer/Headers"]
+layout_mode = 2
+
+[node name="Rotation" type="Label" parent="HBoxContainer/TabContainer/Frames/VBoxContainer/Headers"]
+custom_minimum_size = Vector2(70, 0)
+layout_mode = 2
+text = "Rotation (deg)"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="VSeparator2" type="VSeparator" parent="HBoxContainer/TabContainer/Frames/VBoxContainer/Headers"]
+layout_mode = 2
+
+[node name="Subframes" type="Label" parent="HBoxContainer/TabContainer/Frames/VBoxContainer/Headers"]
+custom_minimum_size = Vector2(265, 0)
+layout_mode = 2
+text = "Subframes
+x, y, u, v, rect, flip_x, flip_y"
+horizontal_alignment = 1
+
+[node name="VSeparator3" type="VSeparator" parent="HBoxContainer/TabContainer/Frames/VBoxContainer/Headers"]
+layout_mode = 2
+
+[node name="Preview" type="Label" parent="HBoxContainer/TabContainer/Frames/VBoxContainer/Headers"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+text = "Preview"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="HBoxContainer/TabContainer/Frames/VBoxContainer"]
+visible = false
+layout_mode = 2
+
+[node name="FrameListScroll" type="ScrollContainer" parent="HBoxContainer/TabContainer/Frames/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+follow_focus = true
+horizontal_scroll_mode = 0
+
+[node name="FrameList" type="VBoxContainer" parent="HBoxContainer/TabContainer/Frames/VBoxContainer/FrameListScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="AnimationEditor" type="PanelContainer" parent="HBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/AnimationEditor"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/AnimationEditor/MarginContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="NewAnimation" type="Button" parent="HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+disabled = true
+text = "Add New Animation"
+
+[node name="DeleteAnimation" type="Button" parent="HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+disabled = true
+text = "Delete Current Animation"
+
+[node name="Options" type="GridContainer" parent="HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer"]
+layout_mode = 2
+columns = 2
+
+[node name="IdLabel" type="Label" parent="HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer/Options"]
+layout_mode = 2
+text = "Anim ID"
+horizontal_alignment = 1
+
+[node name="AnimOptLabel" type="Label" parent="HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer/Options"]
+layout_mode = 2
+text = "Description
+"
+horizontal_alignment = 1
+
+[node name="IdSpinBox" type="SpinBox" parent="HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer/Options"]
+layout_mode = 2
+alignment = 2
+editable = false
+select_all_on_focus = true
+
+[node name="AnimationOptionButton" type="OptionButton" parent="HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer/Options"]
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+
+[node name="Functions" type="HBoxContainer" parent="HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Row" type="Label" parent="HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer/Functions"]
+layout_mode = 2
+text = "Row: "
+
+[node name="RowSpinBox" type="SpinBox" parent="HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer/Functions"]
+layout_mode = 2
+editable = false
+select_all_on_focus = true
+
+[node name="InsertOpcode" type="Button" parent="HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer/Functions"]
+layout_mode = 2
+disabled = true
+text = "Insert Opcode"
+
+[node name="DeleteOpcode" type="Button" parent="HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer/Functions"]
+layout_mode = 2
+disabled = true
+text = "Delete Opcode"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Opcodes" type="GridContainer" parent="HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+columns = 5
+
+[node name="#" type="Label" parent="HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer/ScrollContainer/Opcodes"]
+custom_minimum_size = Vector2(25, 0)
+layout_mode = 2
+text = "Row"
+horizontal_alignment = 1
+
+[node name="Opcode" type="Label" parent="HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer/ScrollContainer/Opcodes"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Opcode"
+horizontal_alignment = 1
+
+[node name="Param1" type="Label" parent="HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer/ScrollContainer/Opcodes"]
+custom_minimum_size = Vector2(70, 0)
+layout_mode = 2
+text = "Param1"
+horizontal_alignment = 1
+
+[node name="Param2" type="Label" parent="HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer/ScrollContainer/Opcodes"]
+custom_minimum_size = Vector2(70, 0)
+layout_mode = 2
+text = "Param2"
+horizontal_alignment = 1
+
+[node name="Param3" type="Label" parent="HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer/ScrollContainer/Opcodes"]
+custom_minimum_size = Vector2(70, 0)
+layout_mode = 2
+text = "Param3"
+horizontal_alignment = 1
+
+[connection signal="pressed" from="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/LoadRom" to="." method="_on_load_rom_pressed"]
+[connection signal="file_selected" from="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/LoadRom/LoadRomDialog" to="." method="_on_load_rom_dialog_file_selected"]
+[connection signal="pressed" from="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/LoadSEQ" to="." method="_on_load_seq_pressed"]
+[connection signal="file_selected" from="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/LoadSEQ/LoadFileDialog" to="." method="_on_load_file_dialog_file_selected"]
+[connection signal="toggled" from="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SliderContainer/PlayCheckBox" to="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer" method="_on_is_playing_check_box_toggled"]
+[connection signal="value_changed" from="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SliderContainer/HSlider" to="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer" method="_on_animation_h_slider_value_changed"]
+[connection signal="pressed" from="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SaveAsXml" to="." method="_on_save_as_xml_pressed"]
+[connection signal="file_selected" from="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SaveAsXml/SaveXmlDialog" to="." method="_on_save_xml_dialog_file_selected"]
+[connection signal="pressed" from="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SaveAsSEQ" to="." method="_on_save_as_seq_pressed"]
+[connection signal="file_selected" from="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SaveAsSEQ/SaveSeqDialog" to="." method="_on_save_seq_dialog_file_selected"]
+[connection signal="item_selected" from="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings/SeqFileOptions" to="." method="_on_seq_file_options_item_selected"]
+[connection signal="item_selected" from="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings/ShpFileOptions" to="." method="_on_shp_file_options_item_selected"]
+[connection signal="item_selected" from="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings/SpriteOptions" to="." method="_on_sprite_options_item_selected"]
+[connection signal="item_selected" from="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings/WeaponOptions" to="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer" method="_on_weapon_options_item_selected"]
+[connection signal="item_selected" from="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings/SubmergedOptions" to="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer" method="_on_submerged_options_item_selected"]
+[connection signal="toggled" from="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings/FaceRightCheckBox" to="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer" method="_on_face_right_check_toggled"]
+[connection signal="toggled" from="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/GridContainer/AnimationRewriteCheck" to="." method="_on_animation_rewrite_check_toggled"]
+[connection signal="pressed" from="HBoxContainer/TabContainer/Animations/VBoxContainer/AddPointer" to="." method="_on_add_pointer_pressed"]
+[connection signal="pressed" from="HBoxContainer/TabContainer/Animations/VBoxContainer/Functions/DeletePointer" to="." method="_on_delete_pointer_pressed"]
+[connection signal="value_changed" from="HBoxContainer/TabContainer/Animations/VBoxContainer/Functions/PointerSpinBox" to="HBoxContainer/PatchPanel" method="_on_pointer_spin_box_value_changed"]
+[connection signal="pressed" from="HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer/HBoxContainer/NewAnimation" to="." method="_on_new_animation_pressed"]
+[connection signal="pressed" from="HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer/HBoxContainer/DeleteAnimation" to="." method="_on_delete_animation_pressed"]
+[connection signal="value_changed" from="HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer/Options/IdSpinBox" to="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer" method="_on_animation_id_spin_box_value_changed"]
+[connection signal="item_selected" from="HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer/Options/AnimationOptionButton" to="." method="_on_animation_option_button_item_selected"]
+[connection signal="item_selected" from="HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer/Options/AnimationOptionButton" to="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer" method="_on_animation_id_spin_box_value_changed"]
+[connection signal="pressed" from="HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer/Functions/InsertOpcode" to="." method="_on_insert_opcode_pressed"]
+[connection signal="pressed" from="HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer/Functions/DeleteOpcode" to="." method="_on_delete_opcode_pressed"]

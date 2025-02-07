@@ -1,0 +1,40 @@
+name,type,frame_offset_index,v_offset_pixels,v_offset
+Knife 1,Knife,0,0,0
+Knife 2,Knife,0,16,2
+Knife 3,Knife,0,32,4
+Knife 4,Knife,0,48,6
+Ninja Sword 1,Ninja Sword,1,64,8
+Ninja Sword 2,Ninja Sword,1,80,10
+Sword 1,Sword,2,0,0
+Sword 2,Sword,2,16,2
+Sword 3,Sword,2,32,4
+Sword 4,Sword,2,48,6
+Knight Sword 1,Knight Sword,3,96,12
+Knight Sword 2,Knight Sword,3,112,14
+Katana 1,Katana,4,128,16
+Katana 2,Katana,4,144,18
+Katana 3,Katana,4,160,20
+Axe,Axe,5,0,0
+Rod 1,Rod,6,176,22
+Rod 2,Rod,6,192,24
+Staff 1,Staff,7,208,26
+Staff 2,Staff,7,224,28
+Flail,Flail,8,24,3
+Gun 1,Gun,9,0,0
+Gun 2,Gun,9,16,2
+Crossbow 1,Crossbow,10,0,0
+Crossbow 2,Crossbow,10,24,3
+Bow 1,Bow,11,0,0
+Bow 2,Bow,11,24,3
+Instrument,Instrument,12,0,0
+Book,Book,13,0,0
+Spear 1,Spear,14,0,0
+Spear 2,Spear,14,16,2
+Pole 1,Pole,15,32,4
+Pole 2,Pole,15,48,6
+Bag,Bag,16,0,0
+Cloth,Cloth,17,0,0
+Shield 1,Shield,18,0,0
+Shield 2,Shield,18,24,3
+Shuriken,Shuriken,19,0,0
+Ball,Ball,20,0,0

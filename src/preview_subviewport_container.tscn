@@ -1,0 +1,65 @@
+[gd_scene load_steps=3 format=3 uid="uid://g0s3vevocg3"]
+
+[ext_resource type="Script" path="res://src/preview_subviewport_container.gd" id="1_hh70j"]
+[ext_resource type="Script" path="res://src/preview_subviewport_control.gd" id="2_j0ikk"]
+
+[node name="PreviewSubViewportContainer" type="SubViewportContainer" node_paths=PackedStringArray("camera_control", "sprite_primary", "sprite_weapon", "sprite_effect", "sprite_text", "sprite_background", "sprite_item")]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+stretch = true
+script = ExtResource("1_hh70j")
+camera_control = NodePath("SubViewport/ViewportControl")
+sprite_primary = NodePath("SubViewport/Translator/PrimaryPivot/PrimarySprite2D")
+sprite_weapon = NodePath("SubViewport/Translator/WeaponPivot/WeaponSprite2D")
+sprite_effect = NodePath("SubViewport/Translator/EffectPivot/EffectSprite2D")
+sprite_text = NodePath("SubViewport/TextSprite2D")
+sprite_background = NodePath("SubViewport/BackgroundSprite2D")
+sprite_item = NodePath("SubViewport/Translator/ItemPivot/ItemSprite2D")
+
+[node name="SubViewport" type="SubViewport" parent="."]
+transparent_bg = true
+handle_input_locally = false
+canvas_item_default_texture_filter = 0
+size = Vector2i(2, 2)
+render_target_update_mode = 4
+
+[node name="Translator" type="Node2D" parent="SubViewport"]
+
+[node name="PrimaryPivot" type="Node2D" parent="SubViewport/Translator"]
+position = Vector2(0, 20)
+
+[node name="PrimarySprite2D" type="Sprite2D" parent="SubViewport/Translator/PrimaryPivot"]
+z_index = -2
+position = Vector2(0, -20)
+
+[node name="WeaponPivot" type="Node2D" parent="SubViewport/Translator"]
+position = Vector2(0, 20)
+
+[node name="WeaponSprite2D" type="Sprite2D" parent="SubViewport/Translator/WeaponPivot"]
+z_index = -3
+position = Vector2(0, -20)
+
+[node name="EffectPivot" type="Node2D" parent="SubViewport/Translator"]
+position = Vector2(0, 20)
+
+[node name="EffectSprite2D" type="Sprite2D" parent="SubViewport/Translator/EffectPivot"]
+z_index = -1
+position = Vector2(0, -20)
+
+[node name="ItemPivot" type="Node2D" parent="SubViewport/Translator"]
+position = Vector2(0, 20)
+
+[node name="ItemSprite2D" type="Sprite2D" parent="SubViewport/Translator/ItemPivot"]
+position = Vector2(0, -20)
+
+[node name="TextSprite2D" type="Sprite2D" parent="SubViewport"]
+
+[node name="BackgroundSprite2D" type="Sprite2D" parent="SubViewport"]
+z_index = -4
+
+[node name="ViewportControl" type="Node2D" parent="SubViewport" node_paths=PackedStringArray("sprite")]
+script = ExtResource("2_j0ikk")
+sprite = NodePath("../Translator/PrimaryPivot/PrimarySprite2D")
+
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]

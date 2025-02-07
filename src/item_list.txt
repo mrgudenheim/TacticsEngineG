@@ -1,0 +1,191 @@
+index,name
+0,none
+1,Knife 1
+2,Knife 2
+3,Knife 3
+4,Knife 4
+5,Knife 5
+6,Knife 6
+7,Ninja Sword 1
+8,Ninja Sword 2
+9,Ninja Sword 3
+10,Ninja Sword 4
+11,Ninja Sword 5
+12,Sword 1
+13,Sword 2
+14,Sword 3
+15,Sword 4
+16,Sword 5
+17,Sword 6
+18,Sword 7
+19,Sword 8
+20,Sword 9
+21,Sword 10
+22,Knight Sword 1
+23,Knight Sword 2
+24,Knight Sword 3
+25,Knight Sword 4
+26,Katana 1
+27,Katana 2
+28,Katana 3
+29,Katana 4
+30,Katana 5
+31,Katana 6
+32,Axe 1
+33,Axe 2
+34,Axe 3
+35,Rod 1
+36,Rod 2
+37,Rod 3
+38,Rod 4
+39,Staff 1
+40,Staff 2
+41,Staff 3
+42,Staff 4
+43,Flail
+44,Gun 1
+45,Gun 2
+46,Gun 3
+47,Crossbow 1
+48,Crossbow 2
+49,Bow 1
+50,Bow 2
+51,Bow 3
+52,Bow 4
+53,Bow 5
+54,Harp
+55,Dictionary
+56,Spear 1
+57,Spear 2
+58,Spear 3
+59,Spear 4
+60,Spear 5
+61,Pole 1
+62,Pole 2
+63,Pole 3
+64,Pole 4
+65,Pole 5
+66,Bag
+67,Cloth 1
+68,Cloth 2
+69,Shuriken
+70,Ball
+71,Shield 1
+72,Shield 2
+73,Shield 3
+74,Shield 4
+75,Shield 5
+76,Shield 6
+77,Shield 7
+78,Shield 8
+79,Shield 9
+80,Helmet 1
+81,Helmet 2
+82,Helmet 3
+83,Helmet 4
+84,Helmet 5
+85,Helmet 6
+86,Helmet 7
+87,Helmet 8
+88,Helmet 9
+89,Helmet 10
+90,Hat 1
+91,Hat 2
+92,Hat 3
+93,Hat 4
+94,Hat 5
+95,Hat 6
+96,Hat 7
+97,Hat 8
+98,Hat 9
+99,Hat 10
+100,Hairpiece 1
+101,Hairpiece 2
+102,Hairpiece 3
+103,Armour 1
+104,Armour 2
+105,Armour 3
+106,Armour 4
+107,Armour 5
+108,Armour 6
+109,Armour 7
+110,Armour 8
+111,Armour 9
+112,Armour 10
+113,Armour 11
+114,Clothing 1
+115,Clothing 2
+116,Clothing 3
+117,Clothing 4
+118,Clothing 5
+119,Clothing 6
+120,Clothing 7
+121,Clothing 8
+122,Clothing 9
+123,Clothing 10
+124,Clothing 11
+125,Clothing 12
+126,Robe 1
+127,Robe 2
+128,Robe 3
+129,Robe 4
+130,Robe 5
+131,Robe 6
+132,Boot 1
+133,Boot 2
+134,Boot 3
+135,Boot 4
+136,Boot 5
+137,Boot 6
+138,Boot 7
+139,Glove 1
+140,Glove 2
+141,Glove 3
+142,Glove 4
+143,Ring 1
+144,Ring 2
+145,Ring 3
+146,Armguard 1
+147,Armguard 2
+148,Armguard 3
+149,Armguard 4
+150,Armguard 5
+151,Cloak 1
+152,Cloak 2
+153,Cloak 3
+154,Cloak 4
+155,Cloak 5
+156,Cloak 6
+157,Cloak 7
+158,Perfume 1
+159,Perfume 2
+160,Perfume 3
+161,Bottle 1
+162,Bottle 2
+163,none
+164,none
+165,Bottle 3
+166,Bottle 4
+167,Bottle 5
+168,Bottle 6
+169,Bottle 7
+170,Leaf
+171,StatueHead
+172,Needle
+173,Bottle 8
+174,Pouch
+175,Feather
+176,Bottle 9
+177,Bottle 10
+178,none
+179,none
+180,Crystal 1
+181,Crystal 2
+182,Crystal 3
+183,Crystal 4
+184,Crystal 5
+185,Crystal 6
+186,Crystal 7
+187,Crystal 8
+188,Chest 1
+189,Chest 2

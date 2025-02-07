@@ -1,0 +1,10 @@
+OpcodeName,Parameters,Code
+SetBackFacedOffset,1,ffc2
+MoveSubGraphU,2,ffc7
+MoveSubGraphV,2,ffc8
+MoveSubGraphX,2,ffc9
+MoveSubGraphY,2,ffca
+QueueSecondaryEffect,1,ffd7
+ClearAllSubGraph,0,ffda
+StretchUnitX,1,ffe3
+StretchUnitY,1,ffe4

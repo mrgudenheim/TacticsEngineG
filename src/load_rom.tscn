@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=3 uid="uid://26tg32417lfm"]
+
+[ext_resource type="Script" path="res://src/load_rom_button.gd" id="1_kahi1"]
+
+[node name="LoadRom" type="Button" node_paths=PackedStringArray("load_rom_dialog")]
+text = "Load ROM
+"
+script = ExtResource("1_kahi1")
+load_rom_dialog = NodePath("LoadRomDialog")
+
+[node name="LoadRomDialog" type="FileDialog" parent="."]
+auto_translate_mode = 1
+title = "Open a File"
+initial_position = 1
+size = Vector2i(500, 400)
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.bin")
+use_native_dialog = true

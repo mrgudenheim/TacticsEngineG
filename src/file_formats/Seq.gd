@@ -489,8 +489,8 @@ static func load_opcode_data(use_rewrite_opcodes: bool = false) -> void:
 	opcode_parameters.clear()
 	opcode_parameters_by_name.clear()
 	
-	var opcode_filepath: String = "res://src/SeqData/opcodeParameters.txt"
-	var animation_rewrite_opcodes_filepath: String = "res://src/SeqData/animation_rewrite_opcodes.txt"
+	var opcode_filepath: String = "res://src/fftae/SeqData/opcodeParameters.txt"
+	var animation_rewrite_opcodes_filepath: String = "res://src/fftae/SeqData/animation_rewrite_opcodes.txt"
 	
 	load_opcode_file(opcode_filepath)
 	if use_rewrite_opcodes:
@@ -523,7 +523,7 @@ static func load_opcode_file(file_path: String) -> void:
 
 
 static func load_seq_name_data() -> void:
-	var filepath: String = "res://src/SeqData/animation_names.txt"
+	var filepath: String = "res://src/fftae/SeqData/animation_names.txt"
 	
 	var file := FileAccess.open(filepath, FileAccess.READ)
 	var input: String = file.get_as_text()

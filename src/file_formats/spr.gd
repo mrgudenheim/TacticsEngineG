@@ -10,6 +10,7 @@ var shp_name: String = ""
 var seq_name: String = ""
 var sprite_id: int = 0
 
+
 func _init() -> void:
 	file_name = "spr_file"
 	bits_per_pixel = 4
@@ -29,6 +30,7 @@ func get_sub_spr(new_name: String, start_pixel: int, end_pixel: int) -> Spr:
 	sub_spr.spritesheet = sub_spr.get_rgba8_image()
 	
 	return sub_spr
+
 
 func set_data(spr_file: PackedByteArray, new_name: String) -> void:
 	file_name = new_name
@@ -103,6 +105,7 @@ func set_color_indices(pixel_bytes: PackedByteArray) -> Array[int]:
 			new_color_indicies[i] = byte & 0b0000_1111 # get 4 rightmost bits
 	
 	return new_color_indicies
+
 
 func set_pixel_colors(palette_id: int = 0) -> void:
 	var new_pixel_colors: PackedColorArray = []

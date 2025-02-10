@@ -1,34 +1,52 @@
 class_name RomReader
 
+signal rom_loaded
+
 var rom: PackedByteArray = []
 var file_records: Dictionary = {}
 var lba_to_file_name: Dictionary = {}
 
-static var directory_start_sector: int = 56436
-static var directory_data_sectors: PackedInt32Array = [56436, 56437, 56438, 56439, 56440, 56441]
-static var directory_data_sectors_map: PackedInt32Array = range(9555, 9601)
+var directory_data_sectors_battle: PackedInt32Array = range(56436, 56442)
+var directory_data_sectors_map: PackedInt32Array = range(9555, 9601)
+var directory_data_sectors: PackedInt32Array = []
 const OFFSET_RECORD_DATA_START: int = 0x60
 
 # https://en.wikipedia.org/wiki/CD-ROM#CD-ROM_XA_extension
-const bytes_per_sector: int = 2352
-const bytes_per_sector_header: int = 24
-const bytes_per_sector_footer: int = 280
-const data_bytes_per_sector: int = 2048
+const BYTES_PER_SECTOR: int = 2352
+const BYTES_PER_SECTOR_HEADER: int = 24
+const BYTES_PER_SECTOR_FOOTER: int = 280
+const DATA_BYTES_PER_SECTOR: int = 2048
+
+
+func _init() -> void:
+	directory_data_sectors.append_array(directory_data_sectors_battle)
+	directory_data_sectors.append_array(directory_data_sectors_map)
+
+
+func on_load_rom_dialog_file_selected(path: String) -> void:
+	var start_time: int = Time.get_ticks_msec()
+	rom = FileAccess.get_file_as_bytes(path)
+	push_warning("Time to load file (ms): " + str(Time.get_ticks_msec() - start_time))
+	
+	process_rom(rom)
+
 
 func process_rom(new_rom: PackedByteArray) -> void:
 	file_records.clear()
 	
 	var start_time: int = Time.get_ticks_msec()
 	
+	# http://wiki.osdev.org/ISO_9660#Directories
 	for directory_sector: int in directory_data_sectors:
 		var offset_start: int = 0
-		if directory_sector == directory_data_sectors[0]:
+		if (directory_sector == directory_data_sectors_battle[0]
+				or directory_sector == directory_data_sectors_map[0]):
 			offset_start = OFFSET_RECORD_DATA_START
-		var directory_start: int = directory_sector * bytes_per_sector
-		var directory_data: PackedByteArray = new_rom.slice(directory_start, directory_start + data_bytes_per_sector + bytes_per_sector_header)
+		var directory_start: int = directory_sector * BYTES_PER_SECTOR
+		var directory_data: PackedByteArray = new_rom.slice(directory_start + BYTES_PER_SECTOR_HEADER, directory_start + DATA_BYTES_PER_SECTOR + BYTES_PER_SECTOR_HEADER)
 		
-		var byte_index: int = offset_start + bytes_per_sector_header
-		while byte_index < data_bytes_per_sector + bytes_per_sector_header:
+		var byte_index: int = offset_start
+		while byte_index < DATA_BYTES_PER_SECTOR:
 			var record_length: int = directory_data.decode_u8(byte_index)
 			var record_data: PackedByteArray = directory_data.slice(byte_index, byte_index + record_length)
 			var record: FileRecord = FileRecord.new(record_data)
@@ -42,3 +60,27 @@ func process_rom(new_rom: PackedByteArray) -> void:
 				break
 	
 	push_warning("Time to process ROM (ms): " + str(Time.get_ticks_msec() - start_time))
+	
+	rom_loaded.emit()
+
+
+func get_file_data(file_name: String) -> PackedByteArray:
+	var file_data: PackedByteArray = []
+	var sector_location: int = file_records[file_name].sector_location
+	var file_size: int = file_records[file_name].size
+	var file_data_start: int = (sector_location * BYTES_PER_SECTOR) + BYTES_PER_SECTOR_HEADER
+	var num_sectors_full: int = floor(file_size / float(DATA_BYTES_PER_SECTOR))
+	
+	for sector_index: int in num_sectors_full:
+		var sector_data_start: int = file_data_start + (sector_index * BYTES_PER_SECTOR)
+		var sector_data_end: int = sector_data_start + DATA_BYTES_PER_SECTOR
+		var sector_data: PackedByteArray = rom.slice(sector_data_start, sector_data_end)
+		file_data.append_array(sector_data)
+	
+	# add data from last sector
+	var last_sector_data_start: int = file_data_start + (num_sectors_full * BYTES_PER_SECTOR)
+	var last_sector_data_end: int = last_sector_data_start + (file_size % DATA_BYTES_PER_SECTOR)
+	var last_sector_data: PackedByteArray = rom.slice(last_sector_data_start, last_sector_data_end)
+	file_data.append_array(last_sector_data)
+	
+	return file_data

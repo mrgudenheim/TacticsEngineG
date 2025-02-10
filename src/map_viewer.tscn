@@ -16,12 +16,16 @@ offset_bottom = 40.0
 [node name="LoadRom" parent="VBoxContainer" instance=ExtResource("2_4wnqg")]
 layout_mode = 2
 
-[node name="Camera3D" type="Camera3D" parent="." node_paths=PackedStringArray("sprite")]
-transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 5, 5)
-projection = 1
-size = 20.0
-script = ExtResource("3_dpuna")
-sprite = NodePath("../Sprite3D")
-
 [node name="Sprite3D" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 0, 0)
+texture_filter = 0
+
+[node name="CameraParent" type="Node3D" parent="." node_paths=PackedStringArray("sprite", "camera")]
+script = ExtResource("3_dpuna")
+sprite = NodePath("../Sprite3D")
+camera = NodePath("Camera3D")
+
+[node name="Camera3D" type="Camera3D" parent="CameraParent"]
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 5, 5)
+projection = 1
+size = 15.0

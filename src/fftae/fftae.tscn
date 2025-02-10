@@ -14,7 +14,7 @@ font_size = 14
 [sub_resource type="LabelSettings" id="LabelSettings_bugng"]
 font_size = 14
 
-[node name="Main" type="Control" node_paths=PackedStringArray("ui_manager", "preview_manager", "load_rom_dialog", "load_file_dialog", "save_xml_button", "save_xml_dialog", "save_seq_button", "save_seq_dialog", "animation_list_container", "opcode_list_container", "frame_list_container")]
+[node name="FFTae" type="Control" node_paths=PackedStringArray("ui_manager", "preview_manager", "load_rom_dialog", "load_file_dialog", "save_xml_button", "save_xml_dialog", "save_seq_button", "save_seq_dialog", "animation_list_container", "opcode_list_container", "frame_list_container")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

@@ -29,13 +29,17 @@ var quads_palettes: PackedInt32Array = []
 var texture_palettes: PackedColorArray = []
 var texture_color_indices: PackedInt32Array = []
 
-func create_map(mesh_bytes: PackedByteArray, texture_bytes: PackedByteArray = []) -> void:
+func create_map(mesh_bytes: PackedByteArray, texture_bytes: PackedByteArray = [], palette_id: int = 0) -> void:
 	set_mesh_data(mesh_bytes)
 	
 	_create_mesh()
 	
-	albedo_texture = get_texture(texture_bytes)
+	albedo_texture = get_texture(texture_bytes, palette_id)
 	mesh_material = StandardMaterial3D.new()
+	mesh_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mesh_material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+	mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+	mesh_material.vertex_color_use_as_albedo = true
 	mesh_material.set_texture(BaseMaterial3D.TEXTURE_ALBEDO, albedo_texture)
 	mesh.surface_set_material(0, mesh_material)
 
@@ -85,7 +89,7 @@ func _create_mesh() -> void:
 		for vertex_index: int in 3:
 			var index: int = (i*3) + vertex_index
 			st.set_color(Color.BLACK)
-			st.add_vertex(text_tri_vertices[index])
+			st.add_vertex(black_tri_vertices[index])
 	
 	# add textured quads
 	for i: int in num_text_quads:
@@ -98,18 +102,34 @@ func _create_mesh() -> void:
 		quad_colors.resize(4)
 		quad_colors.fill(Color.WHITE)
 		
-		st.add_triangle_fan(quad_vertices, quad_uvs, quad_colors, PackedVector2Array(), quad_normals)
+		for vert_index: int in [0, 1, 2]:
+			st.set_normal(quad_normals[vert_index])
+			st.set_uv(quad_uvs[vert_index])
+			st.set_color(Color.WHITE)
+			st.add_vertex(quad_vertices[vert_index])
+		
+		for vert_index: int in [3, 2, 1]:
+			st.set_normal(quad_normals[vert_index])
+			st.set_uv(quad_uvs[vert_index])
+			st.set_color(Color.WHITE)
+			st.add_vertex(quad_vertices[vert_index])
 	
 	# add black quads
 	for i: int in num_black_quads:
 		var quad_start: int = i * 4
 		var quad_end: int = (i + 1) * 4
-		var quad_vertices: PackedVector3Array = text_quad_vertices.slice(quad_start, quad_end)
+		var quad_vertices: PackedVector3Array = black_quad_vertices.slice(quad_start, quad_end)
 		var quad_colors: PackedColorArray
 		quad_colors.resize(4)
 		quad_colors.fill(Color.BLACK)
 		
-		st.add_triangle_fan(quad_vertices, PackedVector2Array(), quad_colors)
+		for vert_index: int in [0, 1, 2]:
+			st.set_color(Color.BLACK)
+			st.add_vertex(quad_vertices[vert_index])
+		
+		for vert_index: int in [3, 2, 1]:
+			st.set_color(Color.BLACK)
+			st.add_vertex(quad_vertices[vert_index])
 	
 	mesh = st.commit()
 
@@ -202,12 +222,19 @@ func get_uvs(uvs_bytes: PackedByteArray, num_polys: int, is_quad = false) -> Pac
 		var palette_index: int = uvs_bytes.decode_u8(byte_index + 2)
 		
 		# TODO do u and v need to be percentage? ie. u / 256 and v / 1024
-		var au: int = uvs_bytes.decode_u8(byte_index)
-		var av: int = uvs_bytes.decode_u8(byte_index + 1) + v_offset
-		var bu: int = uvs_bytes.decode_u8(byte_index + 4)
-		var bv: int = uvs_bytes.decode_u8(byte_index + 5) + v_offset
-		var cu: int = uvs_bytes.decode_u8(byte_index + 8)
-		var cv: int = uvs_bytes.decode_u8(byte_index + 9) + v_offset
+		var au: float = uvs_bytes.decode_u8(byte_index) / 256.0
+		var av: float = (uvs_bytes.decode_u8(byte_index + 1) + v_offset) / 1024.0
+		var bu: float = uvs_bytes.decode_u8(byte_index + 4) / 256.0
+		var bv: float = (uvs_bytes.decode_u8(byte_index + 5) + v_offset) / 1024.0
+		var cu: float = uvs_bytes.decode_u8(byte_index + 8) / 256.0
+		var cv: float = (uvs_bytes.decode_u8(byte_index + 9) + v_offset) / 1024.0
+		
+		#var au: int = uvs_bytes.decode_u8(byte_index)
+		#var av: int = uvs_bytes.decode_u8(byte_index + 1) + v_offset
+		#var bu: int = uvs_bytes.decode_u8(byte_index + 4)
+		#var bv: int = uvs_bytes.decode_u8(byte_index + 5) + v_offset
+		#var cu: int = uvs_bytes.decode_u8(byte_index + 8)
+		#var cv: int = uvs_bytes.decode_u8(byte_index + 9) + v_offset
 		
 		var auv: Vector2 = Vector2(au, av)
 		var buv: Vector2 = Vector2(bu, bv)
@@ -217,8 +244,11 @@ func get_uvs(uvs_bytes: PackedByteArray, num_polys: int, is_quad = false) -> Pac
 		uvs.append(cuv)
 		
 		if is_quad:
-			var du: int = uvs_bytes.decode_u8(byte_index + 10)
-			var dv: int = uvs_bytes.decode_u8(byte_index + 11) + v_offset
+			var du: float = uvs_bytes.decode_u8(byte_index + 10) / 256.0
+			var dv: float = (uvs_bytes.decode_u8(byte_index + 11) + v_offset) / 1024.0
+			
+			#var du: int = uvs_bytes.decode_u8(byte_index + 10)
+			#var dv: int = uvs_bytes.decode_u8(byte_index + 11) + v_offset
 			var duv: Vector2 = Vector2(du, dv)
 			uvs.append(duv)
 			quads_palettes.append(palette_index)
@@ -249,7 +279,9 @@ func get_texture_palettes(texture_palettes_bytes: PackedByteArray) -> PackedColo
 		color.r8 = roundi(255 * (color.r8 / float(31)))
 		
 		# if R == G == B == A == 0, then the color is transparent. 
-		if (color == Color(0, 0, 0, 0)):
+		#if (color == Color(0, 0, 0, 0)):
+			#color.a8 = 0
+		if (i % 16) == 0:
 			color.a8 = 0
 		else:
 			color.a8 = 255
@@ -278,8 +310,7 @@ func get_texture_color_indices(texture_bytes: PackedByteArray) -> PackedInt32Arr
 func get_texture_pixel_colors(palette_id: int = 0) -> PackedColorArray:
 	var new_pixel_colors: PackedColorArray = []
 	var new_size: int = TEXTURE_SIZE.x * TEXTURE_SIZE.y
-	var err: int = new_pixel_colors.resize(new_size)
-	#pixel_colors.resize(color_indices.size())
+	new_pixel_colors.resize(new_size)
 	new_pixel_colors.fill(Color.BLACK)
 	for i: int in new_size:
 		new_pixel_colors[i] = texture_palettes[texture_color_indices[i] + (16 * palette_id)]

@@ -29,7 +29,8 @@ projection = 1
 size = 15.0
 
 [node name="Texture" type="Sprite3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, -75, 0, 0)
+pixel_size = 0.05
 texture_filter = 0
 
 [node name="Map" type="MeshInstance3D" parent="."]

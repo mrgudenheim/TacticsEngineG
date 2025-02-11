@@ -34,7 +34,8 @@ func create_map(mesh_bytes: PackedByteArray, texture_bytes: PackedByteArray = []
 	
 	_create_mesh()
 	
-	albedo_texture = get_texture(texture_bytes, palette_id)
+	#albedo_texture = get_texture(texture_bytes, palette_id)
+	albedo_texture = get_texture_all(texture_bytes)
 	mesh_material = StandardMaterial3D.new()
 	mesh_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	mesh_material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
@@ -164,8 +165,10 @@ func set_mesh_data(bytes: PackedByteArray) -> void:
 	text_tri_normals = get_normals(primary_mesh_data.slice(text_tri_normals_start, text_quad_normals_start), num_text_tris * 3)
 	text_quad_normals = get_normals(primary_mesh_data.slice(text_quad_normals_start, tris_uvs_start), num_text_quads * 4)
 	
-	tris_uvs = get_uvs(primary_mesh_data.slice(tris_uvs_start, quads_uvs_start), num_text_tris, false)
-	quads_uvs = get_uvs(primary_mesh_data.slice(quads_uvs_start, quads_uvs_start + quad_uvs_data_length), num_text_quads, true)
+	#tris_uvs = get_uvs(primary_mesh_data.slice(tris_uvs_start, quads_uvs_start), num_text_tris, false)
+	#quads_uvs = get_uvs(primary_mesh_data.slice(quads_uvs_start, quads_uvs_start + quad_uvs_data_length), num_text_quads, true)
+	tris_uvs = get_uvs_all_palettes(primary_mesh_data.slice(tris_uvs_start, quads_uvs_start), num_text_tris, false)
+	quads_uvs = get_uvs_all_palettes(primary_mesh_data.slice(quads_uvs_start, quads_uvs_start + quad_uvs_data_length), num_text_quads, true)
 	
 	var texture_palettes_data_start: int = bytes.decode_u32(0x44)
 	if texture_palettes_data_start == 0:
@@ -220,21 +223,15 @@ func get_uvs(uvs_bytes: PackedByteArray, num_polys: int, is_quad = false) -> Pac
 		var texture_page: int = uvs_bytes.decode_u8(byte_index + 6) & 0b11 # two right most bits are texture page
 		var v_offset: int = texture_page * 256
 		var palette_index: int = uvs_bytes.decode_u8(byte_index + 2)
+		var x_offset: int = palette_index * 256
 		
-		# TODO do u and v need to be percentage? ie. u / 256 and v / 1024
+		# u and v need to be percentage, ie. u / width and v / height
 		var au: float = uvs_bytes.decode_u8(byte_index) / 256.0
-		var av: float = (uvs_bytes.decode_u8(byte_index + 1) + v_offset) / 1024.0
+		var av: float = (uvs_bytes.decode_u8(byte_index + 1) + v_offset) / float(TEXTURE_SIZE.y)
 		var bu: float = uvs_bytes.decode_u8(byte_index + 4) / 256.0
-		var bv: float = (uvs_bytes.decode_u8(byte_index + 5) + v_offset) / 1024.0
+		var bv: float = (uvs_bytes.decode_u8(byte_index + 5) + v_offset) / float(TEXTURE_SIZE.y)
 		var cu: float = uvs_bytes.decode_u8(byte_index + 8) / 256.0
-		var cv: float = (uvs_bytes.decode_u8(byte_index + 9) + v_offset) / 1024.0
-		
-		#var au: int = uvs_bytes.decode_u8(byte_index)
-		#var av: int = uvs_bytes.decode_u8(byte_index + 1) + v_offset
-		#var bu: int = uvs_bytes.decode_u8(byte_index + 4)
-		#var bv: int = uvs_bytes.decode_u8(byte_index + 5) + v_offset
-		#var cu: int = uvs_bytes.decode_u8(byte_index + 8)
-		#var cv: int = uvs_bytes.decode_u8(byte_index + 9) + v_offset
+		var cv: float = (uvs_bytes.decode_u8(byte_index + 9) + v_offset) / float(TEXTURE_SIZE.y)
 		
 		var auv: Vector2 = Vector2(au, av)
 		var buv: Vector2 = Vector2(bu, bv)
@@ -245,10 +242,52 @@ func get_uvs(uvs_bytes: PackedByteArray, num_polys: int, is_quad = false) -> Pac
 		
 		if is_quad:
 			var du: float = uvs_bytes.decode_u8(byte_index + 10) / 256.0
-			var dv: float = (uvs_bytes.decode_u8(byte_index + 11) + v_offset) / 1024.0
+			var dv: float = (uvs_bytes.decode_u8(byte_index + 11) + v_offset) / float(TEXTURE_SIZE.y)
 			
-			#var du: int = uvs_bytes.decode_u8(byte_index + 10)
-			#var dv: int = uvs_bytes.decode_u8(byte_index + 11) + v_offset
+			var duv: Vector2 = Vector2(du, dv)
+			uvs.append(duv)
+			quads_palettes.append(palette_index)
+		else:
+			tris_palettes.append(palette_index)
+	
+	return uvs
+
+
+func get_uvs_all_palettes(uvs_bytes: PackedByteArray, num_polys: int, is_quad = false) -> PackedVector2Array:
+	var uvs: PackedVector2Array = []
+	var num_palettes: int = 8
+	
+	var data_length: int = 10
+	if is_quad:
+		data_length = 12
+	
+	for poly_index: int in num_polys:
+		var byte_index: int = poly_index * data_length
+		
+		var texture_page: int = uvs_bytes.decode_u8(byte_index + 6) & 0b11 # two right most bits are texture page
+		var v_offset: int = texture_page * 256
+		var palette_index: int = uvs_bytes.decode_u8(byte_index + 2)
+		var x_offset: int = palette_index * 256
+		
+		# u and v need to be percentage, ie. u / width and v / height
+		var au: float = (uvs_bytes.decode_u8(byte_index) + x_offset) / float(TEXTURE_SIZE.x * num_palettes)
+		var av: float = (uvs_bytes.decode_u8(byte_index + 1) + v_offset) / float(TEXTURE_SIZE.y)
+		var bu: float = (uvs_bytes.decode_u8(byte_index + 4) + x_offset) / float(TEXTURE_SIZE.x * num_palettes)
+		var bv: float = (uvs_bytes.decode_u8(byte_index + 5) + v_offset) / float(TEXTURE_SIZE.y)
+		var cu: float = (uvs_bytes.decode_u8(byte_index + 8) + x_offset) / float(TEXTURE_SIZE.x * num_palettes)
+		var cv: float = (uvs_bytes.decode_u8(byte_index + 9) + v_offset) / float(TEXTURE_SIZE.y)
+		
+		var auv: Vector2 = Vector2(au, av)
+		var buv: Vector2 = Vector2(bu, bv)
+		var cuv: Vector2 = Vector2(cu, cv)
+		uvs.append(auv)
+		uvs.append(buv)
+		uvs.append(cuv)
+		
+		if is_quad:
+			var du: float = (uvs_bytes.decode_u8(byte_index + 10) + x_offset) / float(TEXTURE_SIZE.x * num_palettes)
+			var dv: float = (uvs_bytes.decode_u8(byte_index + 11) + v_offset) / float(TEXTURE_SIZE.y)
+			
 			var duv: Vector2 = Vector2(du, dv)
 			uvs.append(duv)
 			quads_palettes.append(palette_index)
@@ -333,4 +372,75 @@ func get_texture_rgba8_image(palette_id: int = 0) -> Image:
 
 func get_texture(texture_bytes: PackedByteArray, palette_id = 0) -> Texture2D:
 	texture_color_indices = get_texture_color_indices(texture_bytes)
+	
+	#var unique_palettes: Dictionary = {}
+	#for palette_index: int in tris_palettes:
+		#unique_palettes[palette_index] = 1
+	#push_warning("Tris palettes: " + str(unique_palettes.keys()))
+	#
+	#unique_palettes.clear()
+	#for palette_index: int in quads_palettes:
+		#unique_palettes[palette_index] = 1
+	#push_warning("Quads palettes: " + str(unique_palettes.keys()))
+	
 	return ImageTexture.create_from_image(get_texture_rgba8_image(palette_id))
+
+
+func get_texture_color_indices_all(color_indices: PackedInt32Array) -> PackedInt32Array:
+	var new_color_indicies: PackedInt32Array = []
+	var num_palettes: int = 8
+	var colors_per_palette: int = 16
+	
+	for row_index in (color_indices.size() / TEXTURE_SIZE.x):
+		var row_start_index: int = row_index * TEXTURE_SIZE.x
+		var row_end_index: int = row_start_index + TEXTURE_SIZE.x
+		var row_indices: PackedInt32Array = color_indices.slice(row_start_index, row_end_index)
+		
+		for palette_index: int in num_palettes:			
+			var row_indices_adjusted: PackedInt32Array = []
+			row_indices_adjusted.resize(TEXTURE_SIZE.x)
+			row_indices_adjusted.fill(palette_index * colors_per_palette)
+			
+			for i: int in TEXTURE_SIZE.x:
+				row_indices_adjusted[i] += row_indices[i]
+			
+			new_color_indicies.append_array(row_indices_adjusted)
+	
+	return new_color_indicies
+
+
+func get_texture_pixel_colors_all() -> PackedColorArray:
+	var new_pixel_colors: PackedColorArray = []
+	var num_palettes: int = 8
+	var new_size: int = TEXTURE_SIZE.x * TEXTURE_SIZE.y * num_palettes
+	new_pixel_colors.resize(new_size)
+	new_pixel_colors.fill(Color.BLACK)
+	
+	var texture_color_indices_all: PackedInt32Array = get_texture_color_indices_all(texture_color_indices)
+	
+	for i: int in new_size:
+		new_pixel_colors[i] = texture_palettes[texture_color_indices_all[i]]
+	
+	return new_pixel_colors
+
+
+func get_texture_rgba8_image_all() -> Image:
+	var num_palettes: int = 8
+	var image_width: int = TEXTURE_SIZE.x * num_palettes
+	var image: Image = Image.create_empty(image_width, TEXTURE_SIZE.y, false, Image.FORMAT_RGBA8)
+	var pixel_colors: PackedColorArray = get_texture_pixel_colors_all()
+	
+	for x in image_width:
+		for y in TEXTURE_SIZE.y:
+			var color: Color = pixel_colors[x + (y * image_width)]
+			var color8: Color = Color8(color.r8, color.g8, color.b8, color.a8) # use Color8 function to prevent issues with format conversion changing color by 1/255
+			image.set_pixel(x,y, color8) # spr stores pixel data left to right, top to bottm
+	
+	return image
+
+
+func get_texture_all(texture_bytes: PackedByteArray) -> Texture2D:
+	texture_color_indices = get_texture_color_indices(texture_bytes)
+	
+	var image: Image = get_texture_rgba8_image_all()
+	return ImageTexture.create_from_image(image)

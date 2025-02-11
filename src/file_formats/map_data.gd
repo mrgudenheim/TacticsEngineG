@@ -31,6 +31,7 @@ var texture_color_indices: PackedInt32Array = []
 
 var map_width: int = 0 # width in tiles
 var map_length: int = 0 # length in tiles
+var terrain_tiles: Array[TerrainTile] = []
 
 func create_map(mesh_bytes: PackedByteArray, texture_bytes: PackedByteArray = [], palette_id: int = 0) -> void:
 	set_mesh_data(mesh_bytes)
@@ -73,6 +74,10 @@ func clear_map_data() -> void:
 	
 	texture_palettes = []
 	texture_color_indices = []
+	
+	map_width = 0
+	map_length = 0
+	terrain_tiles = []
 
 
 func _create_mesh() -> void:
@@ -187,7 +192,8 @@ func set_mesh_data(bytes: PackedByteArray) -> void:
 	
 	var terrain_data_length: int = 2 + (256 * 8 * 2)
 	var terrain_data_end: int = terrain_data_start + terrain_data_length
-	var terrain_data: PackedByteArray = bytes.slice(texture_palettes_data_start, texture_palettes_data_end)
+	var terrain_data: PackedByteArray = bytes.slice(terrain_data_start, terrain_data_end)
+	terrain_tiles = get_terrain(terrain_data)
 
 
 func get_vertices(vertex_bytes: PackedByteArray, num_vertices: int) -> PackedVector3Array:
@@ -265,7 +271,7 @@ func get_uvs(uvs_bytes: PackedByteArray, num_polys: int, is_quad = false) -> Pac
 
 func get_uvs_all_palettes(uvs_bytes: PackedByteArray, num_polys: int, is_quad = false) -> PackedVector2Array:
 	var uvs: PackedVector2Array = []
-	var num_palettes: int = 8
+	var num_palettes: int = 16
 	
 	var data_length: int = 10
 	if is_quad:
@@ -328,10 +334,10 @@ func get_texture_palettes(texture_palettes_bytes: PackedByteArray) -> PackedColo
 		color.r8 = roundi(255 * (color.r8 / float(31)))
 		
 		# if R == G == B == A == 0, then the color is transparent. 
-		#if (color == Color(0, 0, 0, 0)):
-			#color.a8 = 0
-		if (i % 16) == 0:
+		if (color == Color(0, 0, 0, 0)):
 			color.a8 = 0
+		#if (i % 16) == 0:
+			#color.a8 = 0
 		else:
 			color.a8 = 255
 		new_texture_palettes[i] = color
@@ -398,7 +404,7 @@ func get_texture(texture_bytes: PackedByteArray, palette_id = 0) -> Texture2D:
 
 func get_texture_color_indices_all(color_indices: PackedInt32Array) -> PackedInt32Array:
 	var new_color_indicies: PackedInt32Array = []
-	var num_palettes: int = 8
+	var num_palettes: int = 16
 	var colors_per_palette: int = 16
 	
 	for row_index in (color_indices.size() / TEXTURE_SIZE.x):
@@ -406,7 +412,7 @@ func get_texture_color_indices_all(color_indices: PackedInt32Array) -> PackedInt
 		var row_end_index: int = row_start_index + TEXTURE_SIZE.x
 		var row_indices: PackedInt32Array = color_indices.slice(row_start_index, row_end_index)
 		
-		for palette_index: int in num_palettes:			
+		for palette_index: int in num_palettes:
 			var row_indices_adjusted: PackedInt32Array = []
 			row_indices_adjusted.resize(TEXTURE_SIZE.x)
 			row_indices_adjusted.fill(palette_index * colors_per_palette)
@@ -421,7 +427,7 @@ func get_texture_color_indices_all(color_indices: PackedInt32Array) -> PackedInt
 
 func get_texture_pixel_colors_all() -> PackedColorArray:
 	var new_pixel_colors: PackedColorArray = []
-	var num_palettes: int = 8
+	var num_palettes: int = 16
 	var new_size: int = TEXTURE_SIZE.x * TEXTURE_SIZE.y * num_palettes
 	new_pixel_colors.resize(new_size)
 	new_pixel_colors.fill(Color.BLACK)
@@ -435,7 +441,7 @@ func get_texture_pixel_colors_all() -> PackedColorArray:
 
 
 func get_texture_rgba8_image_all() -> Image:
-	var num_palettes: int = 8
+	var num_palettes: int = 16
 	var image_width: int = TEXTURE_SIZE.x * num_palettes
 	var image: Image = Image.create_empty(image_width, TEXTURE_SIZE.y, false, Image.FORMAT_RGBA8)
 	var pixel_colors: PackedColorArray = get_texture_pixel_colors_all()
@@ -457,26 +463,36 @@ func get_texture_all(texture_bytes: PackedByteArray) -> Texture2D:
 
 
 # https://ffhacktics.com/wiki/Maps/Mesh#Terrain
-func get_terrain(terrain_bytes: PackedByteArray) -> void:
+func get_terrain(terrain_bytes: PackedByteArray) -> Array[TerrainTile]:
 	map_width = terrain_bytes.decode_u8(0)
 	map_length = terrain_bytes.decode_u8(1)
 	
 	var tile_data_length: int = 8
-	for z: int in map_length:
-		for x: int in map_width:
-			var tile_index: int = x + (z * map_width)
-			var tile_data_start: int = 2 + (tile_index * tile_data_length)
-			var tile_data: PackedByteArray = terrain_bytes.slice(tile_data_start, tile_data_start + tile_data_length)
-			
-			var surface_type_id: int = tile_data.decode_u8(0) & 0b0011_1111 # right 6 bits are the surface type
-			var height: int = tile_data.decode_u8(2) # For sloped tiles, the height of the bottom of the slope
-			var depth: int = tile_data.decode_u8(3) >> 5 # left 3 bits are bepth
-			var slope_height: int = tile_data.decode_u8(3) & 0b1_1111 # right 5 bits are difference between the height at the top and the height at the bottom
-			var slope_type_id: int = tile_data.decode_u8(4)
-			
-			var no_stand_select: int = tile_data.decode_u8(6) >> 7 # leftmost bit, Can Walk/Cursor through this tile but not stand on it or select it. 
-			var shading: int = (tile_data.decode_u8(6) & 0b0000_1100) >> 2 # 2 bits, Terrain Tile Shading. 0 = Normal, 1 = Dark, 2 = Darker, 3 = Darkest
-			var no_walk: int = (tile_data.decode_u8(6) & 0b0000_0010) >> 1 #  	Can't walk on this tile 
-			var no_cursor: int = tile_data.decode_u8(6) & 0b1 # rightmost bit, Can't move cursor to this tile 
-			
-			var default_camera_position_id: int = tile_data.decode_u8(7)
+	var new_terrain_tiles: Array[TerrainTile] = []
+	new_terrain_tiles.clear()
+	for layer: int in [0, 1]:
+		for z: int in map_length:
+			for x: int in map_width:
+				var tile_index: int = x + (z * map_width)
+				var tile_data_start: int = 2 + (tile_index * tile_data_length) + (layer * 256 * 8) # each layer has space for 256 tiles, each tile data is 8 bytes
+				var tile_data: PackedByteArray = terrain_bytes.slice(tile_data_start, tile_data_start + tile_data_length)
+				
+				var tile: TerrainTile = TerrainTile.new()
+				tile.layer = layer
+				tile.location = Vector2i(x, z)
+				tile.surface_type_id = tile_data.decode_u8(0) & 0b0011_1111 # right 6 bits are the surface type
+				tile.height = tile_data.decode_u8(2) # For sloped tiles, the height of the bottom of the slope
+				tile.depth = tile_data.decode_u8(3) >> 5 # left 3 bits are bepth
+				tile.slope_height = tile_data.decode_u8(3) & 0b1_1111 # right 5 bits are difference between the height at the top and the height at the bottom
+				tile.slope_type_id = tile_data.decode_u8(4)
+				
+				tile.no_stand_select = tile_data.decode_u8(6) >> 7 # leftmost bit, Can Walk/Cursor through this tile but not stand on it or select it. 
+				tile.shading = (tile_data.decode_u8(6) & 0b0000_1100) >> 2 # 2 bits, Terrain Tile Shading. 0 = Normal, 1 = Dark, 2 = Darker, 3 = Darkest
+				tile.no_walk = (tile_data.decode_u8(6) & 0b0000_0010) >> 1 # Can't walk on this tile 
+				tile.no_cursor = tile_data.decode_u8(6) & 0b1 # rightmost bit, Can't move cursor to this tile 
+				
+				tile.default_camera_position_id = tile_data.decode_u8(7)
+				
+				new_terrain_tiles.append(tile)
+	
+	return new_terrain_tiles

@@ -1,3 +1,4 @@
+class_name CameraController
 extends Node3D
 
 @export var sprite: Sprite3D
@@ -11,7 +12,7 @@ const ROTATE_SPEED: float = 5
 const LOW_ANGLE: float = 26.54
 const HIGH_ANGLE: float = 39.37
 
-var zoom: float = 100:
+var zoom: float = 12:
 	get:
 		return zoom
 	set(value):
@@ -22,6 +23,10 @@ var zoom: float = 100:
 var mouse_pos := Vector2.ZERO
 var drag := false
 var should_tween := true
+
+
+func _ready() -> void:
+	camera.size = zoom
 
 
 func _unhandled_input(event: InputEvent) -> void:

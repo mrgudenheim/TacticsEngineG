@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://card26cltbba1"]
+[gd_scene load_steps=11 format=3 uid="uid://card26cltbba1"]
 
 [ext_resource type="Script" path="res://src/map_viewer.gd" id="1_ojbyw"]
 [ext_resource type="PackedScene" uid="uid://26tg32417lfm" path="res://src/load_rom.tscn" id="2_4wnqg"]
@@ -16,11 +16,22 @@ fill_from = Vector2(0.5, 1)
 fill_to = Vector2(0.5, 0)
 metadata/_snap_enabled = true
 
-[node name="MapViewer" type="Node3D" node_paths=PackedStringArray("load_rom", "texture_viewer", "map_mesh")]
+[sub_resource type="Gradient" id="Gradient_lvin3"]
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_twdc0"]
+gradient = SubResource("Gradient_lvin3")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_05x7e"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_foefj"]
+material = SubResource("StandardMaterial3D_05x7e")
+
+[node name="MapViewer" type="Node3D" node_paths=PackedStringArray("load_rom", "texture_viewer", "map_mesh", "camera_controller")]
 script = ExtResource("1_ojbyw")
 load_rom = NodePath("VBoxContainer/LoadRom")
 texture_viewer = NodePath("MapTexture")
 map_mesh = NodePath("Map")
+camera_controller = NodePath("CameraController")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_njvnp")
@@ -44,16 +55,16 @@ offset_bottom = 40.0
 layout_mode = 2
 
 [node name="CameraController" type="Node3D" parent="." node_paths=PackedStringArray("sprite", "camera")]
-transform = Transform3D(1, 0, 0, 0, 0.894934, 0.446198, 0, -0.446198, 0.894934, 0, 0, 0)
+transform = Transform3D(0.707107, -0.315509, 0.632814, 0, 0.894934, 0.446198, -0.707107, -0.315509, 0.632814, 0, 0, 0)
 script = ExtResource("3_dpuna")
 sprite = NodePath("../MapTexture")
 camera = NodePath("Camera3D")
 zoom_in_max = 0.5
 
 [node name="Camera3D" type="Camera3D" parent="CameraController"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 25, 200)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 200)
 projection = 1
-size = 100.0
+size = 12.0
 
 [node name="MapTexture" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, -75, 0, 0)
@@ -62,6 +73,15 @@ pixel_size = 0.05
 texture_filter = 0
 
 [node name="Map" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.176777, -1.54543e-08, 0.176777, -2.18557e-08, -0.25, 0, 0.176777, -1.54543e-08, -0.176777, -50, 0, 0)
+transform = Transform3D(1, -8.74228e-08, -8.74228e-08, -8.74228e-08, -1, 0, -8.74228e-08, 7.64274e-15, -1, 0, 0, 0)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.553391, -0.832921, 0, 0.832921, 0.553391, 0, 3.51982, 2.72607)
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+visible = false
+texture = SubResource("GradientTexture2D_twdc0")
+
+[node name="Quad" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 12, -48, 12)
+mesh = SubResource("QuadMesh_foefj")

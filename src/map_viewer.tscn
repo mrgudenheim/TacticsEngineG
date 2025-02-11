@@ -1,37 +1,67 @@
-[gd_scene load_steps=4 format=3 uid="uid://card26cltbba1"]
+[gd_scene load_steps=7 format=3 uid="uid://card26cltbba1"]
 
 [ext_resource type="Script" path="res://src/map_viewer.gd" id="1_ojbyw"]
 [ext_resource type="PackedScene" uid="uid://26tg32417lfm" path="res://src/load_rom.tscn" id="2_4wnqg"]
 [ext_resource type="Script" path="res://src/camera_control.gd" id="3_dpuna"]
 
+[sub_resource type="Environment" id="Environment_njvnp"]
+background_mode = 3
+
+[sub_resource type="Gradient" id="Gradient_h7qnf"]
+colors = PackedColorArray(0.1332, 0.14724, 0.18, 1, 0.39, 0.695, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_1dnhu"]
+gradient = SubResource("Gradient_h7qnf")
+fill_from = Vector2(0.5, 1)
+fill_to = Vector2(0.5, 0)
+metadata/_snap_enabled = true
+
 [node name="MapViewer" type="Node3D" node_paths=PackedStringArray("load_rom", "texture_viewer", "map_mesh")]
 script = ExtResource("1_ojbyw")
 load_rom = NodePath("VBoxContainer/LoadRom")
-texture_viewer = NodePath("Texture")
+texture_viewer = NodePath("MapTexture")
 map_mesh = NodePath("Map")
 
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_njvnp")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = -3
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_1dnhu")
+
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
-offset_right = 40.0
+offset_right = 88.0
 offset_bottom = 40.0
 
 [node name="LoadRom" parent="VBoxContainer" instance=ExtResource("2_4wnqg")]
 layout_mode = 2
 
-[node name="CameraParent" type="Node3D" parent="." node_paths=PackedStringArray("sprite", "camera")]
+[node name="CameraController" type="Node3D" parent="." node_paths=PackedStringArray("sprite", "camera")]
+transform = Transform3D(1, 0, 0, 0, 0.894934, 0.446198, 0, -0.446198, 0.894934, 0, 0, 0)
 script = ExtResource("3_dpuna")
-sprite = NodePath("../Texture")
+sprite = NodePath("../MapTexture")
 camera = NodePath("Camera3D")
 zoom_in_max = 0.5
 
-[node name="Camera3D" type="Camera3D" parent="CameraParent"]
-transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 100, 100)
+[node name="Camera3D" type="Camera3D" parent="CameraController"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 25, 200)
 projection = 1
-size = 15.0
+size = 100.0
 
-[node name="Texture" type="Sprite3D" parent="."]
+[node name="MapTexture" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, -75, 0, 0)
+visible = false
 pixel_size = 0.05
 texture_filter = 0
 
 [node name="Map" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.176777, -1.54543e-08, 0.176777, -2.18557e-08, -0.25, 0, 0.176777, -1.54543e-08, -0.176777, -50, -50, 0)
+transform = Transform3D(0.176777, -1.54543e-08, 0.176777, -2.18557e-08, -0.25, 0, 0.176777, -1.54543e-08, -0.176777, -50, 0, 0)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]

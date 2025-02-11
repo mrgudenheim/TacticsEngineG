@@ -4,12 +4,14 @@ extends Node3D
 @export var camera: Camera3D
 
 signal zoom_changed
-signal offset_changed
 
 const PAN_SPEED: float = 0.1
 const ROTATE_SPEED: float = 5
+# https://ffhacktics.com/wiki/Camera
+const LOW_ANGLE: float = 26.54
+const HIGH_ANGLE: float = 39.37
 
-var zoom: float = 15:
+var zoom: float = 100:
 	get:
 		return zoom
 	set(value):
@@ -39,7 +41,6 @@ func _unhandled_input(event: InputEvent) -> void:
 	else:
 		var dir := Input.get_vector(&"camera_left", &"camera_right", &"camera_up", &"camera_down")
 		if dir != Vector2.ZERO:
-			push_warning(dir)
 			pan_camera(dir)
 
 

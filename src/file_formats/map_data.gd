@@ -29,6 +29,9 @@ var quads_palettes: PackedInt32Array = []
 var texture_palettes: PackedColorArray = []
 var texture_color_indices: PackedInt32Array = []
 
+var map_width: int = 0 # width in tiles
+var map_length: int = 0 # length in tiles
+
 func create_map(mesh_bytes: PackedByteArray, texture_bytes: PackedByteArray = [], palette_id: int = 0) -> void:
 	set_mesh_data(mesh_bytes)
 	
@@ -136,7 +139,11 @@ func _create_mesh() -> void:
 
 
 func set_mesh_data(bytes: PackedByteArray) -> void:
-	var primary_mesh_data: PackedByteArray = bytes.slice(bytes.decode_u32(0x40), bytes.decode_u32(0x44))
+	var primary_mesh_data_start: int = bytes.decode_u32(0x40)
+	var texture_palettes_data_start: int = bytes.decode_u32(0x44)
+	var terrain_data_start: int = bytes.decode_u32(0x68)
+	
+	var primary_mesh_data: PackedByteArray = bytes.slice(primary_mesh_data_start, texture_palettes_data_start)
 	num_text_tris = primary_mesh_data.decode_u16(0)
 	num_text_quads = primary_mesh_data.decode_u16(2)
 	num_black_tris = primary_mesh_data.decode_u16(4)
@@ -170,14 +177,17 @@ func set_mesh_data(bytes: PackedByteArray) -> void:
 	tris_uvs = get_uvs_all_palettes(primary_mesh_data.slice(tris_uvs_start, quads_uvs_start), num_text_tris, false)
 	quads_uvs = get_uvs_all_palettes(primary_mesh_data.slice(quads_uvs_start, quads_uvs_start + quad_uvs_data_length), num_text_quads, true)
 	
-	var texture_palettes_data_start: int = bytes.decode_u32(0x44)
 	if texture_palettes_data_start == 0:
 		push_warning("No palette data found")
 		return
 	
-	var texture_palettes_data_end: int = texture_palettes_data_start + 512	
+	var texture_palettes_data_end: int = texture_palettes_data_start + 512
 	var texture_palettes_data: PackedByteArray = bytes.slice(texture_palettes_data_start, texture_palettes_data_end)
 	texture_palettes = get_texture_palettes(texture_palettes_data)
+	
+	var terrain_data_length: int = 2 + (256 * 8 * 2)
+	var terrain_data_end: int = terrain_data_start + terrain_data_length
+	var terrain_data: PackedByteArray = bytes.slice(texture_palettes_data_start, texture_palettes_data_end)
 
 
 func get_vertices(vertex_bytes: PackedByteArray, num_vertices: int) -> PackedVector3Array:
@@ -444,3 +454,29 @@ func get_texture_all(texture_bytes: PackedByteArray) -> Texture2D:
 	
 	var image: Image = get_texture_rgba8_image_all()
 	return ImageTexture.create_from_image(image)
+
+
+# https://ffhacktics.com/wiki/Maps/Mesh#Terrain
+func get_terrain(terrain_bytes: PackedByteArray) -> void:
+	map_width = terrain_bytes.decode_u8(0)
+	map_length = terrain_bytes.decode_u8(1)
+	
+	var tile_data_length: int = 8
+	for z: int in map_length:
+		for x: int in map_width:
+			var tile_index: int = x + (z * map_width)
+			var tile_data_start: int = 2 + (tile_index * tile_data_length)
+			var tile_data: PackedByteArray = terrain_bytes.slice(tile_data_start, tile_data_start + tile_data_length)
+			
+			var surface_type_id: int = tile_data.decode_u8(0) & 0b0011_1111 # right 6 bits are the surface type
+			var height: int = tile_data.decode_u8(2) # For sloped tiles, the height of the bottom of the slope
+			var depth: int = tile_data.decode_u8(3) >> 5 # left 3 bits are bepth
+			var slope_height: int = tile_data.decode_u8(3) & 0b1_1111 # right 5 bits are difference between the height at the top and the height at the bottom
+			var slope_type_id: int = tile_data.decode_u8(4)
+			
+			var no_stand_select: int = tile_data.decode_u8(6) >> 7 # leftmost bit, Can Walk/Cursor through this tile but not stand on it or select it. 
+			var shading: int = (tile_data.decode_u8(6) & 0b0000_1100) >> 2 # 2 bits, Terrain Tile Shading. 0 = Normal, 1 = Dark, 2 = Darker, 3 = Darkest
+			var no_walk: int = (tile_data.decode_u8(6) & 0b0000_0010) >> 1 #  	Can't walk on this tile 
+			var no_cursor: int = tile_data.decode_u8(6) & 0b1 # rightmost bit, Can't move cursor to this tile 
+			
+			var default_camera_position_id: int = tile_data.decode_u8(7)

@@ -2,6 +2,10 @@
 class_name MapData
 
 var file_name: String = "default map file name"
+var primary_mesh_data_record: MapFileRecord
+var primary_texture_record: MapFileRecord
+var map_file_records: Array[MapFileRecord] = []
+
 var mesh: ArrayMesh
 var mesh_material: StandardMaterial3D
 var albedo_texture: Texture2D
@@ -35,6 +39,15 @@ var background_gradient_bottom: Color = Color.BLACK
 var map_width: int = 0 # width in tiles
 var map_length: int = 0 # length in tiles
 var terrain_tiles: Array[TerrainTile] = []
+
+
+func init_map(gns_bytes: PackedByteArray) -> void:
+	map_file_records = get_associated_files(gns_bytes)
+	push_warning("Map Mesh File: " + primary_mesh_data_record.file_name)
+	push_warning("Map Texture File: " + primary_texture_record.file_name)
+	create_map(RomReader.get_file_data(primary_mesh_data_record.file_name), 
+			RomReader.get_file_data(primary_texture_record.file_name))
+
 
 func create_map(mesh_bytes: PackedByteArray, texture_bytes: PackedByteArray = [], palette_id: int = 0) -> void:
 	set_mesh_data(mesh_bytes)
@@ -525,3 +538,28 @@ func set_gradient_colors(gradient_color_bytes: PackedByteArray) -> void:
 	
 	background_gradient_top = Color8(top_red, top_green, top_blue)
 	background_gradient_bottom = Color8(bot_red, bot_green, bot_blue)
+
+
+func get_associated_files(gns_bytes: PackedByteArray) -> Array[MapFileRecord]:
+	var gns_record_length: int = 20
+	var new_map_records: Array[MapFileRecord] = []
+	
+	var num_files: int = -1
+	for temp_file_name: String in RomReader.file_records.keys():
+		if temp_file_name.contains(file_name.trim_suffix(".GNS")):
+			num_files += 1
+	
+	for record_index: int in num_files:
+		var record_data: PackedByteArray = gns_bytes.slice(record_index * gns_record_length, (record_index + 1) * gns_record_length)
+		var new_map_file_record: MapFileRecord = MapFileRecord.new(record_data)
+		new_map_records.append(new_map_file_record)
+		
+		if new_map_file_record.file_type_indicator == 0x2e01:
+			primary_mesh_data_record = new_map_file_record
+	
+	for record: MapFileRecord in new_map_records:
+		if record.file_type_indicator == 0x1701:
+			if record.time_weather == primary_mesh_data_record.time_weather and record.arrangement == primary_mesh_data_record.arrangement:
+				primary_texture_record = record
+	
+	return new_map_records

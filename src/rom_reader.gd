@@ -2,9 +2,9 @@ class_name RomReader
 
 signal rom_loaded
 
-var rom: PackedByteArray = []
-var file_records: Dictionary = {}
-var lba_to_file_name: Dictionary = {}
+static var rom: PackedByteArray = []
+static var file_records: Dictionary = {}
+static var lba_to_file_name: Dictionary = {}
 
 var directory_data_sectors_battle: PackedInt32Array = range(56436, 56442)
 var directory_data_sectors_map: PackedInt32Array = range(9555, 9601)
@@ -64,7 +64,7 @@ func process_rom(new_rom: PackedByteArray) -> void:
 	rom_loaded.emit()
 
 
-func get_file_data(file_name: String) -> PackedByteArray:
+static func get_file_data(file_name: String) -> PackedByteArray:
 	var file_data: PackedByteArray = []
 	var sector_location: int = file_records[file_name].sector_location
 	var file_size: int = file_records[file_name].size

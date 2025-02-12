@@ -18,22 +18,18 @@ func _ready() -> void:
 func on_rom_loaded() -> void:
 	push_warning("on rom loaded")
 	
-	# Orbonne
-	var map_file_name: String = "MAP056.48"
-	var map_texture_file_name: String = "MAP056.47"
 	
-	# Gariland
-	#map_file_name = "MAP022.9"
-	#map_texture_file_name = "MAP022.8"
+	var map_file_name: String = "MAP056.GNS" # Orbonne
+	#map_file_name = "MAP022.GNS" # Gariland
 	
 	var start_time: int = Time.get_ticks_msec()
-	var map_mesh_data: PackedByteArray = rom_reader.get_file_data(map_file_name)
-	var map_texture_data: PackedByteArray = rom_reader.get_file_data(map_texture_file_name)
+	var map_gns_data: PackedByteArray = rom_reader.get_file_data(map_file_name)
 	
 	push_warning("Time to get file data (ms): " + str(Time.get_ticks_msec() - start_time))
 	
 	var map_data: MapData = MapData.new()
-	map_data.create_map(map_mesh_data, map_texture_data, 0)
+	map_data.file_name = map_file_name
+	map_data.init_map(map_gns_data)
 	
 	background_gradient.texture.gradient.colors[0] = map_data.background_gradient_bottom
 	background_gradient.texture.gradient.colors[1] = map_data.background_gradient_top

@@ -560,9 +560,10 @@ func get_associated_files(gns_bytes: PackedByteArray) -> Array[MapFileRecord]:
 		if new_map_file_record.file_type_indicator == 0x2e01:
 			primary_mesh_data_record = new_map_file_record
 	
-	for record: MapFileRecord in new_map_records:
-		if record.file_type_indicator == 0x1701:
-			if record.time_weather == primary_mesh_data_record.time_weather and record.arrangement == primary_mesh_data_record.arrangement:
-				primary_texture_record = record
+	if is_instance_valid(primary_mesh_data_record):
+		for record: MapFileRecord in new_map_records:
+			if record.file_type_indicator == 0x1701:
+				if record.time_weather == primary_mesh_data_record.time_weather and record.arrangement == primary_mesh_data_record.arrangement:
+					primary_texture_record = record
 	
 	return new_map_records

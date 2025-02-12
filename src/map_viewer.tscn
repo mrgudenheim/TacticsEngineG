@@ -26,13 +26,17 @@ gradient = SubResource("Gradient_lvin3")
 [sub_resource type="QuadMesh" id="QuadMesh_foefj"]
 material = SubResource("StandardMaterial3D_05x7e")
 
-[node name="MapViewer" type="Node3D" node_paths=PackedStringArray("load_rom", "texture_viewer", "map_mesh", "camera_controller", "background_gradient")]
+[node name="MapViewer" type="Node3D" node_paths=PackedStringArray("load_rom", "texture_viewer", "map_mesh", "camera_controller", "background_gradient", "map_dropdown", "map_mesh2", "map_mesh3", "map_mesh4")]
 script = ExtResource("1_ojbyw")
 load_rom = NodePath("VBoxContainer/LoadRom")
 texture_viewer = NodePath("MapTexture")
 map_mesh = NodePath("Map")
 camera_controller = NodePath("CameraController")
 background_gradient = NodePath("CanvasLayer/TextureRect")
+map_dropdown = NodePath("VBoxContainer/MapDropdown")
+map_mesh2 = NodePath("Map2")
+map_mesh3 = NodePath("Map3")
+map_mesh4 = NodePath("Map4")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_njvnp")
@@ -55,6 +59,9 @@ offset_bottom = 40.0
 [node name="LoadRom" parent="VBoxContainer" instance=ExtResource("2_4wnqg")]
 layout_mode = 2
 
+[node name="MapDropdown" type="OptionButton" parent="VBoxContainer"]
+layout_mode = 2
+
 [node name="CameraController" type="Node3D" parent="." node_paths=PackedStringArray("sprite", "camera")]
 transform = Transform3D(0.707107, -0.315509, 0.632814, 0, 0.894934, 0.446198, -0.707107, -0.315509, 0.632814, 0, 0, 0)
 script = ExtResource("3_dpuna")
@@ -74,6 +81,15 @@ pixel_size = 0.05
 texture_filter = 0
 
 [node name="Map" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, -8.74228e-08, -8.74228e-08, -8.74228e-08, -1, 0, -8.74228e-08, 7.64274e-15, -1, 0, 0, 0)
+
+[node name="Map2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, -8.74228e-08, -8.74228e-08, -8.74228e-08, -1, 0, -8.74228e-08, 7.64274e-15, -1, 0, 0, 0)
+
+[node name="Map3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, -8.74228e-08, -8.74228e-08, -8.74228e-08, -1, 0, -8.74228e-08, 7.64274e-15, -1, 0, 0, 0)
+
+[node name="Map4" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, -8.74228e-08, -8.74228e-08, -8.74228e-08, -1, 0, -8.74228e-08, 7.64274e-15, -1, 0, 0, 0)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]

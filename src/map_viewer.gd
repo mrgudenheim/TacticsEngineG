@@ -38,8 +38,8 @@ func on_rom_loaded() -> void:
 	map_mesh.mesh = map_data.mesh
 	map_mesh.scale = (1.0/PIXELS_PER_TILE) * Vector3.ONE
 	
-	var middle_height: float = map_data.terrain_tiles[map_data.terrain_tiles.size() / 2].height * UNITS_PER_HEIGHT
-	middle_height = 11 * UNITS_PER_HEIGHT
+	var middle_height: float = (map_data.terrain_tiles[map_data.terrain_tiles.size() / 2].height * UNITS_PER_HEIGHT) + 2
+	#middle_height = 11 * UNITS_PER_HEIGHT
 	camera_controller.position = Vector3(map_data.map_width / 2.0, middle_height, -map_data.map_length / 2.0)
 	camera_controller.rotation_degrees = Vector3(-CameraController.LOW_ANGLE, 45, 0)
 	

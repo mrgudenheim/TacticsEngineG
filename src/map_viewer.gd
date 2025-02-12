@@ -7,6 +7,8 @@ var rom_reader: RomReader = RomReader.new()
 @export var camera_controller: CameraController
 @export var background_gradient: TextureRect
 
+var quad_mirror: bool = true
+
 const SCALE: float = 1.0 / MapData.TILE_SIDE_LENGTH
 const SCALED_UNITS_PER_HEIGHT: float = SCALE * MapData.UNITS_PER_HEIGHT
 
@@ -37,6 +39,20 @@ func on_rom_loaded() -> void:
 	texture_viewer.texture = map_data.albedo_texture
 	map_mesh.mesh = map_data.mesh
 	map_mesh.scale = SCALE * Vector3.ONE
+	
+	if quad_mirror:
+		var map_mesh2 := map_mesh.duplicate()
+		var map_mesh3 := map_mesh.duplicate()
+		var map_mesh4 := map_mesh.duplicate()
+		map_mesh2.scale = map_mesh2.scale * Vector3(1, 1, -1)
+		map_mesh3.scale = map_mesh3.scale * Vector3(-1, 1, 1)
+		map_mesh4.scale = map_mesh4.scale * Vector3(-1, 1, -1)
+		map_mesh2.position = Vector3.FORWARD * map_data.map_length * 2
+		map_mesh3.position = Vector3.RIGHT * map_data.map_width * 2
+		map_mesh4.position = (Vector3.RIGHT * map_data.map_width * 2) + (Vector3.FORWARD * map_data.map_length * 2)
+		add_child(map_mesh2)
+		add_child(map_mesh3)
+		add_child(map_mesh4)
 	
 	var middle_height: float = (map_data.terrain_tiles[map_data.terrain_tiles.size() / 2].height * SCALED_UNITS_PER_HEIGHT) + 2
 	camera_controller.position = Vector3(map_data.map_width / 2.0, middle_height, -map_data.map_length / 2.0)

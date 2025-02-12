@@ -29,6 +29,9 @@ var quads_palettes: PackedInt32Array = []
 var texture_palettes: PackedColorArray = []
 var texture_color_indices: PackedInt32Array = []
 
+var background_gradient_top: Color = Color.DIM_GRAY
+var background_gradient_bottom: Color = Color.BLACK
+
 var map_width: int = 0 # width in tiles
 var map_length: int = 0 # length in tiles
 var terrain_tiles: Array[TerrainTile] = []
@@ -146,6 +149,7 @@ func _create_mesh() -> void:
 func set_mesh_data(bytes: PackedByteArray) -> void:
 	var primary_mesh_data_start: int = bytes.decode_u32(0x40)
 	var texture_palettes_data_start: int = bytes.decode_u32(0x44)
+	var lighting_data_start: int = bytes.decode_u32(0x64)
 	var terrain_data_start: int = bytes.decode_u32(0x68)
 	
 	var primary_mesh_data: PackedByteArray = bytes.slice(primary_mesh_data_start, texture_palettes_data_start)
@@ -184,16 +188,29 @@ func set_mesh_data(bytes: PackedByteArray) -> void:
 	
 	if texture_palettes_data_start == 0:
 		push_warning("No palette data found")
-		return
+		pass
+	else:
+		var texture_palettes_data_end: int = texture_palettes_data_start + 512
+		var texture_palettes_data: PackedByteArray = bytes.slice(texture_palettes_data_start, texture_palettes_data_end)
+		texture_palettes = get_texture_palettes(texture_palettes_data)
 	
-	var texture_palettes_data_end: int = texture_palettes_data_start + 512
-	var texture_palettes_data: PackedByteArray = bytes.slice(texture_palettes_data_start, texture_palettes_data_end)
-	texture_palettes = get_texture_palettes(texture_palettes_data)
+	if lighting_data_start == 0:
+		push_warning("No lighting data found")
+		pass
+	else:
+		var lighting_data_length: int = 18 + 18 + 3 + 6 # 6 bytes for each directional light color, position, 3 bytes for ambient light color, 6 bytes for gradient colors
+		var lighting_data_end: int = lighting_data_start + lighting_data_length
+		var lighting_data: PackedByteArray = bytes.slice(lighting_data_length, lighting_data_end)
+		set_gradient_colors(lighting_data.slice(-6))
 	
-	var terrain_data_length: int = 2 + (256 * 8 * 2)
-	var terrain_data_end: int = terrain_data_start + terrain_data_length
-	var terrain_data: PackedByteArray = bytes.slice(terrain_data_start, terrain_data_end)
-	terrain_tiles = get_terrain(terrain_data)
+	if terrain_data_start == 0:
+		push_warning("No terrain data found")
+		pass
+	else:
+		var terrain_data_length: int = 2 + (256 * 8 * 2)
+		var terrain_data_end: int = terrain_data_start + terrain_data_length
+		var terrain_data: PackedByteArray = bytes.slice(terrain_data_start, terrain_data_end)
+		terrain_tiles = get_terrain(terrain_data)
 
 
 func get_vertices(vertex_bytes: PackedByteArray, num_vertices: int) -> PackedVector3Array:
@@ -239,7 +256,6 @@ func get_uvs(uvs_bytes: PackedByteArray, num_polys: int, is_quad = false) -> Pac
 		var texture_page: int = uvs_bytes.decode_u8(byte_index + 6) & 0b11 # two right most bits are texture page
 		var v_offset: int = texture_page * 256
 		var palette_index: int = uvs_bytes.decode_u8(byte_index + 2)
-		var x_offset: int = palette_index * 256
 		
 		# u and v need to be percentage, ie. u / width and v / height
 		var au: float = uvs_bytes.decode_u8(byte_index) / 256.0
@@ -496,3 +512,16 @@ func get_terrain(terrain_bytes: PackedByteArray) -> Array[TerrainTile]:
 				new_terrain_tiles.append(tile)
 	
 	return new_terrain_tiles
+
+
+func set_gradient_colors(gradient_color_bytes: PackedByteArray) -> void:
+	var top_red: int = gradient_color_bytes.decode_u8(0)
+	var top_green: int = gradient_color_bytes.decode_u8(1)
+	var top_blue: int = gradient_color_bytes.decode_u8(2)
+	
+	var bot_red: int = gradient_color_bytes.decode_u8(3)
+	var bot_green: int = gradient_color_bytes.decode_u8(4)
+	var bot_blue: int = gradient_color_bytes.decode_u8(5)
+	
+	background_gradient_top = Color8(top_red, top_green, top_blue)
+	background_gradient_bottom = Color8(bot_red, bot_green, bot_blue)

@@ -26,12 +26,13 @@ gradient = SubResource("Gradient_lvin3")
 [sub_resource type="QuadMesh" id="QuadMesh_foefj"]
 material = SubResource("StandardMaterial3D_05x7e")
 
-[node name="MapViewer" type="Node3D" node_paths=PackedStringArray("load_rom", "texture_viewer", "map_mesh", "camera_controller")]
+[node name="MapViewer" type="Node3D" node_paths=PackedStringArray("load_rom", "texture_viewer", "map_mesh", "camera_controller", "background_gradient")]
 script = ExtResource("1_ojbyw")
 load_rom = NodePath("VBoxContainer/LoadRom")
 texture_viewer = NodePath("MapTexture")
 map_mesh = NodePath("Map")
 camera_controller = NodePath("CameraController")
+background_gradient = NodePath("CanvasLayer/TextureRect")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_njvnp")

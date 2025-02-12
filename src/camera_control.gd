@@ -18,7 +18,7 @@ var zoom: float = 12:
 	set(value):
 		zoom = value
 		zoom_changed.emit()
-@export var zoom_out_max: float = 500
+@export var zoom_out_max: float = 100
 @export var zoom_in_max: float = 0.01
 var mouse_pos := Vector2.ZERO
 var drag := false

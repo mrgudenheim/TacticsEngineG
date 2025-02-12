@@ -5,9 +5,10 @@ var rom_reader: RomReader = RomReader.new()
 @export var texture_viewer: Sprite3D
 @export var map_mesh: MeshInstance3D
 @export var camera_controller: CameraController
+@export var background_gradient: TextureRect
 
 const PIXELS_PER_TILE: int = 28
-const UNITS_PER_HEIGHT: float = 3.0 / 7
+const UNITS_PER_HEIGHT: float = 12.0 / PIXELS_PER_TILE
 
 func _ready() -> void:
 	load_rom.file_selected.connect(rom_reader.on_load_rom_dialog_file_selected)
@@ -34,13 +35,17 @@ func on_rom_loaded() -> void:
 	var map_data: MapData = MapData.new()
 	map_data.create_map(map_mesh_data, map_texture_data, 0)
 	
+	background_gradient.texture.gradient.colors[0] = map_data.background_gradient_bottom
+	background_gradient.texture.gradient.colors[1] = map_data.background_gradient_top
+	
 	texture_viewer.texture = map_data.albedo_texture
 	map_mesh.mesh = map_data.mesh
 	map_mesh.scale = (1.0/PIXELS_PER_TILE) * Vector3.ONE
-	#map_mesh.position = Vector3(-map_data.map_width / 2.0, 0, map_data.map_length / 2.0)
+	
 	var middle_height: float = map_data.terrain_tiles[map_data.terrain_tiles.size() / 2].height * UNITS_PER_HEIGHT
 	middle_height = 11 * UNITS_PER_HEIGHT
 	camera_controller.position = Vector3(map_data.map_width / 2.0, middle_height, -map_data.map_length / 2.0)
+	camera_controller.rotation_degrees = Vector3(-CameraController.LOW_ANGLE, 45, 0)
 	
 	push_warning("Time to create map (ms): " + str(Time.get_ticks_msec() - start_time))
 	push_warning("Map_created")

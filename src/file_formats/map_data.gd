@@ -1,6 +1,9 @@
 #https://ffhacktics.com/wiki/Maps/Mesh
 class_name MapData
 
+const TILE_SIDE_LENGTH: int = 28
+const UNITS_PER_HEIGHT: int = 12
+
 var file_name: String = "default map file name"
 var primary_mesh_data_record: MapFileRecord
 var primary_texture_record: MapFileRecord

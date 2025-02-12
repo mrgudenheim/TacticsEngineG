@@ -7,8 +7,8 @@ var rom_reader: RomReader = RomReader.new()
 @export var camera_controller: CameraController
 @export var background_gradient: TextureRect
 
-const PIXELS_PER_TILE: int = 28
-const UNITS_PER_HEIGHT: float = 12.0 / PIXELS_PER_TILE
+const SCALE: float = 1.0 / MapData.TILE_SIDE_LENGTH
+const SCALED_UNITS_PER_HEIGHT: float = SCALE * MapData.UNITS_PER_HEIGHT
 
 func _ready() -> void:
 	load_rom.file_selected.connect(rom_reader.on_load_rom_dialog_file_selected)
@@ -36,10 +36,9 @@ func on_rom_loaded() -> void:
 	
 	texture_viewer.texture = map_data.albedo_texture
 	map_mesh.mesh = map_data.mesh
-	map_mesh.scale = (1.0/PIXELS_PER_TILE) * Vector3.ONE
+	map_mesh.scale = SCALE * Vector3.ONE
 	
-	var middle_height: float = (map_data.terrain_tiles[map_data.terrain_tiles.size() / 2].height * UNITS_PER_HEIGHT) + 2
-	#middle_height = 11 * UNITS_PER_HEIGHT
+	var middle_height: float = (map_data.terrain_tiles[map_data.terrain_tiles.size() / 2].height * SCALED_UNITS_PER_HEIGHT) + 2
 	camera_controller.position = Vector3(map_data.map_width / 2.0, middle_height, -map_data.map_length / 2.0)
 	camera_controller.rotation_degrees = Vector3(-CameraController.LOW_ANGLE, 45, 0)
 	

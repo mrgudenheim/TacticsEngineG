@@ -545,9 +545,11 @@ func _on_new_animation_pressed() -> void:
 	
 	seq.sequence_pointers.append(seq.sequences.size() - 1) # add pointer to the new sequence
 	populate_animation_list(animation_list_container, seq)
+	ui_manager.update_animation_description_options(seq)
 	
 	ui_manager.animation_id_spinbox.max_value = seq.sequences.size() - 1
 	ui_manager.animation_id_spinbox.value = seq.sequences.size() - 1
+	populate_opcode_list(opcode_list_container, ui_manager.animation_id_spinbox.value)
 
 
 func _on_delete_animation_pressed() -> void:

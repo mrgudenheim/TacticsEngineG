@@ -3,11 +3,12 @@ extends Node3D
 var rom_reader: RomReader = RomReader.new()
 @export var load_rom: LoadRomButton
 @export var texture_viewer: Sprite3D
-@export var map_mesh: MeshInstance3D
 @export var camera_controller: CameraController
 @export var background_gradient: TextureRect
 @export var map_dropdown: OptionButton
 
+@export var map_mesh: MeshInstance3D
+@export var map_collision_shape: CollisionShape3D
 @export var map_mesh2: MeshInstance3D
 @export var map_mesh3: MeshInstance3D
 @export var map_mesh4: MeshInstance3D
@@ -29,12 +30,15 @@ func on_rom_loaded() -> void:
 	for file_name in RomReader.file_records.keys():
 		if file_name.contains(".GNS"):
 			map_dropdown.add_item(file_name)
+	
+	var default_map_index: int = 56 # Orbonne
+	default_map_index = 22 # Gariland
+	map_dropdown.select(default_map_index)
+	map_dropdown.item_selected.emit(default_map_index)
 
 
 func on_map_selected(index: int) -> void:
 	var map_file_name: String = map_dropdown.get_item_text(index)
-	#map_file_name = "MAP056.GNS" # Orbonne
-	#map_file_name = "MAP022.GNS" # Gariland
 	
 	var start_time: int = Time.get_ticks_msec()
 	var map_gns_data: PackedByteArray = RomReader.get_file_data(map_file_name)
@@ -51,6 +55,7 @@ func on_map_selected(index: int) -> void:
 	texture_viewer.texture = map_data.albedo_texture
 	map_mesh.mesh = map_data.mesh
 	map_mesh.scale = SCALE * Vector3.ONE
+	map_collision_shape.shape.set_faces(map_mesh.mesh.get_faces())
 	
 	if quad_mirror:
 		map_mesh2.mesh = map_mesh.mesh
@@ -65,7 +70,7 @@ func on_map_selected(index: int) -> void:
 	
 	var middle_height: float = (map_data.terrain_tiles[map_data.terrain_tiles.size() / 2].height * SCALED_UNITS_PER_HEIGHT) + 2
 	camera_controller.position = Vector3(map_data.map_width / 2.0, middle_height, -map_data.map_length / 2.0)
-	camera_controller.rotation_degrees = Vector3(-CameraController.LOW_ANGLE, 45, 0)
+	camera_controller.camera_pivot.rotation_degrees = Vector3(-CameraController.LOW_ANGLE, 45, 0)
 	
 	push_warning("Time to create map (ms): " + str(Time.get_ticks_msec() - start_time))
 	push_warning("Map_created")

@@ -3,6 +3,7 @@ extends Node3D
 
 @export var sprite: Sprite3D
 @export var camera: Camera3D
+@export var camera_pivot: Node3D
 
 signal zoom_changed
 
@@ -77,11 +78,11 @@ func rotate_camera(dir: int) -> void:
 	var new_rotation: Vector3 = Vector3.ZERO
 	var offset: float = dir * ROTATE_SPEED
 	
-	var new_x = self.rotation_degrees.x
-	var new_y = self.rotation_degrees.y + offset
-	var new_z = self.rotation_degrees.z
+	var new_x = camera_pivot.rotation_degrees.x
+	var new_y = camera_pivot.rotation_degrees.y + offset
+	var new_z = camera_pivot.rotation_degrees.z
 	new_rotation = Vector3(new_x, new_y, new_z)
 	
 	var tween := create_tween().set_parallel()
 	tween.set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_IN)
-	tween.tween_property(self, "rotation_degrees", new_rotation, 0.05)
+	tween.tween_property(camera_pivot, "rotation_degrees", new_rotation, 0.05)

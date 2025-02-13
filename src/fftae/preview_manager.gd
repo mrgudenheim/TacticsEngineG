@@ -209,7 +209,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				new_animation.seq = FFTae.ae.seqs[wep_file_name + ".SEQ"]
 				new_animation.shp = FFTae.ae.shps[wep_file_name + ".SHP"]
 				new_animation.weapon_frame_offset_index = global_weapon_frame_offset_index
-				new_animation.sequence = new_animation.seq.sequences[seq_part.parameters[1]]
+				new_animation.sequence = new_animation.seq.sequences[new_animation.seq.sequence_pointers[seq_part.parameters[1]]]
 				new_animation.image = FFTae.ae.sprs["WEP.SPR"].spritesheet
 				new_animation.is_primary_anim = false
 				new_animation.flipped_h = fft_animation.flipped_h
@@ -221,7 +221,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				new_animation.seq = FFTae.ae.seqs[eff_file_name + ".SEQ"]
 				new_animation.shp = FFTae.ae.shps[eff_file_name + ".SHP"]
 				new_animation.weapon_frame_offset_index = global_weapon_frame_offset_index
-				new_animation.sequence = new_animation.seq.sequences[seq_part.parameters[1]]
+				new_animation.sequence = new_animation.seq.sequences[new_animation.seq.sequence_pointers[seq_part.parameters[1]]]
 				new_animation.image = FFTae.ae.sprs["EFF.SPR"].spritesheet
 				new_animation.is_primary_anim = false
 				new_animation.flipped_h = fft_animation.flipped_h

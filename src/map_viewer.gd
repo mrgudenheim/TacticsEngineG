@@ -17,8 +17,7 @@ var rom_reader: RomReader = RomReader.new()
 @export var map_collision_shape3: CollisionShape3D
 @export var map_collision_shape4: CollisionShape3D
 
-
-@export var unit: RigidBody3D
+@export var unit: CharacterBody3D
 @export var test_collision_shape: CollisionShape3D
 
 var quad_mirror: bool = true
@@ -91,9 +90,6 @@ func on_map_selected(index: int) -> void:
 	push_warning(middle_position)
 	unit.global_position = middle_position + Vector3(-0.5, 0, 0)
 	unit.global_position = Vector3(9.5, 2, -13.5)
-	unit.linear_velocity = Vector3.ZERO
-	
-	unit.freeze = false
 
 
 func get_scaled_collision_shape(mesh: Mesh, scale: Vector3) -> ConcavePolygonShape3D:

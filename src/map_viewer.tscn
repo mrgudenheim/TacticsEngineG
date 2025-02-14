@@ -1,8 +1,9 @@
-[gd_scene load_steps=21 format=3 uid="uid://card26cltbba1"]
+[gd_scene load_steps=22 format=3 uid="uid://card26cltbba1"]
 
 [ext_resource type="Script" path="res://src/map_viewer.gd" id="1_ojbyw"]
 [ext_resource type="PackedScene" uid="uid://26tg32417lfm" path="res://src/load_rom.tscn" id="2_4wnqg"]
 [ext_resource type="Script" path="res://src/camera_control.gd" id="3_dpuna"]
+[ext_resource type="Script" path="res://src/character_controller_realtime.gd" id="3_wbco3"]
 
 [sub_resource type="Environment" id="Environment_njvnp"]
 background_mode = 3
@@ -69,7 +70,7 @@ map_collision_shape = NodePath("Map/CollisionShape3D")
 map_collision_shape2 = NodePath("Map2/CollisionShape3D")
 map_collision_shape3 = NodePath("Map3/CollisionShape3D")
 map_collision_shape4 = NodePath("Map4/CollisionShape3D")
-unit = NodePath("Unit/RigidBody3D")
+unit = NodePath("Unit/CharacterBody3D")
 test_collision_shape = NodePath("TestQuadStaticBody3D/CollisionShape3D")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -98,17 +99,19 @@ layout_mode = 2
 
 [node name="Unit" type="Node3D" parent="."]
 
-[node name="RigidBody3D" type="RigidBody3D" parent="Unit"]
+[node name="CharacterBody3D" type="CharacterBody3D" parent="Unit"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, 0)
-freeze = true
-continuous_cd = true
+axis_lock_angular_x = true
+axis_lock_angular_y = true
+axis_lock_angular_z = true
+script = ExtResource("3_wbco3")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Unit/RigidBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Unit/CharacterBody3D"]
 shape = SubResource("CapsuleShape3D_omsuf")
 
-[node name="Sprite3D" type="Sprite3D" parent="Unit/RigidBody3D"]
+[node name="Sprite3D" type="Sprite3D" parent="Unit/CharacterBody3D"]
 
-[node name="UnitReferenceSphere" type="MeshInstance3D" parent="Unit/RigidBody3D"]
+[node name="UnitReferenceSphere" type="MeshInstance3D" parent="Unit/CharacterBody3D"]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, -1.49012e-08, 0, -1.49012e-08, 0.5, 0, 0, 0)
 mesh = SubResource("CapsuleMesh_46deq")
 skeleton = NodePath("../../../CameraController")

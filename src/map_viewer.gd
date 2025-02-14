@@ -7,24 +7,18 @@ var rom_reader: RomReader = RomReader.new()
 @export var background_gradient: TextureRect
 @export var map_dropdown: OptionButton
 @export var menu_reminder: Label
+@export var map_size_label: Label
 
-@export var map_mesh: MeshInstance3D
-@export var map_mesh2: MeshInstance3D
-@export var map_mesh3: MeshInstance3D
-@export var map_mesh4: MeshInstance3D
-
-@export var map_collision_shape: CollisionShape3D
-@export var map_collision_shape2: CollisionShape3D
-@export var map_collision_shape3: CollisionShape3D
-@export var map_collision_shape4: CollisionShape3D
+@export var maps: Node3D
+@export var map_tscn: PackedScene
 
 @export var unit: CharacterBody3D
-@export var test_collision_shape: CollisionShape3D
 
-var quad_mirror: bool = true
+@export var mirror: bool = true
 
 const SCALE: float = 1.0 / MapData.TILE_SIDE_LENGTH
 const SCALED_UNITS_PER_HEIGHT: float = SCALE * MapData.UNITS_PER_HEIGHT
+
 
 func _ready() -> void:
 	load_rom.file_selected.connect(rom_reader.on_load_rom_dialog_file_selected)
@@ -63,60 +57,32 @@ func on_map_selected(index: int) -> void:
 	var map_data: MapData = MapData.new()
 	map_data.file_name = map_file_name
 	map_data.init_map(map_gns_data)
+	map_size_label.text = "Map Size: " + str(map_data.map_width) + " x " + str(map_data.map_length) + " (" + str(map_data.map_width * map_data.map_length) + ")"
 	
 	background_gradient.texture.gradient.colors[0] = map_data.background_gradient_bottom
 	background_gradient.texture.gradient.colors[1] = map_data.background_gradient_top
 	
 	texture_viewer.texture = map_data.albedo_texture
-	map_mesh.mesh = map_data.mesh
+	#map_mesh.mesh = map_data.mesh
 	
-	var shape_mesh: ConcavePolygonShape3D = map_mesh.mesh.create_trimesh_shape()
-	map_collision_shape.shape = shape_mesh
+	for child: Node in maps.get_children():
+		child.queue_free()
 	
-	if quad_mirror:
-		map_mesh2.mesh = map_mesh.mesh
-		map_mesh3.mesh = map_mesh.mesh
-		map_mesh4.mesh = map_mesh.mesh
-		map_mesh2.scale = Vector3(1, 1, -1)
-		map_mesh3.scale = Vector3(-1, 1, 1)
-		map_mesh4.scale = Vector3(-1, 1, -1)
-		map_mesh2.get_parent().position = Vector3.FORWARD * map_data.map_length * 2
-		map_mesh3.get_parent().position = Vector3.RIGHT * map_data.map_width * 2
-		map_mesh4.get_parent().position = (Vector3.RIGHT * map_data.map_width * 2) + (Vector3.FORWARD * map_data.map_length * 2)
-		
-		map_collision_shape2.shape = get_scaled_collision_shape(map_mesh.mesh, map_mesh2.scale)
-		map_collision_shape3.shape = get_scaled_collision_shape(map_mesh.mesh, map_mesh3.scale)
-		map_collision_shape4.shape = get_scaled_collision_shape(map_mesh.mesh, map_mesh4.scale)
-		
-		var map5: MeshInstance3D = map_mesh2.duplicate()
-		add_child(map5)
-		map5.scale = map_mesh2.scale
-		map5.rotation_degrees = Vector3(0, 180, 180)
-		map5.global_position = Vector3.ZERO
-		
-		var map6: MeshInstance3D = map_mesh3.duplicate()
-		add_child(map6)
-		map6.scale = map_mesh3.scale
-		map6.rotation_degrees = Vector3(0, 180, 180)
-		map6.global_position = Vector3.ZERO
-		
-		var map7: MeshInstance3D = map_mesh4.duplicate()
-		add_child(map7)
-		map7.scale = map_mesh4.scale
-		map7.rotation_degrees = Vector3(0, 180, 180)
-		map7.global_position = Vector3.ZERO
-		
-		var map8: MeshInstance3D = map_mesh4.duplicate()
-		add_child(map8)
-		map8.scale = map_mesh4.scale
-		map8.rotation_degrees = Vector3(0, 180, 180)
-		map8.global_position = Vector3.RIGHT * map_data.map_width * 2
-		
-		var map9: MeshInstance3D = map_mesh4.duplicate()
-		add_child(map9)
-		map9.scale = map_mesh4.scale
-		map9.rotation_degrees = Vector3(0, 180, 180)
-		map9.global_position = Vector3.FORWARD * map_data.map_length * 2
+	instantiate_map(map_data, Vector3.ZERO, Vector3.ONE)
+	
+	#var shape_mesh: ConcavePolygonShape3D = map_mesh.mesh.create_trimesh_shape()
+	#map_collision_shape.shape = shape_mesh
+	
+	if mirror:
+		instantiate_map(map_data, Vector3.ZERO, Vector3(1, 1, -1))
+		instantiate_map(map_data, Vector3.FORWARD * map_data.map_length * 2, Vector3(1, 1, -1))
+		instantiate_map(map_data, Vector3.ZERO, Vector3(-1, 1, 1))
+		instantiate_map(map_data, Vector3.RIGHT * map_data.map_width * 2, Vector3(-1, 1, 1))
+		instantiate_map(map_data, Vector3.ZERO, Vector3(-1, 1, -1))
+		instantiate_map(map_data, Vector3.FORWARD * map_data.map_length * 2, Vector3(-1, 1, -1))
+		instantiate_map(map_data, Vector3.RIGHT * map_data.map_width * 2, Vector3(-1, 1, -1))
+		instantiate_map(map_data, (Vector3.RIGHT * map_data.map_width * 2) + (Vector3.FORWARD * map_data.map_length * 2), Vector3(-1, 1, -1))
+	
 	
 	var middle_height: float = (map_data.terrain_tiles[map_data.terrain_tiles.size() / 2].height * SCALED_UNITS_PER_HEIGHT) + 2
 	var middle_position: Vector3 = Vector3(map_data.map_width / 2.0, middle_height, -map_data.map_length / 2.0)
@@ -128,11 +94,26 @@ func on_map_selected(index: int) -> void:
 	
 	push_warning(middle_position)
 	unit.global_position = middle_position + Vector3(-0.5, 0, 0)
-	unit.global_position = Vector3(9.5, 2, -13.5)
+	unit.global_position = Vector3(5.5, 15, -5.5)
 	
 	map_dropdown.visible = false
 	load_rom.visible = false
 	menu_reminder.visible = true
+
+
+func instantiate_map(new_map_data: MapData, position: Vector3, scale: Vector3) -> void:
+	var new_map_instance: Map = map_tscn.instantiate()
+	maps.add_child(new_map_instance)
+	new_map_instance.mesh.mesh = new_map_data.mesh
+	new_map_instance.mesh.scale = scale
+	new_map_instance.position = position
+	new_map_instance.rotation_degrees = Vector3(0, 180, 180)
+	
+	var shape_mesh: ConcavePolygonShape3D = new_map_data.mesh.create_trimesh_shape()
+	if scale == Vector3.ONE:
+		new_map_instance.collision_shape.shape = new_map_data.mesh.create_trimesh_shape()
+	else:
+		new_map_instance.collision_shape.shape = get_scaled_collision_shape(new_map_data.mesh, scale)
 
 
 func get_scaled_collision_shape(mesh: Mesh, scale: Vector3) -> ConcavePolygonShape3D:

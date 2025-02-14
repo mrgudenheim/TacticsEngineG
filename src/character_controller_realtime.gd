@@ -1,9 +1,12 @@
 extends CharacterBody3D
 
-
 const SPEED = 5.0
+
+const ROTATE_SPEED = 15.0
 const JUMP_VELOCITY = 4.5
 
+@export var camera_pivot: Node3D
+@export var phantom_camera: PhantomCamera3D
 
 func _physics_process(delta: float) -> void:
 	# Add the gravity.
@@ -26,3 +29,28 @@ func _physics_process(delta: float) -> void:
 		velocity.z = move_toward(velocity.z, 0, SPEED)
 
 	move_and_slide()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed(&"camera_rotate_left", true):
+		rotate_camera(-1)
+	elif event.is_action_pressed(&"camera_rotate_right", true):
+		rotate_camera(1)
+
+
+func rotate_camera(dir: int) -> void:
+	var new_rotation: Vector3 = Vector3.ZERO
+	var offset: float = dir * ROTATE_SPEED
+	
+	var new_x = self.rotation_degrees.x
+	var new_y = self.rotation_degrees.y + offset
+	var new_z = self.rotation_degrees.z
+	self.rotation_degrees = Vector3(new_x, new_y, new_z)
+	
+	#var new_x = camera_pivot.rotation_degrees.x
+	#var new_y = camera_pivot.rotation_degrees.y + offset
+	#var new_z = camera_pivot.rotation_degrees.z
+	#camera_pivot.rotation_degrees = Vector3(new_x, new_y, new_z)
+	
+	phantom_camera.set_third_person_rotation_degrees(Vector3(new_x, new_y, new_z))
+	

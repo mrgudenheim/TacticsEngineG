@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://card26cltbba1"]
+[gd_scene load_steps=21 format=3 uid="uid://card26cltbba1"]
 
 [ext_resource type="Script" path="res://src/map_viewer.gd" id="1_ojbyw"]
 [ext_resource type="PackedScene" uid="uid://26tg32417lfm" path="res://src/load_rom.tscn" id="2_4wnqg"]
@@ -20,12 +20,20 @@ metadata/_snap_enabled = true
 radius = 0.25
 height = 0.5
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h85aw"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_46deq"]
+material = SubResource("StandardMaterial3D_h85aw")
+radius = 0.25
+height = 0.5
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_owd5a"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_qc6ji"]
 material = SubResource("StandardMaterial3D_owd5a")
 
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_vqavv"]
+backface_collision = true
 
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_3wu6a"]
 
@@ -57,12 +65,12 @@ map_mesh = NodePath("Map")
 map_mesh2 = NodePath("Map2")
 map_mesh3 = NodePath("Map3")
 map_mesh4 = NodePath("Map4")
-map_collision_shape = NodePath("Map/StaticBody3D/CollisionShape3D")
+map_collision_shape = NodePath("StaticBody3D2/CollisionShape3D")
 map_collision_shape2 = NodePath("Map2/StaticBody3D/CollisionShape3D")
 map_collision_shape3 = NodePath("Map3/StaticBody3D/CollisionShape3D")
 map_collision_shape4 = NodePath("Map4/StaticBody3D/CollisionShape3D")
 unit = NodePath("CameraController/Unit/RigidBody3D")
-test_collision_shape = NodePath("StaticBody3D/CollisionShape3D")
+test_collision_shape = NodePath("TestQuadStaticBody3D/CollisionShape3D")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_njvnp")
@@ -99,7 +107,7 @@ zoom_in_max = 0.5
 [node name="Unit" type="Node3D" parent="CameraController"]
 
 [node name="RigidBody3D" type="RigidBody3D" parent="CameraController/Unit"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.007, 5, -0.009)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, 0)
 freeze = true
 continuous_cd = true
 
@@ -110,7 +118,7 @@ shape = SubResource("CapsuleShape3D_omsuf")
 
 [node name="UnitReferenceSphere" type="MeshInstance3D" parent="CameraController/Unit/RigidBody3D"]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, -1.49012e-08, 0, -1.49012e-08, 0.5, 0, 0, 0)
-mesh = SubResource("SphereMesh_qc6ji")
+mesh = SubResource("CapsuleMesh_46deq")
 skeleton = NodePath("../../..")
 
 [node name="ReferenceSphere" type="MeshInstance3D" parent="CameraController/Unit"]
@@ -132,17 +140,18 @@ visible = false
 pixel_size = 0.05
 texture_filter = 0
 
+[node name="StaticBody3D2" type="StaticBody3D" parent="."]
+transform = Transform3D(1, -8.74228e-08, -8.74228e-08, -8.74228e-08, -1, 0, -8.74228e-08, 7.64274e-15, -1, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D2"]
+shape = SubResource("ConcavePolygonShape3D_vqavv")
+
 [node name="Map" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, -8.74228e-08, -8.74228e-08, -8.74228e-08, -1, 0, -8.74228e-08, 7.64274e-15, -1, 0, 0, 0)
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Map"]
-transform = Transform3D(1, -8.74228e-08, -8.74228e-08, -8.74228e-08, -1, 7.64275e-15, -8.74228e-08, 5.0822e-21, -1, 0, 0, 0)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Map/StaticBody3D"]
-shape = SubResource("ConcavePolygonShape3D_vqavv")
-
 [node name="Map2" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, -8.74228e-08, -8.74228e-08, -8.74228e-08, -1, 0, -8.74228e-08, 7.64274e-15, -1, 0, 0, 0)
+visible = false
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Map2"]
 transform = Transform3D(1, -4.443e-28, 0, -6.6815e-22, 1, -7.64275e-15, 0, 7.64274e-15, 1, 0, 0, 0)
@@ -152,6 +161,7 @@ shape = SubResource("ConcavePolygonShape3D_3wu6a")
 
 [node name="Map3" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, -8.74228e-08, -8.74228e-08, -8.74228e-08, -1, 0, -8.74228e-08, 7.64274e-15, -1, 0, 0, 0)
+visible = false
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Map3"]
 transform = Transform3D(1, -8.74228e-08, -8.74228e-08, -8.74228e-08, -1, 7.64275e-15, -8.74228e-08, 5.0822e-21, -1, 0, 0, 0)
@@ -161,6 +171,7 @@ shape = SubResource("ConcavePolygonShape3D_bdpvt")
 
 [node name="Map4" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, -8.74228e-08, -8.74228e-08, -8.74228e-08, -1, 0, -8.74228e-08, 7.64274e-15, -1, 0, 0, 0)
+visible = false
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Map4"]
 transform = Transform3D(1, -8.74228e-08, -8.74228e-08, -8.74228e-08, -1, 7.64275e-15, -8.74228e-08, 5.0822e-21, -1, 0, 0, 0)
@@ -180,8 +191,8 @@ transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 12, -4
 visible = false
 mesh = SubResource("QuadMesh_foefj")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="."]
+[node name="TestQuadStaticBody3D" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TestQuadStaticBody3D"]
 shape = SubResource("BoxShape3D_pwjms")

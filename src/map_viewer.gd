@@ -30,18 +30,6 @@ func _ready() -> void:
 	load_rom.file_selected.connect(rom_reader.on_load_rom_dialog_file_selected)
 	rom_reader.rom_loaded.connect(on_rom_loaded)
 	map_dropdown.item_selected.connect(on_map_selected)
-	
-	var test_vertices: PackedVector3Array = [
-		Vector3(-50, 0, -50),
-		Vector3(-50, 0, 50),
-		Vector3(50, 0, 50),
-		Vector3(-50, 0, -50),
-		Vector3(50, 0, 50),
-		Vector3(50, 0, -50),
-		]
-	var shape_mesh: ConcavePolygonShape3D = ConcavePolygonShape3D.new()
-	shape_mesh.set_faces(test_vertices)
-	test_collision_shape.shape = shape_mesh
 
 func on_rom_loaded() -> void:
 	push_warning("on rom loaded")
@@ -74,7 +62,13 @@ func on_map_selected(index: int) -> void:
 	texture_viewer.texture = map_data.albedo_texture
 	map_mesh.mesh = map_data.mesh
 	map_mesh.scale = SCALE * Vector3.ONE
-	map_collision_shape.shape.set_faces(map_mesh.mesh.get_faces())
+	
+	var shape_mesh: ConcavePolygonShape3D = ConcavePolygonShape3D.new()
+	var vertices: PackedVector3Array = map_mesh.mesh.get_faces().duplicate()
+	for i: int in vertices.size():
+		vertices[i] = vertices[i] * SCALE
+	shape_mesh.set_faces(vertices)
+	map_collision_shape.shape = shape_mesh
 	
 	if quad_mirror:
 		map_mesh2.mesh = map_mesh.mesh
@@ -100,7 +94,7 @@ func on_map_selected(index: int) -> void:
 	push_warning("Map_created")
 	
 	push_warning(middle_position)
-	unit.global_position = middle_position + Vector3(0, 1, 0)
+	unit.global_position = middle_position + Vector3(-0.25, 0, 0)
 	unit.linear_velocity = Vector3.ZERO
 	
 	unit.freeze = false

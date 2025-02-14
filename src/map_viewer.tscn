@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://card26cltbba1"]
+[gd_scene load_steps=19 format=3 uid="uid://card26cltbba1"]
 
 [ext_resource type="Script" path="res://src/map_viewer.gd" id="1_ojbyw"]
 [ext_resource type="PackedScene" uid="uid://26tg32417lfm" path="res://src/load_rom.tscn" id="2_4wnqg"]
@@ -43,7 +43,10 @@ gradient = SubResource("Gradient_lvin3")
 [sub_resource type="QuadMesh" id="QuadMesh_foefj"]
 material = SubResource("StandardMaterial3D_05x7e")
 
-[node name="MapViewer" type="Node3D" node_paths=PackedStringArray("load_rom", "texture_viewer", "camera_controller", "background_gradient", "map_dropdown", "map_mesh", "map_collision_shape", "map_mesh2", "map_mesh3", "map_mesh4")]
+[sub_resource type="BoxShape3D" id="BoxShape3D_pwjms"]
+size = Vector3(20, 0.1, 20)
+
+[node name="MapViewer" type="Node3D" node_paths=PackedStringArray("load_rom", "texture_viewer", "camera_controller", "background_gradient", "map_dropdown", "map_mesh", "map_mesh2", "map_mesh3", "map_mesh4", "map_collision_shape", "map_collision_shape2", "map_collision_shape3", "map_collision_shape4", "unit", "test_collision_shape")]
 script = ExtResource("1_ojbyw")
 load_rom = NodePath("VBoxContainer/LoadRom")
 texture_viewer = NodePath("MapTexture")
@@ -51,10 +54,15 @@ camera_controller = NodePath("CameraController")
 background_gradient = NodePath("CanvasLayer/TextureRect")
 map_dropdown = NodePath("VBoxContainer/MapDropdown")
 map_mesh = NodePath("Map")
-map_collision_shape = NodePath("Map/StaticBody3D/CollisionShape3D")
 map_mesh2 = NodePath("Map2")
 map_mesh3 = NodePath("Map3")
 map_mesh4 = NodePath("Map4")
+map_collision_shape = NodePath("Map/StaticBody3D/CollisionShape3D")
+map_collision_shape2 = NodePath("Map2/StaticBody3D/CollisionShape3D")
+map_collision_shape3 = NodePath("Map3/StaticBody3D/CollisionShape3D")
+map_collision_shape4 = NodePath("Map4/StaticBody3D/CollisionShape3D")
+unit = NodePath("CameraController/Unit/RigidBody3D")
+test_collision_shape = NodePath("StaticBody3D/CollisionShape3D")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_njvnp")
@@ -89,14 +97,21 @@ camera_pivot = NodePath("CameraPivot")
 zoom_in_max = 0.5
 
 [node name="Unit" type="Node3D" parent="CameraController"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
-
-[node name="Sprite3D" type="Sprite3D" parent="CameraController/Unit"]
 
 [node name="RigidBody3D" type="RigidBody3D" parent="CameraController/Unit"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.007, 5, -0.009)
+freeze = true
+continuous_cd = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CameraController/Unit/RigidBody3D"]
 shape = SubResource("CapsuleShape3D_omsuf")
+
+[node name="Sprite3D" type="Sprite3D" parent="CameraController/Unit/RigidBody3D"]
+
+[node name="UnitReferenceSphere" type="MeshInstance3D" parent="CameraController/Unit/RigidBody3D"]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, -1.49012e-08, 0, -1.49012e-08, 0.5, 0, 0, 0)
+mesh = SubResource("SphereMesh_qc6ji")
+skeleton = NodePath("../../..")
 
 [node name="ReferenceSphere" type="MeshInstance3D" parent="CameraController/Unit"]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, -1.49012e-08, 0, -1.49012e-08, 0.5, 0, 0, 0)
@@ -164,3 +179,9 @@ texture = SubResource("GradientTexture2D_twdc0")
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 12, -48, 12)
 visible = false
 mesh = SubResource("QuadMesh_foefj")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("BoxShape3D_pwjms")

@@ -8,10 +8,18 @@ var rom_reader: RomReader = RomReader.new()
 @export var map_dropdown: OptionButton
 
 @export var map_mesh: MeshInstance3D
-@export var map_collision_shape: CollisionShape3D
 @export var map_mesh2: MeshInstance3D
 @export var map_mesh3: MeshInstance3D
 @export var map_mesh4: MeshInstance3D
+
+@export var map_collision_shape: CollisionShape3D
+@export var map_collision_shape2: CollisionShape3D
+@export var map_collision_shape3: CollisionShape3D
+@export var map_collision_shape4: CollisionShape3D
+
+
+@export var unit: RigidBody3D
+@export var test_collision_shape: CollisionShape3D
 
 var quad_mirror: bool = true
 
@@ -22,7 +30,18 @@ func _ready() -> void:
 	load_rom.file_selected.connect(rom_reader.on_load_rom_dialog_file_selected)
 	rom_reader.rom_loaded.connect(on_rom_loaded)
 	map_dropdown.item_selected.connect(on_map_selected)
-
+	
+	var test_vertices: PackedVector3Array = [
+		Vector3(-50, 0, -50),
+		Vector3(-50, 0, 50),
+		Vector3(50, 0, 50),
+		Vector3(-50, 0, -50),
+		Vector3(50, 0, 50),
+		Vector3(50, 0, -50),
+		]
+	var shape_mesh: ConcavePolygonShape3D = ConcavePolygonShape3D.new()
+	shape_mesh.set_faces(test_vertices)
+	test_collision_shape.shape = shape_mesh
 
 func on_rom_loaded() -> void:
 	push_warning("on rom loaded")
@@ -67,10 +86,21 @@ func on_map_selected(index: int) -> void:
 		map_mesh2.position = Vector3.FORWARD * map_data.map_length * 2
 		map_mesh3.position = Vector3.RIGHT * map_data.map_width * 2
 		map_mesh4.position = (Vector3.RIGHT * map_data.map_width * 2) + (Vector3.FORWARD * map_data.map_length * 2)
+		
+		map_collision_shape2.shape.set_faces(map_mesh2.mesh.get_faces())
+		map_collision_shape3.shape.set_faces(map_mesh3.mesh.get_faces())
+		map_collision_shape4.shape.set_faces(map_mesh4.mesh.get_faces())
 	
 	var middle_height: float = (map_data.terrain_tiles[map_data.terrain_tiles.size() / 2].height * SCALED_UNITS_PER_HEIGHT) + 2
-	camera_controller.position = Vector3(map_data.map_width / 2.0, middle_height, -map_data.map_length / 2.0)
+	var middle_position: Vector3 = Vector3(map_data.map_width / 2.0, middle_height, -map_data.map_length / 2.0)
+	camera_controller.position = middle_position
 	camera_controller.camera_pivot.rotation_degrees = Vector3(-CameraController.LOW_ANGLE, 45, 0)
 	
 	push_warning("Time to create map (ms): " + str(Time.get_ticks_msec() - start_time))
 	push_warning("Map_created")
+	
+	push_warning(middle_position)
+	unit.global_position = middle_position + Vector3(0, 1, 0)
+	unit.linear_velocity = Vector3.ZERO
+	
+	unit.freeze = false

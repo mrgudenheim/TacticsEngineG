@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://card26cltbba1"]
+[gd_scene load_steps=24 format=3 uid="uid://card26cltbba1"]
 
 [ext_resource type="Script" path="res://src/map_viewer.gd" id="1_ojbyw"]
 [ext_resource type="PackedScene" uid="uid://26tg32417lfm" path="res://src/load_rom.tscn" id="2_4wnqg"]
@@ -50,11 +50,6 @@ backface_collision = true
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_bdpvt"]
 
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_8pwdn"]
-
-[sub_resource type="Gradient" id="Gradient_lvin3"]
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_twdc0"]
-gradient = SubResource("Gradient_lvin3")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_05x7e"]
 
@@ -211,14 +206,6 @@ skeleton = NodePath("../..")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.553391, -0.832921, 0, 0.832921, 0.553391, 0, 3.51982, 2.72607)
-
-[node name="Sprite3D" type="Sprite3D" parent="."]
-visible = false
-texture = SubResource("GradientTexture2D_twdc0")
-
-[node name="CollisionVisualizer" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 12, -48, 12)
-skeleton = NodePath("../ReferenceQuad")
 
 [node name="ReferenceQuad" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 12, -48, 12)

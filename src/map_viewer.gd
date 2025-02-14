@@ -87,6 +87,36 @@ func on_map_selected(index: int) -> void:
 		map_collision_shape2.shape = get_scaled_collision_shape(map_mesh.mesh, map_mesh2.scale)
 		map_collision_shape3.shape = get_scaled_collision_shape(map_mesh.mesh, map_mesh3.scale)
 		map_collision_shape4.shape = get_scaled_collision_shape(map_mesh.mesh, map_mesh4.scale)
+		
+		var map5: MeshInstance3D = map_mesh2.duplicate()
+		add_child(map5)
+		map5.scale = map_mesh2.scale
+		map5.rotation_degrees = Vector3(0, 180, 180)
+		map5.global_position = Vector3.ZERO
+		
+		var map6: MeshInstance3D = map_mesh3.duplicate()
+		add_child(map6)
+		map6.scale = map_mesh3.scale
+		map6.rotation_degrees = Vector3(0, 180, 180)
+		map6.global_position = Vector3.ZERO
+		
+		var map7: MeshInstance3D = map_mesh4.duplicate()
+		add_child(map7)
+		map7.scale = map_mesh4.scale
+		map7.rotation_degrees = Vector3(0, 180, 180)
+		map7.global_position = Vector3.ZERO
+		
+		var map8: MeshInstance3D = map_mesh4.duplicate()
+		add_child(map8)
+		map8.scale = map_mesh4.scale
+		map8.rotation_degrees = Vector3(0, 180, 180)
+		map8.global_position = Vector3.RIGHT * map_data.map_width * 2
+		
+		var map9: MeshInstance3D = map_mesh4.duplicate()
+		add_child(map9)
+		map9.scale = map_mesh4.scale
+		map9.rotation_degrees = Vector3(0, 180, 180)
+		map9.global_position = Vector3.FORWARD * map_data.map_length * 2
 	
 	var middle_height: float = (map_data.terrain_tiles[map_data.terrain_tiles.size() / 2].height * SCALED_UNITS_PER_HEIGHT) + 2
 	var middle_position: Vector3 = Vector3(map_data.map_width / 2.0, middle_height, -map_data.map_length / 2.0)

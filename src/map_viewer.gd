@@ -6,6 +6,7 @@ var rom_reader: RomReader = RomReader.new()
 @export var camera_controller: CameraController
 @export var background_gradient: TextureRect
 @export var map_dropdown: OptionButton
+@export var menu_reminder: Label
 
 @export var map_mesh: MeshInstance3D
 @export var map_mesh2: MeshInstance3D
@@ -29,6 +30,14 @@ func _ready() -> void:
 	load_rom.file_selected.connect(rom_reader.on_load_rom_dialog_file_selected)
 	rom_reader.rom_loaded.connect(on_rom_loaded)
 	map_dropdown.item_selected.connect(on_map_selected)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		map_dropdown.visible = not map_dropdown.visible
+		load_rom.visible = not load_rom.visible
+		menu_reminder.visible = not menu_reminder.visible
+
 
 func on_rom_loaded() -> void:
 	push_warning("on rom loaded")
@@ -90,6 +99,10 @@ func on_map_selected(index: int) -> void:
 	push_warning(middle_position)
 	unit.global_position = middle_position + Vector3(-0.5, 0, 0)
 	unit.global_position = Vector3(9.5, 2, -13.5)
+	
+	map_dropdown.visible = false
+	load_rom.visible = false
+	menu_reminder.visible = true
 
 
 func get_scaled_collision_shape(mesh: Mesh, scale: Vector3) -> ConcavePolygonShape3D:
@@ -98,7 +111,7 @@ func get_scaled_collision_shape(mesh: Mesh, scale: Vector3) -> ConcavePolygonSha
 	for i: int in faces.size():
 		faces[i] = faces[i] * scale
 	
-	push_warning(faces)
+	#push_warning(faces)
 	new_collision_shape.set_faces(faces)
 	new_collision_shape.backface_collision = true
 	return new_collision_shape

@@ -1,9 +1,12 @@
-[gd_scene load_steps=22 format=3 uid="uid://card26cltbba1"]
+[gd_scene load_steps=26 format=3 uid="uid://card26cltbba1"]
 
 [ext_resource type="Script" path="res://src/map_viewer.gd" id="1_ojbyw"]
 [ext_resource type="PackedScene" uid="uid://26tg32417lfm" path="res://src/load_rom.tscn" id="2_4wnqg"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="3_a072s"]
 [ext_resource type="Script" path="res://src/camera_control.gd" id="3_dpuna"]
 [ext_resource type="Script" path="res://src/character_controller_realtime.gd" id="3_wbco3"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="4_8ik4g"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="6_yx7fd"]
 
 [sub_resource type="Environment" id="Environment_njvnp"]
 background_mode = 3
@@ -16,6 +19,12 @@ gradient = SubResource("Gradient_h7qnf")
 fill_from = Vector2(0.5, 1)
 fill_to = Vector2(0.5, 0)
 metadata/_snap_enabled = true
+
+[sub_resource type="Resource" id="Resource_bid86"]
+script = ExtResource("4_8ik4g")
+duration = 1.0
+transition = 0
+ease = 2
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_omsuf"]
 radius = 0.25
@@ -55,13 +64,14 @@ material = SubResource("StandardMaterial3D_05x7e")
 [sub_resource type="BoxShape3D" id="BoxShape3D_pwjms"]
 size = Vector3(20, 0.1, 20)
 
-[node name="MapViewer" type="Node3D" node_paths=PackedStringArray("load_rom", "texture_viewer", "camera_controller", "background_gradient", "map_dropdown", "map_mesh", "map_mesh2", "map_mesh3", "map_mesh4", "map_collision_shape", "map_collision_shape2", "map_collision_shape3", "map_collision_shape4", "unit", "test_collision_shape")]
+[node name="MapViewer" type="Node3D" node_paths=PackedStringArray("load_rom", "texture_viewer", "camera_controller", "background_gradient", "map_dropdown", "menu_reminder", "map_mesh", "map_mesh2", "map_mesh3", "map_mesh4", "map_collision_shape", "map_collision_shape2", "map_collision_shape3", "map_collision_shape4", "unit", "test_collision_shape")]
 script = ExtResource("1_ojbyw")
 load_rom = NodePath("VBoxContainer/LoadRom")
 texture_viewer = NodePath("MapTexture")
 camera_controller = NodePath("CameraController")
 background_gradient = NodePath("CanvasLayer/TextureRect")
 map_dropdown = NodePath("VBoxContainer/MapDropdown")
+menu_reminder = NodePath("VBoxContainer/Label")
 map_mesh = NodePath("Map/Map")
 map_mesh2 = NodePath("Map2/Map2")
 map_mesh3 = NodePath("Map3/Map3")
@@ -97,7 +107,21 @@ layout_mode = 2
 [node name="MapDropdown" type="OptionButton" parent="VBoxContainer"]
 layout_mode = 2
 
+[node name="Label" type="Label" parent="VBoxContainer"]
+visible = false
+layout_mode = 2
+text = "Press ESCAPE to open menu"
+
 [node name="Unit" type="Node3D" parent="."]
+
+[node name="PhantomCamera3D" type="Node3D" parent="Unit" node_paths=PackedStringArray("follow_target")]
+transform = Transform3D(0.707107, -0.315509, 0.632814, 0, 0.894934, 0.446198, -0.707107, -0.315509, 0.632814, 49.5, 35.32, 50)
+top_level = true
+script = ExtResource("3_a072s")
+follow_mode = 2
+follow_target = NodePath("../CharacterBody3D")
+tween_resource = SubResource("Resource_bid86")
+follow_offset = Vector3(50, 35.32, 50)
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="Unit"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, 0)
@@ -116,21 +140,27 @@ transform = Transform3D(0.5, 0, 0, 0, 0.5, -1.49012e-08, 0, -1.49012e-08, 0.5, 0
 mesh = SubResource("CapsuleMesh_46deq")
 skeleton = NodePath("../../../CameraController")
 
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.707107, -0.315509, 0.632814, 0, 0.894934, 0.446198, -0.707107, -0.315509, 0.632814, 49.5, 35.32, 50)
+projection = 1
+size = 12.0
+
+[node name="PhantomCameraHost" type="Node" parent="Camera3D"]
+process_priority = 300
+process_physics_priority = 300
+script = ExtResource("6_yx7fd")
+
 [node name="CameraController" type="Node3D" parent="." node_paths=PackedStringArray("sprite", "camera", "camera_pivot")]
 transform = Transform3D(1, 0, 0, 0, 0.999999, 0, 0, 0, 1, 0, 0, 0)
+visible = false
 script = ExtResource("3_dpuna")
 sprite = NodePath("../MapTexture")
-camera = NodePath("CameraPivot/Camera3D")
+camera = NodePath("../Camera3D")
 camera_pivot = NodePath("CameraPivot")
 zoom_in_max = 0.5
 
 [node name="CameraPivot" type="Node3D" parent="CameraController"]
 transform = Transform3D(0.707107, -0.315509, 0.632814, 0, 0.894935, 0.446197, -0.707107, -0.315509, 0.632814, 0, 0, 0)
-
-[node name="Camera3D" type="Camera3D" parent="CameraController/CameraPivot"]
-transform = Transform3D(1, 0, 0, 0, 1, -7.45058e-07, 0, 0, 1, 0, -7.62939e-06, 200)
-projection = 1
-size = 12.0
 
 [node name="ReferenceSphere" type="MeshInstance3D" parent="CameraController"]
 transform = Transform3D(0.5, 0, 0, 0, 0.500001, -1.49012e-08, 0, -1.49012e-08, 0.5, 0, 0, 0)

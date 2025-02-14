@@ -61,29 +61,24 @@ func on_map_selected(index: int) -> void:
 	
 	texture_viewer.texture = map_data.albedo_texture
 	map_mesh.mesh = map_data.mesh
-	map_mesh.scale = SCALE * Vector3.ONE
 	
-	var shape_mesh: ConcavePolygonShape3D = ConcavePolygonShape3D.new()
-	var vertices: PackedVector3Array = map_mesh.mesh.get_faces().duplicate()
-	for i: int in vertices.size():
-		vertices[i] = vertices[i] * SCALE
-	shape_mesh.set_faces(vertices)
+	var shape_mesh: ConcavePolygonShape3D = map_mesh.mesh.create_trimesh_shape()
 	map_collision_shape.shape = shape_mesh
 	
 	if quad_mirror:
 		map_mesh2.mesh = map_mesh.mesh
 		map_mesh3.mesh = map_mesh.mesh
 		map_mesh4.mesh = map_mesh.mesh
-		map_mesh2.scale = SCALE * Vector3(1, 1, -1)
-		map_mesh3.scale = SCALE * Vector3(-1, 1, 1)
-		map_mesh4.scale = SCALE * Vector3(-1, 1, -1)
-		map_mesh2.position = Vector3.FORWARD * map_data.map_length * 2
-		map_mesh3.position = Vector3.RIGHT * map_data.map_width * 2
-		map_mesh4.position = (Vector3.RIGHT * map_data.map_width * 2) + (Vector3.FORWARD * map_data.map_length * 2)
+		map_mesh2.scale = Vector3(1, 1, -1)
+		map_mesh3.scale = Vector3(-1, 1, 1)
+		map_mesh4.scale = Vector3(-1, 1, -1)
+		map_mesh2.get_parent().position = Vector3.FORWARD * map_data.map_length * 2
+		map_mesh3.get_parent().position = Vector3.RIGHT * map_data.map_width * 2
+		map_mesh4.get_parent().position = (Vector3.RIGHT * map_data.map_width * 2) + (Vector3.FORWARD * map_data.map_length * 2)
 		
-		map_collision_shape2.shape.set_faces(map_mesh2.mesh.get_faces())
-		map_collision_shape3.shape.set_faces(map_mesh3.mesh.get_faces())
-		map_collision_shape4.shape.set_faces(map_mesh4.mesh.get_faces())
+		map_collision_shape2.shape = get_scaled_collision_shape(map_mesh.mesh, map_mesh2.scale)
+		map_collision_shape3.shape = get_scaled_collision_shape(map_mesh.mesh, map_mesh3.scale)
+		map_collision_shape4.shape = get_scaled_collision_shape(map_mesh.mesh, map_mesh4.scale)
 	
 	var middle_height: float = (map_data.terrain_tiles[map_data.terrain_tiles.size() / 2].height * SCALED_UNITS_PER_HEIGHT) + 2
 	var middle_position: Vector3 = Vector3(map_data.map_width / 2.0, middle_height, -map_data.map_length / 2.0)
@@ -94,7 +89,20 @@ func on_map_selected(index: int) -> void:
 	push_warning("Map_created")
 	
 	push_warning(middle_position)
-	unit.global_position = middle_position + Vector3(-0.25, 0, 0)
+	unit.global_position = middle_position + Vector3(-0.5, 0, 0)
+	unit.global_position = Vector3(9.5, 2, -13.5)
 	unit.linear_velocity = Vector3.ZERO
 	
 	unit.freeze = false
+
+
+func get_scaled_collision_shape(mesh: Mesh, scale: Vector3) -> ConcavePolygonShape3D:
+	var new_collision_shape: ConcavePolygonShape3D = mesh.create_trimesh_shape()
+	var faces: PackedVector3Array = new_collision_shape.get_faces()
+	for i: int in faces.size():
+		faces[i] = faces[i] * scale
+	
+	push_warning(faces)
+	new_collision_shape.set_faces(faces)
+	new_collision_shape.backface_collision = true
+	return new_collision_shape

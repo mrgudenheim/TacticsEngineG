@@ -3,6 +3,7 @@ class_name MapData
 
 const TILE_SIDE_LENGTH: int = 28
 const UNITS_PER_HEIGHT: int = 12
+const SCALE: float = 1.0 / TILE_SIDE_LENGTH
 
 var file_name: String = "default map file name"
 var primary_mesh_data_record: MapFileRecord
@@ -107,17 +108,17 @@ func _create_mesh() -> void:
 	for i: int in num_text_tris:
 		for vertex_index: int in 3:
 			var index: int = (i*3) + vertex_index
-			st.set_normal(text_tri_normals[index])
+			st.set_normal(text_tri_normals[index] * SCALE)
 			st.set_uv(tris_uvs[index])
 			st.set_color(Color.WHITE)
-			st.add_vertex(text_tri_vertices[index])
+			st.add_vertex(text_tri_vertices[index] * SCALE)
 	
 	# add black tris
 	for i: int in num_black_tris:
 		for vertex_index: int in 3:
 			var index: int = (i*3) + vertex_index
 			st.set_color(Color.BLACK)
-			st.add_vertex(black_tri_vertices[index])
+			st.add_vertex(black_tri_vertices[index] * SCALE)
 	
 	# add textured quads
 	for i: int in num_text_quads:
@@ -131,16 +132,16 @@ func _create_mesh() -> void:
 		quad_colors.fill(Color.WHITE)
 		
 		for vert_index: int in [0, 1, 2]:
-			st.set_normal(quad_normals[vert_index])
+			st.set_normal(quad_normals[vert_index] * SCALE)
 			st.set_uv(quad_uvs[vert_index])
 			st.set_color(Color.WHITE)
-			st.add_vertex(quad_vertices[vert_index])
+			st.add_vertex(quad_vertices[vert_index] * SCALE)
 		
 		for vert_index: int in [3, 2, 1]:
-			st.set_normal(quad_normals[vert_index])
+			st.set_normal(quad_normals[vert_index] * SCALE)
 			st.set_uv(quad_uvs[vert_index])
 			st.set_color(Color.WHITE)
-			st.add_vertex(quad_vertices[vert_index])
+			st.add_vertex(quad_vertices[vert_index] * SCALE)
 	
 	# add black quads
 	for i: int in num_black_quads:
@@ -153,11 +154,11 @@ func _create_mesh() -> void:
 		
 		for vert_index: int in [0, 1, 2]:
 			st.set_color(Color.BLACK)
-			st.add_vertex(quad_vertices[vert_index])
+			st.add_vertex(quad_vertices[vert_index] * SCALE)
 		
 		for vert_index: int in [3, 2, 1]:
 			st.set_color(Color.BLACK)
-			st.add_vertex(quad_vertices[vert_index])
+			st.add_vertex(quad_vertices[vert_index] * SCALE)
 	
 	mesh = st.commit()
 

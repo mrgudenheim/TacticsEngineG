@@ -61,15 +61,15 @@ texture_viewer = NodePath("MapTexture")
 camera_controller = NodePath("CameraController")
 background_gradient = NodePath("CanvasLayer/TextureRect")
 map_dropdown = NodePath("VBoxContainer/MapDropdown")
-map_mesh = NodePath("Map")
-map_mesh2 = NodePath("Map2")
-map_mesh3 = NodePath("Map3")
-map_mesh4 = NodePath("Map4")
-map_collision_shape = NodePath("StaticBody3D2/CollisionShape3D")
-map_collision_shape2 = NodePath("Map2/StaticBody3D/CollisionShape3D")
-map_collision_shape3 = NodePath("Map3/StaticBody3D/CollisionShape3D")
-map_collision_shape4 = NodePath("Map4/StaticBody3D/CollisionShape3D")
-unit = NodePath("CameraController/Unit/RigidBody3D")
+map_mesh = NodePath("Map/Map")
+map_mesh2 = NodePath("Map2/Map2")
+map_mesh3 = NodePath("Map3/Map3")
+map_mesh4 = NodePath("Map4/Map4")
+map_collision_shape = NodePath("Map/CollisionShape3D")
+map_collision_shape2 = NodePath("Map2/CollisionShape3D")
+map_collision_shape3 = NodePath("Map3/CollisionShape3D")
+map_collision_shape4 = NodePath("Map4/CollisionShape3D")
+unit = NodePath("Unit/RigidBody3D")
 test_collision_shape = NodePath("TestQuadStaticBody3D/CollisionShape3D")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -96,6 +96,23 @@ layout_mode = 2
 [node name="MapDropdown" type="OptionButton" parent="VBoxContainer"]
 layout_mode = 2
 
+[node name="Unit" type="Node3D" parent="."]
+
+[node name="RigidBody3D" type="RigidBody3D" parent="Unit"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, 0)
+freeze = true
+continuous_cd = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Unit/RigidBody3D"]
+shape = SubResource("CapsuleShape3D_omsuf")
+
+[node name="Sprite3D" type="Sprite3D" parent="Unit/RigidBody3D"]
+
+[node name="UnitReferenceSphere" type="MeshInstance3D" parent="Unit/RigidBody3D"]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, -1.49012e-08, 0, -1.49012e-08, 0.5, 0, 0, 0)
+mesh = SubResource("CapsuleMesh_46deq")
+skeleton = NodePath("../../../CameraController")
+
 [node name="CameraController" type="Node3D" parent="." node_paths=PackedStringArray("sprite", "camera", "camera_pivot")]
 transform = Transform3D(1, 0, 0, 0, 0.999999, 0, 0, 0, 1, 0, 0, 0)
 script = ExtResource("3_dpuna")
@@ -103,28 +120,6 @@ sprite = NodePath("../MapTexture")
 camera = NodePath("CameraPivot/Camera3D")
 camera_pivot = NodePath("CameraPivot")
 zoom_in_max = 0.5
-
-[node name="Unit" type="Node3D" parent="CameraController"]
-
-[node name="RigidBody3D" type="RigidBody3D" parent="CameraController/Unit"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, 0)
-freeze = true
-continuous_cd = true
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CameraController/Unit/RigidBody3D"]
-shape = SubResource("CapsuleShape3D_omsuf")
-
-[node name="Sprite3D" type="Sprite3D" parent="CameraController/Unit/RigidBody3D"]
-
-[node name="UnitReferenceSphere" type="MeshInstance3D" parent="CameraController/Unit/RigidBody3D"]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, -1.49012e-08, 0, -1.49012e-08, 0.5, 0, 0, 0)
-mesh = SubResource("CapsuleMesh_46deq")
-skeleton = NodePath("../../..")
-
-[node name="ReferenceSphere" type="MeshInstance3D" parent="CameraController/Unit"]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, -1.49012e-08, 0, -1.49012e-08, 0.5, 0, 0, 0)
-mesh = SubResource("SphereMesh_qc6ji")
-skeleton = NodePath("../..")
 
 [node name="CameraPivot" type="Node3D" parent="CameraController"]
 transform = Transform3D(0.707107, -0.315509, 0.632814, 0, 0.894935, 0.446197, -0.707107, -0.315509, 0.632814, 0, 0, 0)
@@ -134,50 +129,52 @@ transform = Transform3D(1, 0, 0, 0, 1, -7.45058e-07, 0, 0, 1, 0, -7.62939e-06, 2
 projection = 1
 size = 12.0
 
+[node name="ReferenceSphere" type="MeshInstance3D" parent="CameraController"]
+transform = Transform3D(0.5, 0, 0, 0, 0.500001, -1.49012e-08, 0, -1.49012e-08, 0.5, 0, 0, 0)
+mesh = SubResource("SphereMesh_qc6ji")
+
 [node name="MapTexture" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, -75, 0, 0)
 visible = false
 pixel_size = 0.05
 texture_filter = 0
 
-[node name="StaticBody3D2" type="StaticBody3D" parent="."]
+[node name="Map" type="StaticBody3D" parent="."]
 transform = Transform3D(1, -8.74228e-08, -8.74228e-08, -8.74228e-08, -1, 0, -8.74228e-08, 7.64274e-15, -1, 0, 0, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D2"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Map"]
 shape = SubResource("ConcavePolygonShape3D_vqavv")
 
-[node name="Map" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, -8.74228e-08, -8.74228e-08, -8.74228e-08, -1, 0, -8.74228e-08, 7.64274e-15, -1, 0, 0, 0)
+[node name="Map" type="MeshInstance3D" parent="Map"]
+transform = Transform3D(1, -6.6815e-22, 0, -6.6815e-22, 1, 0, 0, 0, 1, 0, 0, 0)
+skeleton = NodePath("../..")
 
-[node name="Map2" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, -8.74228e-08, -8.74228e-08, -8.74228e-08, -1, 0, -8.74228e-08, 7.64274e-15, -1, 0, 0, 0)
-visible = false
+[node name="Map2" type="StaticBody3D" parent="."]
+transform = Transform3D(1, -8.74228e-08, -8.74228e-08, -8.74228e-08, -1, 7.64275e-15, -8.74228e-08, 0, -1, 0, 0, 0)
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Map2"]
-transform = Transform3D(1, -4.443e-28, 0, -6.6815e-22, 1, -7.64275e-15, 0, 7.64274e-15, 1, 0, 0, 0)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Map2/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Map2"]
 shape = SubResource("ConcavePolygonShape3D_3wu6a")
 
-[node name="Map3" type="MeshInstance3D" parent="."]
+[node name="Map2" type="MeshInstance3D" parent="Map2"]
+skeleton = NodePath("../..")
+
+[node name="Map3" type="StaticBody3D" parent="."]
 transform = Transform3D(1, -8.74228e-08, -8.74228e-08, -8.74228e-08, -1, 0, -8.74228e-08, 7.64274e-15, -1, 0, 0, 0)
-visible = false
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Map3"]
-transform = Transform3D(1, -8.74228e-08, -8.74228e-08, -8.74228e-08, -1, 7.64275e-15, -8.74228e-08, 5.0822e-21, -1, 0, 0, 0)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Map3/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Map3"]
 shape = SubResource("ConcavePolygonShape3D_bdpvt")
 
-[node name="Map4" type="MeshInstance3D" parent="."]
+[node name="Map3" type="MeshInstance3D" parent="Map3"]
+skeleton = NodePath("../..")
+
+[node name="Map4" type="StaticBody3D" parent="."]
 transform = Transform3D(1, -8.74228e-08, -8.74228e-08, -8.74228e-08, -1, 0, -8.74228e-08, 7.64274e-15, -1, 0, 0, 0)
-visible = false
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Map4"]
-transform = Transform3D(1, -8.74228e-08, -8.74228e-08, -8.74228e-08, -1, 7.64275e-15, -8.74228e-08, 5.0822e-21, -1, 0, 0, 0)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Map4/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Map4"]
 shape = SubResource("ConcavePolygonShape3D_8pwdn")
+
+[node name="Map4" type="MeshInstance3D" parent="Map4"]
+skeleton = NodePath("../..")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.553391, -0.832921, 0, 0.832921, 0.553391, 0, 3.51982, 2.72607)
@@ -186,6 +183,10 @@ transform = Transform3D(1, 0, 0, 0, 0.553391, -0.832921, 0, 0.832921, 0.553391, 
 visible = false
 texture = SubResource("GradientTexture2D_twdc0")
 
+[node name="CollisionVisualizer" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 12, -48, 12)
+skeleton = NodePath("../ReferenceQuad")
+
 [node name="ReferenceQuad" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 12, -48, 12)
 visible = false
@@ -193,6 +194,7 @@ mesh = SubResource("QuadMesh_foefj")
 
 [node name="TestQuadStaticBody3D" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+visible = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="TestQuadStaticBody3D"]
 shape = SubResource("BoxShape3D_pwjms")

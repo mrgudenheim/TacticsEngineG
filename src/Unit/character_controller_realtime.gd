@@ -52,5 +52,6 @@ func rotate_camera(dir: int) -> void:
 	#var new_z = camera_pivot.rotation_degrees.z
 	#camera_pivot.rotation_degrees = Vector3(new_x, new_y, new_z)
 	
+	#phantom_camera.tween
 	phantom_camera.set_third_person_rotation_degrees(Vector3(new_x, new_y, new_z))
 	

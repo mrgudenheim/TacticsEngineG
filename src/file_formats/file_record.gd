@@ -16,7 +16,7 @@ var size: int = 0
 var flags: int = 0
 var name_length: int = 0 # in num characters, includes the ending characters ';1', so actual file name length is 2 shorter
 var name: String = ""
-
+var type_index: int = 0
 
 func _init(record: PackedByteArray = []) -> void:
 	if record.size() == 0:

@@ -1,5 +1,7 @@
 class_name Shp
 
+var is_initialized: bool = false
+
 const SUBFRAME_RECT_SIZES: PackedVector2Array = [
 	Vector2(  8,  8 ),
 	Vector2( 16,  8 ),
@@ -129,6 +131,10 @@ var frames_submerged_length:int = 0:
 		return sum + 2 # bytes
 
 
+func _init(new_file_name: String) -> void:
+	set_name(new_file_name)
+
+
 func get_frame(frame_index:int, submerged_depth:int = 0) -> FrameData:
 	if submerged_depth == 0 or not has_submerged_data:
 		return frames[frame_index]
@@ -227,6 +233,8 @@ func set_data_from_shp_bytes(bytes: PackedByteArray, new_name: String) -> void:
 			var num_subframes: int = 1 + (bytes.decode_u8(frame_offset) & 0b00000111)
 			var frame_length: int = 2 + (num_subframes * 4)
 			frames_submerged.append(_get_frame_data(bytes.slice(frame_offset, frame_offset + frame_length)))
+	
+	is_initialized = true
 
 
 func _get_frame_data(bytes: PackedByteArray) -> FrameData:

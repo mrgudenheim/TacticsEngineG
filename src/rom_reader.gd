@@ -6,9 +6,9 @@ static var rom: PackedByteArray = []
 static var file_records: Dictionary = {}
 static var lba_to_file_name: Dictionary = {}
 
-var directory_data_sectors_battle: PackedInt32Array = range(56436, 56442)
-var directory_data_sectors_map: PackedInt32Array = range(9555, 9601)
-var directory_data_sectors: PackedInt32Array = []
+static var directory_data_sectors_battle: PackedInt32Array = range(56436, 56442)
+static var directory_data_sectors_map: PackedInt32Array = range(9555, 9601)
+static var directory_data_sectors: PackedInt32Array = []
 const OFFSET_RECORD_DATA_START: int = 0x60
 
 # https://en.wikipedia.org/wiki/CD-ROM#CD-ROM_XA_extension
@@ -16,6 +16,11 @@ const BYTES_PER_SECTOR: int = 2352
 const BYTES_PER_SECTOR_HEADER: int = 24
 const BYTES_PER_SECTOR_FOOTER: int = 280
 const DATA_BYTES_PER_SECTOR: int = 2048
+
+static var sprs: Array[Spr] = []
+static var shps: Array[Shp] = []
+static var seqs: Array[Seq] = []
+static var maps: Array[MapData] = []
 
 
 func _init() -> void:
@@ -31,8 +36,16 @@ func on_load_rom_dialog_file_selected(path: String) -> void:
 	process_rom(rom)
 
 
-func process_rom(new_rom: PackedByteArray) -> void:
+func clear_data() -> void:
 	file_records.clear()
+	sprs.clear()
+	shps.clear()
+	seqs.clear()
+	maps.clear()
+
+
+func process_rom(new_rom: PackedByteArray) -> void:
+	clear_data()
 	
 	var start_time: int = Time.get_ticks_msec()
 	
@@ -54,6 +67,21 @@ func process_rom(new_rom: PackedByteArray) -> void:
 			record.record_location_offset = byte_index
 			file_records[record.name] = record
 			lba_to_file_name[record.sector_location] = record.name
+			
+			var file_extension: String = record.name.get_extension()
+			if file_extension == "SPR":
+				record.type_index = sprs.size()
+				sprs.append(Spr.new(record.name))
+			if file_extension == "SHP":
+				record.type_index = shps.size()
+				shps.append(Shp.new(record.name))
+			if file_extension == "SEQ":
+				record.type_index = seqs.size()
+				seqs.append(Seq.new(record.name))
+			if file_extension == "GNS":
+				record.type_index = maps.size()
+				maps.append(MapData.new(record.name))
+			
 			
 			byte_index += record_length
 			if directory_data.decode_u8(byte_index) == 0: # end of data, rest of sector will be padded with zeros

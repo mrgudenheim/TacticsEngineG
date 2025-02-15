@@ -1,5 +1,7 @@
 class_name Spr extends Bmp
 
+var is_initialized: bool = false
+
 const PORTRAIT_HEIGHT: int = 32 # pixels
 
 var spritesheet: Image
@@ -11,8 +13,8 @@ var seq_name: String = ""
 var sprite_id: int = 0
 
 
-func _init() -> void:
-	file_name = "spr_file"
+func _init(new_file_name: String) -> void:
+	file_name = new_file_name
 	bits_per_pixel = 4
 	palette_data_start = 0
 	pixel_data_start = num_colors * 2 # after 256 color palette, 2 bytes per color - 1 bit for alpha, followed by 5 bits per channel (B,G,R)
@@ -22,7 +24,7 @@ func _init() -> void:
 
 
 func get_sub_spr(new_name: String, start_pixel: int, end_pixel: int) -> Spr:
-	var sub_spr: Spr = Spr.new()
+	var sub_spr: Spr = Spr.new(new_name)
 	sub_spr.file_name = new_name
 	sub_spr.color_palette = color_palette
 	sub_spr.color_indices = color_indices.slice(start_pixel, end_pixel)
@@ -65,6 +67,8 @@ func set_data(spr_file: PackedByteArray, new_name: String) -> void:
 	color_indices = set_color_indices(spr_total_decompressed_bytes)
 	set_pixel_colors()
 	spritesheet = get_rgba8_image()
+	
+	is_initialized = true
 
 
 func set_palette_data(palette_bytes: PackedByteArray) -> void:

@@ -50,13 +50,11 @@ func on_map_selected(index: int) -> void:
 	var map_file_name: String = map_dropdown.get_item_text(index)
 	
 	var start_time: int = Time.get_ticks_msec()
-	var map_gns_data: PackedByteArray = RomReader.get_file_data(map_file_name)
 	
-	push_warning("Time to get file data (ms): " + str(Time.get_ticks_msec() - start_time))
-	
-	var map_data: MapData = MapData.new()
-	map_data.file_name = map_file_name
-	map_data.init_map(map_gns_data)
+	#var map_data: MapData = MapData.new()
+	var map_data: MapData = RomReader.maps[index]
+	if not map_data.is_initialized:
+		map_data.init_map()
 	map_size_label.text = "Map Size: " + str(map_data.map_width) + " x " + str(map_data.map_length) + " (" + str(map_data.map_width * map_data.map_length) + ")"
 	
 	background_gradient.texture.gradient.colors[0] = map_data.background_gradient_bottom

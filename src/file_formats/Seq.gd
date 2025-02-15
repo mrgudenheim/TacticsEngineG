@@ -1,5 +1,7 @@
 class_name Seq
 
+var is_initialized: bool = false
+
 static var seq_aliases: Dictionary = {
 	"ARUTE.SEQ":"Altima/arute",
 	"CYOKO.SEQ":"Chocobo/cyoko",
@@ -56,21 +58,21 @@ var shp_name: String:
 				return "TYPE1.SHP"
 
 
-var file_name:String = "default_file_name"
-var name_alias:String = "default_name_alias"
+var file_name: String = "default_file_name"
+var name_alias: String = "default_name_alias"
 
 # section 1
-var AA:int = 0
-var BB:int = 0
-var section1_length:int = 4
+var AA: int = 0
+var BB: int = 0
+var section1_length: int = 4
 
 # section 2
-var sequence_pointers:Array[int] = []
-var section2_length:int = 0x400
+var sequence_pointers: Array[int] = []
+var section2_length: int = 0x400
 	
 # section 3
 var sequences: Array[Sequence] = []
-var section3_length:int = 0:
+var section3_length: int = 0:
 	get:
 		var sum: int = 2
 		for sequence: Sequence in sequences:
@@ -90,6 +92,10 @@ static var seq_names: Dictionary = {} # [name_alias, [seq_index, seq_name]]
 static func _static_init() -> void:
 	load_opcode_data()
 	load_seq_name_data()
+
+
+func _init(new_file_name: String) -> void:
+	set_name(new_file_name)
 
 
 func set_data_from_seq_object(seq_object:Seq) -> void:
@@ -172,6 +178,8 @@ func set_data_from_seq_bytes(bytes: PackedByteArray) -> void:
 	for index in sequence_pointers.size():
 		sequence_pointers[index] = get_pointer_from_address(sequence_pointers[index])
 	set_sequence_names()
+	
+	is_initialized = true
 
 
 func get_pointer_address(pointer: int) -> int:

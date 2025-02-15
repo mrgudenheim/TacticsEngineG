@@ -2,26 +2,43 @@ class_name UnitAnimationManager
 extends Node3D
 
 
-@export var ui_manager: UiManager
+#@export var ui_manager: UiManager
 @export var unit_sprites_manager: UnitSpritesManager
-var global_fft_animation: FftAnimation:
-	get:
-		return FFTae.ae.global_fft_animation
+var global_fft_animation: FftAnimation
+var global_spr: Spr
+var global_shp: Shp
+var global_seq: Seq
+
+var wep_spr: Spr
+var wep_shp: Shp
+var wep_seq: Seq
+
+var eff_spr: Spr
+var eff_shp: Shp
+var eff_seq: Seq
+
+var item_spr: Spr
+var item_shp: Shp
+
+var other_spr: Spr
+var other_shp: Shp
 
 @export var weapon_options: OptionButton
 @export var item_options: OptionButton
+@export var weapon_id: int = 0
+@export var item_index: int = 0
 @export var other_type_options: OptionButton
-@export var submerged_depth_options: OptionButton
-@export var face_right_check: CheckBox
-@export var is_playing_check: CheckBox
-@export var is_back_facing_check: CheckBox
+@export var submerged_depth: int = 0
+@export var face_right: bool = false
+#@export var is_playing_check: CheckBox
+@export var is_back_facing: bool = false
 
 @export_file("*.txt") var layer_priority_table_filepath: String
-var layer_priority_table: Array = []
+static var layer_priority_table: Array[PackedStringArray] = []
 @export_file("*.txt") var weapon_table_filepath: String
-var weapon_table: Array = []
+static var weapon_table: Array[PackedStringArray] = []
 @export_file("*.txt") var item_list_filepath: String
-var item_list: Array = []
+static var item_list: Array[PackedStringArray] = []
 
 @export var animation_is_playing: bool = true
 @export var animation_speed: float = 59 # frames per sec
@@ -36,11 +53,8 @@ var wait_for_input_delay: int = 10
 @export var weapon_shp_num: int = 1
 var weapon_v_offset: int = 0: # v_offset to lookup for weapon frames
 	get:
-		return weapon_table[weapon_options.selected][3] as int
+		return weapon_table[weapon_id][3] as int
 var effect_type: int = 1
-var item_index: int = 0:
-	get:
-		return item_options.selected as int
 
 
 var global_weapon_frame_offset_index: int = 0: # index to lookup frame offset for wep and eff animations
@@ -49,7 +63,7 @@ var global_weapon_frame_offset_index: int = 0: # index to lookup frame offset fo
 	set(value):
 		if (value != global_weapon_frame_offset_index):
 			global_weapon_frame_offset_index = value
-			if FFTae.ae.seq != null: # check if data is ready
+			if global_seq != null: # check if data is ready
 				_on_animation_changed()
 
 @export var global_animation_id: int = 0:
@@ -58,7 +72,7 @@ var global_weapon_frame_offset_index: int = 0: # index to lookup frame offset fo
 	set(value):
 		if (value != global_animation_id):
 			global_animation_id = value
-			ui_manager.animation_name_options.select(value)
+			#ui_manager.animation_name_options.select(value)
 			_on_animation_changed()
 			#if isReady:
 				#if not global_fft_animation.sequence.seq_parts[0].isOpcode:
@@ -66,9 +80,12 @@ var global_weapon_frame_offset_index: int = 0: # index to lookup frame offset fo
 
 
 func _ready() -> void:
-	layer_priority_table = load_csv(layer_priority_table_filepath)
-	weapon_table = load_csv(weapon_table_filepath)
-	item_list = load_csv(item_list_filepath)
+	if layer_priority_table.size() == 0:
+		layer_priority_table = load_csv(layer_priority_table_filepath)
+	if weapon_table.size() == 0:
+		weapon_table = load_csv(weapon_table_filepath)
+	if item_list.size() == 0:
+		item_list = load_csv(item_list_filepath)
 	
 	weapon_options.clear()
 	for weapon_index: int in weapon_table.size():
@@ -81,11 +98,11 @@ func _ready() -> void:
 		item_options.add_item(str(item_list[item_list_index][1]))
 
 
-func load_csv(filepath: String) -> Array:
-	var table: Array = []
+func load_csv(filepath: String) -> Array[PackedStringArray]:
+	var table: Array[PackedStringArray] = []
 	var file := FileAccess.open(filepath, FileAccess.READ)
 	var file_contents: String = file.get_as_text()
-	var lines: Array = file_contents.split("\r\n")
+	var lines: PackedStringArray = file_contents.split("\r\n")
 	if lines.size() == 1:
 		lines = file_contents.split("\n")
 	if lines.size() == 1:
@@ -102,9 +119,9 @@ func enable_ui() -> void:
 	weapon_options.disabled = false
 	item_options.disabled = false
 	other_type_options.disabled = false
-	submerged_depth_options.disabled = false
-	face_right_check.disabled = false
-	is_playing_check.disabled = false
+	#submerged_depth_options.disabled = false
+	#face_right_check.disabled = false
+	#is_playing_check.disabled = false
 
 
 func start_animation(fft_animation: FftAnimation, draw_target: Sprite3D, is_playing: bool, isLooping: bool, force_loop: bool = false) -> void:
@@ -120,7 +137,7 @@ func start_animation(fft_animation: FftAnimation, draw_target: Sprite3D, is_play
 	if (num_parts == 0 or only_opcodes): # TODO only_opcodes should play instead of showing a blank image, ie. if only a loop, but need to handle broken MON MFItem animation infinite loop
 		# draw a blank image
 		var assembled_image: Image = fft_animation.shp.create_blank_frame()
-		ui_manager.preview_viewport.sprite_primary.texture = ImageTexture.create_from_image(assembled_image)
+		unit_sprites_manager.sprite_primary.texture = ImageTexture.create_from_image(assembled_image)
 		await get_tree().create_timer(.001).timeout # prevent infinite loop from Wait opcodes looping only opcodes
 		return
 	elif (num_parts == 1 and not force_loop):
@@ -184,7 +201,8 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			var assembled_image: Image = fft_animation.shp.create_blank_frame()
 			draw_target.texture = ImageTexture.create_from_image(assembled_image)
 		else:
-			var assembled_image: Image = fft_animation.shp.get_assembled_frame(new_frame_id, fft_animation.image, ui_manager.animation_id_spinbox.value, other_type_options.selected, weapon_v_offset, submerged_depth_options.selected)
+			var assembled_image: Image = fft_animation.shp.get_assembled_frame(
+					new_frame_id, fft_animation.image, global_animation_id, other_type_options.selected, weapon_v_offset, submerged_depth)
 			draw_target.texture = ImageTexture.create_from_image(assembled_image)
 			var y_rotation: float = fft_animation.shp.get_frame(new_frame_id, fft_animation.submerged_depth).y_rotation
 			if fft_animation.flipped_h != fft_animation.flipped_v:
@@ -204,14 +222,14 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 		if seq_part.opcode_name == "QueueSpriteAnim":
 			#print("Performing " + anim_part_start) 
 			if seq_part.parameters[0] == 1: # play weapon animation
-				weapon_shp_num = 2 if FFTae.ae.shp.file_name.to_upper().contains("TYPE2") else 1
+				weapon_shp_num = 2 if global_shp.file_name.to_upper().contains("TYPE2") else 1
 				var new_animation := FftAnimation.new()
 				var wep_file_name: String = "WEP" + str(weapon_shp_num)
-				new_animation.seq = FFTae.ae.seqs[wep_file_name + ".SEQ"]
-				new_animation.shp = FFTae.ae.shps[wep_file_name + ".SHP"]
+				new_animation.seq = wep_seq
+				new_animation.shp = wep_shp
 				new_animation.weapon_frame_offset_index = global_weapon_frame_offset_index
 				new_animation.sequence = new_animation.seq.sequences[new_animation.seq.sequence_pointers[seq_part.parameters[1]]]
-				new_animation.image = FFTae.ae.sprs["WEP.SPR"].spritesheet
+				new_animation.image = wep_spr.spritesheet
 				new_animation.is_primary_anim = false
 				new_animation.flipped_h = fft_animation.flipped_h
 				
@@ -219,11 +237,11 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			elif seq_part.parameters[0] == 2: # play effect animation
 				var new_animation := FftAnimation.new()
 				var eff_file_name: String = "EFF" + str(effect_type)
-				new_animation.seq = FFTae.ae.seqs[eff_file_name + ".SEQ"]
-				new_animation.shp = FFTae.ae.shps[eff_file_name + ".SHP"]
+				new_animation.seq = eff_seq
+				new_animation.shp = eff_shp
 				new_animation.weapon_frame_offset_index = global_weapon_frame_offset_index
 				new_animation.sequence = new_animation.seq.sequences[new_animation.seq.sequence_pointers[seq_part.parameters[1]]]
-				new_animation.image = FFTae.ae.sprs["EFF.SPR"].spritesheet
+				new_animation.image = eff_spr.spritesheet
 				new_animation.is_primary_anim = false
 				new_animation.flipped_h = fft_animation.flipped_h
 				
@@ -268,40 +286,40 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			for i in range(0, layer_priority.size() - 1):
 				var layer_name: String = layer_priority[i + 1] # skip set_id
 				if layer_name == "unit":
-					ui_manager.preview_viewport.sprite_primary.z_index = -i
+					unit_sprites_manager.sprite_primary.z_index = -i
 				elif layer_name == "weapon":
-					ui_manager.preview_viewport.sprite_weapon.z_index = -i
+					unit_sprites_manager.sprite_weapon.z_index = -i
 				elif layer_name == "effect":
-					ui_manager.preview_viewport.sprite_effect.z_index = -i
+					unit_sprites_manager.sprite_effect.z_index = -i
 				elif layer_name == "text":
-					ui_manager.preview_viewport.sprite_text.z_index = -i
+					unit_sprites_manager.sprite_text.z_index = -i
 		elif seq_part.opcode_name == "SetFrameOffset":
 			opcode_frame_offset = seq_part.parameters[0] # use global var since SetFrameOffset is only used in animations that do not call other animations
 		elif seq_part.opcode_name == "FlipHorizontal": # does not do anything for wep or eff animations through QueueSpriteAnim
-			if draw_target == ui_manager.preview_viewport.sprite_primary:
+			if draw_target == unit_sprites_manager.sprite_primary:
 				draw_target.flip_h = !draw_target.flip_h
 				fft_animation.flipped_h = not fft_animation.flipped_h
 		elif seq_part.opcode_name == "FlipVertical": # does not do anything for wep or eff animations through QueueSpriteAnim
-			if draw_target == ui_manager.preview_viewport.sprite_primary:
+			if draw_target == unit_sprites_manager.sprite_primary:
 				draw_target.flip_v = !draw_target.flip_v
 				fft_animation.flipped_v = not fft_animation.flipped_v
 		elif seq_part.opcode_name == "UnloadMFItem":
-			var target_sprite: Sprite2D = ui_manager.preview_viewport.sprite_item
+			var target_sprite: Sprite3D = unit_sprites_manager.sprite_item
 			target_sprite.texture = ImageTexture.create_from_image(fft_animation.shp.create_blank_frame())
 			# reset any rotation or movement
 			(target_sprite.get_parent() as Node2D).rotation_degrees = 0
 			(target_sprite.get_parent() as Node2D).position = Vector2(0,0)
 		elif seq_part.opcode_name == "MFItemPosFBDU":
-			var target_sprite_pivot := ui_manager.preview_viewport.sprite_item.get_parent() as Node2D
+			var target_sprite_pivot := unit_sprites_manager.sprite_item.get_parent() as Node2D
 			target_sprite_pivot.position = Vector2(-(seq_part.parameters[0]), (seq_part.parameters[1]) + 20) # assume facing left, add 20 because it is y position from bottom of unit
 		elif seq_part.opcode_name == "LoadMFItem":
 			var item_frame_id: int = item_index # assumes loading item
-			var item_sheet_type:Shp = FFTae.ae.shps["ITEM.SHP"]
-			var item_image: Image = FFTae.ae.sprs["ITEM.BIN"].spritesheet
+			var item_sheet_type:Shp = item_shp
+			var item_image: Image = item_spr.spritesheet
 			
 			if item_index >= 180:
-				item_sheet_type = FFTae.ae.shps["OTHER"]
-				item_image = FFTae.ae.sprs["OTHER.SPR"].spritesheet
+				item_sheet_type = other_shp
+				item_image = other_spr.spritesheet
 				
 				if item_index <= 187: # load crystal
 					item_frame_id = item_index - 179
@@ -318,10 +336,10 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			
 			frame_id_label = str(item_index)
 			
-			var assembled_image: Image = item_sheet_type.get_assembled_frame(item_frame_id, item_image, ui_manager.animation_id_spinbox.value, other_type_options.selected, weapon_v_offset, submerged_depth_options.selected)
-			var target_sprite: Sprite2D = ui_manager.preview_viewport.sprite_item
+			var assembled_image: Image = item_sheet_type.get_assembled_frame(item_frame_id, item_image, global_animation_id, other_type_options.selected, weapon_v_offset, submerged_depth)
+			var target_sprite: Sprite3D = unit_sprites_manager.sprite_item
 			target_sprite.texture = ImageTexture.create_from_image(assembled_image)
-			var y_rotation: float = item_sheet_type.get_frame(item_frame_id, submerged_depth_options.selected).y_rotation
+			var y_rotation: float = item_sheet_type.get_frame(item_frame_id, submerged_depth).y_rotation
 			(target_sprite.get_parent() as Node2D).rotation_degrees = y_rotation
 		elif seq_part.opcode_name == "Wait":
 			var loop_length: int = seq_part.parameters[0]
@@ -407,7 +425,7 @@ func get_animation_frame_offset(weapon_frame_offset_index: int, shp: Shp, back_f
 		and shp.zero_frames.size() > 0):
 		return shp.zero_frames[weapon_frame_offset_index]
 	else:
-		if is_back_facing_check.button_pressed:
+		if is_back_facing:
 			return back_faced_offset
 		else:
 			return 0
@@ -450,22 +468,22 @@ func reset_sprites() -> void:
 	# reset frame offset
 	opcode_frame_offset = 0
 	
-	unit_sprites_manager.reset_sprites(face_right_check.button_pressed)
+	unit_sprites_manager.reset_sprites(face_right)
 
 
 func get_animation_from_globals() -> FftAnimation:
 	var fft_animation: FftAnimation = FftAnimation.new()
-	fft_animation.seq = FFTae.ae.seq
-	fft_animation.shp = FFTae.ae.shp
-	fft_animation.sequence = FFTae.ae.seq.sequences[global_animation_id]
+	fft_animation.seq = global_seq
+	fft_animation.shp = global_shp
+	fft_animation.sequence = global_seq.sequences[global_animation_id]
 	fft_animation.weapon_frame_offset_index = global_weapon_frame_offset_index
-	fft_animation.image = FFTae.ae.spr.spritesheet
-	fft_animation.flipped_h = face_right_check.button_pressed
+	fft_animation.image = global_spr.spritesheet
+	fft_animation.flipped_h = face_right
 	fft_animation.flipped_v = false
-	fft_animation.submerged_depth = submerged_depth_options.selected
+	fft_animation.submerged_depth = submerged_depth
 	fft_animation.back_face_offset = 0
 	
-	FFTae.ae.global_fft_animation = fft_animation
+	global_fft_animation = fft_animation
 	return fft_animation
 
 
@@ -482,7 +500,7 @@ func _on_is_playing_check_box_toggled(toggled_on: bool) -> void:
 	if (!toggled_on):
 		animation_slider.value = 0
 	
-	if FFTae.ae.seq.sequences.size() == 0:
+	if global_seq.sequences.size() == 0:
 		return
 	_on_animation_changed()
 

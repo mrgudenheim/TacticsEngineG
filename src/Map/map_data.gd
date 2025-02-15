@@ -5,6 +5,8 @@ const TILE_SIDE_LENGTH: int = 28
 const UNITS_PER_HEIGHT: int = 12
 const SCALE: float = 1.0 / TILE_SIDE_LENGTH
 
+var is_initialized: bool = false
+
 var file_name: String = "default map file name"
 var primary_mesh_data_record: MapFileRecord
 var primary_texture_record: MapFileRecord
@@ -45,7 +47,17 @@ var map_length: int = 0 # length in tiles
 var terrain_tiles: Array[TerrainTile] = []
 
 
-func init_map(gns_bytes: PackedByteArray) -> void:
+func _init(map_file_name: String) -> void:
+	file_name = map_file_name
+
+
+func init_map() -> void:
+	var map_gns_data: PackedByteArray = RomReader.get_file_data(file_name)
+	init_map_data(map_gns_data)
+	is_initialized = true
+
+
+func init_map_data(gns_bytes: PackedByteArray) -> void:
 	map_file_records = get_associated_files(gns_bytes)
 	push_warning("Map Mesh File: " + primary_mesh_data_record.file_name)
 	push_warning("Map Texture File: " + primary_texture_record.file_name)

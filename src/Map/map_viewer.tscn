@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://card26cltbba1"]
+[gd_scene load_steps=24 format=3 uid="uid://card26cltbba1"]
 
 [ext_resource type="Script" path="res://src/Map/map_viewer.gd" id="1_ojbyw"]
 [ext_resource type="PackedScene" uid="uid://26tg32417lfm" path="res://src/load_rom.tscn" id="2_4wnqg"]
@@ -8,7 +8,8 @@
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="4_8ik4g"]
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="6_yx7fd"]
 [ext_resource type="PackedScene" uid="uid://buljw4afjva1d" path="res://src/Map/map.tscn" id="8_0n3mn"]
-[ext_resource type="PackedScene" uid="uid://cw8mvbkue4ibk" path="res://src/Unit/unit_sprites.tscn" id="9_81hnw"]
+[ext_resource type="PackedScene" uid="uid://cw8mvbkue4ibk" path="res://src/Unit/unit_sprites_manager.tscn" id="9_81hnw"]
+[ext_resource type="Script" path="res://src/Unit/unit_animation_manager.gd" id="9_rgxyk"]
 
 [sub_resource type="Environment" id="Environment_njvnp"]
 background_mode = 3
@@ -183,7 +184,17 @@ spring_length = 5.0
 [node name="DropShadowSprite3D" type="Sprite3D" parent="Unit/CharacterBody3D/ShadowSpringArm3D"]
 texture = SubResource("GradientTexture2D_6vwfi")
 
-[node name="SpritesAtUnit" parent="Unit/CharacterBody3D" instance=ExtResource("9_81hnw")]
+[node name="UnitAnimationManager" type="Node3D" parent="Unit/CharacterBody3D"]
+script = ExtResource("9_rgxyk")
+layer_priority_table_filepath = null
+weapon_table_filepath = null
+item_list_filepath = null
+animation_is_playing = null
+animation_speed = null
+weapon_shp_num = null
+global_animation_id = null
+
+[node name="UnitSpritesManager" parent="Unit/CharacterBody3D/UnitAnimationManager" instance=ExtResource("9_81hnw")]
 
 [node name="MapTexture" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, -75, 0, 0)

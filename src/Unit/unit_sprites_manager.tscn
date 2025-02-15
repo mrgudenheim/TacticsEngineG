@@ -1,0 +1,29 @@
+[gd_scene load_steps=2 format=3 uid="uid://cw8mvbkue4ibk"]
+
+[ext_resource type="Script" path="res://src/Unit/unit_sprites_manager.gd" id="1_brshp"]
+
+[node name="UnitSpritesManager" type="Node3D" node_paths=PackedStringArray("sprite_primary", "sprite_weapon", "sprite_effect", "sprite_text", "sprite_item", "sprite_background")]
+script = ExtResource("1_brshp")
+sprite_primary = NodePath("UnitSprite3D")
+sprite_weapon = NodePath("WepSprite3D")
+sprite_effect = NodePath("EffSprite3D")
+sprite_text = NodePath("TextSprite3D")
+sprite_item = NodePath("ItemSprite3D")
+sprite_background = NodePath("BackgroundSprite3D")
+
+[node name="UnitSprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, 0, 0, 0)
+
+[node name="WepSprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, 0, 0, 0)
+
+[node name="EffSprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, 0, 0, 0)
+
+[node name="TextSprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, 0, 0, 0)
+
+[node name="ItemSprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, 0, 0, 0)
+
+[node name="BackgroundSprite3D" type="Sprite3D" parent="."]

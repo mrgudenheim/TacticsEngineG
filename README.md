@@ -4,6 +4,7 @@
 This engine is intended to create a game similar to Final Fantasy Tactics (FFT), including reading data from an FFT ROM
 
 # Features
+- Displays maps
 ...
 
 # Limitations and Notes

@@ -1582,7 +1582,7 @@ func set_third_person_rotation_degrees(value: Vector3) -> void:
 
 
 ## Tweens to a new rotation (in degrees) value to [SpringArm3D] for
-## [param ThirdPerson] [enum FollowMode].
+## [param ThirdPerson] [enum FollowMode]. Awaits the tween.finished
 func tween_third_person_rotation_degrees(value: Vector3, duration: float) -> void:
 	var tween: Tween = get_tree().create_tween()
 	tween.tween_property(_follow_spring_arm, "rotation_degrees", value, duration)

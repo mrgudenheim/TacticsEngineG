@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cw8mvbkue4ibk"]
 
-[node name="SpritesAtUnit" type="Node3D"]
+[node name="UnitSprites" type="Node3D"]
 
 [node name="UnitSprite3D" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, 0, 0, 0)

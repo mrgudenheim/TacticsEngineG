@@ -8,7 +8,7 @@
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="4_8ik4g"]
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="6_yx7fd"]
 [ext_resource type="PackedScene" uid="uid://buljw4afjva1d" path="res://src/Map/map.tscn" id="8_0n3mn"]
-[ext_resource type="PackedScene" uid="uid://cw8mvbkue4ibk" path="res://src/Unit/sprites_at_unit.tscn" id="9_81hnw"]
+[ext_resource type="PackedScene" uid="uid://cw8mvbkue4ibk" path="res://src/Unit/unit_sprites.tscn" id="9_81hnw"]
 
 [sub_resource type="Environment" id="Environment_njvnp"]
 background_mode = 3
@@ -79,12 +79,11 @@ environment = SubResource("Environment_njvnp")
 
 [node name="CameraPivot" type="Node3D" parent="."]
 
-[node name="PhantomCamera3D" type="Node3D" parent="CameraPivot" node_paths=PackedStringArray("follow_target", "look_at_target")]
+[node name="PhantomCamera3D" type="Node3D" parent="CameraPivot" node_paths=PackedStringArray("follow_target")]
 transform = Transform3D(0.707107, -0.31551, 0.632763, 1.49012e-08, 0.894934, 0.446163, -0.707107, -0.31551, 0.632763, 126.053, 89.2326, 126.553)
 script = ExtResource("3_a072s")
 follow_mode = 6
 follow_target = NodePath("../../Unit/CharacterBody3D")
-look_at_target = NodePath("../../Unit/CharacterBody3D")
 tween_resource = SubResource("Resource_bid86")
 follow_damping = true
 follow_distance = 200.0
@@ -179,7 +178,7 @@ skeleton = NodePath("../../../CameraController")
 
 [node name="ShadowSpringArm3D" type="SpringArm3D" parent="Unit/CharacterBody3D"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
-spring_length = 2.0
+spring_length = 5.0
 
 [node name="DropShadowSprite3D" type="Sprite3D" parent="Unit/CharacterBody3D/ShadowSpringArm3D"]
 texture = SubResource("GradientTexture2D_6vwfi")

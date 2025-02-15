@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://card26cltbba1"]
+[gd_scene load_steps=23 format=3 uid="uid://card26cltbba1"]
 
 [ext_resource type="Script" path="res://src/Map/map_viewer.gd" id="1_ojbyw"]
 [ext_resource type="PackedScene" uid="uid://26tg32417lfm" path="res://src/load_rom.tscn" id="2_4wnqg"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="4_8ik4g"]
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="6_yx7fd"]
 [ext_resource type="PackedScene" uid="uid://buljw4afjva1d" path="res://src/Map/map.tscn" id="8_0n3mn"]
+[ext_resource type="PackedScene" uid="uid://cw8mvbkue4ibk" path="res://src/Unit/sprites_at_unit.tscn" id="9_81hnw"]
 
 [sub_resource type="Environment" id="Environment_njvnp"]
 background_mode = 3
@@ -44,6 +45,16 @@ material = SubResource("StandardMaterial3D_h85aw")
 radius = 0.25
 height = 0.5
 
+[sub_resource type="Gradient" id="Gradient_gjfh4"]
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_6vwfi"]
+gradient = SubResource("Gradient_gjfh4")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+metadata/_snap_enabled = true
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_05x7e"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_foefj"]
@@ -73,9 +84,9 @@ transform = Transform3D(0.707107, -0.31551, 0.632763, 1.49012e-08, 0.894934, 0.4
 script = ExtResource("3_a072s")
 follow_mode = 6
 follow_target = NodePath("../../Unit/CharacterBody3D")
-look_at_mode = 2
 look_at_target = NodePath("../../Unit/CharacterBody3D")
 tween_resource = SubResource("Resource_bid86")
+follow_damping = true
 follow_distance = 200.0
 spring_length = 200.0
 collision_mask = 0
@@ -150,7 +161,7 @@ texture = SubResource("GradientTexture2D_1dnhu")
 [node name="Unit" type="Node3D" parent="."]
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="Unit" node_paths=PackedStringArray("camera_pivot", "phantom_camera")]
-transform = Transform3D(0.707107, -0.315509, 0.632814, 0, 0.894934, 0.446198, -0.707107, -0.315509, 0.632814, -0.5, 0, 0)
+transform = Transform3D(0.707107, 0, 0.707107, 0, 0.999999, 0, -0.707107, 0, 0.707107, -0.5, 0, 0)
 axis_lock_angular_x = true
 axis_lock_angular_y = true
 axis_lock_angular_z = true
@@ -166,16 +177,14 @@ transform = Transform3D(0.5, 0, 0, 0, 0.5, -1.49012e-08, 0, -1.49012e-08, 0.5, 0
 mesh = SubResource("CapsuleMesh_46deq")
 skeleton = NodePath("../../../CameraController")
 
-[node name="Sprites" type="Node3D" parent="Unit/CharacterBody3D"]
+[node name="ShadowSpringArm3D" type="SpringArm3D" parent="Unit/CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+spring_length = 2.0
 
-[node name="UnitSprite3D" type="Sprite3D" parent="Unit/CharacterBody3D/Sprites"]
-transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, 0, 0, 0)
+[node name="DropShadowSprite3D" type="Sprite3D" parent="Unit/CharacterBody3D/ShadowSpringArm3D"]
+texture = SubResource("GradientTexture2D_6vwfi")
 
-[node name="WepSprite3D" type="Sprite3D" parent="Unit/CharacterBody3D/Sprites"]
-transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, 0, 0, 0)
-
-[node name="EffSprite3D" type="Sprite3D" parent="Unit/CharacterBody3D/Sprites"]
-transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, 0, 0, 0)
+[node name="SpritesAtUnit" parent="Unit/CharacterBody3D" instance=ExtResource("9_81hnw")]
 
 [node name="MapTexture" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, -75, 0, 0)

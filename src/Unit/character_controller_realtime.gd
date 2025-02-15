@@ -1,12 +1,16 @@
 extends CharacterBody3D
 
-const SPEED = 5.0
+const SPEED: float = 5.0
 
-const ROTATE_SPEED = 15.0
-const JUMP_VELOCITY = 4.5
+const ROTATE_INTERVAL: float = 45.0 # degrees
+const ROTATE_SPEED: float = 300.0 # degrees / sec
+#const ROTATION_DURATION: float = 0.1 # seconds
+const JUMP_VELOCITY: float = 4.5
 
 @export var camera_pivot: Node3D
 @export var phantom_camera: PhantomCamera3D
+
+var is_rotating: bool = false
 
 func _physics_process(delta: float) -> void:
 	# Add the gravity.
@@ -39,20 +43,17 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func rotate_camera(dir: int) -> void:
+	if is_rotating:
+		return
+	
+	is_rotating = true
 	var new_rotation: Vector3 = Vector3.ZERO
-	var offset: float = dir * ROTATE_SPEED
+	var offset: float = dir * ROTATE_INTERVAL
 	
 	var new_x = self.rotation_degrees.x
 	var new_y = self.rotation_degrees.y + offset
 	var new_z = self.rotation_degrees.z
 	self.rotation_degrees = Vector3(new_x, new_y, new_z)
 	
-	#var new_x = camera_pivot.rotation_degrees.x
-	#var new_y = camera_pivot.rotation_degrees.y + offset
-	#var new_z = camera_pivot.rotation_degrees.z
-	#camera_pivot.rotation_degrees = Vector3(new_x, new_y, new_z)
-	
-	#var tween: Tween = create_tween()
-	#phantom_camera.tween
-	phantom_camera.set_third_person_rotation_degrees(Vector3(-26.54, new_y, new_z))
-	
+	await phantom_camera.tween_third_person_rotation_degrees(Vector3(-26.54, new_y, new_z), ROTATE_INTERVAL / ROTATE_SPEED)
+	is_rotating = false

@@ -1,4 +1,7 @@
+class_name UnitControllerRT
 extends CharacterBody3D
+
+signal velocity_set(direction: Vector3)
 
 const SPEED: float = 5.0
 
@@ -27,7 +30,9 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 		velocity.z = move_toward(velocity.z, 0, SPEED)
-
+	
+	if velocity != Vector3.ZERO:
+		velocity_set.emit(direction)
 	move_and_slide()
 
 

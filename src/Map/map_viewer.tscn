@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://card26cltbba1"]
+[gd_scene load_steps=26 format=3 uid="uid://card26cltbba1"]
 
 [ext_resource type="Script" path="res://src/Map/map_viewer.gd" id="1_ojbyw"]
 [ext_resource type="PackedScene" uid="uid://26tg32417lfm" path="res://src/load_rom.tscn" id="2_4wnqg"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="4_8ik4g"]
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="6_yx7fd"]
 [ext_resource type="PackedScene" uid="uid://buljw4afjva1d" path="res://src/Map/map.tscn" id="8_0n3mn"]
+[ext_resource type="Script" path="res://src/Map/unit.gd" id="8_o41s4"]
 [ext_resource type="PackedScene" uid="uid://cw8mvbkue4ibk" path="res://src/Unit/unit_sprites_manager.tscn" id="9_81hnw"]
 [ext_resource type="Script" path="res://src/Unit/unit_animation_manager.gd" id="9_rgxyk"]
 [ext_resource type="Script" path="res://src/Map/unit_debug_menu.gd" id="11_wboi1"]
@@ -65,8 +66,6 @@ material = SubResource("StandardMaterial3D_05x7e")
 
 [node name="MapViewer" type="Node3D" node_paths=PackedStringArray("load_rom_button", "texture_viewer", "camera_controller", "background_gradient", "map_dropdown", "menu_reminder", "map_size_label", "maps", "unit")]
 script = ExtResource("1_ojbyw")
-map_tscn = ExtResource("8_0n3mn")
-mirror = null
 load_rom_button = NodePath("PanelContainer/MarginContainer/VBoxContainer/LoadRom")
 texture_viewer = NodePath("MapTexture")
 camera_controller = NodePath("CameraController")
@@ -75,7 +74,9 @@ map_dropdown = NodePath("PanelContainer/MarginContainer/VBoxContainer/MapDropdow
 menu_reminder = NodePath("PanelContainer/MarginContainer/VBoxContainer/MenuReminder")
 map_size_label = NodePath("PanelContainer/MarginContainer/VBoxContainer/MapSize")
 maps = NodePath("Maps")
+map_tscn = ExtResource("8_0n3mn")
 unit = NodePath("Unit/CharacterBody3D")
+mirror = null
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_njvnp")
@@ -160,7 +161,9 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("GradientTexture2D_1dnhu")
 
-[node name="Unit" type="Node3D" parent="."]
+[node name="Unit" type="Node3D" parent="." node_paths=PackedStringArray("controller")]
+script = ExtResource("8_o41s4")
+controller = NodePath("CharacterBody3D")
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="Unit" node_paths=PackedStringArray("camera_pivot", "phantom_camera")]
 transform = Transform3D(0.707107, 0, 0.707107, 0, 0.999999, 0, -0.707107, 0, 0.707107, 0, 0, 0)
@@ -205,7 +208,7 @@ offset_bottom = 40.0
 script = ExtResource("11_wboi1")
 animation_manager = NodePath("../UnitAnimationManager")
 sprite_options = NodePath("PanelContainer/MarginContainer/GridContainer/SprOptionButton")
-anim_id_spin = NodePath("PanelContainer/MarginContainer/GridContainer/AnimIdSpinBox")
+anim_id_spin = NodePath("PanelContainer/MarginContainer/GridContainer/AnimPtrIdSpinBox")
 weapon_options = NodePath("PanelContainer/MarginContainer/GridContainer/WeaponOptionButton")
 item_options = NodePath("PanelContainer/MarginContainer/GridContainer/ItemOptionButton")
 other_type_options = NodePath("PanelContainer/MarginContainer/GridContainer/OtherTypeOptionButton")
@@ -225,15 +228,17 @@ columns = 2
 [node name="Sprite" type="Label" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
 layout_mode = 2
 text = "Sprite: "
+horizontal_alignment = 2
 
 [node name="SprOptionButton" type="OptionButton" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
 layout_mode = 2
 
-[node name="AnimationId" type="Label" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
+[node name="AnimationPtrId" type="Label" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
 layout_mode = 2
-text = "Animation ID: "
+text = "Animation Ptr: "
+horizontal_alignment = 2
 
-[node name="AnimIdSpinBox" type="SpinBox" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
+[node name="AnimPtrIdSpinBox" type="SpinBox" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
 layout_mode = 2
 max_value = 256.0
 rounded = true
@@ -242,6 +247,7 @@ select_all_on_focus = true
 [node name="Weapon" type="Label" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
 layout_mode = 2
 text = "Weapon: "
+horizontal_alignment = 2
 
 [node name="WeaponOptionButton" type="OptionButton" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
 layout_mode = 2
@@ -249,6 +255,7 @@ layout_mode = 2
 [node name="Item" type="Label" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
 layout_mode = 2
 text = "Item: "
+horizontal_alignment = 2
 
 [node name="ItemOptionButton" type="OptionButton" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
 layout_mode = 2
@@ -256,6 +263,7 @@ layout_mode = 2
 [node name="Other Type" type="Label" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
 layout_mode = 2
 text = "Other: "
+horizontal_alignment = 2
 
 [node name="OtherTypeOptionButton" type="OptionButton" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
 layout_mode = 2

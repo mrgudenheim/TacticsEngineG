@@ -86,4 +86,4 @@ func _on_sprite_option_selected(index) -> void:
 	animation_manager.other_shp = RomReader.shps[RomReader.file_records["OTHER.SHP"].type_index]
 
 func _on_anim_id_spin_value_changed(value: int) -> void:
-	animation_manager.global_animation_id = value
+	animation_manager.global_animation_id = animation_manager.global_seq.sequence_pointers[value]

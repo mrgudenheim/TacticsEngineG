@@ -669,7 +669,8 @@ func create_blank_frame(color: Color = Color.TRANSPARENT, new_frame_size: Vector
 	return blank_image
 
 
-func get_assembled_frame(frame_index: int, source_image: Image, animation_index: int, other_type_index: int, weapon_v_offset: int, submerged_depth: int, new_frame_size: Vector2i = frame_size, y_offset: int = 40) -> Image:
+func get_assembled_frame(frame_index: int, source_image: Image, animation_index: int, 
+		other_type_index: int, weapon_v_offset: int, submerged_depth: int, new_frame_size: Vector2i = frame_size, y_offset: int = 40) -> Image:
 	var frame: FrameData = get_frame(frame_index, submerged_depth)
 	var assembled_image: Image = create_blank_frame(Color.TRANSPARENT, new_frame_size)
 	

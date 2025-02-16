@@ -25,6 +25,8 @@ static var shps: Array[Shp] = []
 static var seqs: Array[Seq] = []
 static var maps: Array[MapData] = []
 
+@export_file("*.txt") var item_frames_csv_filepath: String = "res://src/fftae/frame_data_item.txt"
+
 
 func _init() -> void:
 	directory_data_sectors.append_array(directory_data_sectors_battle)
@@ -93,7 +95,87 @@ func process_rom(new_rom: PackedByteArray) -> void:
 	push_warning("Time to process ROM (ms): " + str(Time.get_ticks_msec() - start_time))
 	
 	_load_battle_bin_sprite_data()
+	cache_associated_files()
 	rom_loaded.emit()
+
+
+func cache_associated_files() -> void:
+	var associated_file_names: PackedStringArray = [
+		"WEP1.SEQ",
+		"WEP2.SEQ",
+		"EFF1.SEQ",
+		"WEP1.SHP",
+		"WEP2.SHP",
+		"EFF1.SHP",
+		"WEP.SPR",
+		]
+	
+	for file_name: String in associated_file_names:
+		var type_index: int = file_records[file_name].type_index
+		match file_name.get_extension():
+			"SPR":
+				var spr: Spr = sprs[type_index]
+				spr.set_data(get_file_data(file_name))
+				if file_name != "WEP.SPR":
+					spr.set_spritesheet_data(spr_file_name_to_id[file_name])
+			"SHP":
+				var shp: Shp = shps[type_index]
+				shp.set_data_from_shp_bytes(get_file_data(file_name))
+			"SEQ":
+				var seq: Seq = seqs[type_index]
+				seq.set_data_from_seq_bytes(get_file_data(file_name))
+	
+	# getting effect / weapon trail / glint
+	var eff_spr_name: String = "EFF.SPR"
+	var eff_spr: Spr = Spr.new(eff_spr_name)
+	eff_spr.height = 144
+	var eff_spr_record: FileRecord = FileRecord.new()
+	eff_spr_record.name = eff_spr_name
+	eff_spr_record.type_index = sprs.size()
+	file_records[eff_spr_name] = eff_spr_record
+	eff_spr.set_data(get_file_data("WEP.SPR").slice(0x8200, 0x10400))
+	eff_spr.shp_name = "EFF1.SHP"
+	eff_spr.seq_name = "EFF1.SEQ"
+	sprs.append(eff_spr)
+	
+	# TODO get trap effects - not useful for this tool at this time
+	
+	# crop wep spr
+	var wep_spr_start: int = 0
+	var wep_spr_end: int = 256 * 256 # wep is 256 pixels tall
+	var wep_spr_index: int = file_records["WEP.SPR"].type_index
+	var wep_spr: Spr = sprs[wep_spr_index].get_sub_spr("WEP.SPR", wep_spr_start, wep_spr_end)
+	wep_spr.shp_name = "WEP1.SHP"
+	wep_spr.seq_name = "WEP1.SEQ"
+	sprs[wep_spr_index] = wep_spr
+	
+	# get shp for item graphics
+	var item_shp_name: String = "ITEM.SHP"
+	var item_shp_record: FileRecord = FileRecord.new()
+	item_shp_record.name = item_shp_name
+	item_shp_record.type_index = shps.size()
+	file_records[item_shp_name] = item_shp_record
+	var item_shp: Shp = Shp.new(item_shp_name)
+	item_shp.set_frames_from_csv(item_frames_csv_filepath)
+	shps.append(item_shp)
+	
+	# get item graphics
+	# TODO set type_index
+	var item_record: FileRecord = FileRecord.new()
+	item_record.sector_location = 6297 # ITEM.BIN is in EVENT not BATTLE, so needs a new record created
+	item_record.size = 33280
+	item_record.name = "ITEM.BIN"
+	item_record.type_index = sprs.size()
+	file_records[item_record.name] = item_record
+	
+	var item_spr_data: PackedByteArray = RomReader.get_file_data(item_record.name)
+	var item_spr: Spr = Spr.new(item_record.name)
+	item_spr.height = 256
+	item_spr.set_palette_data(item_spr_data.slice(0x8000, 0x8200))
+	item_spr.color_indices = item_spr.set_color_indices(item_spr_data.slice(0, 0x8000))
+	item_spr.set_pixel_colors()
+	item_spr.spritesheet = item_spr.get_rgba8_image()
+	sprs.append(item_spr)
 
 
 # https://ffhacktics.com/wiki/BATTLE.BIN_Data_Tables#Animation_.26_Display_Related_Data

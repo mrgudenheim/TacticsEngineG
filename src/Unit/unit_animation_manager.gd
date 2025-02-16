@@ -281,13 +281,17 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			for i in range(0, layer_priority.size() - 1):
 				var layer_name: String = layer_priority[i + 1] # skip set_id
 				if layer_name == "unit":
-					unit_sprites_manager.sprite_primary.z_index = -i
+					#unit_sprites_manager.sprite_primary.z_index = -i
+					unit_sprites_manager.sprite_primary.position.z = -i * UnitSpritesManager.LAYERING_OFFSET
 				elif layer_name == "weapon":
-					unit_sprites_manager.sprite_weapon.z_index = -i
+					#unit_sprites_manager.sprite_weapon.z_index = -i
+					unit_sprites_manager.sprite_weapon.position.z = -i * UnitSpritesManager.LAYERING_OFFSET
 				elif layer_name == "effect":
-					unit_sprites_manager.sprite_effect.z_index = -i
+					#unit_sprites_manager.sprite_effect.z_index = -i
+					unit_sprites_manager.sprite_effect.position.z = -i * UnitSpritesManager.LAYERING_OFFSET
 				elif layer_name == "text":
-					unit_sprites_manager.sprite_text.z_index = -i
+					#unit_sprites_manager.sprite_text.z_index = -i
+					unit_sprites_manager.sprite_text.position.z = -i * UnitSpritesManager.LAYERING_OFFSET
 		elif seq_part.opcode_name == "SetFrameOffset":
 			opcode_frame_offset = seq_part.parameters[0] # use global var since SetFrameOffset is only used in animations that do not call other animations
 		elif seq_part.opcode_name == "FlipHorizontal": # does not do anything for wep or eff animations through QueueSpriteAnim
@@ -302,11 +306,11 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			var target_sprite: Sprite3D = unit_sprites_manager.sprite_item
 			target_sprite.texture = ImageTexture.create_from_image(fft_animation.shp.create_blank_frame())
 			# reset any rotation or movement
-			(target_sprite.get_parent() as Node2D).rotation_degrees = 0
-			(target_sprite.get_parent() as Node2D).position = Vector2(0,0)
+			target_sprite.rotation_degrees = Vector3.ZERO
+			target_sprite.position = Vector3.ZERO
 		elif seq_part.opcode_name == "MFItemPosFBDU":
-			var target_sprite_pivot := unit_sprites_manager.sprite_item.get_parent() as Node2D
-			target_sprite_pivot.position = Vector2(-(seq_part.parameters[0]), (seq_part.parameters[1]) + 20) # assume facing left, add 20 because it is y position from bottom of unit
+			var target_sprite_pivot := unit_sprites_manager.sprite_item
+			target_sprite_pivot.position = Vector3(-seq_part.parameters[0], seq_part.parameters[1] + 20, 0) # assume facing left, add 20 because it is y position from bottom of unit
 		elif seq_part.opcode_name == "LoadMFItem":
 			var item_frame_id: int = item_index # assumes loading item
 			var item_sheet_type:Shp = item_shp
@@ -331,11 +335,12 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			
 			frame_id_label = str(item_index)
 			
-			var assembled_image: Image = item_sheet_type.get_assembled_frame(item_frame_id, item_image, global_animation_id, unit_debug_menu.other_type_options.selected, weapon_v_offset, submerged_depth)
+			var assembled_image: Image = item_sheet_type.get_assembled_frame(
+					item_frame_id, item_image, global_animation_id, unit_debug_menu.other_type_options.selected, weapon_v_offset, submerged_depth)
 			var target_sprite: Sprite3D = unit_sprites_manager.sprite_item
 			target_sprite.texture = ImageTexture.create_from_image(assembled_image)
 			var y_rotation: float = item_sheet_type.get_frame(item_frame_id, submerged_depth).y_rotation
-			(target_sprite.get_parent() as Node2D).rotation_degrees = y_rotation
+			target_sprite.rotation_degrees = Vector3(0, y_rotation, 0)
 		elif seq_part.opcode_name == "Wait":
 			var loop_length: int = seq_part.parameters[0]
 			if loop_length > 0:

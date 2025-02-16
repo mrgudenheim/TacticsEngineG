@@ -1,6 +1,8 @@
 class_name UnitSpritesManager
 extends Node3D
 
+const LAYERING_OFFSET: float = 0.0000001
+
 @export var sprite_primary: Sprite3D
 @export var sprite_weapon: Sprite3D
 @export var sprite_effect: Sprite3D
@@ -19,11 +21,10 @@ func reset_sprites(flip_h: bool = false) -> void:
 	sprite_item.texture = ImageTexture.create_from_image(Image.create_empty(120, 120, false, Image.FORMAT_RGBA8))
 	
 	# reset layer priority
-	var layering_offset: float = 0.0000001
-	sprite_primary.position.z = -2 * layering_offset
-	sprite_weapon.position.z = -3 * layering_offset
-	sprite_effect.position.z = -1 * layering_offset
-	sprite_text.position.z = 0 * layering_offset
+	sprite_primary.position.z = -2 * LAYERING_OFFSET
+	sprite_weapon.position.z = -3 * LAYERING_OFFSET
+	sprite_effect.position.z = -1 * LAYERING_OFFSET
+	sprite_text.position.z = 0 * LAYERING_OFFSET
 	
 	#sprite_primary.z_index = -2
 	#sprite_weapon.z_index = -3

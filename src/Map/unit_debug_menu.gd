@@ -70,7 +70,20 @@ func _on_sprite_option_selected(index) -> void:
 	animation_manager.global_spr = spr
 	animation_manager.global_shp = shp
 	animation_manager.global_seq = seq
+	
+	animation_manager.wep_spr = RomReader.sprs[RomReader.file_records["WEP.SPR"].type_index]
+	animation_manager.wep_shp = RomReader.shps[RomReader.file_records["WEP1.SHP"].type_index]
+	animation_manager.wep_seq = RomReader.seqs[RomReader.file_records["WEP1.SEQ"].type_index]
 
+	animation_manager.eff_spr = RomReader.sprs[RomReader.file_records["EFF.SPR"].type_index]
+	animation_manager.eff_shp = RomReader.shps[RomReader.file_records["EFF1.SHP"].type_index]
+	animation_manager.eff_seq = RomReader.seqs[RomReader.file_records["EFF1.SEQ"].type_index]
+
+	animation_manager.item_spr = RomReader.sprs[RomReader.file_records["ITEM.BIN"].type_index]
+	animation_manager.item_shp = RomReader.shps[RomReader.file_records["ITEM.SHP"].type_index]
+
+	animation_manager.other_spr = RomReader.sprs[RomReader.file_records["OTHER.SPR"].type_index]
+	animation_manager.other_shp = RomReader.shps[RomReader.file_records["OTHER.SHP"].type_index]
 
 func _on_anim_id_spin_value_changed(value: int) -> void:
 	animation_manager.global_animation_id = value

@@ -235,6 +235,9 @@ text = "Animation ID: "
 
 [node name="AnimIdSpinBox" type="SpinBox" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
 layout_mode = 2
+max_value = 256.0
+rounded = true
+select_all_on_focus = true
 
 [node name="Weapon" type="Label" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
 layout_mode = 2

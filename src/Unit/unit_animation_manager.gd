@@ -1,6 +1,7 @@
 class_name UnitAnimationManager
 extends Node3D
 
+@export var unit_debug_menu: UnitDebugMenu
 
 #@export var ui_manager: UiManager
 @export var unit_sprites_manager: UnitSpritesManager
@@ -23,11 +24,8 @@ var item_shp: Shp
 var other_spr: Spr
 var other_shp: Shp
 
-@export var weapon_options: OptionButton
-@export var item_options: OptionButton
 @export var weapon_id: int = 0
 @export var item_index: int = 0
-@export var other_type_options: OptionButton
 @export var submerged_depth: int = 0
 @export var face_right: bool = false
 #@export var is_playing_check: CheckBox
@@ -42,8 +40,8 @@ static var item_list: Array[PackedStringArray] = []
 
 @export var animation_is_playing: bool = true
 @export var animation_speed: float = 59 # frames per sec
-@export var animation_slider: Slider
-@export var opcode_text: LineEdit
+#@export var animation_slider: Slider
+#@export var opcode_text: LineEdit
 var opcode_frame_offset: int = 0
 var weapon_sheathe_check1_delay: int = 0
 var weapon_sheathe_check2_delay: int = 10
@@ -87,15 +85,7 @@ func _ready() -> void:
 	if item_list.size() == 0:
 		item_list = load_csv(item_list_filepath)
 	
-	weapon_options.clear()
-	for weapon_index: int in weapon_table.size():
-		weapon_options.add_item(str(weapon_table[weapon_index][0]))
-	
-	item_options.clear()
-	for item_list_index: int in item_list.size():
-		if item_list[item_list_index].size() < 2: # ignore blank lines
-			break
-		item_options.add_item(str(item_list[item_list_index][1]))
+	unit_debug_menu.populate_options()
 
 
 func load_csv(filepath: String) -> Array[PackedStringArray]:
@@ -113,15 +103,6 @@ func load_csv(filepath: String) -> Array[PackedStringArray]:
 		table.append(lines[line_index].split(","))
 
 	return table
-
-
-func enable_ui() -> void:
-	weapon_options.disabled = false
-	item_options.disabled = false
-	other_type_options.disabled = false
-	#submerged_depth_options.disabled = false
-	#face_right_check.disabled = false
-	#is_playing_check.disabled = false
 
 
 func start_animation(fft_animation: FftAnimation, draw_target: Sprite3D, is_playing: bool, isLooping: bool, force_loop: bool = false) -> void:
@@ -202,19 +183,19 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			draw_target.texture = ImageTexture.create_from_image(assembled_image)
 		else:
 			var assembled_image: Image = fft_animation.shp.get_assembled_frame(
-					new_frame_id, fft_animation.image, global_animation_id, other_type_options.selected, weapon_v_offset, submerged_depth)
+					new_frame_id, fft_animation.image, global_animation_id, unit_debug_menu.other_type_options.selected, weapon_v_offset, submerged_depth)
 			draw_target.texture = ImageTexture.create_from_image(assembled_image)
 			var y_rotation: float = fft_animation.shp.get_frame(new_frame_id, fft_animation.submerged_depth).y_rotation
 			if fft_animation.flipped_h != fft_animation.flipped_v:
 				y_rotation = -y_rotation
-			(draw_target.get_parent() as Node2D).rotation_degrees = y_rotation
+			(draw_target.get_parent() as Node3D).rotation_degrees = Vector3(0, 0, y_rotation)
 	
 	# only update ui for primary animation, not animations called through opcodes
-	if fft_animation.is_primary_anim:
-		animation_slider.value = seq_part_id
-		opcode_text.text = seq_part.to_string()
+	#if fft_animation.is_primary_anim:
+		#animation_slider.value = seq_part_id
+		#opcode_text.text = seq_part.to_string()
 	
-	var position_offset: Vector2 = Vector2.ZERO
+	var position_offset: Vector3 = Vector3.ZERO
 	
 	# Handle opcodes
 	if seq_part.isOpcode:
@@ -250,36 +231,50 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				push_warning("Error: QueueSpriteAnim: " + seq_part.to_string() + "\n" + fft_animation.sequence.to_string())
 		elif seq_part.opcode_name.begins_with("Move"):
 			if seq_part.opcode_name == "MoveUnitFB":
-				position_offset = Vector2(-(seq_part.parameters[0]), 0) # assume facing left
+				#position_offset = Vector2(-seq_part.parameters[0], 0) # assume facing left
+				position_offset = Vector3(-seq_part.parameters[0], 0, 0) # assume facing left
 			elif seq_part.opcode_name == "MoveUnitDU":
-				position_offset = Vector2(0, seq_part.parameters[0])
+				#position_offset = Vector2(0, seq_part.parameters[0])
+				position_offset = Vector3(0, seq_part.parameters[0], 0)
 			elif seq_part.opcode_name == "MoveUnitRL":
-				position_offset = Vector2(seq_part.parameters[0], 0)
+				#position_offset = Vector2(seq_part.parameters[0], 0)
+				position_offset = Vector3(seq_part.parameters[0], 0, 0)
 			elif seq_part.opcode_name == "MoveUnitRLDUFB":
-				position_offset = Vector2((seq_part.parameters[0]) - (seq_part.parameters[2]), seq_part.parameters[1]) # assume facing left
+				#position_offset = Vector2((seq_part.parameters[0]) - (seq_part.parameters[2]), seq_part.parameters[1]) # assume facing left
+				position_offset = Vector3((seq_part.parameters[0]) - (seq_part.parameters[2]), seq_part.parameters[1], 0) # assume facing left
 			elif seq_part.opcode_name == "MoveUp1":
-				position_offset = Vector2(0, -1)
+				#position_offset = Vector2(0, -1)
+				position_offset = Vector3(0, -1, 0)
 			elif seq_part.opcode_name == "MoveUp2":
-				position_offset = Vector2(0, -2)
+				#position_offset = Vector2(0, -2)
+				position_offset = Vector3(0, -2, 0)
 			elif seq_part.opcode_name == "MoveDown1":
-				position_offset = Vector2(0, 1)
+				#position_offset = Vector2(0, 1)
+				position_offset = Vector3(0, 1, 0)
 			elif seq_part.opcode_name == "MoveDown2":
-				position_offset = Vector2(0, 2)
+				#position_offset = Vector2(0, 2)
+				position_offset = Vector3(0, 2, 0)
 			elif seq_part.opcode_name == "MoveBackward1":
-				position_offset = Vector2(1, 0) # assume facing left
+				#position_offset = Vector2(1, 0) # assume facing left
+				position_offset = Vector3(1, 0, 0) # assume facing left
 			elif seq_part.opcode_name == "MoveBackward2":
-				position_offset = Vector2(2, 0) # assume facing left
+				#position_offset = Vector2(2, 0) # assume facing left
+				position_offset = Vector3(2, 0, 0) # assume facing left
 			elif seq_part.opcode_name == "MoveForward1":
-				position_offset = Vector2(-1, 0) # assume facing left
+				#position_offset = Vector2(-1, 0) # assume facing left
+				position_offset = Vector3(-1, 0, 0) # assume facing left
 			elif seq_part.opcode_name == "MoveForward2":
-				position_offset = Vector2(-2, 0) # assume facing left
+				#position_offset = Vector2(-2, 0) # assume facing left
+				position_offset = Vector3(-2, 0, 0) # assume facing left
 			else:
 				print_debug("can't inerpret " + seq_part.opcode_name)
 				push_warning("can't inerpret " + seq_part.opcode_name)
 			
 			if fft_animation.flipped_h:
-				position_offset = Vector2(-position_offset.x, position_offset.y)
-			(draw_target.get_parent().get_parent() as Node2D).position += position_offset
+				position_offset = position_offset * Vector3(-1, 1, 1)
+				
+			unit_sprites_manager.position += position_offset * MapViewer.SCALE
+			#(draw_target.get_parent().get_parent() as Node3D).position += position_offset
 		elif seq_part.opcode_name == "SetLayerPriority":
 			# print(layer_priority_table)
 			var layer_priority: Array = layer_priority_table[seq_part.parameters[0]]
@@ -323,20 +318,20 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				
 				if item_index <= 187: # load crystal
 					item_frame_id = item_index - 179
-					other_type_options.select(2) # to update ui
+					unit_debug_menu.other_type_options.select(2) # to update ui
 					#other_type_index = 2 # to set v_offset is correct
 				elif item_index == 188: # load chest 1
 					item_frame_id = 15
-					other_type_options.select(0)
+					unit_debug_menu.other_type_options.select(0)
 					#other_type_index = 0
 				elif item_index == 189: # load chest 2
 					item_frame_id = 16
-					other_type_options.select(0)
+					unit_debug_menu.other_type_options.select(0)
 					#other_type_index = 0
 			
 			frame_id_label = str(item_index)
 			
-			var assembled_image: Image = item_sheet_type.get_assembled_frame(item_frame_id, item_image, global_animation_id, other_type_options.selected, weapon_v_offset, submerged_depth)
+			var assembled_image: Image = item_sheet_type.get_assembled_frame(item_frame_id, item_image, global_animation_id, unit_debug_menu.other_type_options.selected, weapon_v_offset, submerged_depth)
 			var target_sprite: Sprite3D = unit_sprites_manager.sprite_item
 			target_sprite.texture = ImageTexture.create_from_image(assembled_image)
 			var y_rotation: float = item_sheet_type.get_frame(item_frame_id, submerged_depth).y_rotation
@@ -458,8 +453,8 @@ func _on_animation_changed() -> void:
 	var new_fft_animation: FftAnimation = get_animation_from_globals()
 	
 	var num_parts: int = new_fft_animation.sequence.seq_parts.size()
-	animation_slider.tick_count = num_parts
-	animation_slider.max_value = num_parts - 1
+	#animation_slider.tick_count = num_parts
+	#animation_slider.max_value = num_parts - 1
 	
 	start_animation(new_fft_animation, unit_sprites_manager.sprite_primary, animation_is_playing, true)
 
@@ -495,10 +490,10 @@ func _on_weapon_options_item_selected(index: int) -> void:
 
 func _on_is_playing_check_box_toggled(toggled_on: bool) -> void:
 	animation_is_playing = toggled_on
-	animation_slider.editable = !toggled_on
+	#animation_slider.editable = !toggled_on
 	
-	if (!toggled_on):
-		animation_slider.value = 0
+	#if (!toggled_on):
+		#animation_slider.value = 0
 	
 	if global_seq.sequences.size() == 0:
 		return

@@ -1,4 +1,5 @@
-class_name RomReader
+#class_name RomReader
+extends Node
 
 signal rom_loaded
 
@@ -18,6 +19,8 @@ const BYTES_PER_SECTOR_FOOTER: int = 280
 const DATA_BYTES_PER_SECTOR: int = 2048
 
 static var sprs: Array[Spr] = []
+static var spr_file_name_to_id: Dictionary = {}
+
 static var shps: Array[Shp] = []
 static var seqs: Array[Seq] = []
 static var maps: Array[MapData] = []
@@ -36,9 +39,10 @@ func on_load_rom_dialog_file_selected(path: String) -> void:
 	process_rom(rom)
 
 
-func clear_data() -> void:
+static func clear_data() -> void:
 	file_records.clear()
 	sprs.clear()
+	spr_file_name_to_id.clear()
 	shps.clear()
 	seqs.clear()
 	maps.clear()
@@ -72,16 +76,15 @@ func process_rom(new_rom: PackedByteArray) -> void:
 			if file_extension == "SPR":
 				record.type_index = sprs.size()
 				sprs.append(Spr.new(record.name))
-			if file_extension == "SHP":
+			elif file_extension == "SHP":
 				record.type_index = shps.size()
 				shps.append(Shp.new(record.name))
-			if file_extension == "SEQ":
+			elif file_extension == "SEQ":
 				record.type_index = seqs.size()
 				seqs.append(Seq.new(record.name))
-			if file_extension == "GNS":
+			elif file_extension == "GNS":
 				record.type_index = maps.size()
 				maps.append(MapData.new(record.name))
-			
 			
 			byte_index += record_length
 			if directory_data.decode_u8(byte_index) == 0: # end of data, rest of sector will be padded with zeros
@@ -89,7 +92,31 @@ func process_rom(new_rom: PackedByteArray) -> void:
 	
 	push_warning("Time to process ROM (ms): " + str(Time.get_ticks_msec() - start_time))
 	
+	_load_battle_bin_sprite_data()
 	rom_loaded.emit()
+
+
+# https://ffhacktics.com/wiki/BATTLE.BIN_Data_Tables#Animation_.26_Display_Related_Data
+func _load_battle_bin_sprite_data() -> void:
+	# get BATTLE.BIN file data
+	# get item graphics
+	var battle_bin_record: FileRecord = FileRecord.new()
+	battle_bin_record.sector_location = 1000 # ITEM.BIN is in EVENT not BATTLE, so needs a new record created
+	battle_bin_record.size = 1397096
+	battle_bin_record.name = "BATTLE.BIN"
+	file_records[battle_bin_record.name] = battle_bin_record
+	
+	# look up spr file_name based on LBA
+	var spritesheet_file_data_length: int = 8
+	var battle_bin_bytes: PackedByteArray = file_records["BATTLE.BIN"].get_file_data(rom)
+	for sprite_id: int in range(0, 0x9f):
+		var spritesheet_file_data_start: int = 0x2dcd4 + (sprite_id * spritesheet_file_data_length)
+		var spritesheet_file_data_bytes: PackedByteArray = battle_bin_bytes.slice(spritesheet_file_data_start, spritesheet_file_data_start + spritesheet_file_data_length)
+		var spritesheet_lba: int = spritesheet_file_data_bytes.decode_u32(0)
+		var spritesheet_file_name: String = ""
+		if spritesheet_lba != 0:
+			spritesheet_file_name = lba_to_file_name[spritesheet_lba]
+		spr_file_name_to_id[spritesheet_file_name] = sprite_id
 
 
 static func get_file_data(file_name: String) -> PackedByteArray:

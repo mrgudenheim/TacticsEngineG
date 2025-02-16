@@ -34,18 +34,17 @@ func get_sub_spr(new_name: String, start_pixel: int, end_pixel: int) -> Spr:
 	return sub_spr
 
 
-func set_data(spr_file: PackedByteArray, new_name: String) -> void:
-	file_name = new_name
-	if file_name.to_upper().contains("OTHER"):
+func set_data(spr_file: PackedByteArray) -> void:
+	if file_name == "OTHER.SPR":
 		num_colors = 512
 		has_compressed = false
-	elif (file_name.to_upper().contains("WEP") 
-		or file_name.to_upper().contains("EFF")
-		or file_name.to_upper().contains("0")
-		or file_name.to_upper().contains("CYOMON")
-		or file_name.to_upper().contains("DAMI")
-		or file_name.to_upper().contains("FURAIA")
-		or file_name.to_upper().contains("ITEM")
+	elif (file_name.contains("WEP") 
+		or file_name.contains("EFF")
+		or file_name.contains("0")
+		or file_name.contains("CYOMON")
+		or file_name.contains("DAMI")
+		or file_name.contains("FURAIA")
+		or file_name.contains("ITEM")
 		):
 			has_compressed = false
 	
@@ -67,6 +66,8 @@ func set_data(spr_file: PackedByteArray, new_name: String) -> void:
 	color_indices = set_color_indices(spr_total_decompressed_bytes)
 	set_pixel_colors()
 	spritesheet = get_rgba8_image()
+	
+	set_sp2s()
 	
 	is_initialized = true
 
@@ -196,25 +197,26 @@ func decompress(compressed_bytes: PackedByteArray) -> PackedByteArray:
 	return decompressed_bytes
 
 
-func set_sp2s(file_records: Dictionary, rom: PackedByteArray) -> void:
+func set_sp2s() -> void:
 	var sp2_name_base: String = file_name.get_basename()
 	if sp2_name_base == "TETSU":
 		sp2_name_base = "IRON"
 	
 	for file_num: int in range(5):
 		var sp2_name: String = sp2_name_base + str(file_num) + ".SP2"
-		if file_records.has(sp2_name):
-			var file_record: FileRecord = file_records[sp2_name]
-			var sp2_data: PackedByteArray = file_record.get_file_data(rom)
+		if RomReader.file_records.has(sp2_name):
+			var sp2_data: PackedByteArray = RomReader.get_file_data(sp2_name)
 			color_indices.append_array(set_color_indices(sp2_data))
 	
 	set_pixel_colors()
 	spritesheet = get_rgba8_image()
 
 
-func set_spritesheet_data(new_sprite_id: int, battle_bin_bytes: PackedByteArray) -> void:
+func set_spritesheet_data(new_sprite_id: int) -> void:
 	# WEP and EFF partially handled directly in preview_manager QueueSpriteAnim opcode
 	# TODO handle WEP and EFF when direclty selected
+	var battle_bin_bytes: PackedByteArray = RomReader.get_file_data("BATTLE.BIN")
+	
 	sprite_id = new_sprite_id
 	var spritesheet_data_length: int = 4
 	var spritesheet_data_start: int = 0x2d748 + (sprite_id * spritesheet_data_length)

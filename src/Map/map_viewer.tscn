@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://card26cltbba1"]
+[gd_scene load_steps=25 format=3 uid="uid://card26cltbba1"]
 
 [ext_resource type="Script" path="res://src/Map/map_viewer.gd" id="1_ojbyw"]
 [ext_resource type="PackedScene" uid="uid://26tg32417lfm" path="res://src/load_rom.tscn" id="2_4wnqg"]
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://buljw4afjva1d" path="res://src/Map/map.tscn" id="8_0n3mn"]
 [ext_resource type="PackedScene" uid="uid://cw8mvbkue4ibk" path="res://src/Unit/unit_sprites_manager.tscn" id="9_81hnw"]
 [ext_resource type="Script" path="res://src/Unit/unit_animation_manager.gd" id="9_rgxyk"]
+[ext_resource type="Script" path="res://src/Map/unit_debug_menu.gd" id="11_wboi1"]
 
 [sub_resource type="Environment" id="Environment_njvnp"]
 background_mode = 3
@@ -47,6 +48,7 @@ radius = 0.25
 height = 0.5
 
 [sub_resource type="Gradient" id="Gradient_gjfh4"]
+offsets = PackedFloat32Array(0.594937, 1)
 colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 0)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_6vwfi"]
@@ -61,9 +63,11 @@ metadata/_snap_enabled = true
 [sub_resource type="QuadMesh" id="QuadMesh_foefj"]
 material = SubResource("StandardMaterial3D_05x7e")
 
-[node name="MapViewer" type="Node3D" node_paths=PackedStringArray("load_rom", "texture_viewer", "camera_controller", "background_gradient", "map_dropdown", "menu_reminder", "map_size_label", "maps", "unit")]
+[node name="MapViewer" type="Node3D" node_paths=PackedStringArray("load_rom_button", "texture_viewer", "camera_controller", "background_gradient", "map_dropdown", "menu_reminder", "map_size_label", "maps", "unit")]
 script = ExtResource("1_ojbyw")
-load_rom = NodePath("PanelContainer/MarginContainer/VBoxContainer/LoadRom")
+map_tscn = ExtResource("8_0n3mn")
+mirror = null
+load_rom_button = NodePath("PanelContainer/MarginContainer/VBoxContainer/LoadRom")
 texture_viewer = NodePath("MapTexture")
 camera_controller = NodePath("CameraController")
 background_gradient = NodePath("BackgroundCanvasLayer/TextureRect")
@@ -71,9 +75,7 @@ map_dropdown = NodePath("PanelContainer/MarginContainer/VBoxContainer/MapDropdow
 menu_reminder = NodePath("PanelContainer/MarginContainer/VBoxContainer/MenuReminder")
 map_size_label = NodePath("PanelContainer/MarginContainer/VBoxContainer/MapSize")
 maps = NodePath("Maps")
-map_tscn = ExtResource("8_0n3mn")
 unit = NodePath("Unit/CharacterBody3D")
-mirror = false
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_njvnp")
@@ -81,7 +83,7 @@ environment = SubResource("Environment_njvnp")
 [node name="CameraPivot" type="Node3D" parent="."]
 
 [node name="PhantomCamera3D" type="Node3D" parent="CameraPivot" node_paths=PackedStringArray("follow_target")]
-transform = Transform3D(0.707107, -0.31551, 0.632763, 1.49012e-08, 0.894934, 0.446163, -0.707107, -0.31551, 0.632763, 126.053, 89.2326, 126.553)
+transform = Transform3D(0.707107, -0.31551, 0.632763, 1.49012e-08, 0.894934, 0.446163, -0.707107, -0.31551, 0.632763, 126.553, 89.2326, 126.553)
 script = ExtResource("3_a072s")
 follow_mode = 6
 follow_target = NodePath("../../Unit/CharacterBody3D")
@@ -93,7 +95,7 @@ collision_mask = 0
 look_at_damping = true
 
 [node name="Camera3D" type="Camera3D" parent="CameraPivot"]
-transform = Transform3D(0.707107, -0.31551, 0.632814, 1.49012e-08, 0.894934, 0.446199, -0.707107, -0.31551, 0.632814, 126.053, 89.2326, 126.553)
+transform = Transform3D(0.707107, -0.31551, 0.632814, 1.49012e-08, 0.894934, 0.446199, -0.707107, -0.31551, 0.632814, 126.553, 89.2326, 126.553)
 projection = 1
 size = 12.0
 
@@ -161,7 +163,7 @@ texture = SubResource("GradientTexture2D_1dnhu")
 [node name="Unit" type="Node3D" parent="."]
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="Unit" node_paths=PackedStringArray("camera_pivot", "phantom_camera")]
-transform = Transform3D(0.707107, 0, 0.707107, 0, 0.999999, 0, -0.707107, 0, 0.707107, -0.5, 0, 0)
+transform = Transform3D(0.707107, 0, 0.707107, 0, 0.999999, 0, -0.707107, 0, 0.707107, 0, 0, 0)
 axis_lock_angular_x = true
 axis_lock_angular_y = true
 axis_lock_angular_z = true
@@ -172,10 +174,10 @@ phantom_camera = NodePath("../../CameraPivot/PhantomCamera3D")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Unit/CharacterBody3D"]
 shape = SubResource("CapsuleShape3D_omsuf")
 
-[node name="UnitReferenceSphere" type="MeshInstance3D" parent="Unit/CharacterBody3D"]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, -1.49012e-08, 0, -1.49012e-08, 0.5, 0, 0, 0)
+[node name="UnitReferenceSphere" type="MeshInstance3D" parent="Unit/CharacterBody3D/CollisionShape3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 2.98024e-08, 0, -2.98024e-08, 1, 0, 0, 0)
+visible = false
 mesh = SubResource("CapsuleMesh_46deq")
-skeleton = NodePath("../../../CameraController")
 
 [node name="ShadowSpringArm3D" type="SpringArm3D" parent="Unit/CharacterBody3D"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
@@ -184,17 +186,76 @@ spring_length = 5.0
 [node name="DropShadowSprite3D" type="Sprite3D" parent="Unit/CharacterBody3D/ShadowSpringArm3D"]
 texture = SubResource("GradientTexture2D_6vwfi")
 
-[node name="UnitAnimationManager" type="Node3D" parent="Unit/CharacterBody3D"]
+[node name="UnitAnimationManager" type="Node3D" parent="Unit/CharacterBody3D" node_paths=PackedStringArray("unit_debug_menu", "unit_sprites_manager")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.643, 0)
 script = ExtResource("9_rgxyk")
-layer_priority_table_filepath = null
-weapon_table_filepath = null
-item_list_filepath = null
-animation_is_playing = null
-animation_speed = null
-weapon_shp_num = null
-global_animation_id = null
+unit_debug_menu = NodePath("../UnitDebugMenu")
+unit_sprites_manager = NodePath("UnitSpritesManager")
+layer_priority_table_filepath = "res://src/fftae/layer_priority_table.txt"
+weapon_table_filepath = "res://src/fftae/weapons.txt"
+item_list_filepath = "res://src/fftae/item_list.txt"
 
 [node name="UnitSpritesManager" parent="Unit/CharacterBody3D/UnitAnimationManager" instance=ExtResource("9_81hnw")]
+
+[node name="UnitDebugMenu" type="Control" parent="Unit/CharacterBody3D" node_paths=PackedStringArray("animation_manager", "sprite_options", "anim_id_spin", "weapon_options", "item_options", "other_type_options")]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("11_wboi1")
+animation_manager = NodePath("../UnitAnimationManager")
+sprite_options = NodePath("PanelContainer/MarginContainer/GridContainer/SprOptionButton")
+anim_id_spin = NodePath("PanelContainer/MarginContainer/GridContainer/AnimIdSpinBox")
+weapon_options = NodePath("PanelContainer/MarginContainer/GridContainer/WeaponOptionButton")
+item_options = NodePath("PanelContainer/MarginContainer/GridContainer/ItemOptionButton")
+other_type_options = NodePath("PanelContainer/MarginContainer/GridContainer/OtherTypeOptionButton")
+
+[node name="PanelContainer" type="PanelContainer" parent="Unit/CharacterBody3D/UnitDebugMenu"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="MarginContainer" type="MarginContainer" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer"]
+layout_mode = 2
+
+[node name="GridContainer" type="GridContainer" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer"]
+layout_mode = 2
+columns = 2
+
+[node name="Sprite" type="Label" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
+layout_mode = 2
+text = "Sprite: "
+
+[node name="SprOptionButton" type="OptionButton" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
+layout_mode = 2
+
+[node name="AnimationId" type="Label" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
+layout_mode = 2
+text = "Animation ID: "
+
+[node name="AnimIdSpinBox" type="SpinBox" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
+layout_mode = 2
+
+[node name="Weapon" type="Label" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
+layout_mode = 2
+text = "Weapon: "
+
+[node name="WeaponOptionButton" type="OptionButton" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
+layout_mode = 2
+
+[node name="Item" type="Label" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
+layout_mode = 2
+text = "Item: "
+
+[node name="ItemOptionButton" type="OptionButton" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
+layout_mode = 2
+
+[node name="Other Type" type="Label" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
+layout_mode = 2
+text = "Other: "
+
+[node name="OtherTypeOptionButton" type="OptionButton" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
+layout_mode = 2
 
 [node name="MapTexture" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, -75, 0, 0)

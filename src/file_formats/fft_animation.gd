@@ -1,7 +1,7 @@
 class_name FftAnimation
 
-var seq := Seq.new()
-var shp := Shp.new()
+var seq: Seq
+var shp: Shp
 var sequence := Sequence.new()
 var image: Image
 

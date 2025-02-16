@@ -47,8 +47,7 @@ var seq: Seq:
 		if seqs.has(file_name):
 			return seqs[file_name]
 		else:
-			var new_seq: Seq = Seq.new()
-			new_seq.set_name(file_name)
+			var new_seq: Seq = Seq.new(file_name)
 			new_seq.set_data_from_seq_bytes(file_records[file_name].get_file_data(rom))
 			seqs[file_name] = new_seq
 			return seqs[file_name]
@@ -59,9 +58,8 @@ var shp: Shp:
 		if shps.has(file_name):
 			return shps[file_name]
 		else:
-			var new_shp: Shp = Shp.new()
-			new_shp.set_data_from_shp_bytes(file_records[file_name].get_file_data(rom), file_name)
-			shps[file_name] = new_shp
+			var new_shp: Shp = Shp.new(file_name)
+			new_shp.set_data_from_shp_bytes(file_records[file_name].get_file_data(rom))
 			return shps[file_name]
 
 var spr: Spr:
@@ -70,10 +68,9 @@ var spr: Spr:
 		if sprs.has(file_name):
 			return sprs[file_name]
 		else:
-			var new_spr: Spr = Spr.new()
-			new_spr.set_data(file_records[file_name].get_file_data(rom), file_name.get_basename())
-			new_spr.set_sp2s(file_records, rom)
-			new_spr.set_spritesheet_data(spr_file_name_to_id[file_name], file_records["BATTLE.BIN"].get_file_data(rom))
+			var new_spr: Spr = Spr.new(file_name)
+			new_spr.set_data(file_records[file_name].get_file_data(rom))
+			new_spr.set_spritesheet_data(spr_file_name_to_id[file_name])
 			sprs[file_name] = new_spr
 			return sprs[file_name]
 
@@ -203,7 +200,7 @@ func _on_save_as_seq_pressed() -> void:
 
 
 func _on_load_file_dialog_file_selected(path: String) -> void:
-	seq = Seq.new()
+	seq = Seq.new(path.get_file())
 	seq.set_data_from_seq_file(path)
 	ui_manager.on_seq_data_loaded(seq)
 	save_xml_button.disabled = false
@@ -321,25 +318,23 @@ func cache_associated_files() -> void:
 	for file_name: String in associated_file_names:
 		match file_name.get_extension():
 			"SPR":
-				var new_spr: Spr = Spr.new()
-				new_spr.set_data(file_records[file_name].get_file_data(rom), file_name.get_basename())
-				new_spr.set_sp2s(file_records, rom)
+				var new_spr: Spr = Spr.new(file_name)
+				new_spr.set_data(RomReader.get_file_data(file_name))
 				sprs[file_name] = new_spr
 			"SHP":
-				var new_shp: Shp = Shp.new()
-				new_shp.set_data_from_shp_bytes(file_records[file_name].get_file_data(rom), file_name)
+				var new_shp: Shp = Shp.new(file_name)
+				new_shp.set_data_from_shp_bytes(RomReader.get_file_data(file_name))
 				shps[file_name] = new_shp
 			"SEQ":
-				var new_seq: Seq = Seq.new()
-				new_seq.set_name(file_name)
-				new_seq.set_data_from_seq_bytes(file_records[file_name].get_file_data(rom))
+				var new_seq: Seq = Seq.new(file_name)
+				new_seq.set_data_from_seq_bytes(RomReader.get_file_data(file_name))
 				seqs[file_name] = new_seq
 	
 	# getting effect / weapon trail / glint
 	var eff_spr_name: String = "EFF.SPR"
-	var eff_spr: Spr = Spr.new()
+	var eff_spr: Spr = Spr.new(eff_spr_name)
 	eff_spr.height = 144
-	eff_spr.set_data(file_records["WEP.SPR"].get_file_data(rom).slice(0x8200, 0x10400), eff_spr_name)
+	eff_spr.set_data(file_records["WEP.SPR"].get_file_data(rom).slice(0x8200, 0x10400))
 	eff_spr.shp_name = "EFF1.SHP"
 	eff_spr.seq_name = "EFF1.SEQ"
 	sprs[eff_spr_name] = eff_spr
@@ -357,7 +352,7 @@ func cache_associated_files() -> void:
 	
 	# get shp for item graphics
 	var item_shp_name: String = "ITEM.SHP"
-	var item_shp: Shp = Shp.new()
+	var item_shp: Shp = Shp.new(item_shp_name)
 	item_shp.set_name(item_shp_name)
 	item_shp.set_frames_from_csv(item_frames_csv_filepath)
 	shps[item_shp_name] = item_shp
@@ -370,7 +365,7 @@ func cache_associated_files() -> void:
 	file_records[item_record.name] = item_record
 	
 	var item_spr_data: PackedByteArray = file_records[item_record.name].get_file_data(rom)
-	var item_spr: Spr = Spr.new()
+	var item_spr: Spr = Spr.new(item_record.name)
 	item_spr.height = 256
 	item_spr.set_palette_data(item_spr_data.slice(0x8000, 0x8200))
 	item_spr.color_indices = item_spr.set_color_indices(item_spr_data.slice(0, 0x8000))

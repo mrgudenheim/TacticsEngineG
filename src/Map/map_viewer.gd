@@ -1,7 +1,9 @@
+class_name MapViewer
 extends Node3D
 
-var rom_reader: RomReader = RomReader.new()
-@export var load_rom: LoadRomButton
+#var rom_reader: RomReader = RomReader.new()
+static var main_camera: Camera3D
+@export var load_rom_button: LoadRomButton
 @export var texture_viewer: Sprite3D
 @export var camera_controller: CameraController
 @export var background_gradient: TextureRect
@@ -21,15 +23,17 @@ const SCALED_UNITS_PER_HEIGHT: float = SCALE * MapData.UNITS_PER_HEIGHT
 
 
 func _ready() -> void:
-	load_rom.file_selected.connect(rom_reader.on_load_rom_dialog_file_selected)
-	rom_reader.rom_loaded.connect(on_rom_loaded)
+	main_camera = get_viewport().get_camera_3d()
+	
+	load_rom_button.file_selected.connect(RomReader.on_load_rom_dialog_file_selected)
+	RomReader.rom_loaded.connect(on_rom_loaded)
 	map_dropdown.item_selected.connect(on_map_selected)
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		map_dropdown.visible = not map_dropdown.visible
-		load_rom.visible = not load_rom.visible
+		load_rom_button.visible = not load_rom_button.visible
 		menu_reminder.visible = not menu_reminder.visible
 
 
@@ -95,7 +99,7 @@ func on_map_selected(index: int) -> void:
 	unit.global_position = Vector3(5.5, 15, -5.5)
 	
 	map_dropdown.visible = false
-	load_rom.visible = false
+	load_rom_button.visible = false
 	menu_reminder.visible = true
 
 

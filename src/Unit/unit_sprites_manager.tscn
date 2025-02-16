@@ -13,17 +13,34 @@ sprite_background = NodePath("BackgroundSprite3D")
 
 [node name="UnitSprite3D" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, 0, 0, 0)
+pixel_size = 0.0357
+billboard = 1
+alpha_cut = 1
+texture_filter = 0
 
 [node name="WepSprite3D" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, 0, 0, 0)
+billboard = 1
+alpha_cut = 1
+texture_filter = 0
 
 [node name="EffSprite3D" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, 0, 0, 0)
+billboard = 1
+alpha_cut = 1
+texture_filter = 0
 
 [node name="TextSprite3D" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, 0, 0, 0)
+billboard = 1
+alpha_cut = 1
 
 [node name="ItemSprite3D" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, 0, 0, 0)
+billboard = 1
+alpha_cut = 1
+texture_filter = 0
 
 [node name="BackgroundSprite3D" type="Sprite3D" parent="."]
+billboard = 1
+texture_filter = 0

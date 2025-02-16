@@ -163,7 +163,7 @@ func set_data_from_shp_object(shp_object:Shp) -> void:
 	frames_submerged = shp_object.frames_submerged.duplicate()
 
 
-func set_data_from_shp_file(filepath:String) -> void:	
+func set_data_from_shp_file(filepath:String) -> void:
 	var new_file_name:String = filepath.get_file()
 	
 	var bytes:PackedByteArray = FileAccess.get_file_as_bytes(filepath)
@@ -171,7 +171,7 @@ func set_data_from_shp_file(filepath:String) -> void:
 		push_warning("Open Error: " + filepath)
 		return
 	else:
-		set_data_from_shp_bytes(bytes, new_file_name)
+		set_data_from_shp_bytes(bytes)
 
 
 func set_name(new_file_name: String) -> void:
@@ -188,9 +188,7 @@ func set_name(new_file_name: String) -> void:
 		name_alias = file_name
 
 
-func set_data_from_shp_bytes(bytes: PackedByteArray, new_name: String) -> void:	
-	set_name(new_name)
-	
+func set_data_from_shp_bytes(bytes: PackedByteArray) -> void:
 	swim_pointer = bytes.decode_u32(0)
 	attack_start_index = bytes.decode_u16(4)
 	sp_extra = bytes.decode_u16(6)

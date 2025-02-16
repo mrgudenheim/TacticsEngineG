@@ -235,25 +235,25 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				position_offset = Vector3(-seq_part.parameters[0], 0, 0) # assume facing left
 			elif seq_part.opcode_name == "MoveUnitDU":
 				#position_offset = Vector2(0, seq_part.parameters[0])
-				position_offset = Vector3(0, seq_part.parameters[0], 0)
+				position_offset = Vector3(0, -seq_part.parameters[0], 0)
 			elif seq_part.opcode_name == "MoveUnitRL":
 				#position_offset = Vector2(seq_part.parameters[0], 0)
 				position_offset = Vector3(seq_part.parameters[0], 0, 0)
 			elif seq_part.opcode_name == "MoveUnitRLDUFB":
 				#position_offset = Vector2((seq_part.parameters[0]) - (seq_part.parameters[2]), seq_part.parameters[1]) # assume facing left
-				position_offset = Vector3((seq_part.parameters[0]) - (seq_part.parameters[2]), seq_part.parameters[1], 0) # assume facing left
+				position_offset = Vector3((seq_part.parameters[0]) - (seq_part.parameters[2]), -seq_part.parameters[1], 0) # assume facing left
 			elif seq_part.opcode_name == "MoveUp1":
 				#position_offset = Vector2(0, -1)
-				position_offset = Vector3(0, -1, 0)
+				position_offset = Vector3(0, 1, 0)
 			elif seq_part.opcode_name == "MoveUp2":
 				#position_offset = Vector2(0, -2)
-				position_offset = Vector3(0, -2, 0)
+				position_offset = Vector3(0, 2, 0)
 			elif seq_part.opcode_name == "MoveDown1":
 				#position_offset = Vector2(0, 1)
-				position_offset = Vector3(0, 1, 0)
+				position_offset = Vector3(0, -1, 0)
 			elif seq_part.opcode_name == "MoveDown2":
 				#position_offset = Vector2(0, 2)
-				position_offset = Vector3(0, 2, 0)
+				position_offset = Vector3(0, -2, 0)
 			elif seq_part.opcode_name == "MoveBackward1":
 				#position_offset = Vector2(1, 0) # assume facing left
 				position_offset = Vector3(1, 0, 0) # assume facing left

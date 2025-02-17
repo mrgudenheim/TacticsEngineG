@@ -27,7 +27,7 @@ var other_shp: Shp
 @export var weapon_id: int = 0
 @export var item_index: int = 0
 @export var submerged_depth: int = 0
-@export var face_right: bool = false
+@export var is_right_facing: bool = false
 #@export var is_playing_check: CheckBox
 @export var is_back_facing: bool = false
 
@@ -468,7 +468,7 @@ func reset_sprites() -> void:
 	# reset frame offset
 	opcode_frame_offset = 0
 	
-	unit_sprites_manager.reset_sprites(face_right)
+	unit_sprites_manager.reset_sprites(is_right_facing)
 
 
 func get_animation_from_globals() -> FftAnimation:
@@ -478,7 +478,7 @@ func get_animation_from_globals() -> FftAnimation:
 	fft_animation.sequence = global_seq.sequences[global_animation_id]
 	fft_animation.weapon_frame_offset_index = global_weapon_frame_offset_index
 	fft_animation.image = global_spr.spritesheet
-	fft_animation.flipped_h = face_right
+	fft_animation.flipped_h = is_right_facing
 	fft_animation.flipped_v = false
 	fft_animation.submerged_depth = submerged_depth
 	fft_animation.back_face_offset = 0

@@ -81,13 +81,11 @@ mirror = null
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_njvnp")
 
-[node name="CameraPivot" type="Node3D" parent="."]
-
-[node name="PhantomCamera3D" type="Node3D" parent="CameraPivot" node_paths=PackedStringArray("follow_target")]
+[node name="PhantomCamera3D" type="Node3D" parent="." node_paths=PackedStringArray("follow_target")]
 transform = Transform3D(0.707107, -0.31551, 0.632763, 1.49012e-08, 0.894934, 0.446163, -0.707107, -0.31551, 0.632763, 126.553, 89.2326, 126.553)
 script = ExtResource("3_a072s")
 follow_mode = 6
-follow_target = NodePath("../../Unit/CharacterBody3D")
+follow_target = NodePath("../Unit/CharacterBody3D")
 tween_resource = SubResource("Resource_bid86")
 follow_damping = true
 follow_distance = 200.0
@@ -95,22 +93,24 @@ spring_length = 200.0
 collision_mask = 0
 look_at_damping = true
 
-[node name="Camera3D" type="Camera3D" parent="CameraPivot"]
+[node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(0.707107, -0.31551, 0.632814, 1.49012e-08, 0.894934, 0.446199, -0.707107, -0.31551, 0.632814, 126.553, 89.2326, 126.553)
 projection = 1
 size = 12.0
 
-[node name="PhantomCameraHost" type="Node" parent="CameraPivot/Camera3D"]
+[node name="PhantomCameraHost" type="Node" parent="Camera3D"]
 process_priority = 300
 process_physics_priority = 300
 script = ExtResource("6_yx7fd")
+
+[node name="CameraPivot" type="Node3D" parent="."]
 
 [node name="CameraController" type="Node3D" parent="." node_paths=PackedStringArray("sprite", "camera", "camera_pivot")]
 transform = Transform3D(1, 0, 0, 0, 0.999999, 0, 0, 0, 1, 0, 0, 0)
 visible = false
 script = ExtResource("3_dpuna")
 sprite = NodePath("../MapTexture")
-camera = NodePath("../CameraPivot/Camera3D")
+camera = NodePath("../Camera3D")
 camera_pivot = NodePath("CameraPivot")
 zoom_in_max = 0.5
 
@@ -161,18 +161,18 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("GradientTexture2D_1dnhu")
 
-[node name="Unit" type="Node3D" parent="." node_paths=PackedStringArray("controller")]
+[node name="Unit" type="Node3D" parent="." node_paths=PackedStringArray("controller", "animation_manager")]
 script = ExtResource("8_o41s4")
 controller = NodePath("CharacterBody3D")
+animation_manager = NodePath("CharacterBody3D/UnitAnimationManager")
 
-[node name="CharacterBody3D" type="CharacterBody3D" parent="Unit" node_paths=PackedStringArray("camera_pivot", "phantom_camera")]
+[node name="CharacterBody3D" type="CharacterBody3D" parent="Unit" node_paths=PackedStringArray("phantom_camera")]
 transform = Transform3D(0.707107, 0, 0.707107, 0, 0.999999, 0, -0.707107, 0, 0.707107, 0, 0, 0)
 axis_lock_angular_x = true
 axis_lock_angular_y = true
 axis_lock_angular_z = true
 script = ExtResource("3_wbco3")
-camera_pivot = NodePath("../../CameraPivot")
-phantom_camera = NodePath("../../CameraPivot/PhantomCamera3D")
+phantom_camera = NodePath("../../PhantomCamera3D")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Unit/CharacterBody3D"]
 shape = SubResource("CapsuleShape3D_omsuf")

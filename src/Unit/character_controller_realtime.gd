@@ -12,7 +12,6 @@ const ROTATE_SPEED: float = 300.0 # degrees / sec
 const JUMP_VELOCITY: float = 4.5
 
 @export var phantom_camera: PhantomCamera3D
-var camera_angle: Vector3 = Vector3.ZERO
 var camera_facing: Facings = Facings.NORTHWEST
 
 enum Facings {
@@ -72,39 +71,36 @@ func rotate_camera(dir: int) -> void:
 	var offset: float = dir * ROTATE_INTERVAL
 	
 	var new_x = self.rotation_degrees.x
-	var new_y = self.rotation_degrees.y + offset
+	var new_y = roundi(self.rotation_degrees.y) + offset
 	var new_z = self.rotation_degrees.z
 	self.rotation_degrees = Vector3(new_x, new_y, new_z)
 	
 	new_rotation = Vector3(-26.54, new_y, new_z)
-	phantom_camera.tween_third_person_rotation_degrees(new_rotation, ROTATE_INTERVAL / ROTATE_SPEED)
+	var tween: Tween = create_tween()
+	tween.tween_method(rotate_phantom_camera, MapViewer.main_camera.rotation_degrees, new_rotation, ROTATE_INTERVAL / ROTATE_SPEED)
+	await tween.finished
 	
-	camera_angle = MapViewer.main_camera.rotation_degrees * Vector3(0, 1, 0)
-	var target_angle = fposmod(new_y, 360)
-	var camera_angle_pos = fposmod(camera_angle.y, 360)
-	
-	#push_warning(str(camera_angle_pos) + " " + str(target_angle) + " " + str(new_y))
-	while abs(camera_angle_pos - target_angle) > 0.0001:
-		await get_tree().process_frame
-		camera_angle_pos = fposmod(MapViewer.main_camera.rotation_degrees.y, 360)
-		
-		#push_warning(PackedFloat64Array([camera_angle_pos - target_angle, camera_angle_pos, target_angle]))
-		#push_warning(target_angle)
-		#push_warning(camera_angle_pos - target_angle)
-		
-		var new_camera_facing: Facings = Facings.NORTHEAST
-		if camera_angle_pos < 90:
-			new_camera_facing = Facings.NORTHWEST
-		elif camera_angle_pos < 180:
-			new_camera_facing = Facings.SOUTHWEST
-		elif camera_angle_pos < 270:
-			new_camera_facing = Facings.SOUTHEAST
-		elif camera_angle_pos < 360:
-			new_camera_facing = Facings.NORTHEAST
-		
-		if new_camera_facing != camera_facing:
-			camera_facing = new_camera_facing
-			camera_facing_changed.emit()
-	
-	push_warning(str(camera_facing) + " " + str(roundi(camera_angle_pos)))
+	push_warning(str(camera_facing))
 	is_rotating = false
+
+
+func rotate_phantom_camera(new_rotation_degress: Vector3) -> void:
+	phantom_camera.set_third_person_rotation_degrees(new_rotation_degress)
+	
+	var camera_angle: float = MapViewer.main_camera.rotation_degrees.y
+	#var target_angle = fposmod(new_rotation_degress.y, 360)
+	var camera_angle_pos = fposmod(camera_angle, 360)
+		
+	var new_camera_facing: Facings = Facings.NORTHEAST
+	if camera_angle_pos < 90:
+		new_camera_facing = Facings.NORTHWEST
+	elif camera_angle_pos < 180:
+		new_camera_facing = Facings.SOUTHWEST
+	elif camera_angle_pos < 270:
+		new_camera_facing = Facings.SOUTHEAST
+	elif camera_angle_pos < 360:
+		new_camera_facing = Facings.NORTHEAST
+	
+	if new_camera_facing != camera_facing:
+		camera_facing = new_camera_facing
+		camera_facing_changed.emit()

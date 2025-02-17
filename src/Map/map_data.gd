@@ -572,6 +572,8 @@ func get_associated_files(gns_bytes: PackedByteArray) -> Array[MapFileRecord]:
 		
 		if new_map_file_record.file_type_indicator == 0x2e01:
 			primary_mesh_data_record = new_map_file_record
+		elif primary_mesh_data_record == null and new_map_file_record.file_type_indicator == 0x2f01:
+			primary_mesh_data_record = new_map_file_record
 	
 	if is_instance_valid(primary_mesh_data_record):
 		for record: MapFileRecord in new_map_records:

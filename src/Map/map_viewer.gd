@@ -65,6 +65,7 @@ func on_rom_loaded() -> void:
 
 
 func on_map_selected(index: int) -> void:
+	# TODO fix loading MAP053 Entrance to Death City
 	var map_file_name: String = map_dropdown.get_item_text(index)
 	
 	var start_time: int = Time.get_ticks_msec()

@@ -64,19 +64,21 @@ metadata/_snap_enabled = true
 [sub_resource type="QuadMesh" id="QuadMesh_foefj"]
 material = SubResource("StandardMaterial3D_05x7e")
 
-[node name="MapViewer" type="Node3D" node_paths=PackedStringArray("load_rom_button", "texture_viewer", "camera_controller", "background_gradient", "map_dropdown", "menu_reminder", "map_size_label", "maps", "unit")]
+[node name="MapViewer" type="Node3D" node_paths=PackedStringArray("phantom_camera", "load_rom_button", "texture_viewer", "camera_controller", "background_gradient", "menu_list", "map_dropdown", "orthographic_check", "menu_reminder", "map_size_label", "maps", "unit")]
 script = ExtResource("1_ojbyw")
-load_rom_button = NodePath("PanelContainer/MarginContainer/VBoxContainer/LoadRom")
+phantom_camera = NodePath("PhantomCamera3D")
+load_rom_button = NodePath("PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer/LoadRom")
 texture_viewer = NodePath("MapTexture")
 camera_controller = NodePath("CameraController")
 background_gradient = NodePath("BackgroundCanvasLayer/TextureRect")
-map_dropdown = NodePath("PanelContainer/MarginContainer/VBoxContainer/MapDropdown")
-menu_reminder = NodePath("PanelContainer/MarginContainer/VBoxContainer/MenuReminder")
-map_size_label = NodePath("PanelContainer/MarginContainer/VBoxContainer/MapSize")
+menu_list = NodePath("PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer")
+map_dropdown = NodePath("PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer/MapDropdown")
+orthographic_check = NodePath("PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer/OrthographicCheckBox")
+menu_reminder = NodePath("PanelContainer/MarginContainer/VBoxContainer2/MenuReminder")
+map_size_label = NodePath("PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer/MapSize")
 maps = NodePath("Maps")
 map_tscn = ExtResource("8_0n3mn")
 unit = NodePath("Unit/CharacterBody3D")
-mirror = null
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_njvnp")
@@ -132,23 +134,30 @@ theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+[node name="VBoxContainer2" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
 layout_mode = 2
 
-[node name="LoadRom" parent="PanelContainer/MarginContainer/VBoxContainer" instance=ExtResource("2_4wnqg")]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer2"]
 layout_mode = 2
 
-[node name="MapDropdown" type="OptionButton" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="LoadRom" parent="PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer" instance=ExtResource("2_4wnqg")]
 layout_mode = 2
 
-[node name="MenuReminder" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
-visible = false
+[node name="MapDropdown" type="OptionButton" parent="PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer"]
 layout_mode = 2
-text = "Press ESCAPE to open menu"
 
-[node name="MapSize" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="OrthographicCheckBox" type="CheckBox" parent="PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer"]
+layout_mode = 2
+button_pressed = true
+text = "Orthographic"
+
+[node name="MapSize" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer"]
 layout_mode = 2
 text = "Map Size: X x Y"
+
+[node name="MenuReminder" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer2"]
+layout_mode = 2
+text = "Press ESCAPE to toggle menu"
 
 [node name="BackgroundCanvasLayer" type="CanvasLayer" parent="."]
 layer = -3

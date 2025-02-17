@@ -3,11 +3,15 @@ extends Node3D
 
 #var rom_reader: RomReader = RomReader.new()
 static var main_camera: Camera3D
+@export var phantom_camera: PhantomCamera3D
 @export var load_rom_button: LoadRomButton
 @export var texture_viewer: Sprite3D
 @export var camera_controller: CameraController
 @export var background_gradient: TextureRect
+
+@export var menu_list: Control
 @export var map_dropdown: OptionButton
+@export var orthographic_check: CheckBox
 @export var menu_reminder: Label
 @export var map_size_label: Label
 
@@ -28,13 +32,12 @@ func _ready() -> void:
 	load_rom_button.file_selected.connect(RomReader.on_load_rom_dialog_file_selected)
 	RomReader.rom_loaded.connect(on_rom_loaded)
 	map_dropdown.item_selected.connect(on_map_selected)
+	orthographic_check.toggled.connect(on_orthographic_check_toggled)
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
-		map_dropdown.visible = not map_dropdown.visible
-		load_rom_button.visible = not load_rom_button.visible
-		menu_reminder.visible = not menu_reminder.visible
+		menu_list.visible = not menu_list.visible
 
 
 func on_rom_loaded() -> void:
@@ -98,9 +101,7 @@ func on_map_selected(index: int) -> void:
 	unit.global_position = middle_position + Vector3(-0.5, 0, 0)
 	unit.global_position = Vector3(5.5, 15, -5.5)
 	
-	map_dropdown.visible = false
-	load_rom_button.visible = false
-	menu_reminder.visible = true
+	menu_list.visible = false
 
 
 func instantiate_map(new_map_data: MapData, position: Vector3, scale: Vector3) -> void:
@@ -128,3 +129,12 @@ func get_scaled_collision_shape(mesh: Mesh, scale: Vector3) -> ConcavePolygonSha
 	new_collision_shape.set_faces(faces)
 	new_collision_shape.backface_collision = true
 	return new_collision_shape
+
+
+func on_orthographic_check_toggled(toggled_on: bool) -> void:
+	if toggled_on:
+		main_camera.projection = Camera3D.PROJECTION_ORTHOGONAL
+		phantom_camera.set_spring_length(200)
+	else:
+		main_camera.projection = Camera3D.PROJECTION_PERSPECTIVE
+		phantom_camera.set_spring_length(7)

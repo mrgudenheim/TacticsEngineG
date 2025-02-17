@@ -135,6 +135,8 @@ func on_orthographic_check_toggled(toggled_on: bool) -> void:
 	if toggled_on:
 		main_camera.projection = Camera3D.PROJECTION_ORTHOGONAL
 		phantom_camera.set_spring_length(200)
+		phantom_camera.set_collision_mask(0)
 	else:
 		main_camera.projection = Camera3D.PROJECTION_PERSPECTIVE
 		phantom_camera.set_spring_length(7)
+		phantom_camera.set_collision_mask(1)

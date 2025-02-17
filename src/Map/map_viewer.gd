@@ -37,7 +37,12 @@ func _ready() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
-		menu_list.visible = not menu_list.visible
+		toggle_debug_ui()
+
+
+func toggle_debug_ui() -> void:
+	menu_list.visible = not menu_list.visible
+	get_tree().call_group("Units", "toggle_debug_menu")
 
 
 func on_rom_loaded() -> void:
@@ -101,7 +106,7 @@ func on_map_selected(index: int) -> void:
 	unit.global_position = middle_position + Vector3(-0.5, 0, 0)
 	unit.global_position = Vector3(5.5, 15, -5.5)
 	
-	menu_list.visible = false
+	toggle_debug_ui()
 
 
 func instantiate_map(new_map_data: MapData, position: Vector3, scale: Vector3) -> void:

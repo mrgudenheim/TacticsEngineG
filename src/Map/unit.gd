@@ -27,6 +27,8 @@ func _ready() -> void:
 	controller.velocity_set.connect(update_unit_facing)
 	controller.camera_facing_changed.connect(update_animation_facing)
 	RomReader.rom_loaded.connect(initialize_unit)
+	
+	add_to_group("Units")
 
 
 func initialize_unit() -> void:
@@ -110,3 +112,7 @@ func update_animation_facing() -> void:
 				animation_manager.unit_debug_menu.anim_id_spin.value -= 1
 		else:
 			animation_manager._on_animation_changed()
+
+
+func toggle_debug_menu() -> void:
+	animation_manager.unit_debug_menu.visible = not animation_manager.unit_debug_menu.visible

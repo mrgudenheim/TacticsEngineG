@@ -21,6 +21,8 @@ const FacingVectors: Dictionary = {
 	Facings.WEST: Vector3.LEFT,
 	}
 
+var is_in_air: bool = false
+
 func _ready() -> void:
 	controller.velocity_set.connect(update_unit_facing)
 	controller.camera_facing_changed.connect(update_animation_facing)
@@ -31,12 +33,24 @@ func initialize_unit() -> void:
 	animation_manager.unit_debug_menu.anim_id_spin.value = 6
 
 
-#func _process(delta: float) -> void:
-	#if controller.velocity.y != 0:
-		#var mid_jump_animation: int = 62 # front facing mid jump animation
-		#if animation_manager.is_back_facing:
-			#mid_jump_animation += 1
-		#animation_manager.unit_debug_menu.anim_id_spin.value = mid_jump_animation 
+func _process(delta: float) -> void:
+	if not RomReader.is_ready:
+		return
+	
+	if controller.velocity.y != 0 and is_in_air == false:
+		is_in_air = true
+		
+		var mid_jump_animation: int = 62 # front facing mid jump animation
+		if animation_manager.is_back_facing:
+			mid_jump_animation += 1
+		animation_manager.unit_debug_menu.anim_id_spin.value = mid_jump_animation
+	elif controller.velocity.y == 0 and is_in_air == true:
+		is_in_air = false
+		
+		var idle_animation: int = 6 # front facing mid jump animation
+		if animation_manager.is_back_facing:
+			idle_animation += 1
+		animation_manager.unit_debug_menu.anim_id_spin.value = idle_animation
 
 
 func update_unit_facing(dir: Vector3) -> void:

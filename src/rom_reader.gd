@@ -3,6 +3,8 @@ extends Node
 
 signal rom_loaded
 
+static var is_ready: bool = false
+
 static var rom: PackedByteArray = []
 static var file_records: Dictionary = {}
 static var lba_to_file_name: Dictionary = {}
@@ -96,6 +98,8 @@ func process_rom(new_rom: PackedByteArray) -> void:
 	
 	_load_battle_bin_sprite_data()
 	cache_associated_files()
+	
+	is_ready = true
 	rom_loaded.emit()
 
 

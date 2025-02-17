@@ -67,7 +67,7 @@ material = SubResource("StandardMaterial3D_05x7e")
 [node name="MapViewer" type="Node3D" node_paths=PackedStringArray("phantom_camera", "load_rom_button", "texture_viewer", "camera_controller", "background_gradient", "menu_list", "map_dropdown", "orthographic_check", "menu_reminder", "map_size_label", "maps", "unit")]
 script = ExtResource("1_ojbyw")
 phantom_camera = NodePath("PhantomCamera3D")
-load_rom_button = NodePath("PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer/LoadRom")
+load_rom_button = NodePath("PanelContainer/MarginContainer/VBoxContainer2/LoadRom")
 texture_viewer = NodePath("MapTexture")
 camera_controller = NodePath("CameraController")
 background_gradient = NodePath("BackgroundCanvasLayer/TextureRect")
@@ -137,10 +137,11 @@ theme_override_constants/margin_bottom = 5
 [node name="VBoxContainer2" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer2"]
+[node name="LoadRom" parent="PanelContainer/MarginContainer/VBoxContainer2" instance=ExtResource("2_4wnqg")]
 layout_mode = 2
 
-[node name="LoadRom" parent="PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer" instance=ExtResource("2_4wnqg")]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer2"]
+visible = false
 layout_mode = 2
 
 [node name="MapDropdown" type="OptionButton" parent="PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer"]
@@ -210,6 +211,7 @@ item_list_filepath = "res://src/fftae/item_list.txt"
 [node name="UnitSpritesManager" parent="Unit/CharacterBody3D/UnitAnimationManager" instance=ExtResource("9_81hnw")]
 
 [node name="UnitDebugMenu" type="Control" parent="Unit/CharacterBody3D" node_paths=PackedStringArray("animation_manager", "sprite_options", "anim_id_spin", "weapon_options", "item_options", "other_type_options")]
+visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0

@@ -45,8 +45,14 @@ func toggle_debug_ui() -> void:
 	get_tree().call_group("Units", "toggle_debug_menu")
 
 
+func hide_debug_ui() -> void:
+	menu_list.visible = false
+	get_tree().call_group("Units", "hide_debug_menu")
+
+
 func on_rom_loaded() -> void:
 	push_warning("on rom loaded")
+	load_rom_button.visible = false
 	
 	for file_name in RomReader.file_records.keys():
 		if file_name.contains(".GNS"):
@@ -106,7 +112,7 @@ func on_map_selected(index: int) -> void:
 	unit.global_position = middle_position + Vector3(-0.5, 0, 0)
 	unit.global_position = Vector3(5.5, 15, -5.5)
 	
-	toggle_debug_ui()
+	hide_debug_ui()
 
 
 func instantiate_map(new_map_data: MapData, position: Vector3, scale: Vector3) -> void:
@@ -144,4 +150,4 @@ func on_orthographic_check_toggled(toggled_on: bool) -> void:
 	else:
 		main_camera.projection = Camera3D.PROJECTION_PERSPECTIVE
 		phantom_camera.set_spring_length(7)
-		phantom_camera.set_collision_mask(1)
+		#phantom_camera.set_collision_mask(1)

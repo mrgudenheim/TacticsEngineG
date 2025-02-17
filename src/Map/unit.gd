@@ -116,3 +116,7 @@ func update_animation_facing() -> void:
 
 func toggle_debug_menu() -> void:
 	animation_manager.unit_debug_menu.visible = not animation_manager.unit_debug_menu.visible
+
+
+func hide_debug_menu() -> void:
+	animation_manager.unit_debug_menu.visible = false

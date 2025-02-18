@@ -200,7 +200,7 @@ spring_length = 5.0
 texture = SubResource("GradientTexture2D_6vwfi")
 
 [node name="UnitAnimationManager" type="Node3D" parent="Unit/CharacterBody3D" node_paths=PackedStringArray("unit_debug_menu", "unit_sprites_manager")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.643, 0)
+transform = Transform3D(1, 0, 0, 0, 0.894934, 0.446198, 0, -0.446198, 0.894934, 0, 0.643, 0)
 script = ExtResource("9_rgxyk")
 unit_debug_menu = NodePath("../UnitDebugMenu")
 unit_sprites_manager = NodePath("UnitSpritesManager")

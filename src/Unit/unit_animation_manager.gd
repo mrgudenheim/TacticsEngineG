@@ -311,7 +311,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			target_sprite.position = Vector3.ZERO
 		elif seq_part.opcode_name == "MFItemPosFBDU":
 			var target_sprite_pivot := unit_sprites_manager.sprite_item
-			target_sprite_pivot.position = Vector3(-seq_part.parameters[0], seq_part.parameters[1] + (20 * MapViewer.SCALE), 0) # assume facing left, add 20 because it is y position from bottom of unit
+			target_sprite_pivot.position = Vector3(-seq_part.parameters[0], seq_part.parameters[1] + 20, 0) * MapViewer.SCALE # assume facing left, add 20 because it is y position from bottom of unit
 		elif seq_part.opcode_name == "LoadMFItem":
 			var item_frame_id: int = item_index # assumes loading item
 			var item_sheet_type:Shp = item_shp

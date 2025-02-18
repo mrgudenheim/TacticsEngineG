@@ -10,6 +10,7 @@ var is_initialized: bool = false
 var file_name: String = "default map file name"
 var primary_mesh_data_record: MapFileRecord
 var primary_texture_record: MapFileRecord
+var other_data_record: MapFileRecord
 var map_file_records: Array[MapFileRecord] = []
 
 var mesh: ArrayMesh
@@ -65,12 +66,49 @@ func init_map_data(gns_bytes: PackedByteArray) -> void:
 			RomReader.get_file_data(primary_texture_record.file_name))
 
 
-func create_map(mesh_bytes: PackedByteArray, texture_bytes: PackedByteArray = [], palette_id: int = 0) -> void:
-	set_mesh_data(mesh_bytes)
+func create_map(mesh_bytes: PackedByteArray, texture_bytes: PackedByteArray = []) -> void:
+	var other_bytes: PackedByteArray = mesh_bytes
+	if file_name == "MAP053.GNS":
+		other_bytes = RomReader.get_file_data(other_data_record.file_name)
+		
+	var primary_mesh_data_start: int = mesh_bytes.decode_u32(0x40)
+	var texture_palettes_data_start: int = other_bytes.decode_u32(0x44)
+	var lighting_data_start: int = other_bytes.decode_u32(0x64)
+	var terrain_data_start: int = other_bytes.decode_u32(0x68)
+	#var primary_mesh_data_end: int = texture_palettes_data_start if texture_palettes_data_start > 0 else 2147483647
+	
+	#var primary_mesh_data: PackedByteArray = mesh_bytes.slice(primary_mesh_data_start, primary_mesh_data_end)
+	var primary_mesh_data: PackedByteArray = mesh_bytes.slice(primary_mesh_data_start)
+	set_mesh_data(primary_mesh_data)
+	
+	if texture_palettes_data_start == 0:
+		push_warning("No palette data found")
+		pass
+	else:
+		var texture_palettes_data_end: int = texture_palettes_data_start + 512
+		var texture_palettes_data: PackedByteArray = other_bytes.slice(texture_palettes_data_start, texture_palettes_data_end)
+		texture_palettes = get_texture_palettes(texture_palettes_data)
+	
+	if lighting_data_start == 0:
+		push_warning("No lighting data found")
+		pass
+	else:
+		var lighting_data_length: int = 18 + 18 + 3 + 6 # 6 bytes for each directional light color, position, 3 bytes for ambient light color, 6 bytes for gradient colors
+		var lighting_data_end: int = lighting_data_start + lighting_data_length
+		var lighting_data: PackedByteArray = other_bytes.slice(lighting_data_length, lighting_data_end)
+		set_gradient_colors(lighting_data.slice(-6))
+	
+	if terrain_data_start == 0:
+		push_warning("No terrain data found")
+		pass
+	else:
+		var terrain_data_length: int = 2 + (256 * 8 * 2)
+		var terrain_data_end: int = terrain_data_start + terrain_data_length
+		var terrain_data: PackedByteArray = other_bytes.slice(terrain_data_start, terrain_data_end)
+		terrain_tiles = get_terrain(terrain_data)
 	
 	_create_mesh()
 	
-	#albedo_texture = get_texture(texture_bytes, palette_id)
 	albedo_texture = get_texture_all(texture_bytes)
 	mesh_material = StandardMaterial3D.new()
 	mesh_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
@@ -175,13 +213,7 @@ func _create_mesh() -> void:
 	mesh = st.commit()
 
 
-func set_mesh_data(bytes: PackedByteArray) -> void:
-	var primary_mesh_data_start: int = bytes.decode_u32(0x40)
-	var texture_palettes_data_start: int = bytes.decode_u32(0x44)
-	var lighting_data_start: int = bytes.decode_u32(0x64)
-	var terrain_data_start: int = bytes.decode_u32(0x68)
-	
-	var primary_mesh_data: PackedByteArray = bytes.slice(primary_mesh_data_start, texture_palettes_data_start)
+func set_mesh_data(primary_mesh_data: PackedByteArray) -> void:
 	num_text_tris = primary_mesh_data.decode_u16(0)
 	num_text_quads = primary_mesh_data.decode_u16(2)
 	num_black_tris = primary_mesh_data.decode_u16(4)
@@ -214,32 +246,6 @@ func set_mesh_data(bytes: PackedByteArray) -> void:
 	#quads_uvs = get_uvs(primary_mesh_data.slice(quads_uvs_start, quads_uvs_start + quad_uvs_data_length), num_text_quads, true)
 	tris_uvs = get_uvs_all_palettes(primary_mesh_data.slice(tris_uvs_start, quads_uvs_start), num_text_tris, false)
 	quads_uvs = get_uvs_all_palettes(primary_mesh_data.slice(quads_uvs_start, quads_uvs_start + quad_uvs_data_length), num_text_quads, true)
-	
-	if texture_palettes_data_start == 0:
-		push_warning("No palette data found")
-		pass
-	else:
-		var texture_palettes_data_end: int = texture_palettes_data_start + 512
-		var texture_palettes_data: PackedByteArray = bytes.slice(texture_palettes_data_start, texture_palettes_data_end)
-		texture_palettes = get_texture_palettes(texture_palettes_data)
-	
-	if lighting_data_start == 0:
-		push_warning("No lighting data found")
-		pass
-	else:
-		var lighting_data_length: int = 18 + 18 + 3 + 6 # 6 bytes for each directional light color, position, 3 bytes for ambient light color, 6 bytes for gradient colors
-		var lighting_data_end: int = lighting_data_start + lighting_data_length
-		var lighting_data: PackedByteArray = bytes.slice(lighting_data_length, lighting_data_end)
-		set_gradient_colors(lighting_data.slice(-6))
-	
-	if terrain_data_start == 0:
-		push_warning("No terrain data found")
-		pass
-	else:
-		var terrain_data_length: int = 2 + (256 * 8 * 2)
-		var terrain_data_end: int = terrain_data_start + terrain_data_length
-		var terrain_data: PackedByteArray = bytes.slice(terrain_data_start, terrain_data_end)
-		terrain_tiles = get_terrain(terrain_data)
 
 
 func get_vertices(vertex_bytes: PackedByteArray, num_vertices: int) -> PackedVector3Array:
@@ -556,7 +562,40 @@ func set_gradient_colors(gradient_color_bytes: PackedByteArray) -> void:
 	background_gradient_bottom = Color8(bot_red, bot_green, bot_blue)
 
 
-func get_associated_files(gns_bytes: PackedByteArray) -> Array[MapFileRecord]:
+func get_associated_files(gns_bytes: PackedByteArray) -> Array[MapFileRecord]:	
+	var gns_record_length: int = 20
+	var new_map_records: Array[MapFileRecord] = []
+	
+	if file_name == "MAP053.GNS":
+		return handle_map053(gns_bytes)
+	
+	var num_files: int = -1
+	for temp_file_name: String in RomReader.file_records.keys():
+		if temp_file_name.contains(file_name.trim_suffix(".GNS")):
+			num_files += 1
+	
+	for record_index: int in num_files:
+		var record_data: PackedByteArray = gns_bytes.slice(record_index * gns_record_length, (record_index + 1) * gns_record_length)
+		var new_map_file_record: MapFileRecord = MapFileRecord.new(record_data)
+		new_map_records.append(new_map_file_record)
+		
+		if new_map_file_record.file_type_indicator == 0x2e01: # MAP053's mesh data is in the 0x2f01 resource
+			primary_mesh_data_record = new_map_file_record
+			other_data_record = primary_mesh_data_record
+		elif primary_mesh_data_record == null and new_map_file_record.file_type_indicator == 0x2f01:
+			primary_mesh_data_record = new_map_file_record
+			other_data_record = primary_mesh_data_record
+	
+	if is_instance_valid(primary_mesh_data_record):
+		for record: MapFileRecord in new_map_records:
+			if record.file_type_indicator == 0x1701:
+				if record.time_weather == primary_mesh_data_record.time_weather and record.arrangement == primary_mesh_data_record.arrangement:
+					primary_texture_record = record
+	
+	return new_map_records
+
+
+func handle_map053(gns_bytes: PackedByteArray) -> Array[MapFileRecord]:
 	var gns_record_length: int = 20
 	var new_map_records: Array[MapFileRecord] = []
 	
@@ -570,10 +609,13 @@ func get_associated_files(gns_bytes: PackedByteArray) -> Array[MapFileRecord]:
 		var new_map_file_record: MapFileRecord = MapFileRecord.new(record_data)
 		new_map_records.append(new_map_file_record)
 		
+		# MAP053's mesh data is in the 0x2f01 resource
+		if new_map_file_record.file_type_indicator == 0x2f01: 
+			primary_mesh_data_record = new_map_file_record
+		
+		# MAP053's palette, lighting, and terrain data is in the 0x2e01 resource
 		if new_map_file_record.file_type_indicator == 0x2e01:
-			primary_mesh_data_record = new_map_file_record
-		elif primary_mesh_data_record == null and new_map_file_record.file_type_indicator == 0x2f01:
-			primary_mesh_data_record = new_map_file_record
+			other_data_record = new_map_file_record
 	
 	if is_instance_valid(primary_mesh_data_record):
 		for record: MapFileRecord in new_map_records:

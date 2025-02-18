@@ -70,7 +70,6 @@ func on_map_selected(index: int) -> void:
 	
 	var start_time: int = Time.get_ticks_msec()
 	
-	#var map_data: MapData = MapData.new()
 	var map_data: MapData = RomReader.maps[index]
 	if not map_data.is_initialized:
 		map_data.init_map()
@@ -80,15 +79,11 @@ func on_map_selected(index: int) -> void:
 	background_gradient.texture.gradient.colors[1] = map_data.background_gradient_top
 	
 	texture_viewer.texture = map_data.albedo_texture
-	#map_mesh.mesh = map_data.mesh
 	
 	for child: Node in maps.get_children():
 		child.queue_free()
 	
 	instantiate_map(map_data, Vector3.ZERO, Vector3.ONE)
-	
-	#var shape_mesh: ConcavePolygonShape3D = map_mesh.mesh.create_trimesh_shape()
-	#map_collision_shape.shape = shape_mesh
 	
 	if mirror:
 		instantiate_map(map_data, Vector3.ZERO, Vector3(1, 1, -1))

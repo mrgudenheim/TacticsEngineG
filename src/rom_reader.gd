@@ -205,7 +205,7 @@ func _load_battle_bin_sprite_data() -> void:
 		spr_file_name_to_id[spritesheet_file_name] = sprite_id
 
 
-static func get_file_data(file_name: String) -> PackedByteArray:
+func get_file_data(file_name: String) -> PackedByteArray:
 	var file_data: PackedByteArray = []
 	var sector_location: int = file_records[file_name].sector_location
 	var file_size: int = file_records[file_name].size

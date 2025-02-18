@@ -9,8 +9,13 @@ const LAYERING_OFFSET: float = 0.0000001
 @export var sprite_text: Sprite3D
 
 @export var sprite_item: Sprite3D
-
 @export var sprite_background: Sprite3D
+
+@export var pivot_primary: Node3D
+@export var pivot_weapon: Node3D
+@export var pivot_effect: Node3D
+@export var pivot_text: Node3D
+
 
 
 func reset_sprites(flip_h: bool = false) -> void:
@@ -25,6 +30,12 @@ func reset_sprites(flip_h: bool = false) -> void:
 	sprite_weapon.position.z = -3 * LAYERING_OFFSET
 	sprite_effect.position.z = -1 * LAYERING_OFFSET
 	sprite_text.position.z = 0 * LAYERING_OFFSET
+	
+	pivot_primary.rotation_degrees.y = 0
+	pivot_weapon.rotation_degrees.y = 0
+	pivot_effect.rotation_degrees.y = 0
+	pivot_text.rotation_degrees.y = 0
+	
 	
 	#sprite_primary.z_index = -2
 	#sprite_weapon.z_index = -3

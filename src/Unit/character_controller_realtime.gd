@@ -73,7 +73,7 @@ func rotate_camera(dir: int) -> void:
 	var new_x = self.rotation_degrees.x
 	var new_y = roundi(self.rotation_degrees.y) + offset
 	var new_z = self.rotation_degrees.z
-	self.rotation_degrees = Vector3(new_x, new_y, new_z)
+	#self.rotation_degrees = Vector3(new_x, new_y, new_z)
 	
 	new_rotation = Vector3(-26.54, new_y, new_z)
 	var tween: Tween = create_tween()
@@ -86,6 +86,7 @@ func rotate_camera(dir: int) -> void:
 
 func rotate_phantom_camera(new_rotation_degress: Vector3) -> void:
 	phantom_camera.set_third_person_rotation_degrees(new_rotation_degress)
+	self.rotation_degrees = Vector3(0, new_rotation_degress.y, 0)
 	
 	var camera_angle: float = MapViewer.main_camera.rotation_degrees.y
 	#var target_angle = fposmod(new_rotation_degress.y, 360)

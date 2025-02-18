@@ -188,7 +188,8 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			var y_rotation: float = fft_animation.shp.get_frame(new_frame_id, fft_animation.submerged_depth).y_rotation
 			if fft_animation.flipped_h != fft_animation.flipped_v:
 				y_rotation = -y_rotation
-			(draw_target.get_parent() as Node3D).rotation_degrees = Vector3(0, 0, y_rotation)
+			
+			(draw_target.get_parent() as Node3D).rotation_degrees = Vector3(0, 0, -y_rotation)
 	
 	# only update ui for primary animation, not animations called through opcodes
 	#if fft_animation.is_primary_anim:
@@ -310,7 +311,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			target_sprite.position = Vector3.ZERO
 		elif seq_part.opcode_name == "MFItemPosFBDU":
 			var target_sprite_pivot := unit_sprites_manager.sprite_item
-			target_sprite_pivot.position = Vector3(-seq_part.parameters[0], seq_part.parameters[1] + 20, 0) # assume facing left, add 20 because it is y position from bottom of unit
+			target_sprite_pivot.position = Vector3(-seq_part.parameters[0], seq_part.parameters[1] + (20 * MapViewer.SCALE), 0) # assume facing left, add 20 because it is y position from bottom of unit
 		elif seq_part.opcode_name == "LoadMFItem":
 			var item_frame_id: int = item_index # assumes loading item
 			var item_sheet_type:Shp = item_shp
@@ -340,7 +341,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			var target_sprite: Sprite3D = unit_sprites_manager.sprite_item
 			target_sprite.texture = ImageTexture.create_from_image(assembled_image)
 			var y_rotation: float = item_sheet_type.get_frame(item_frame_id, submerged_depth).y_rotation
-			target_sprite.rotation_degrees = Vector3(0, y_rotation, 0)
+			(target_sprite.get_parent() as Node3D).rotation_degrees = Vector3(0, 0, y_rotation)
 		elif seq_part.opcode_name == "Wait":
 			var loop_length: int = seq_part.parameters[0]
 			if loop_length > 0:

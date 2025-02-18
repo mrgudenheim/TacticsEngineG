@@ -118,14 +118,14 @@ var section3_length:int = 0:
 		return sum + 2 # bytes
 
 # submerged section
-var has_submerged_data:bool = false:
+var has_submerged_data: bool = false:
 	get:
 		return swim_pointer > 0
-var frame_pointers_submerged:Array[int] = []
+var frame_pointers_submerged: Array[int] = []
 var frames_submerged: Array[FrameData] = []
-var frames_submerged_length:int = 0:
+var frames_submerged_length: int = 0:
 	get:
-		var sum:int = 0
+		var sum: int = 0
 		for frame in frames_submerged:
 			sum += frame.length
 		return sum + 2 # bytes
@@ -135,7 +135,7 @@ func _init(new_file_name: String) -> void:
 	set_name(new_file_name)
 
 
-func get_frame(frame_index:int, submerged_depth:int = 0) -> FrameData:
+func get_frame(frame_index: int, submerged_depth: int = 0) -> FrameData:
 	if submerged_depth == 0 or not has_submerged_data:
 		return frames[frame_index]
 	elif submerged_depth == 1:
@@ -144,7 +144,7 @@ func get_frame(frame_index:int, submerged_depth:int = 0) -> FrameData:
 		return frames_submerged[0]
 
 
-func set_data_from_shp_object(shp_object:Shp) -> void:
+func set_data_from_shp_object(shp_object: Shp) -> void:
 	file_name = shp_object.file_name
 	name_alias = shp_object.name_alias
 	

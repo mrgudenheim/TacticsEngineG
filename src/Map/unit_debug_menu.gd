@@ -17,6 +17,11 @@ func _ready() -> void:
 	RomReader.rom_loaded.connect(populat_sprite_options)
 	sprite_options.item_selected.connect(_on_sprite_option_selected)
 	anim_id_spin.value_changed.connect(_on_anim_id_spin_value_changed)
+	weapon_options.item_selected.connect(func(idx) -> void: 
+		animation_manager.weapon_id = idx)
+	item_options.item_selected.connect(func(idx) -> void: 
+		animation_manager.item_index = idx
+		animation_manager._on_animation_changed())
 
 func _process(delta: float) -> void:
 	position = MapViewer.main_camera.unproject_position(unit.position) + Vector2(50, -50)

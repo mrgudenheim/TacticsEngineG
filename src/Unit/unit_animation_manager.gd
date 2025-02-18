@@ -24,7 +24,12 @@ var item_shp: Shp
 var other_spr: Spr
 var other_shp: Shp
 
-@export var weapon_id: int = 0
+@export var weapon_id: int = 0:
+	get:
+		return weapon_id
+	set(value):
+		weapon_id = value
+		_on_weapon_options_item_selected(value)
 @export var item_index: int = 0
 @export var submerged_depth: int = 0
 @export var is_right_facing: bool = false
@@ -48,7 +53,7 @@ var weapon_sheathe_check2_delay: int = 10
 var wait_for_input_delay: int = 10
 
 
-@export var weapon_shp_num: int = 1
+@export var weapon_shp_num: int = 1 # TODO fix for type2
 var weapon_v_offset: int = 0: # v_offset to lookup for weapon frames
 	get:
 		return weapon_table[weapon_id][3] as int
@@ -311,7 +316,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			target_sprite.position = Vector3.ZERO
 		elif seq_part.opcode_name == "MFItemPosFBDU":
 			var target_sprite_pivot := unit_sprites_manager.sprite_item
-			target_sprite_pivot.position = Vector3(-seq_part.parameters[0], seq_part.parameters[1] + 20, 0) * MapViewer.SCALE # assume facing left, add 20 because it is y position from bottom of unit
+			target_sprite_pivot.position = Vector3(-seq_part.parameters[0], -seq_part.parameters[1], 0.01) * MapViewer.SCALE # assume facing left, add 20 because it is y position from bottom of unit
 		elif seq_part.opcode_name == "LoadMFItem":
 			var item_frame_id: int = item_index # assumes loading item
 			var item_sheet_type:Shp = item_shp

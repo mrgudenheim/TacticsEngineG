@@ -25,7 +25,7 @@ func reset_sprites(flip_h: bool = false) -> void:
 	sprite_item.rotation = Vector3.ZERO
 	sprite_item.texture = ImageTexture.create_from_image(Image.create_empty(120, 120, false, Image.FORMAT_RGBA8))
 	
-	# reset layer priority
+	# reset layer priority, TODO fix for sprite3Ds
 	sprite_primary.position.z = -2 * LAYERING_OFFSET
 	sprite_weapon.position.z = -3 * LAYERING_OFFSET
 	sprite_effect.position.z = -1 * LAYERING_OFFSET

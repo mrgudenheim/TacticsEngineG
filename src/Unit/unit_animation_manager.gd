@@ -281,6 +281,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				
 			unit_sprites_manager.position += position_offset * MapViewer.SCALE
 			#(draw_target.get_parent().get_parent() as Node3D).position += position_offset
+		# TODO fix for sprite3Ds
 		elif seq_part.opcode_name == "SetLayerPriority":
 			# print(layer_priority_table)
 			var layer_priority: Array = layer_priority_table[seq_part.parameters[0]]

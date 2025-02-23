@@ -1,6 +1,8 @@
 class_name UnitData
 extends Node3D
 
+# https://ffhacktics.com/wiki/Miscellaneous_Unit_Data
+
 @export var controller: UnitControllerRT
 @export var animation_manager: UnitAnimationManager
 

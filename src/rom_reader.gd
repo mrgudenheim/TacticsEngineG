@@ -6,14 +6,10 @@ signal rom_loaded
 static var is_ready: bool = false
 
 static var rom: PackedByteArray = []
-static var file_records: Dictionary = {}
-static var lba_to_file_name: Dictionary = {}
+var file_records: Dictionary = {}
+var lba_to_file_name: Dictionary = {}
 
-static var directory_data_sectors_battle: PackedInt32Array = range(56436, 56441 + 1)
-static var directory_data_sectors_map: PackedInt32Array = range(9555, 9600 + 1)
-static var directory_data_sectors_effects: PackedInt32Array = range(60545, 60559 + 1)
-static var directory_data_sectors_root: PackedInt32Array = [22]
-static var directory_data_sectors: PackedInt32Array = []
+const DIRECTORY_DATA_SECTORS_ROOT: PackedInt32Array = [22]
 const OFFSET_RECORD_DATA_START: int = 0x60
 
 # https://en.wikipedia.org/wiki/CD-ROM#CD-ROM_XA_extension
@@ -34,11 +30,8 @@ static var abilities: Array[AbilityData] = []
 @export_file("*.txt") var item_frames_csv_filepath: String = "res://src/fftae/frame_data_item.txt"
 
 
-func _init() -> void:
-	directory_data_sectors.append_array(directory_data_sectors_battle)
-	directory_data_sectors.append_array(directory_data_sectors_map)
-	directory_data_sectors.append_array(directory_data_sectors_effects)
-	directory_data_sectors.append_array(directory_data_sectors_root)
+#func _init() -> void:
+	#pass
 
 
 func on_load_rom_dialog_file_selected(path: String) -> void:
@@ -49,8 +42,9 @@ func on_load_rom_dialog_file_selected(path: String) -> void:
 	process_rom(rom)
 
 
-static func clear_data() -> void:
+func clear_data() -> void:
 	file_records.clear()
+	lba_to_file_name.clear()
 	sprs.clear()
 	spr_file_name_to_id.clear()
 	shps.clear()
@@ -66,26 +60,42 @@ func process_rom(new_rom: PackedByteArray) -> void:
 	var start_time: int = Time.get_ticks_msec()
 	
 	# http://wiki.osdev.org/ISO_9660#Directories
-	for directory_sector: int in directory_data_sectors:
+	process_file_records(DIRECTORY_DATA_SECTORS_ROOT)
+	
+	push_warning("Time to process ROM (ms): " + str(Time.get_ticks_msec() - start_time))
+	
+	_load_battle_bin_sprite_data()
+	cache_associated_files()
+	
+	is_ready = true
+	rom_loaded.emit()
+
+
+func process_file_records(sectors: PackedInt32Array) -> void:
+	for sector: int in sectors:
 		var offset_start: int = 0
-		if (directory_sector == directory_data_sectors_battle[0]
-				or directory_sector == directory_data_sectors_map[0]):
+		if sector == sectors[0]:
 			offset_start = OFFSET_RECORD_DATA_START
-		var directory_start: int = directory_sector * BYTES_PER_SECTOR
-		var directory_data: PackedByteArray = new_rom.slice(directory_start + BYTES_PER_SECTOR_HEADER, directory_start + DATA_BYTES_PER_SECTOR + BYTES_PER_SECTOR_HEADER)
+		var directory_start: int = sector * BYTES_PER_SECTOR
+		var directory_data: PackedByteArray = rom.slice(directory_start + BYTES_PER_SECTOR_HEADER, directory_start + DATA_BYTES_PER_SECTOR + BYTES_PER_SECTOR_HEADER)
 		
 		var byte_index: int = offset_start
 		while byte_index < DATA_BYTES_PER_SECTOR:
 			var record_length: int = directory_data.decode_u8(byte_index)
 			var record_data: PackedByteArray = directory_data.slice(byte_index, byte_index + record_length)
 			var record: FileRecord = FileRecord.new(record_data)
-			record.record_location_sector = directory_sector
+			record.record_location_sector = sector
 			record.record_location_offset = byte_index
 			file_records[record.name] = record
 			lba_to_file_name[record.sector_location] = record.name
 			
 			var file_extension: String = record.name.get_extension()
-			if file_extension == "SPR":
+			if file_extension == "": # folder
+				#push_warning("Getting files from folder: " + record.name)
+				var data_length_sectors: int = ceil(float(record.size) / DATA_BYTES_PER_SECTOR)
+				var directory_sectors: PackedInt32Array = range(record.sector_location, record.sector_location + data_length_sectors)
+				process_file_records(directory_sectors)
+			elif file_extension == "SPR":
 				record.type_index = sprs.size()
 				sprs.append(Spr.new(record.name))
 			elif file_extension == "SHP":
@@ -101,14 +111,6 @@ func process_rom(new_rom: PackedByteArray) -> void:
 			byte_index += record_length
 			if directory_data.decode_u8(byte_index) == 0: # end of data, rest of sector will be padded with zeros
 				break
-	
-	push_warning("Time to process ROM (ms): " + str(Time.get_ticks_msec() - start_time))
-	
-	_load_battle_bin_sprite_data()
-	cache_associated_files()
-	
-	is_ready = true
-	rom_loaded.emit()
 
 
 func cache_associated_files() -> void:

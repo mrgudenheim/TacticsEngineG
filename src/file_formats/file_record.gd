@@ -18,16 +18,16 @@ var name_length: int = 0 # in num characters, includes the ending characters ';1
 var name: String = ""
 var type_index: int = 0
 
-func _init(record: PackedByteArray = []) -> void:
-	if record.size() == 0:
+func _init(record_bytes: PackedByteArray = []) -> void:
+	if record_bytes.size() == 0:
 		return
 	
-	record_length = record.decode_u8(OFFSET_RECORD_LENGTH)
-	sector_location = record.decode_u32(OFFSET_SECTOR_LOCATION)
-	size = record.decode_u32(OFFSET_SIZE)
-	flags = record.decode_u8(OFFSET_FLAGS)
-	name_length = record.decode_u8(OFFSET_NAME_LENGTH)
-	name = record.slice(OFFSET_NAME, OFFSET_NAME + name_length - 2).get_string_from_ascii()
+	record_length = record_bytes.decode_u8(OFFSET_RECORD_LENGTH)
+	sector_location = record_bytes.decode_u32(OFFSET_SECTOR_LOCATION)
+	size = record_bytes.decode_u32(OFFSET_SIZE)
+	flags = record_bytes.decode_u8(OFFSET_FLAGS)
+	name_length = record_bytes.decode_u8(OFFSET_NAME_LENGTH)
+	name = record_bytes.slice(OFFSET_NAME, OFFSET_NAME + name_length).get_string_from_ascii().trim_suffix(";1")
 
 
 func _to_string() -> String:

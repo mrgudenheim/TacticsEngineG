@@ -8,10 +8,10 @@
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="4_8ik4g"]
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="6_yx7fd"]
 [ext_resource type="PackedScene" uid="uid://buljw4afjva1d" path="res://src/Map/map.tscn" id="8_0n3mn"]
-[ext_resource type="Script" path="res://src/Map/unit.gd" id="8_o41s4"]
+[ext_resource type="Script" path="res://src/Unit/unit.gd" id="8_o41s4"]
 [ext_resource type="PackedScene" uid="uid://cw8mvbkue4ibk" path="res://src/Unit/unit_sprites_manager.tscn" id="9_81hnw"]
 [ext_resource type="Script" path="res://src/Unit/unit_animation_manager.gd" id="9_rgxyk"]
-[ext_resource type="Script" path="res://src/Map/unit_debug_menu.gd" id="11_wboi1"]
+[ext_resource type="Script" path="res://src/Unit/unit_debug_menu.gd" id="11_wboi1"]
 
 [sub_resource type="Environment" id="Environment_njvnp"]
 background_mode = 3

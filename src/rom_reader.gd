@@ -9,8 +9,10 @@ static var rom: PackedByteArray = []
 static var file_records: Dictionary = {}
 static var lba_to_file_name: Dictionary = {}
 
-static var directory_data_sectors_battle: PackedInt32Array = range(56436, 56442)
-static var directory_data_sectors_map: PackedInt32Array = range(9555, 9601)
+static var directory_data_sectors_battle: PackedInt32Array = range(56436, 56441 + 1)
+static var directory_data_sectors_map: PackedInt32Array = range(9555, 9600 + 1)
+static var directory_data_sectors_effects: PackedInt32Array = range(60545, 60559 + 1)
+static var directory_data_sectors_root: PackedInt32Array = [22]
 static var directory_data_sectors: PackedInt32Array = []
 const OFFSET_RECORD_DATA_START: int = 0x60
 
@@ -26,6 +28,8 @@ static var spr_file_name_to_id: Dictionary = {}
 static var shps: Array[Shp] = []
 static var seqs: Array[Seq] = []
 static var maps: Array[MapData] = []
+static var effects: Array[VisualEffectData] = []
+static var abilities: Array[AbilityData] = []
 
 @export_file("*.txt") var item_frames_csv_filepath: String = "res://src/fftae/frame_data_item.txt"
 
@@ -33,6 +37,8 @@ static var maps: Array[MapData] = []
 func _init() -> void:
 	directory_data_sectors.append_array(directory_data_sectors_battle)
 	directory_data_sectors.append_array(directory_data_sectors_map)
+	directory_data_sectors.append_array(directory_data_sectors_effects)
+	directory_data_sectors.append_array(directory_data_sectors_root)
 
 
 func on_load_rom_dialog_file_selected(path: String) -> void:
@@ -50,6 +56,8 @@ static func clear_data() -> void:
 	shps.clear()
 	seqs.clear()
 	maps.clear()
+	effects.clear()
+	abilities.clear()
 
 
 func process_rom(new_rom: PackedByteArray) -> void:

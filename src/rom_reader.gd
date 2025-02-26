@@ -29,6 +29,18 @@ static var abilities: Array[AbilityData] = []
 
 @export_file("*.txt") var item_frames_csv_filepath: String = "res://src/fftae/frame_data_item.txt"
 
+# BATTLE.BIN tables
+# https://ffhacktics.com/wiki/BATTLE.BIN_Data_Tables#Animation_.26_Display_Related_Data
+var sounds_attacks # BATTLE.BIN offset="2cd40" - table of sounds for miss, hit, and deflected, by weapong type
+var ability_animations # BATTLE.BIN offset="2ce10"
+var wep_animation_offsets # BATTLE.BIN offset="2d364" - Weapon Change of Animation (multiplied by 2 (+1 if camera is behind the unit) to get true animation - applied to unit when attacking
+var item_graphics # BATTLE.BIN offset="2d3e4" - Item Graphic Data (0x7f total?), palettes (wep1 or wep2), and graphic id (multiple of 2)
+var unit_frame_sizes # BATTLE.BIN offset="2d53c" - Unit raw size measurements? all words. contains many possible raw size combinations (for the record, these are all *8 to get the true graphic size.)
+var wep_eff_frame_sizes # BATTLE.BIN offset="2d6c8" - weapon/effect raw size measurements? all words, with only a byte of data each. this is just inefficient.
+var spritesheet_data # BATTLE.BIN offset="2d748" - Spritesheet Data (4 bytes each, 0x9f total), SHP, SEQ, Flying, Graphic Height
+var frame_targeted # BATTLE.BIN offset="2d9c4" - called if target hasn't replaced target animation (e.g. shield)
+
+
 
 #func _init() -> void:
 	#pass

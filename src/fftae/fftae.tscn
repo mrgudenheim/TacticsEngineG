@@ -14,7 +14,7 @@ font_size = 14
 [sub_resource type="LabelSettings" id="LabelSettings_bugng"]
 font_size = 14
 
-[node name="FFTae" type="Control" node_paths=PackedStringArray("ui_manager", "preview_manager", "load_rom_dialog", "load_file_dialog", "save_xml_button", "save_xml_dialog", "save_seq_button", "save_seq_dialog", "animation_list_container", "opcode_list_container", "frame_list_container")]
+[node name="FFTae" type="Control" node_paths=PackedStringArray("ui_manager", "preview_manager", "load_rom_dialog", "load_file_dialog", "save_xml_button", "save_xml_dialog", "save_seq_button", "save_seq_dialog", "save_frame_grid_button", "save_frame_grid_dialog", "animation_list_container", "opcode_list_container", "frame_list_container")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -31,6 +31,8 @@ save_xml_button = NodePath("HBoxContainer/PatchPanel/MarginContainer/VBoxContain
 save_xml_dialog = NodePath("HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SaveAsXml/SaveXmlDialog")
 save_seq_button = NodePath("HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SaveAsSEQ")
 save_seq_dialog = NodePath("HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SaveAsSEQ/SaveSeqDialog")
+save_frame_grid_button = NodePath("HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SaveFrameGrid")
+save_frame_grid_dialog = NodePath("HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SaveFrameGrid/SaveFrameGridDialog")
 animation_list_container = NodePath("HBoxContainer/TabContainer/Animations/VBoxContainer/AnimationListScroll/AnimationList")
 animation_list_row_tscn = ExtResource("3_n0tn6")
 opcode_list_container = NodePath("HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer/ScrollContainer/Opcodes")
@@ -193,6 +195,19 @@ ticks_on_borders = true
 layout_mode = 2
 placeholder_text = "Opcode"
 editable = false
+
+[node name="SaveFrameGrid" type="Button" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+disabled = true
+text = "Save Frame Grid PNG"
+
+[node name="SaveFrameGridDialog" type="FileDialog" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SaveFrameGrid"]
+auto_translate_mode = 1
+initial_position = 1
+size = Vector2i(500, 400)
+access = 2
+filters = PackedStringArray("*.png")
+use_native_dialog = true
 
 [node name="SaveAsXml" type="Button" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -654,6 +669,8 @@ horizontal_alignment = 1
 [connection signal="file_selected" from="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/LoadSEQ/LoadFileDialog" to="." method="_on_load_file_dialog_file_selected"]
 [connection signal="toggled" from="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SliderContainer/PlayCheckBox" to="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer" method="_on_is_playing_check_box_toggled"]
 [connection signal="value_changed" from="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SliderContainer/HSlider" to="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer" method="_on_animation_h_slider_value_changed"]
+[connection signal="pressed" from="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SaveFrameGrid" to="." method="_on_save_frame_grid_pressed"]
+[connection signal="file_selected" from="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SaveFrameGrid/SaveFrameGridDialog" to="." method="_on_save_frame_grid_dialog_file_selected"]
 [connection signal="pressed" from="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SaveAsXml" to="." method="_on_save_as_xml_pressed"]
 [connection signal="file_selected" from="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SaveAsXml/SaveXmlDialog" to="." method="_on_save_xml_dialog_file_selected"]
 [connection signal="pressed" from="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SaveAsSEQ" to="." method="_on_save_as_seq_pressed"]

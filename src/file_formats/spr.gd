@@ -262,3 +262,22 @@ func set_spritesheet_data(new_sprite_id: int) -> void:
 			seq_name = "ARUTE.SHP"
 		7:
 			seq_name = "KANZEN.SEQ"
+
+
+func create_frame_grid(anim_idx: int = 0, other_idx: int = 0, wep_v_offset: int = 0, submerged_depth: int = 0) -> Image:
+	var shp: Shp = RomReader.shps[RomReader.file_records[shp_name].type_index]
+	
+	var cell_width: int = shp.frame_size.x
+	var cell_height: int = shp.frame_size.y
+	
+	var frame_grid: Image = Image.create_empty(cell_width * 16, cell_height * 16, false, Image.FORMAT_RGBA8)
+	
+	for frame_idx: int in shp.frames.size():
+		var cell_x: int = frame_idx % 16
+		var cell_y: int = frame_idx / 16
+		
+		var frame_image: Image = shp.get_assembled_frame(frame_idx, spritesheet, anim_idx, other_idx, wep_v_offset, submerged_depth)
+		frame_grid.blit_rect(frame_image, Rect2i(0, 0, frame_image.get_size().x, frame_image.get_size().y), Vector2i(cell_x * cell_width, cell_y * cell_height))
+	
+	
+	return frame_grid

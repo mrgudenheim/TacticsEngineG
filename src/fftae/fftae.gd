@@ -13,6 +13,8 @@ static var global_fft_animation: FftAnimation = FftAnimation.new()
 @export var save_xml_dialog: FileDialog
 @export var save_seq_button: Button
 @export var save_seq_dialog: FileDialog
+@export var save_frame_grid_button: Button
+@export var save_frame_grid_dialog: FileDialog
 
 @export var animation_list_container: VBoxContainer
 @export var animation_list_row_tscn: PackedScene
@@ -100,6 +102,7 @@ func initialize_ui() -> void:
 	
 	save_xml_button.disabled = false
 	save_seq_button.disabled = false
+	save_frame_grid_button.disabled = false
 	
 	# try to load defaults
 	UiManager.option_button_select_text(ui_manager.seq_options, "TYPE1.SEQ")
@@ -557,3 +560,14 @@ func _on_sprite_options_item_selected(_index: int) -> void:
 func _on_animation_rewrite_check_toggled(toggled_on: bool) -> void:
 	Seq.load_opcode_data(toggled_on)
 	populate_opcode_list(opcode_list_container, ui_manager.animation_id_spinbox.value)
+
+
+func _on_save_frame_grid_pressed() -> void:
+	save_frame_grid_dialog.visible = true
+
+
+func _on_save_frame_grid_dialog_file_selected(path: String) -> void:
+	var frame_grid: Image = spr.create_frame_grid()
+	frame_grid.save_png(path)
+	
+	save_frame_grid_dialog.visible = false

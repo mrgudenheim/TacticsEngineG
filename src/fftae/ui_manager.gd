@@ -105,8 +105,8 @@ func update_info_text(current: int, max_value: int, ui: Label) -> void:
 	var type: String = seq_options.get_item_text(seq_options.selected)
 	if current > max_value:
 		ui.label_settings.font_color = Color.DARK_RED
-	elif FFTae.ae.file_records.has(type):
-		if current == FFTae.ae.file_records[type].size:
+	elif RomReader.file_records.has(type):
+		if current == RomReader.file_records[type].size:
 			ui.label_settings.font_color = Color.LIME_GREEN
 		else:
 			ui.label_settings.font_color = Color.WHITE

@@ -3,11 +3,11 @@ extends Node
 
 signal rom_loaded
 
-static var is_ready: bool = false
+var is_ready: bool = false
 
-static var rom: PackedByteArray = []
-var file_records: Dictionary = {}
-var lba_to_file_name: Dictionary = {}
+var rom: PackedByteArray = []
+var file_records: Dictionary = {} # {String, FileRecord}
+var lba_to_file_name: Dictionary = {} # {int, String}
 
 const DIRECTORY_DATA_SECTORS_ROOT: PackedInt32Array = [22]
 const OFFSET_RECORD_DATA_START: int = 0x60
@@ -18,14 +18,14 @@ const BYTES_PER_SECTOR_HEADER: int = 24
 const BYTES_PER_SECTOR_FOOTER: int = 280
 const DATA_BYTES_PER_SECTOR: int = 2048
 
-static var sprs: Array[Spr] = []
-static var spr_file_name_to_id: Dictionary = {}
+var sprs: Array[Spr] = []
+var spr_file_name_to_id: Dictionary = {}
 
-static var shps: Array[Shp] = []
-static var seqs: Array[Seq] = []
-static var maps: Array[MapData] = []
-static var effects: Array[VisualEffectData] = []
-static var abilities: Array[AbilityData] = []
+var shps: Array[Shp] = []
+var seqs: Array[Seq] = []
+var maps: Array[MapData] = []
+var effects: Array[VisualEffectData] = []
+var abilities: Array[AbilityData] = []
 
 @export_file("*.txt") var item_frames_csv_filepath: String = "res://src/fftae/frame_data_item.txt"
 

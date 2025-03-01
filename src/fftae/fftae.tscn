@@ -46,7 +46,7 @@ anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="PatchPanel" type="PanelContainer" parent="HBoxContainer" node_paths=PackedStringArray("seq_options", "animations_pointers_text", "animations_bytes_text", "shp_options", "sprite_options", "animation_scroll_container", "patch_name_edit", "author_name_edit", "patch_description_edit", "animation_id_spinbox", "animation_name_options", "row_spinbox", "pointer_index_spinbox", "create_animation", "delete_animation", "create_opcode", "delete_opcode", "create_pointer", "delete_pointer", "preview_viewport")]
+[node name="PatchPanel" type="PanelContainer" parent="HBoxContainer" node_paths=PackedStringArray("seq_options", "animations_pointers_text", "animations_bytes_text", "shp_options", "sprite_options", "palette_spinbox", "animation_scroll_container", "patch_name_edit", "author_name_edit", "patch_description_edit", "animation_id_spinbox", "animation_name_options", "row_spinbox", "pointer_index_spinbox", "create_animation", "delete_animation", "create_opcode", "delete_opcode", "create_pointer", "delete_pointer", "preview_viewport")]
 layout_mode = 2
 script = ExtResource("5_1m40y")
 seq_options = NodePath("../SettingsPanel/MarginContainer/VBoxContainer/Settings/SeqFileOptions")
@@ -54,6 +54,7 @@ animations_pointers_text = NodePath("../SettingsPanel/MarginContainer/VBoxContai
 animations_bytes_text = NodePath("../SettingsPanel/MarginContainer/VBoxContainer/Settings/NumEmptySeqBytes")
 shp_options = NodePath("../SettingsPanel/MarginContainer/VBoxContainer/Settings/ShpFileOptions")
 sprite_options = NodePath("../SettingsPanel/MarginContainer/VBoxContainer/Settings/SpriteOptions")
+palette_spinbox = NodePath("../SettingsPanel/MarginContainer/VBoxContainer/Settings/PaletteSpinBox")
 animation_scroll_container = NodePath("../TabContainer/Animations/VBoxContainer/AnimationListScroll")
 patch_name_edit = NodePath("MarginContainer/VBoxContainer/GridContainer/PatchNameLineEdit")
 author_name_edit = NodePath("MarginContainer/VBoxContainer/GridContainer/AuthorLineEdit")
@@ -322,6 +323,18 @@ horizontal_alignment = 2
 
 [node name="SpriteOptions" type="OptionButton" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
 layout_mode = 2
+
+[node name="PaletteLabel" type="Label" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
+layout_mode = 2
+text = "Palette"
+horizontal_alignment = 2
+
+[node name="PaletteSpinBox" type="SpinBox" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
+layout_mode = 2
+max_value = 7.0
+rounded = true
+editable = false
+select_all_on_focus = true
 
 [node name="WeaponLabel" type="Label" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
 layout_mode = 2
@@ -678,6 +691,7 @@ horizontal_alignment = 1
 [connection signal="item_selected" from="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings/SeqFileOptions" to="." method="_on_seq_file_options_item_selected"]
 [connection signal="item_selected" from="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings/ShpFileOptions" to="." method="_on_shp_file_options_item_selected"]
 [connection signal="item_selected" from="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings/SpriteOptions" to="." method="_on_sprite_options_item_selected"]
+[connection signal="value_changed" from="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings/PaletteSpinBox" to="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer" method="_on_palette_spin_box_value_changed"]
 [connection signal="item_selected" from="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings/WeaponOptions" to="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer" method="_on_weapon_options_item_selected"]
 [connection signal="item_selected" from="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings/SubmergedOptions" to="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer" method="_on_submerged_options_item_selected"]
 [connection signal="toggled" from="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings/FaceRightCheckBox" to="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer" method="_on_face_right_check_toggled"]

@@ -523,6 +523,13 @@ func _on_submerged_options_item_selected(index: int) -> void:
 	_on_animation_changed()
 
 
-func _on_face_right_check_toggled(_toggled_on: bool) -> void:	
+func _on_face_right_check_toggled(_toggled_on: bool) -> void:
 	preview_viewport.flip_h()
+	_on_animation_changed()
+
+
+func _on_palette_spin_box_value_changed(value: float) -> void:
+	FFTae.ae.spr.set_pixel_colors(value)
+	FFTae.ae.spr.spritesheet = FFTae.ae.spr.get_rgba8_image()
+	
 	_on_animation_changed()

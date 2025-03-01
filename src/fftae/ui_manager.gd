@@ -6,6 +6,7 @@ extends Node
 @export var animations_bytes_text: Label
 @export var shp_options: OptionButton
 @export var sprite_options: OptionButton
+@export var palette_spinbox: SpinBox
 @export var animation_scroll_container: ScrollContainer
 
 @export var patch_name_edit: LineEdit
@@ -96,6 +97,8 @@ func enable_ui() -> void:
 	pointer_index_spinbox.editable = true
 	create_pointer.disabled = false
 	delete_pointer.disabled = false
+	
+	palette_spinbox.editable = true
 
 
 func update_info_text(current: int, max_value: int, ui: Label) -> void:

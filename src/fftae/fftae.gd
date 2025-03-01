@@ -29,18 +29,6 @@ const bytes_per_sector_footer: int = 280
 const data_bytes_per_sector: int = 2048
 
 
-# (sector location * bytes_per_sector) + bytes_per_sector_header
-# https://ffhacktics.com/wiki/BATTLE/
-#static var directory_start_sector: int = 56436
-#static var directory_data_sectors: PackedInt32Array = [56436, 56437, 56438, 56439, 56440, 56441]
-#const OFFSET_RECORD_DATA_START: int = 0x60
-#var file_records: Dictionary = {}
-#var lba_to_file_name: Dictionary = {}
-#var spr_file_name_to_id: Dictionary = {}
-#var sprs: Dictionary = {}
-#var shps: Dictionary = {}
-#var seqs: Dictionary = {}
-
 var seq: Seq:
 	get:
 		var file_name: String = ui_manager.seq_options.get_item_text(ui_manager.seq_options.selected)
@@ -50,14 +38,7 @@ var seq: Seq:
 			seq.set_data_from_seq_bytes(RomReader.get_file_data(seq.file_name))
 		
 		return seq
-		
-		#if seqs.has(file_name):
-			#return seqs[file_name]
-		#else:
-			#var new_seq: Seq = Seq.new(file_name)
-			#new_seq.set_data_from_seq_bytes(file_records[file_name].get_file_data(rom))
-			#seqs[file_name] = new_seq
-			#return seqs[file_name]
+
 
 var shp: Shp:
 	get:
@@ -68,13 +49,7 @@ var shp: Shp:
 			shp.set_data_from_shp_bytes(RomReader.get_file_data(shp.file_name))
 		
 		return shp
-		
-		#if shps.has(file_name):
-			#return shps[file_name]
-		#else:
-			#var new_shp: Shp = Shp.new(file_name)
-			#new_shp.set_data_from_shp_bytes(file_records[file_name].get_file_data(rom))
-			#return shps[file_name]
+
 
 var spr: Spr:
 	get:
@@ -86,15 +61,6 @@ var spr: Spr:
 			spr.set_spritesheet_data(RomReader.spr_file_name_to_id[spr.file_name])
 		
 		return spr
-		
-		#if sprs.has(file_name):
-			#return sprs[file_name]
-		#else:
-			#var new_spr: Spr = Spr.new(file_name)
-			#new_spr.set_data(file_records[file_name].get_file_data(rom))
-			#new_spr.set_spritesheet_data(spr_file_name_to_id[file_name])
-			#sprs[file_name] = new_spr
-			#return sprs[file_name]
 
 
 func _ready() -> void:
@@ -108,110 +74,6 @@ func _on_load_rom_pressed() -> void:
 
 func _on_load_rom_dialog_file_selected(path: String) -> void:
 	RomReader.on_load_rom_dialog_file_selected(path)
-	
-	
-	#var start_time: int = Time.get_ticks_msec()
-	#var rom: PackedByteArray = FileAccess.get_file_as_bytes(path)
-	#push_warning("Time to load file (ms): " + str(Time.get_ticks_msec() - start_time))
-	#
-	#RomReader.process_rom(rom)
-	#process_rom(rom)
-
-
-#func process_rom(new_rom: PackedByteArray) -> void:
-	#await get_tree().process_frame
-	#
-	#file_records.clear()
-	#
-	#var start_time: int = Time.get_ticks_msec()
-	#
-	#for directory_sector: int in directory_data_sectors:
-		#var offset_start: int = 0
-		#if directory_sector == directory_data_sectors[0]:
-			#offset_start = OFFSET_RECORD_DATA_START
-		#var directory_start: int = directory_sector * bytes_per_sector
-		#var directory_data: PackedByteArray = new_rom.slice(directory_start, directory_start + data_bytes_per_sector + bytes_per_sector_header)
-		#
-		#var byte_index: int = offset_start + bytes_per_sector_header
-		#while byte_index < data_bytes_per_sector + bytes_per_sector_header:
-			#var record_length: int = directory_data.decode_u8(byte_index)
-			#var record_data: PackedByteArray = directory_data.slice(byte_index, byte_index + record_length)
-			#var record: FileRecord = FileRecord.new(record_data)
-			#record.record_location_sector = directory_sector
-			#record.record_location_offset = byte_index
-			#file_records[record.name] = record
-			#lba_to_file_name[record.sector_location] = record.name
-			#
-			#byte_index += record_length
-			#if directory_data.decode_u8(byte_index) == 0: # end of data, rest of sector will be padded with zeros
-				#break
-	#
-	#for record: FileRecord in file_records.values():
-		##push_warning(record.to_string())
-		#match record.name.get_extension():
-			#"SPR":
-				#ui_manager.sprite_options.add_item(record.name)
-			#"SHP":
-				#ui_manager.shp_options.add_item(record.name)
-			#"SEQ":
-				#ui_manager.seq_options.add_item(record.name)
-			#"SP2":
-				## SP2 handled by Spr
-				#pass
-			#_:
-				#push_warning(record.name + ": File extension not recognized")
-	#
-	#push_warning("Time to get file records (ms): " + str(Time.get_ticks_msec() - start_time))
-	#cache_associated_files()
-	#push_warning("Time to cache files (ms): " + str(Time.get_ticks_msec() - start_time))
-	#preview_manager.enable_ui()
-	#ui_manager.enable_ui()
-	#
-	#save_xml_button.disabled = false
-	#save_seq_button.disabled = false
-	#
-	## try to load defaults
-	#UiManager.option_button_select_text(ui_manager.seq_options, "TYPE1.SEQ")
-	#UiManager.option_button_select_text(ui_manager.shp_options, "TYPE1.SHP")
-	#UiManager.option_button_select_text(ui_manager.sprite_options, "RAMUZA.SPR")
-	#
-	#_on_seq_file_options_item_selected(ui_manager.seq_options.selected)
-	##_on_shp_file_options_item_selected(ui_manager.shp_options.selected)
-	#
-	#ui_manager.pointer_index_spinbox.value = 6 # default to walking animation
-	##ui_manager.preview_viewport.sprite_primary.texture = ImageTexture.create_from_image(spr.spritesheet)
-	#
-	#var background_image: Image = shp.create_blank_frame(Color.BLACK)
-	#ui_manager.preview_viewport.sprite_background.texture = ImageTexture.create_from_image(background_image)
-	#
-	#var new_fft_animation: FftAnimation = preview_manager.get_animation_from_globals()
-	#
-	#preview_manager.start_animation(new_fft_animation, ui_manager.preview_viewport.sprite_primary, preview_manager.animation_is_playing, true)
-	#ui_manager.preview_viewport.camera_control._update_viewport_transform()
-	#
-	#push_warning("Time to process ROM (ms): " + str(Time.get_ticks_msec() - start_time))
-
-# https://ffhacktics.com/wiki/BATTLE.BIN_Data_Tables#Animation_.26_Display_Related_Data
-#func _load_battle_bin_sprite_data() -> void:
-	## get BATTLE.BIN file data
-	## get item graphics
-	#var battle_bin_record: FileRecord = FileRecord.new()
-	#battle_bin_record.sector_location = 1000 # ITEM.BIN is in EVENT not BATTLE, so needs a new record created
-	#battle_bin_record.size = 1397096
-	#battle_bin_record.name = "BATTLE.BIN"
-	#file_records[battle_bin_record.name] = battle_bin_record
-	#
-	## look up spr file_name based on LBA
-	#var spritesheet_file_data_length: int = 8
-	#var battle_bin_bytes: PackedByteArray = file_records["BATTLE.BIN"].get_file_data(rom)
-	#for sprite_id: int in range(0, 0x9f):
-		#var spritesheet_file_data_start: int = 0x2dcd4 + (sprite_id * spritesheet_file_data_length)
-		#var spritesheet_file_data_bytes: PackedByteArray = battle_bin_bytes.slice(spritesheet_file_data_start, spritesheet_file_data_start + spritesheet_file_data_length)
-		#var spritesheet_lba: int = spritesheet_file_data_bytes.decode_u32(0)
-		#var spritesheet_file_name: String = ""
-		#if spritesheet_lba != 0:
-			#spritesheet_file_name = lba_to_file_name[spritesheet_lba]
-		#spr_file_name_to_id[spritesheet_file_name] = sprite_id
 
 
 func initialize_ui() -> void:

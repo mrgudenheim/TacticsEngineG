@@ -59,6 +59,13 @@ var frame_targeted # BATTLE.BIN offset="2d9c4" - called if target hasn't replace
 # fed88 - fedf5? - Summon names
 # fedf6 -  - Draw out names
 
+# https://ffhacktics.com/wiki/Load_FFTText
+# OPEN.LZW - Sound Test - Track Names
+# SPELL.MES - Spell Quotes
+# WORLD.BIN 09 - Locations - Names
+# WORLD.LZW 0x713b - 0x73e3 - Locations - Names
+# WORLD.LZW - World Map Menu
+# WORLD.LZW 0x74df - 0x7e69  - Maps - Names
 
 
 #func _init() -> void:
@@ -72,7 +79,10 @@ func on_load_rom_dialog_file_selected(path: String) -> void:
 	
 	process_rom()
 	
-	#var ability_names: String = text_to_string(get_file_data("BATTLE.BIN").slice(0xfcb88, 0xfdeb6))
+	#var ability_names: String = text_to_string(get_file_data("BATTLE.BIN").slice(0xfcb88, 0xfdeb6 + 1))
+	#var map_names: String = text_to_string(get_file_data("WORLD.LZW").slice(0x74df, 0x7e69 + 1))
+	#var location_names: String = text_to_string(get_file_data("WORLD.LZW").slice(0x713b, 0x73e3 + 1))
+	#push_warning(location_names)
 
 
 func clear_data() -> void:
@@ -319,24 +329,24 @@ static func text_to_string(bytes_text: PackedByteArray) -> String:
 			char_code = 0x2f
 		elif char_code == 69: # japanese
 			char_code = 0 # TODO fix
-		elif char_code == 70: # colon
+		elif char_code == 70 or char_code == 0xd9bd: # colon
 			char_code = 0x3a
 		# 71 - 94 japanese
-		elif char_code == 95 or char_code == 0xd11c: # period
+		elif char_code == 95 or char_code == 0xd11c or char_code == 0xd9b6: # period
 			char_code = 0x2e
 		# 96 - 138 japanese
-		elif char_code == 139: # middle dot
+		elif char_code == 139 or char_code == 0xd9bc: # middle dot
 			char_code = 0xb7
 		elif char_code == 140: # japanese
 			char_code = 0 # TODO fix
-		elif char_code == 141: # open parentheses
+		elif char_code == 141 or char_code == 0xd9be: # open parentheses
 			char_code = 0x28
-		elif char_code == 142: # close parentheses
+		elif char_code == 142 or char_code == 0xd9bf: # close parentheses
 			char_code = 0x29
 		# 143 - 144 japanese
-		elif char_code == 145 or char_code == 0xda77: # double quote
+		elif char_code == 145 or char_code == 0xda77 or char_code == 0xd9c0: # double quote
 			char_code = 0x22
-		elif char_code == 147 or char_code == 0xda76: # single quote, apostrophe
+		elif char_code == 147 or char_code == 0xda76 or char_code == 0xd9c1: # single quote, apostrophe
 			char_code = 0x27
 		elif char_code == 178: # music note
 			char_code = 0x1d160

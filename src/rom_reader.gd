@@ -363,7 +363,7 @@ static func text_to_string(bytes_text: PackedByteArray) -> String:
 			char_code = 0xd7
 		elif char_code == 0xd120: # division sign
 			char_code = 0xf7
-		elif char_code == 0xd123: # equal sign
+		elif char_code == 0xd123 or char_code == 0xda70: # equal sign
 			char_code = 0x3d
 		elif char_code == 0xd125: # greater than
 			char_code = 0x3e

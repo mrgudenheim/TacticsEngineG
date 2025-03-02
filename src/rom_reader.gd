@@ -47,15 +47,17 @@ var frame_targeted # BATTLE.BIN offset="2d9c4" - called if target hasn't replace
 
 # Text
 # https://github.com/Glain/FFTPatcher/blob/master/FFTacText/notes.txt
-# https://ffhacktics.com/wiki/Font
 # BATTLE.BIN
-# fa35c - 161928 - Battle Error Messages Text
-# fa929 - 161d41 - Battle Messages Text
-# fad41 - 1622c2 - Job Names Text
-# fb2c3 - 162e48 - Item Names Text
-# fbe50 - 1630d9 - Japanese writing (FREE SPACE)
-# fc0da - 163b87 - Act menus display data (0x05 bytes each, 0x06 for each unit?)
-# fcb88 - Ability Names Text
+# fa35c - fa928 - Battle Error Messages Text
+# fa929 - fad41 - Battle Messages Text
+# fad41 - fb2c2 - Job Names Text
+# fb2c3 - fbe48 - Item Names Text
+# fbe50 - fc0d9 - Japanese writing (FREE SPACE)
+# fc0da - fcb87 - Act menus display data (0x05 bytes each, 0x06 for each unit?)
+# fcb88 - fdeb6 - Skill/Ability Names Text
+# fe93a - fed73 - skillset names
+# fed88 - fedf5? - Summon names
+# fedf6 -  - Draw out names
 
 
 
@@ -68,7 +70,9 @@ func on_load_rom_dialog_file_selected(path: String) -> void:
 	rom = FileAccess.get_file_as_bytes(path)
 	push_warning("Time to load file (ms): " + str(Time.get_ticks_msec() - start_time))
 	
-	process_rom(rom)
+	process_rom()
+	
+	#var ability_names: String = text_to_string(get_file_data("BATTLE.BIN").slice(0xfcb88, 0xfdeb6))
 
 
 func clear_data() -> void:
@@ -83,7 +87,7 @@ func clear_data() -> void:
 	abilities.clear()
 
 
-func process_rom(new_rom: PackedByteArray) -> void:
+func process_rom() -> void:
 	clear_data()
 	
 	var start_time: int = Time.get_ticks_msec()
@@ -264,3 +268,117 @@ func get_file_data(file_name: String) -> PackedByteArray:
 	file_data.append_array(last_sector_data)
 	
 	return file_data
+
+
+# https://ffhacktics.com/wiki/Font
+static func text_to_string(bytes_text: PackedByteArray) -> String:
+	var text : String = ""
+	
+	if bytes_text.size() == 0:                        
+		push_warning("No text data")
+		return text
+	
+	
+	var byte_index: int = 0
+	while byte_index < bytes_text.size():
+		var char_code: int = bytes_text[byte_index]
+		
+		if char_code > 0xda:
+			byte_index += 1
+		elif char_code > 0xcf:
+			var code_2bytes: String = bytes_text.slice(byte_index, byte_index + 2).hex_encode()
+			char_code = code_2bytes.hex_to_int()
+			#char_code = bytes_text.decode_u16(byte_index)
+			byte_index += 2
+		else:
+			byte_index += 1
+		
+		if char_code == 0xfa or char_code == 0xda73: # space
+			char_code = 0x20
+		elif char_code == 0xfe: # end string?
+			char_code = 0x0d
+		elif char_code < 10: # 0-9 are digits
+			char_code += 0x30
+		elif char_code < 36: # next 26 are upper case alphabet
+			char_code += (0x41 - 10)
+		elif char_code < 62: # next 26 are lower case alphabet
+			char_code += (0x61 - 36)
+		elif char_code == 62 or char_code == 0xd11a: # exclamation mark
+			char_code = 0x21
+		elif char_code == 63: # japanese
+			char_code = 0 # TODO fix
+		elif char_code == 64: # question mark
+			char_code = 0x3f
+		elif char_code == 65: # japanese
+			char_code = 0 # TODO fix
+		elif char_code == 66  or char_code == 0xd11e: # plus sign
+			char_code = 0x2b
+		elif char_code == 67: # japanese
+			char_code = 0 # TODO fix
+		elif char_code == 68: # forward slash
+			char_code = 0x2f
+		elif char_code == 69: # japanese
+			char_code = 0 # TODO fix
+		elif char_code == 70: # colon
+			char_code = 0x3a
+		# 71 - 94 japanese
+		elif char_code == 95 or char_code == 0xd11c: # period
+			char_code = 0x2e
+		# 96 - 138 japanese
+		elif char_code == 139: # middle dot
+			char_code = 0xb7
+		elif char_code == 140: # japanese
+			char_code = 0 # TODO fix
+		elif char_code == 141: # open parentheses
+			char_code = 0x28
+		elif char_code == 142: # close parentheses
+			char_code = 0x29
+		# 143 - 144 japanese
+		elif char_code == 145 or char_code == 0xda77: # double quote
+			char_code = 0x22
+		elif char_code == 147 or char_code == 0xda76: # single quote, apostrophe
+			char_code = 0x27
+		elif char_code == 178: # music note
+			char_code = 0x1d160
+		elif char_code == 181 or char_code == 0xd111: # asterisk
+			char_code = 0x2a
+		elif char_code == 0xd117: # underscore
+			char_code = 0x5f
+		elif char_code == 0xd11b: # ellipsis
+			char_code = 0x2026
+		elif char_code == 0xd11d: # minus sign
+			char_code = 0x2d
+		elif char_code == 0xd11f: # multiplication sign
+			char_code = 0xd7
+		elif char_code == 0xd120: # division sign
+			char_code = 0xf7
+		elif char_code == 0xd123: # equal sign
+			char_code = 0x3d
+		elif char_code == 0xd125: # greater than
+			char_code = 0x3e
+		elif char_code == 0xd126: # less than
+			char_code = 0x3c
+		elif char_code == 0xd9b5: # infinity
+			char_code = 0x221e
+		elif char_code == 0xd9b7: # ampersand
+			char_code = 0x26
+		elif char_code == 0xd9b8: # percent
+			char_code = 0x25
+		elif char_code == 0xd9c5: # tilde
+			char_code = 0x7e
+		elif char_code >= 0xd9cb and char_code <= 0xd9cf: # roman numerals
+			char_code = (char_code - 0xd9cb) + 0x2160
+		elif char_code >= 0xda00 and char_code <= 0xda0b: # zodiac signs
+			char_code = (char_code - 0xda00) + 0x2648
+		elif char_code == 0xda0c: # serpentarius zodiac signs
+			char_code = "Serpentarius".to_int()
+		elif char_code == 0xda71: # dollar sign
+			char_code = 0x24
+		elif char_code == 0xda74: # comma
+			char_code = 0x2c
+		elif char_code == 0xda75: # semi colon
+			char_code = 0x3b
+		
+		text += String.chr(char_code)
+	
+	return text

@@ -82,7 +82,8 @@ func on_load_rom_dialog_file_selected(path: String) -> void:
 	#var ability_names: String = text_to_string(get_file_data("BATTLE.BIN").slice(0xfcb88, 0xfdeb6 + 1))
 	#var map_names: String = text_to_string(get_file_data("WORLD.LZW").slice(0x74df, 0x7e69 + 1))
 	#var location_names: String = text_to_string(get_file_data("WORLD.LZW").slice(0x713b, 0x73e3 + 1))
-	#push_warning(location_names)
+	#var text: String = text_to_string(get_file_data("WORLD.LZW").slice(0x7cd0, 0x8600 + 1))
+	#push_warning(text)
 
 
 func clear_data() -> void:
@@ -317,15 +318,15 @@ static func text_to_string(bytes_text: PackedByteArray) -> String:
 			char_code = 0x21
 		elif char_code == 63: # japanese
 			char_code = 0 # TODO fix
-		elif char_code == 64: # question mark
+		elif char_code == 64 or char_code == 0xd9c9: # question mark
 			char_code = 0x3f
 		elif char_code == 65: # japanese
 			char_code = 0 # TODO fix
-		elif char_code == 66  or char_code == 0xd11e: # plus sign
+		elif char_code == 66 or char_code == 0xd11e: # plus sign
 			char_code = 0x2b
 		elif char_code == 67: # japanese
 			char_code = 0 # TODO fix
-		elif char_code == 68: # forward slash
+		elif char_code == 68 or char_code == 0xd9c6: # forward slash
 			char_code = 0x2f
 		elif char_code == 69: # japanese
 			char_code = 0 # TODO fix
@@ -376,12 +377,19 @@ static func text_to_string(bytes_text: PackedByteArray) -> String:
 			char_code = 0x25
 		elif char_code == 0xd9c5: # tilde
 			char_code = 0x7e
+		elif char_code == 0xd9c7: # triangle
+			char_code = 0x25b3
+		elif char_code == 0xd9c8: # square
+			char_code = 0x25a1
+		elif char_code == 0xd9ca: # heart
+			char_code = 0x2665
 		elif char_code >= 0xd9cb and char_code <= 0xd9cf: # roman numerals
 			char_code = (char_code - 0xd9cb) + 0x2160
 		elif char_code >= 0xda00 and char_code <= 0xda0b: # zodiac signs
 			char_code = (char_code - 0xda00) + 0x2648
 		elif char_code == 0xda0c: # serpentarius zodiac signs
-			char_code = "Serpentarius".to_int()
+			text += "[Serpentarius]"
+			continue
 		elif char_code == 0xda71: # dollar sign
 			char_code = 0x24
 		elif char_code == 0xda74: # comma

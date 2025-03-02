@@ -15,6 +15,8 @@ static var global_fft_animation: FftAnimation = FftAnimation.new()
 @export var save_seq_dialog: FileDialog
 @export var save_frame_grid_button: Button
 @export var save_frame_grid_dialog: FileDialog
+@export var save_gif_button: Button
+@export var save_gif_dialog: FileDialog
 
 @export var animation_list_container: VBoxContainer
 @export var animation_list_row_tscn: PackedScene
@@ -29,6 +31,11 @@ const bytes_per_sector: int = 2352
 const bytes_per_sector_header: int = 24
 const bytes_per_sector_footer: int = 280
 const data_bytes_per_sector: int = 2048
+
+# load gif exporter module
+const GIFExporter = preload("res://addons/gdgifexporter/exporter.gd")
+# load quantization module that you want to use
+const MedianCutQuantization = preload("res://addons/gdgifexporter/quantization/median_cut.gd")
 
 
 var seq: Seq:
@@ -103,6 +110,7 @@ func initialize_ui() -> void:
 	save_xml_button.disabled = false
 	save_seq_button.disabled = false
 	save_frame_grid_button.disabled = false
+	save_gif_button.disabled = false
 	
 	# try to load defaults
 	UiManager.option_button_select_text(ui_manager.seq_options, "TYPE1.SEQ")
@@ -569,5 +577,43 @@ func _on_save_frame_grid_pressed() -> void:
 func _on_save_frame_grid_dialog_file_selected(path: String) -> void:
 	var frame_grid: Image = spr.create_frame_grid(preview_manager.global_animation_id, preview_manager.other_type_options.selected, preview_manager.weapon_v_offset, preview_manager.submerged_depth_options.selected)
 	frame_grid.save_png(path)
+	
+	save_frame_grid_dialog.visible = false
+
+
+func _on_save_animation_gif_pressed() -> void:
+	save_gif_dialog.visible = true
+
+
+# ignores all opcodes and rotation
+func _on_save_animation_gif_dialog_file_selected(path: String) -> void:
+	var fft_animation: FftAnimation = preview_manager.global_fft_animation
+	var gif_exporter = GIFExporter.new(fft_animation.shp.frame_size.x, fft_animation.shp.frame_size.y)
+	
+	#push_warning(fft_animation.sequence.seq_parts.size())
+	for seq_part: SeqPart in fft_animation.sequence.seq_parts:
+		if seq_part.isOpcode:
+			continue
+		
+		var new_frame_id: int = seq_part.parameters[0]
+		var frame_id_offset: int = preview_manager.get_animation_frame_offset(fft_animation.weapon_frame_offset_index, fft_animation.shp, fft_animation.back_face_offset)
+		new_frame_id = new_frame_id + frame_id_offset # + opcode_frame_offset
+		var frame_id_label: String = str(new_frame_id)
+	
+		var assembled_image: Image
+		if new_frame_id >= fft_animation.shp.frames.size(): # high frame offsets (such as shuriken) can only be used with certain animations
+			assembled_image = fft_animation.shp.create_blank_frame()
+		else:
+			assembled_image = fft_animation.shp.get_assembled_frame(new_frame_id, fft_animation.image, ui_manager.animation_id_spinbox.value, preview_manager.other_type_options.selected, preview_manager.weapon_v_offset, preview_manager.submerged_depth_options.selected)
+
+		var delay: float = seq_part.parameters[1] / 59.0
+		
+		gif_exporter.add_frame(assembled_image, delay, MedianCutQuantization)
+		#var frame_image: Image = shp.get_assembled_frame(frame_idx, spritesheet, anim_idx, other_idx, wep_v_offset, submerged_depth)
+	
+	var file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
+	# save data stream into file
+	file.store_buffer(gif_exporter.export_file_data())
+	file.close()
 	
 	save_frame_grid_dialog.visible = false

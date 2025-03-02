@@ -5,6 +5,8 @@ This engine is intended to create a game similar to Final Fantasy Tactics (FFT),
 
 # Features
 - Displays maps
+- FFTae allows exporting a grid sheet of all shp frames
+- FFTae allows exporting a gif of an animation - Ignores all Opcodes and rotations
 ...
 
 # Limitations and Notes

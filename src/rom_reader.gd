@@ -375,6 +375,8 @@ static func text_to_string(bytes_text: PackedByteArray) -> String:
 			char_code = 0x26
 		elif char_code == 0xd9b8: # percent
 			char_code = 0x25
+		elif char_code == 0xd9b9: # circle
+			char_code = 0x25cb
 		elif char_code == 0xd9c5: # tilde
 			char_code = 0x7e
 		elif char_code == 0xd9c7: # triangle

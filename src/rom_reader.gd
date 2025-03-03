@@ -67,6 +67,8 @@ var frame_targeted # BATTLE.BIN offset="2d9c4" - called if target hasn't replace
 # WORLD.LZW - World Map Menu
 # WORLD.LZW 0x74df - 0x7e69  - Maps - Names
 
+var world_lzw_offsets = []
+
 
 #func _init() -> void:
 	#pass
@@ -79,10 +81,22 @@ func on_load_rom_dialog_file_selected(path: String) -> void:
 	
 	process_rom()
 	
+	
+	# offsets to sections of file are at the beginning of the WORLD.LZW file
+	#var offsets_bytes = get_file_data("WORLD.LZW").slice(0, 0x80)
+	#for idx: int in offsets_bytes.size() / 4:
+		#world_lzw_offsets.append(offsets_bytes.decode_u32(idx * 4) + 0x80)
+	#
 	#var ability_names: String = text_to_string(get_file_data("BATTLE.BIN").slice(0xfcb88, 0xfdeb6 + 1))
 	#var map_names: String = text_to_string(get_file_data("WORLD.LZW").slice(0x74df, 0x7e69 + 1))
 	#var location_names: String = text_to_string(get_file_data("WORLD.LZW").slice(0x713b, 0x73e3 + 1))
-	#var text: String = text_to_string(get_file_data("WORLD.LZW").slice(0x7cd0, 0x8600 + 1))
+	#var section: int = 31
+	#var text: String = ""
+	#if section == world_lzw_offsets.size() - 1:
+		#text = text_to_string(get_file_data("WORLD.LZW").slice(world_lzw_offsets[section]))
+	#else:
+		#text = text_to_string(get_file_data("WORLD.LZW").slice(world_lzw_offsets[section], world_lzw_offsets[section + 1]))
+	#
 	#push_warning(text)
 
 
@@ -282,6 +296,7 @@ func get_file_data(file_name: String) -> PackedByteArray:
 
 
 # https://ffhacktics.com/wiki/Font
+# https://ffhacktics.com/wiki/Text_Format
 static func text_to_string(bytes_text: PackedByteArray) -> String:
 	var text : String = ""
 	
@@ -306,7 +321,9 @@ static func text_to_string(bytes_text: PackedByteArray) -> String:
 		
 		if char_code == 0xfa or char_code == 0xda73: # space
 			char_code = 0x20
-		elif char_code == 0xfe: # end string?
+		elif char_code == 0xfe or char_code == 0xff: # end string TODO separate out the text
+			char_code = 0x0d
+		elif char_code == 0xf8: # new line
 			char_code = 0x0d
 		elif char_code < 10: # 0-9 are digits
 			char_code += 0x30

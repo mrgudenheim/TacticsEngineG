@@ -67,6 +67,7 @@ var frame_targeted # BATTLE.BIN offset="2d9c4" - called if target hasn't replace
 # WORLD.LZW - World Map Menu
 # WORLD.LZW 0x74df - 0x7e69  - Maps - Names
 
+var world_lzw_offsets: PackedInt32Array = []
 enum WORLD_LZW_SECTIONS {
 	JOB_NAMES = 6,
 	ITEM_NAMES = 7,
@@ -92,7 +93,25 @@ enum WORLD_LZW_SECTIONS {
 	PERSON = 30,
 	PROPOSITION_OBJECTIVES = 31,
 	}
-var world_lzw_offsets = []
+
+var battle_bin_text_offsets: PackedInt32Array = []
+var battle_bin_text_end: int = 0xfee64
+enum BATTLE_BIN_TEXT_SECTIONS {
+	EVENT_TEXT = 0,
+	BATTLE_ACTION_DENIED = 2,
+	BATTLE_ACTION_EFFECT = 3,
+	JOB_NAMES = 6,
+	ITEM_NAMES = 7,
+	UNIT_NAMES = 8,
+	MISC_MENU = 10,
+	ROSTER_UNIT_NICKNAMES = 11,
+	ABILITY_NAMES = 14,
+	BATTLE_NAVIGATION_MESSAGES = 16,
+	STATUSES_NAMES = 17,
+	FORMATION_TEXT = 18,
+	SKILLSET_NAMES = 22,
+	SUMMON_DRAW_OUT_NAMES = 23,
+	}
 
 
 #func _init() -> void:
@@ -107,6 +126,11 @@ func on_load_rom_dialog_file_selected(path: String) -> void:
 	process_rom()
 	
 	
+	# offsets to 24 text sections of BATTLE.BIN are at 0xfa2dc - 0xfa338 and are measured from 0xfa35c
+	#var offsets_bytes = get_file_data("BATTLE.BIN").slice(0xfa2dc, 0xfa2dc + (24 * 4))
+	#for idx: int in offsets_bytes.size() / 4:
+		#battle_bin_text_offsets.append(offsets_bytes.decode_u32(idx * 4) + 0xfa35c)
+	
 	# offsets to sections of file are at the beginning of the WORLD.LZW file
 	#var offsets_bytes = get_file_data("WORLD.LZW").slice(0, 0x80)
 	#for idx: int in offsets_bytes.size() / 4:
@@ -116,13 +140,24 @@ func on_load_rom_dialog_file_selected(path: String) -> void:
 	#var map_names: String = text_to_string(get_file_data("WORLD.LZW").slice(0x74df, 0x7e69 + 1))
 	#var location_names: String = text_to_string(get_file_data("WORLD.LZW").slice(0x713b, 0x73e3 + 1))
 	#var section: int = 31
-	#var text: String = ""
-	#if section == world_lzw_offsets.size() - 1:
-		#text = text_to_string(get_file_data("WORLD.LZW").slice(world_lzw_offsets[section]))
-	#else:
-		#text = text_to_string(get_file_data("WORLD.LZW").slice(world_lzw_offsets[section], world_lzw_offsets[section + 1]))
-	#
+	
+	# process text
+	#var offsets: PackedInt32Array = battle_bin_text_offsets
+	#var file_name: String = "BATTLE.BIN"
+	#var text_data_end: int = battle_bin_text_end
+	#for section_name in BATTLE_BIN_TEXT_SECTIONS:
+		#var text: String = ""
+		#var section_num = BATTLE_BIN_TEXT_SECTIONS[section_name]
+		#if section_num == offsets.size() - 1:
+			#text = text_to_string(get_file_data(file_name).slice(offsets[section_num], text_data_end))
+		#else:
+			#text = text_to_string(get_file_data(file_name).slice(offsets[section_num], offsets[section_num + 1]))
+		#
+		#push_warning(str(section_num) + " " + section_name + "\n" + text)
+	
+	#var text: String = text_to_string(get_file_data("SPELL.MES"))
 	#push_warning(text)
+
 
 
 func clear_data() -> void:
@@ -352,13 +387,30 @@ static func text_to_string(bytes_text: PackedByteArray) -> String:
 		elif char_code == 0xe1: # code for printing unit's name
 			text += "[UnitName]"
 			continue
+		elif char_code == 0xe3: # code to change color
+			#text += "[UnitName]"
+			byte_index += 1
+			continue
+		elif [0xe4, 0xe6].has(char_code): # codes for printing text variable as decimal
+			text += "[Number]"
+			if char_code == 0xe6:
+				byte_index += 1
+			continue
 		elif [0xe5, 0xe9, 0xea, 0xeb].has(char_code): # code for printing text variable
 			text += "[TextVariable]"
 			continue
+		elif char_code == 0xe8: # code to provide space for decimals?
+			#text += "[UnitName]"
+			byte_index += 1
+			continue
 		elif char_code == 0xfe or char_code == 0xff: # end string TODO separate out the text
 			char_code = 0x0d
+		elif char_code == 0xfd: # code to prevent closing? TODO separate out the text
+			char_code = 0x0d # interpret as new line
+			#continue
 		elif char_code == 0xf8: # new line
-			char_code = 0x0d
+			#char_code = 0x0d # new line
+			char_code = 0x20 # use a space instead of new line
 		elif char_code < 10: # 0-9 are digits
 			char_code += 0x30
 		elif char_code < 36: # next 26 are upper case alphabet
@@ -402,13 +454,17 @@ static func text_to_string(bytes_text: PackedByteArray) -> String:
 			char_code = 0x27
 		elif char_code == 178: # music note
 			char_code = 0x1d160
+		elif char_code == 0xd110: # counter clockwise arrow
+			char_code = 0x2607
 		elif char_code == 181 or char_code == 0xd111: # asterisk
 			char_code = 0x2a
-		elif char_code == 0xd117: # underscore
-			char_code = 0x5f
+		elif char_code == 0xd117: # minus sign
+			char_code = 0x2212
+		elif char_code == 0xd118: # left corner bracket
+			char_code = 0x300c
 		elif char_code == 0xd11b: # ellipsis
 			char_code = 0x2026
-		elif char_code == 0xd11d: # minus sign
+		elif char_code == 0xd11d: # hyphen-minus
 			char_code = 0x2d
 		elif char_code == 0xd11f: # multiplication sign
 			char_code = 0xd7
@@ -428,6 +484,8 @@ static func text_to_string(bytes_text: PackedByteArray) -> String:
 			char_code = 0x25
 		elif char_code == 0xd9b9: # circle
 			char_code = 0x25cb
+		elif char_code == 0xd9c4: # right corner bracket
+			char_code = 0x300d
 		elif char_code == 0xd9c5: # tilde
 			char_code = 0x7e
 		elif char_code == 0xd9c7: # triangle
@@ -449,6 +507,9 @@ static func text_to_string(bytes_text: PackedByteArray) -> String:
 			char_code = 0x2c
 		elif char_code == 0xda75: # semi colon
 			char_code = 0x3b
+		else:
+			text += ("%x" % char_code)
+			continue
 		
 		text += String.chr(char_code)
 	

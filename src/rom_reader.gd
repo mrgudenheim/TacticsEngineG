@@ -346,6 +346,15 @@ static func text_to_string(bytes_text: PackedByteArray) -> String:
 		
 		if char_code == 0xfa or char_code == 0xda73: # space
 			char_code = 0x20
+		elif char_code == 0xe0: # code for protaganists name
+			text += "[Ramza]"
+			continue
+		elif char_code == 0xe1: # code for printing unit's name
+			text += "[UnitName]"
+			continue
+		elif [0xe5, 0xe9, 0xea, 0xeb].has(char_code): # code for printing text variable
+			text += "[TextVariable]"
+			continue
 		elif char_code == 0xfe or char_code == 0xff: # end string TODO separate out the text
 			char_code = 0x0d
 		elif char_code == 0xf8: # new line

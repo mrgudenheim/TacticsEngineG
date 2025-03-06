@@ -32,9 +32,8 @@ const bytes_per_sector_header: int = 24
 const bytes_per_sector_footer: int = 280
 const data_bytes_per_sector: int = 2048
 
-# load gif exporter module
+# load gif exporter module and quantization module that you want to use
 const GIFExporter = preload("res://addons/gdgifexporter/exporter.gd")
-# load quantization module that you want to use
 const MedianCutQuantization = preload("res://addons/gdgifexporter/quantization/median_cut.gd")
 
 

@@ -211,7 +211,7 @@ item_list_filepath = "res://src/fftae/item_list.txt"
 
 [node name="UnitSpritesManager" parent="Unit/CharacterBody3D/UnitAnimationManager" instance=ExtResource("9_81hnw")]
 
-[node name="UnitDebugMenu" type="Control" parent="Unit/CharacterBody3D" node_paths=PackedStringArray("animation_manager", "sprite_options", "anim_id_spin", "weapon_options", "item_options", "other_type_options")]
+[node name="UnitDebugMenu" type="Control" parent="Unit/CharacterBody3D" node_paths=PackedStringArray("animation_manager", "sprite_options", "anim_id_spin", "weapon_options", "item_options", "other_type_options", "sprite_sheet_viewer")]
 visible = false
 layout_mode = 3
 anchors_preset = 0
@@ -224,6 +224,7 @@ anim_id_spin = NodePath("PanelContainer/MarginContainer/GridContainer/AnimPtrIdS
 weapon_options = NodePath("PanelContainer/MarginContainer/GridContainer/WeaponOptionButton")
 item_options = NodePath("PanelContainer/MarginContainer/GridContainer/ItemOptionButton")
 other_type_options = NodePath("PanelContainer/MarginContainer/GridContainer/OtherTypeOptionButton")
+sprite_sheet_viewer = NodePath("../../../MapTexture")
 
 [node name="PanelContainer" type="PanelContainer" parent="Unit/CharacterBody3D/UnitDebugMenu"]
 layout_mode = 0

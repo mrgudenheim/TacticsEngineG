@@ -222,7 +222,7 @@ func set_sp2s() -> void:
 
 func set_sp2_data(base_spr: Spr) -> void:
 	var sp2_data: PackedByteArray = RomReader.get_file_data(file_name)
-	set_data(sp2_data)
+	color_indices = set_color_indices(sp2_data)
 	color_palette = base_spr.color_palette
 	set_pixel_colors()
 	spritesheet = get_rgba8_image()

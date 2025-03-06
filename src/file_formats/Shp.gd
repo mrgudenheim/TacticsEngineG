@@ -78,15 +78,30 @@ static var shp_aliases: Dictionary[String, String] = {
 const SP2_START_ANIMATION_ID: int = 194
 const SP2_V_OFFSET: int = 232 # pixels
 const SP2_V_OFFSET2: int = 256 # pixels
-const constant_sp2_v_offsets: Dictionary[int, int] = {
-	234: SP2_V_OFFSET,
-	235: SP2_V_OFFSET,
-	236: SP2_V_OFFSET + (SP2_V_OFFSET2 * 1),
-	237: SP2_V_OFFSET + (SP2_V_OFFSET2 * 1),
-	232: SP2_V_OFFSET + (SP2_V_OFFSET2 * 2),
-	233: SP2_V_OFFSET + (SP2_V_OFFSET2 * 2),
-	230: SP2_V_OFFSET + (SP2_V_OFFSET2 * 3),
-	231: SP2_V_OFFSET + (SP2_V_OFFSET2 * 3),
+#const constant_sp2_v_offsets: Dictionary[int, int] = { # using ShiShi spritesheet, sp2s loaded in order of ability id
+	#234: SP2_V_OFFSET,
+	#235: SP2_V_OFFSET,
+	#236: SP2_V_OFFSET + (SP2_V_OFFSET2 * 1),
+	#237: SP2_V_OFFSET + (SP2_V_OFFSET2 * 1),
+	#232: SP2_V_OFFSET + (SP2_V_OFFSET2 * 2),
+	#233: SP2_V_OFFSET + (SP2_V_OFFSET2 * 2),
+	#230: SP2_V_OFFSET + (SP2_V_OFFSET2 * 3),
+	#231: SP2_V_OFFSET + (SP2_V_OFFSET2 * 3),
+	#}
+
+# ptr 230 - Destroy (electric fist) - IRON5.SP2
+# ptr 232 - Compress (hammer) - IRON4.SP2
+# ptr 234 - Dispose (cannon) - IRON2.SP2
+# ptr 236 - Crush (drill) - IRON3.SP2
+const constant_sp2_v_offsets: Dictionary[int, int] = { # spritesheet with sp2s appended in order of file name
+	234: SP2_V_OFFSET + (SP2_V_OFFSET2 * 1),
+	235: SP2_V_OFFSET + (SP2_V_OFFSET2 * 1),
+	236: SP2_V_OFFSET + (SP2_V_OFFSET2 * 2),
+	237: SP2_V_OFFSET + (SP2_V_OFFSET2 * 2),
+	232: SP2_V_OFFSET + (SP2_V_OFFSET2 * 3),
+	233: SP2_V_OFFSET + (SP2_V_OFFSET2 * 3),
+	230: SP2_V_OFFSET + (SP2_V_OFFSET2 * 4),
+	231: SP2_V_OFFSET + (SP2_V_OFFSET2 * 4),
 	}
 
 
@@ -669,33 +684,33 @@ func create_blank_frame(color: Color = Color.TRANSPARENT, new_frame_size: Vector
 	return blank_image
 
 
-func get_assembled_frame(frame_index: int, source_image: Image, animation_index: int, 
+func get_assembled_frame(frame_index: int, source_image: Image, animation_ptr_index: int, 
 		other_type_index: int, weapon_v_offset: int, submerged_depth: int, new_frame_size: Vector2i = frame_size, y_offset: int = 40) -> Image:
 	var frame: FrameData = get_frame(frame_index, submerged_depth)
 	var assembled_image: Image = create_blank_frame(Color.TRANSPARENT, new_frame_size)
 	
 	for subframe_index in range(frame.num_subframes-1, -1, -1): # reverse order to layer them correctly
-		var v_offset:int = get_v_offset(frame_index, subframe_index, animation_index, other_type_index, weapon_v_offset, submerged_depth)
+		var v_offset: int = get_v_offset(frame_index, subframe_index, animation_ptr_index, other_type_index, weapon_v_offset, submerged_depth)
 		assembled_image = add_subframe(frame.subframes[subframe_index], source_image, assembled_image, v_offset, new_frame_size, y_offset)
 	
 	return assembled_image
 
 
-func get_v_offset(frame_index:int, subframe_index:int, animation_index: int, other_type_index: int, weapon_v_offset: int, submerged_depth: int) -> int:
+func get_v_offset(frame_index:int, subframe_index:int, animation_ptr_index: int, other_type_index: int, weapon_v_offset: int, submerged_depth: int) -> int:
 	var v_offset: int = 0
 	var y_top: int = get_frame(frame_index, submerged_depth).subframes[subframe_index].load_location_y
 	if frame_index >= attack_start_index:
 		v_offset += 256
 	
-	if file_name.contains("wep"):
+	if file_name.contains("WEP"):
 		v_offset = weapon_v_offset
-	elif file_name.contains("other"):
+	elif file_name.contains("OTHER"):
 		v_offset = other_type_index * 24 * 2 # 2 rows each of chicken and frog frames
-	elif file_name.contains("mon") and y_top >= 256: # if y_top left is in bottom half, check if it should look into sp2
-		if constant_sp2_v_offsets.has(animation_index):
-			v_offset = constant_sp2_v_offsets[animation_index]
-		elif animation_index >= SP2_START_ANIMATION_ID:
-			v_offset = SP2_V_OFFSET
+	elif file_name.contains("MON"): # if y_top left is in bottom half, check if it should look into sp2
+		if constant_sp2_v_offsets.has(animation_ptr_index):
+			v_offset = constant_sp2_v_offsets[animation_ptr_index]
+		elif animation_ptr_index >= SP2_START_ANIMATION_ID:
+			v_offset = SP2_V_OFFSET + SP2_V_OFFSET2
 	
 	return v_offset
 

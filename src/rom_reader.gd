@@ -6,8 +6,8 @@ signal rom_loaded
 var is_ready: bool = false
 
 var rom: PackedByteArray = []
-var file_records: Dictionary = {} # {String, FileRecord}
-var lba_to_file_name: Dictionary = {} # {int, String}
+var file_records: Dictionary[String, FileRecord] = {} # {String, FileRecord}
+var lba_to_file_name: Dictionary[int, String] = {} # {int, String}
 
 const DIRECTORY_DATA_SECTORS_ROOT: PackedInt32Array = [22]
 const OFFSET_RECORD_DATA_START: int = 0x60
@@ -19,7 +19,7 @@ const BYTES_PER_SECTOR_FOOTER: int = 280
 const DATA_BYTES_PER_SECTOR: int = 2048
 
 var sprs: Array[Spr] = []
-var spr_file_name_to_id: Dictionary = {}
+var spr_file_name_to_id: Dictionary[String, int] = {}
 
 var shps: Array[Shp] = []
 var seqs: Array[Seq] = []

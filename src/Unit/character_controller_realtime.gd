@@ -21,7 +21,7 @@ enum Facings {
 	SOUTHEAST,
 	}
 
-const CameraFacingVectors: Dictionary = {
+const CameraFacingVectors: Dictionary[Facings, Vector3] = {
 	Facings.NORTHWEST: Vector3.LEFT + Vector3.FORWARD,
 	Facings.NORTHEAST: Vector3.RIGHT + Vector3.FORWARD,
 	Facings.SOUTHWEST: Vector3.LEFT + Vector3.BACK,

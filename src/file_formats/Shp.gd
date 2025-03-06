@@ -60,7 +60,7 @@ var frame_size: Vector2i:
 
 const PIXELS_PER_TILE = 8
 
-static var shp_aliases: Dictionary = {
+static var shp_aliases: Dictionary[String, String] = {
 	"arute":"Altima/arute",
 	"cyoko":"Chocobo/cyoko",
 	"eff1":"eff1",
@@ -78,7 +78,7 @@ static var shp_aliases: Dictionary = {
 const SP2_START_ANIMATION_ID: int = 194
 const SP2_V_OFFSET: int = 232 # pixels
 const SP2_V_OFFSET2: int = 256 # pixels
-const constant_sp2_v_offsets: Dictionary = {
+const constant_sp2_v_offsets: Dictionary[int, int] = {
 	234: SP2_V_OFFSET,
 	235: SP2_V_OFFSET,
 	236: SP2_V_OFFSET + (SP2_V_OFFSET2 * 1),

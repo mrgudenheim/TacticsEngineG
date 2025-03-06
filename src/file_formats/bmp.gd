@@ -207,7 +207,7 @@ static func create_paletted_bmp(image: Image, palette: Array[Color], local_bits_
 	bmp_file.encode_u32(0x0032, palette_num_colors) # Important Colors (4 bytes) 0x0032
 
 	# Color Table 0x0036 - either 16 (4bpp) colors long or 256 (8 bpp) colors long	
-	var color_index: Dictionary = {} # Dictionary[string, int] to determine index based on pixel color
+	var color_index: Dictionary[String, int] = {} # Dictionary[string, int] to determine index based on pixel color
 	for i in palette_num_colors:
 		var palette_color_string: String = str(palette[i]) # use string to allow for correct dictionary lookup
 		if color_index.has(palette_color_string): # keep lowest index for color

@@ -2,7 +2,7 @@ class_name Seq
 
 var is_initialized: bool = false
 
-static var seq_aliases: Dictionary = {
+static var seq_aliases: Dictionary[String, String] = {
 	"ARUTE.SEQ":"Altima/arute",
 	"CYOKO.SEQ":"Chocobo/cyoko",
 	"EFF1.SEQ":"eff1",
@@ -83,10 +83,10 @@ var toal_length: int = 0:
 	get:
 		return section1_length + section2_length + section3_length
 
-static var opcode_parameters: Dictionary = {}
-static var opcode_parameters_by_name: Dictionary = {}
-static var opcode_names: Dictionary = {}
-static var seq_names: Dictionary = {} # [name_alias, [seq_index, seq_name]]
+static var opcode_parameters: Dictionary[String, int] = {}
+static var opcode_parameters_by_name: Dictionary[String, int] = {}
+static var opcode_names: Dictionary[String, String] = {}
+static var seq_names: Dictionary[String, PackedStringArray] = {} # [name_alias, [seq_index, seq_name]]
 
 
 static func _static_init() -> void:
@@ -208,7 +208,7 @@ func set_sequence_names() -> void:
 		#push_warning(seq_names[name_alias])
 		for pointer_index in sequence_pointers.size():
 			var pointer: int = sequence_pointers[pointer_index]
-			if sequences[pointer].seq_name.is_empty() and seq_names[name_alias].has(pointer_index): # if this is the first pointer to point to the sequence
+			if sequences[pointer].seq_name.is_empty() and seq_names[name_alias].size() > pointer_index: # if this is the first pointer to point to the sequence
 				sequences[pointer].seq_name = seq_names[name_alias][pointer_index] # set name of the sequence
 
 
@@ -547,7 +547,10 @@ static func load_seq_name_data() -> void:
 			continue
 		
 		if not seq_names.has(parts[0]):
-			seq_names[parts[0]] = {}
+			seq_names[parts[0]] = PackedStringArray()
+		if seq_names[parts[0]].size() <= parts[1].to_int():
+			seq_names[parts[0]].resize(parts[1].to_int() + 1)
+		
 		seq_names[parts[0]][parts[1].to_int()] = parts[2]
 		
 		line_index += 1

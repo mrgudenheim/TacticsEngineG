@@ -19,7 +19,23 @@ func _init(new_file_name: String) -> void:
 	palette_data_start = 0
 	pixel_data_start = num_colors * 2 # after 256 color palette, 2 bytes per color - 1 bit for alpha, followed by 5 bits per channel (B,G,R)
 	width = 256 # pixels
-	height = 488 # need to set based on file?
+	height = 488
+	if file_name.get_extension() == "SP2":
+		height = 256
+		is_sp2 = true
+		has_compressed = false
+	elif file_name == "OTHER.SPR":
+		num_colors = 512
+		has_compressed = false
+	elif (file_name.contains("WEP") 
+		or file_name.contains("EFF")
+		or file_name.contains("0")
+		or file_name.contains("CYOMON")
+		or file_name.contains("DAMI")
+		or file_name.contains("FURAIA")
+		or file_name.contains("ITEM")
+		):
+			has_compressed = false
 	num_pixels = width * height
 
 
@@ -35,19 +51,6 @@ func get_sub_spr(new_name: String, start_pixel: int, end_pixel: int) -> Spr:
 
 
 func set_data(spr_file: PackedByteArray) -> void:
-	if file_name == "OTHER.SPR":
-		num_colors = 512
-		has_compressed = false
-	elif (file_name.contains("WEP") 
-		or file_name.contains("EFF")
-		or file_name.contains("0")
-		or file_name.contains("CYOMON")
-		or file_name.contains("DAMI")
-		or file_name.contains("FURAIA")
-		or file_name.contains("ITEM")
-		):
-			has_compressed = false
-	
 	var num_palette_bytes: int = num_colors * 2
 	var palette_bytes: PackedByteArray = spr_file.slice(0, num_palette_bytes)
 	var num_bytes_top: int = (width * 256) /2
@@ -67,7 +70,8 @@ func set_data(spr_file: PackedByteArray) -> void:
 	set_pixel_colors()
 	spritesheet = get_rgba8_image()
 	
-	set_sp2s()
+	if not is_sp2:
+		set_sp2s()
 	
 	is_initialized = true
 
@@ -202,12 +206,24 @@ func set_sp2s() -> void:
 	if sp2_name_base == "TETSU":
 		sp2_name_base = "IRON"
 	
-	for file_num: int in range(5):
+	for file_num: int in range(2,6):
 		var sp2_name: String = sp2_name_base + str(file_num) + ".SP2"
 		if RomReader.file_records.has(sp2_name):
-			var sp2_data: PackedByteArray = RomReader.get_file_data(sp2_name)
-			color_indices.append_array(set_color_indices(sp2_data))
+			var sp2_spr: Spr = Spr.new(sp2_name)
+			sp2_spr.set_sp2_data(self)
+			sp2s[sp2_name] = sp2_spr
+			
+			# append sp2 image data to base spr
+			color_indices.append_array(sp2_spr.color_indices)
 	
+	set_pixel_colors()
+	spritesheet = get_rgba8_image()
+
+
+func set_sp2_data(base_spr: Spr) -> void:
+	var sp2_data: PackedByteArray = RomReader.get_file_data(file_name)
+	set_data(sp2_data)
+	color_palette = base_spr.color_palette
 	set_pixel_colors()
 	spritesheet = get_rgba8_image()
 

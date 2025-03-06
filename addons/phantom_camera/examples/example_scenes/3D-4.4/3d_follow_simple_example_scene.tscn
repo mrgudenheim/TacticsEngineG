@@ -1,11 +1,11 @@
 [gd_scene load_steps=12 format=3 uid="uid://c7uyfhhnrmkbx"]
 
-[ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="1_gt67h"]
-[ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="2_4ltlo"]
-[ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="3_hldrt"]
-[ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/camera_3d_resource.gd" id="4_pqibl"]
+[ext_resource type="Script" uid="uid://c50vdp0vsl2rm" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="1_gt67h"]
+[ext_resource type="Script" uid="uid://dkngme7toaf3g" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="2_4ltlo"]
+[ext_resource type="Script" uid="uid://05d30de5cm5w" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="3_hldrt"]
+[ext_resource type="Script" uid="uid://cq1heh2qoayxk" path="res://addons/phantom_camera/scripts/resources/camera_3d_resource.gd" id="4_pqibl"]
 [ext_resource type="PackedScene" uid="uid://bulsh7s0ibmao" path="res://addons/phantom_camera/examples/example_scenes/3D/sub_scenes/playable_character_3d.tscn" id="5_o4k7v"]
-[ext_resource type="Script" path="res://addons/phantom_camera/examples/scripts/3D/player_controller_4.4.gd" id="6_8yuc5"]
+[ext_resource type="Script" uid="uid://brdixodtxgj7l" path="res://addons/phantom_camera/examples/scripts/3D/player_controller_4.4.gd" id="6_8yuc5"]
 [ext_resource type="PackedScene" uid="uid://cixlwqycoox8h" path="res://addons/phantom_camera/examples/models/3d_cube_dark.tscn" id="6_m6ich"]
 [ext_resource type="Texture2D" uid="uid://c7ja4woxol8yc" path="res://addons/phantom_camera/examples/textures/3D/checker_pattern_dark.png" id="7_pagh0"]
 

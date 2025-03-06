@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cw8mvbkue4ibk"]
 
-[ext_resource type="Script" path="res://src/Unit/unit_sprites_manager.gd" id="1_brshp"]
+[ext_resource type="Script" uid="uid://cd7gejdmtbx5v" path="res://src/Unit/unit_sprites_manager.gd" id="1_brshp"]
 
 [node name="UnitSpritesManager" type="Node3D" node_paths=PackedStringArray("sprite_primary", "sprite_weapon", "sprite_effect", "sprite_text", "sprite_item", "sprite_background", "pivot_primary", "pivot_weapon", "pivot_effect", "pivot_text")]
 script = ExtResource("1_brshp")

@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://cxr41bg8c7dir"]
 
-[ext_resource type="Script" path="res://src/fftae/row_frame.gd" id="1_runw7"]
+[ext_resource type="Script" uid="uid://b54ksiq6h2fnn" path="res://src/fftae/row_frame.gd" id="1_runw7"]
 [ext_resource type="ButtonGroup" uid="uid://cevw4a121sxn3" path="res://src/fftae/button_group_frames.tres" id="2_sgvtx"]
 
 [node name="RowMarginContainer" type="MarginContainer" node_paths=PackedStringArray("frame_label", "rotation_label", "subframes_label", "preview_rect", "button")]

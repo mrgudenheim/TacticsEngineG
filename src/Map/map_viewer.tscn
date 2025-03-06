@@ -1,17 +1,17 @@
 [gd_scene load_steps=26 format=3 uid="uid://card26cltbba1"]
 
-[ext_resource type="Script" path="res://src/Map/map_viewer.gd" id="1_ojbyw"]
+[ext_resource type="Script" uid="uid://cd31vmh881wm5" path="res://src/Map/map_viewer.gd" id="1_ojbyw"]
 [ext_resource type="PackedScene" uid="uid://26tg32417lfm" path="res://src/load_rom.tscn" id="2_4wnqg"]
-[ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="3_a072s"]
-[ext_resource type="Script" path="res://src/camera_control.gd" id="3_dpuna"]
-[ext_resource type="Script" path="res://src/Unit/character_controller_realtime.gd" id="3_wbco3"]
-[ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="4_8ik4g"]
-[ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="6_yx7fd"]
+[ext_resource type="Script" uid="uid://dkngme7toaf3g" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="3_a072s"]
+[ext_resource type="Script" uid="uid://bg3no6nu8phv0" path="res://src/camera_control.gd" id="3_dpuna"]
+[ext_resource type="Script" uid="uid://cl143w048iago" path="res://src/Unit/character_controller_realtime.gd" id="3_wbco3"]
+[ext_resource type="Script" uid="uid://05d30de5cm5w" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="4_8ik4g"]
+[ext_resource type="Script" uid="uid://c50vdp0vsl2rm" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="6_yx7fd"]
 [ext_resource type="PackedScene" uid="uid://buljw4afjva1d" path="res://src/Map/map.tscn" id="8_0n3mn"]
-[ext_resource type="Script" path="res://src/Unit/unit.gd" id="8_o41s4"]
+[ext_resource type="Script" uid="uid://b1ogscpjrty2b" path="res://src/Unit/unit.gd" id="8_o41s4"]
 [ext_resource type="PackedScene" uid="uid://cw8mvbkue4ibk" path="res://src/Unit/unit_sprites_manager.tscn" id="9_81hnw"]
-[ext_resource type="Script" path="res://src/Unit/unit_animation_manager.gd" id="9_rgxyk"]
-[ext_resource type="Script" path="res://src/Unit/unit_debug_menu.gd" id="11_wboi1"]
+[ext_resource type="Script" uid="uid://cmjcg2ou16liv" path="res://src/Unit/unit_animation_manager.gd" id="9_rgxyk"]
+[ext_resource type="Script" uid="uid://x1o6jl12c6sh" path="res://src/Unit/unit_debug_menu.gd" id="11_wboi1"]
 
 [sub_resource type="Environment" id="Environment_njvnp"]
 background_mode = 3
@@ -96,6 +96,7 @@ collision_mask = 0
 look_at_damping = true
 
 [node name="Camera3D" type="Camera3D" parent="."]
+physics_interpolation_mode = 1
 transform = Transform3D(0.707107, -0.31551, 0.632814, 1.49012e-08, 0.894934, 0.446199, -0.707107, -0.31551, 0.632814, 126.553, 89.2326, 126.553)
 projection = 1
 size = 12.0

@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://t3xjefep2ne1"]
 
 [ext_resource type="ButtonGroup" uid="uid://d3gvtnjq7tpqo" path="res://src/fftae/button_group_animations.tres" id="1_7wbbd"]
-[ext_resource type="Script" path="res://src/fftae/row_animation.gd" id="1_bnb56"]
+[ext_resource type="Script" uid="uid://1hfkujadr060" path="res://src/fftae/row_animation.gd" id="1_bnb56"]
 
 [node name="RowMarginContainer" type="MarginContainer" node_paths=PackedStringArray("pointer_label", "anim_id_spinbox", "description_label", "opcodes_label", "button")]
 clip_contents = true

@@ -21,6 +21,38 @@ static var main_camera: Camera3D
 @export var unit: CharacterBody3D
 
 @export var mirror: bool = true
+var walled_maps: PackedInt32Array = [
+	3,
+	4,
+	8,
+	10,
+	11,
+	13,
+	14,
+	16,
+	17,
+	18,
+	20,
+	21,
+	24,
+	26,
+	33,
+	39,
+	41,
+	51,
+	52,
+	53,
+	62,
+	65,
+	68,
+	73,
+	92,
+	93,
+	94,
+	95,
+	96,
+	104,
+	]
 
 const SCALE: float = 1.0 / MapData.TILE_SIDE_LENGTH
 const SCALED_UNITS_PER_HEIGHT: float = SCALE * MapData.UNITS_PER_HEIGHT
@@ -65,7 +97,6 @@ func on_rom_loaded() -> void:
 
 
 func on_map_selected(index: int) -> void:
-	# TODO fix loading MAP053 Entrance to Death City
 	var map_file_name: String = map_dropdown.get_item_text(index)
 	
 	var start_time: int = Time.get_ticks_msec()
@@ -85,7 +116,7 @@ func on_map_selected(index: int) -> void:
 	
 	instantiate_map(map_data, Vector3.ZERO, Vector3.ONE)
 	
-	if mirror:
+	if not walled_maps.has(index):
 		instantiate_map(map_data, Vector3.ZERO, Vector3(1, 1, -1))
 		instantiate_map(map_data, Vector3.FORWARD * map_data.map_length * 2, Vector3(1, 1, -1))
 		instantiate_map(map_data, Vector3.ZERO, Vector3(-1, 1, 1))

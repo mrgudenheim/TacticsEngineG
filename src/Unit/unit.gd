@@ -8,6 +8,9 @@ extends Node3D
 
 var map_position: Vector2i
 var facing: Facings = Facings.NORTH
+var facing_vector: Vector3 = Vector3.FORWARD:
+	get:
+		return FacingVectors[facing]
 
 enum Facings {
 	NORTH,

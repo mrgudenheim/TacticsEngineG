@@ -200,10 +200,11 @@ spring_length = 5.0
 [node name="DropShadowSprite3D" type="Sprite3D" parent="Unit/CharacterBody3D/ShadowSpringArm3D"]
 texture = SubResource("GradientTexture2D_6vwfi")
 
-[node name="UnitAnimationManager" type="Node3D" parent="Unit/CharacterBody3D" node_paths=PackedStringArray("unit_debug_menu", "unit_sprites_manager")]
+[node name="UnitAnimationManager" type="Node3D" parent="Unit/CharacterBody3D" node_paths=PackedStringArray("unit_debug_menu", "unit_data", "unit_sprites_manager")]
 transform = Transform3D(1, 0, 0, 0, 0.894934, 0.446198, 0, -0.446198, 0.894934, 0, 0.643, 0)
 script = ExtResource("9_rgxyk")
 unit_debug_menu = NodePath("../UnitDebugMenu")
+unit_data = NodePath("../..")
 unit_sprites_manager = NodePath("UnitSpritesManager")
 layer_priority_table_filepath = "res://src/fftae/layer_priority_table.txt"
 weapon_table_filepath = "res://src/fftae/weapons.txt"
@@ -296,3 +297,27 @@ visible = false
 mesh = SubResource("QuadMesh_foefj")
 
 [node name="Maps" type="Node3D" parent="."]
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, 0)
+pixel_size = 0.05
+billboard = 1
+text = "(1, 0, 0)"
+
+[node name="Label3D2" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 0, 0)
+pixel_size = 0.05
+billboard = 1
+text = "(-1, 0, 0)"
+
+[node name="Label3D3" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 20)
+pixel_size = 0.05
+billboard = 1
+text = "(0, 0, 1)"
+
+[node name="Label3D4" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -40)
+pixel_size = 0.05
+billboard = 1
+text = "(0, 0, -1)"

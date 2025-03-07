@@ -4,6 +4,7 @@ extends Node3D
 @export var unit_debug_menu: UnitDebugMenu
 
 #@export var ui_manager: UiManager
+@export var unit_data: UnitData
 @export var unit_sprites_manager: UnitSpritesManager
 var global_fft_animation: FftAnimation
 var global_spr: Spr
@@ -246,51 +247,41 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				start_animation(new_animation, unit_sprites_manager.sprite_effect, true, false, false)
 			else:
 				push_warning("Error: QueueSpriteAnim: " + seq_part.to_string() + "\n" + fft_animation.sequence.to_string())
-		elif seq_part.opcode_name.begins_with("Move"):
+		elif seq_part.opcode_name.begins_with("Move"): # TODO Move opcodes move the unit in 3d world space relative to facing
 			if seq_part.opcode_name == "MoveUnitFB":
-				#position_offset = Vector2(-seq_part.parameters[0], 0) # assume facing left
-				position_offset = Vector3(-seq_part.parameters[0], 0, 0) # assume facing left
+				position_offset = unit_data.facing_vector * seq_part.parameters[0]
 			elif seq_part.opcode_name == "MoveUnitDU":
-				#position_offset = Vector2(0, seq_part.parameters[0])
 				position_offset = Vector3(0, -seq_part.parameters[0], 0)
 			elif seq_part.opcode_name == "MoveUnitRL":
-				#position_offset = Vector2(seq_part.parameters[0], 0)
-				position_offset = Vector3(seq_part.parameters[0], 0, 0)
+				position_offset = unit_data.facing_vector.rotated(Vector3.UP, deg_to_rad(-90)) * seq_part.parameters[0]
 			elif seq_part.opcode_name == "MoveUnitRLDUFB":
-				#position_offset = Vector2((seq_part.parameters[0]) - (seq_part.parameters[2]), seq_part.parameters[1]) # assume facing left
-				position_offset = Vector3((seq_part.parameters[0]) - (seq_part.parameters[2]), -seq_part.parameters[1], 0) # assume facing left
+				var position_offset_fb: Vector3 = unit_data.facing_vector * seq_part.parameters[2]
+				var position_offset_rl: Vector3 = unit_data.facing_vector.rotated(Vector3.UP, deg_to_rad(-90)) * seq_part.parameters[0]
+				var position_offset_du: Vector3 = Vector3(0, -seq_part.parameters[1], 0)
+				position_offset = position_offset_fb + position_offset_rl + position_offset_du
 			elif seq_part.opcode_name == "MoveUp1":
-				#position_offset = Vector2(0, -1)
 				position_offset = Vector3(0, 1, 0)
 			elif seq_part.opcode_name == "MoveUp2":
-				#position_offset = Vector2(0, -2)
 				position_offset = Vector3(0, 2, 0)
 			elif seq_part.opcode_name == "MoveDown1":
-				#position_offset = Vector2(0, 1)
 				position_offset = Vector3(0, -1, 0)
 			elif seq_part.opcode_name == "MoveDown2":
-				#position_offset = Vector2(0, 2)
 				position_offset = Vector3(0, -2, 0)
 			elif seq_part.opcode_name == "MoveBackward1":
-				#position_offset = Vector2(1, 0) # assume facing left
-				position_offset = Vector3(1, 0, 0) # assume facing left
+				position_offset = unit_data.facing_vector * -1
 			elif seq_part.opcode_name == "MoveBackward2":
-				#position_offset = Vector2(2, 0) # assume facing left
-				position_offset = Vector3(2, 0, 0) # assume facing left
+				position_offset = unit_data.facing_vector * -2
 			elif seq_part.opcode_name == "MoveForward1":
-				#position_offset = Vector2(-1, 0) # assume facing left
-				position_offset = Vector3(-1, 0, 0) # assume facing left
+				position_offset = unit_data.facing_vector * 1
 			elif seq_part.opcode_name == "MoveForward2":
-				#position_offset = Vector2(-2, 0) # assume facing left
-				position_offset = Vector3(-2, 0, 0) # assume facing left
+				position_offset = unit_data.facing_vector * 2
 			else:
-				print_debug("can't inerpret " + seq_part.opcode_name)
-				push_warning("can't inerpret " + seq_part.opcode_name)
+				push_warning("can't interpret " + seq_part.opcode_name)
 			
-			if fft_animation.flipped_h:
-				position_offset = position_offset * Vector3(-1, 1, 1)
+			#if fft_animation.flipped_h:
+				#position_offset = position_offset * Vector3(-1, 1, 1)
 				
-			unit_sprites_manager.position += position_offset * MapViewer.SCALE
+			unit_sprites_manager.global_position += position_offset * MapViewer.SCALE
 			#(draw_target.get_parent().get_parent() as Node3D).position += position_offset
 		# TODO fix for sprite3Ds
 		elif seq_part.opcode_name == "SetLayerPriority":

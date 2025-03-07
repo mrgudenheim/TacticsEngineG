@@ -4,28 +4,18 @@ class_name ScusData
 
 class JobData:
 	var skillset_id: int = 0
+	#var innate_abilities:
 
 class SkillsetData:
 	var action_ability_ids: PackedInt32Array = []
 	var rsm_ability_ids: PackedInt32Array = []
 
+
 var jobs_start: int = 0x518b8 # 0x30 byte long entries
 var jobs_data: Array[JobData] = []
-#var skillset_ids: PackedInt32Array = [] # 1 byte
-#var innate_abilities: 
-
 
 var skillsets_start: int = 0x55294 # 0x55311 start of 05 Basic Skill, 0x19 bytes long
 var skillsets_data: Array[SkillsetData] = []
-#var action_ability_flags: PackedInt32Array = [] # 1 byte, add 0x100 to ability ID if bit is 1 for each ability, 0x80 = Ability 1 (eg. Item ability, etc)
-#var action_ability_flags2: PackedInt32Array = [] # 1 byte, add 0x100 to ability ID if bit is 1 for each ability, 0x80 = Ability 9
-#var rsm_ability_flags: PackedInt32Array = [] # 1 byte, add 0x100 to ability ID if bit is 1 for each ability, 0x80 = RSM Ability 1 (rightmost 2 bits unused)
-#var action_ability_ids: PackedInt32Array = [] # 16 bytes for normal abilities
-#var rsm_ability_ids: PackedInt32Array = [] # 6 bytes for R/S/M abilities
-
-#var monster_skillsets_start: int = 0x000 # 0x05 bytes long
-#var monster_ability_flags: PackedInt32Array = [] # 1 byte, add 0x100 to ability ID if bit is 1 for each ability, 0x80 = Ability 1 (eg. Item ability, etc)
-#var monster_ability_ids: PackedInt32Array = [] # 4 bytes for monster abilities
 
 
 func init_from_scus() -> void:
@@ -53,7 +43,7 @@ func init_from_scus() -> void:
 		skillset_data.rsm_ability_ids.resize(6)
 		for skill_slot: int in 16: # action abilities
 			var ability_id: int = unit_skillsets_bytes.decode_u8((skillset_id * entry_size) + 3 + skill_slot)
-			var flag: int = 2**(7 - (skill_slot % 8))
+			var flag: int = 2**(7 - (skill_slot % 8)) # add 0x100 to ability ID if bit is 1 for each ability, 0x80 = Ability 1 (eg. Item ability, etc)
 			if skill_slot < 8:
 				ability_id += 0x100 if unit_skillsets_bytes.decode_u8((skillset_id * entry_size)) & flag != 0 else 0
 			elif skill_slot < 16:
@@ -63,7 +53,7 @@ func init_from_scus() -> void:
 			
 		for skill_slot: int in 6: # rsm abilities
 			var ability_id: int = unit_skillsets_bytes.decode_u8((skillset_id * entry_size) + 3 + 16 + skill_slot)
-			var flag: int = 2**(7 - (skill_slot % 8))
+			var flag: int = 2**(7 - (skill_slot % 8)) # add 0x100 to ability ID if bit is 1 for each ability, 0x80 = RSM Ability 1 (rightmost 2 bits unused)
 			ability_id += 0x100 if unit_skillsets_bytes.decode_u8((skillset_id * entry_size) + 2) & flag != 0 else 0
 			skillset_data.rsm_ability_ids[skill_slot] = ability_id
 		
@@ -79,7 +69,7 @@ func init_from_scus() -> void:
 		skillset_data.action_ability_ids.resize(4)
 		for skill_slot: int in 4: # action abilities
 			var ability_id: int = monster_skillsets_bytes.decode_u8((skillset_id * entry_size) + 1 + skill_slot)
-			var flag: int = 2**(7 - (skill_slot % 8))
+			var flag: int = 2**(7 - (skill_slot % 8)) # add 0x100 to ability ID if bit is 1 for each ability, 0x80 = Ability 1 (eg. Item ability, etc)
 			ability_id += 0x100 if monster_skillsets_bytes.decode_u8(skillset_id * entry_size) & flag != 0 else 0
 			skillset_data.action_ability_ids[skill_slot] = ability_id
 		

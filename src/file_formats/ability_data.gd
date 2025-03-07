@@ -3,9 +3,40 @@ class_name AbilityData
 # https://ffhacktics.com/wiki/Ability_Data
 # https://ffhacktics.com/wiki/BATTLE.BIN_Data_Tables#Animation_.26_Display_Related_Data
 
+enum AbilityType {
+	BLANK,
+	NORMAL,
+	ITEM,
+	THROWING,
+	JUMPING,
+	AIM,
+	MATH_SKILL,
+	REACTION,
+	SUPPORT,
+	MOVEMENT,
+	UNKNOWN1,
+	UNKNOWN2,
+	UNKNOWN3,
+	UNKNOWN4,
+	UNKNOWN5,
+	UNKNOWN6,
+	}
+
 var id: int = 0
 var name: String = "ability name"
 var spell_quote: String = "spell quote"
+var jp_cost: int = 0
+var chance_to_learn: float = 100 # percent
+var ability_type: AbilityType = AbilityType.NORMAL
+
+var formula # TODO store Callable?
+var target_range: int = 1
+var area_of_effect: int = 1
+var vertical_limit: int = 2
+var inflict_status: int = 0
+var ticks_charge_time: int = 0
+var mp_cost: int = 0
+
 var vfx_data: VisualEffectData # BATTLE.BIN offset="14F3F0" - table of Effect IDs used by Ability ID
 var animation_charging_id: int # BATTLE.BIN offset="2ce10" - table of animations IDs used by Ability ID - byte 2
 var animation_executing_id: int # BATTLE.BIN offset="2ce10" - table of animations IDs used by Ability ID - byte 1

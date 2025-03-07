@@ -20,6 +20,10 @@ const DATA_BYTES_PER_SECTOR: int = 2048
 
 const NUM_ABILITIES = 512
 const NUM_SPRITESHEETS = 0x9f
+const NUM_SKILLSETS = 0xe0
+const NUM_UNIT_SKILLSETS = 0xb0
+const NUM_MONSTER_SKILLSETS = 0xe0 - 0xb0
+const NUM_JOBS = 0xa0
 
 var sprs: Array[Spr] = []
 var spr_file_name_to_id: Dictionary[String, int] = {}
@@ -34,6 +38,9 @@ var abilities: Array[AbilityData] = []
 
 # BATTLE.BIN tables
 var battle_bin_data: BattleBinData = BattleBinData.new()
+
+# SCUS.942.41 tables
+var scus_data: ScusData = ScusData.new()
 
 # Images
 # https://github.com/Glain/FFTPatcher/blob/master/ShishiSpriteEditor/PSXImages.xml#L148
@@ -79,9 +86,9 @@ func process_rom() -> void:
 	
 	fft_text.init_text()
 	battle_bin_data.init_from_battle_bin()
+	scus_data.init_from_scus()
 	
 	cache_associated_files()
-	
 	
 	is_ready = true
 	rom_loaded.emit()

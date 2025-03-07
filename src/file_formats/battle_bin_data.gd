@@ -48,7 +48,7 @@ func init_from_battle_bin() -> void:
 	# ability animation charging sets
 	var entry_size: int = 2 # bytes
 	var num_entries: int = 20
-	var ability_animation_charging_sets_bytes = battle_bytes.slice(ability_animation_charging_sets_start, ability_animation_charging_sets_start + (num_entries * entry_size))
+	var ability_animation_charging_sets_bytes: PackedByteArray = battle_bytes.slice(ability_animation_charging_sets_start, ability_animation_charging_sets_start + (num_entries * entry_size))
 	ability_animation_start_ids.resize(num_entries)
 	ability_animation_charging_ids.resize(num_entries)
 	for set_id: int in ability_animation_charging_sets_bytes.size() / entry_size:
@@ -57,7 +57,7 @@ func init_from_battle_bin() -> void:
 	
 	# ability animations
 	entry_size = 3 # bytes
-	var ability_animation_id_bytes = battle_bytes.slice(ability_animation_ids_start, ability_animation_ids_start + (NUM_ACTIVE_ABILITIES * entry_size))
+	var ability_animation_id_bytes: PackedByteArray = battle_bytes.slice(ability_animation_ids_start, ability_animation_ids_start + (NUM_ACTIVE_ABILITIES * entry_size))
 	ability_animation_charging_set_ids.resize(NUM_ACTIVE_ABILITIES)
 	ability_animation_executing_ids.resize(NUM_ACTIVE_ABILITIES)
 	ability_animation_text_ids.resize(NUM_ACTIVE_ABILITIES)
@@ -68,7 +68,7 @@ func init_from_battle_bin() -> void:
 	
 	# ability vfx
 	entry_size = 2
-	var ability_effect_id_bytes = battle_bytes.slice(ability_effect_ids_start, ability_effect_ids_start + (NUM_ACTIVE_ABILITIES * entry_size))
+	var ability_effect_id_bytes: PackedByteArray = battle_bytes.slice(ability_effect_ids_start, ability_effect_ids_start + (NUM_ACTIVE_ABILITIES * entry_size))
 	ability_effect_ids.resize(NUM_ACTIVE_ABILITIES)
 	for ability_id: int in ability_effect_id_bytes.size() / entry_size:
 		ability_animation_charging_set_ids[ability_id] = ability_animation_id_bytes.decode_u8(ability_id * entry_size)

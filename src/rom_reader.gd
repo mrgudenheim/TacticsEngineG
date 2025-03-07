@@ -46,27 +46,10 @@ var frame_targeted # BATTLE.BIN offset="2d9c4" - called if target hasn't replace
 
 
 # Text
+var fft_text: FftText = FftText.new()
 # https://github.com/Glain/FFTPatcher/blob/master/FFTacText/notes.txt
-# BATTLE.BIN
-# fa35c - fa928 - Battle Error Messages Text
-# fa929 - fad41 - Battle Messages Text
-# fad41 - fb2c2 - Job Names Text
-# fb2c3 - fbe48 - Item Names Text
-# fbe50 - fc0d9 - Japanese writing (FREE SPACE)
-# fc0da - fcb87 - Act menus display data (0x05 bytes each, 0x06 for each unit?)
-# fcb88 - fdeb6 - Skill/Ability Names Text
-# fe93a - fed73 - skillset names
-# fed88 - fedf5? - Summon names
-# fedf6 -  - Draw out names
-
 # https://ffhacktics.com/wiki/Load_FFTText
-# OPEN.LZW - Sound Test - Track Names
-# SPELL.MES - Spell Quotes
-# WORLD.BIN 09 - Locations - Names
-# WORLD.LZW 0x713b - 0x73e3 - Locations - Names
-# WORLD.LZW - World Map Menu
-# WORLD.LZW 0x74df - 0x7e69  - Maps - Names
-
+# https://github.com/Glain/FFTPatcher/blob/master/FFTacText/PSXText.xml
 var world_lzw_offsets: PackedInt32Array = []
 enum WORLD_LZW_SECTIONS {
 	JOB_NAMES = 6,
@@ -124,40 +107,6 @@ func on_load_rom_dialog_file_selected(path: String) -> void:
 	push_warning("Time to load file (ms): " + str(Time.get_ticks_msec() - start_time))
 	
 	process_rom()
-	
-	
-	# offsets to 24 text sections of BATTLE.BIN are at 0xfa2dc - 0xfa338 and are measured from 0xfa35c
-	#var offsets_bytes = get_file_data("BATTLE.BIN").slice(0xfa2dc, 0xfa2dc + (24 * 4))
-	#for idx: int in offsets_bytes.size() / 4:
-		#battle_bin_text_offsets.append(offsets_bytes.decode_u32(idx * 4) + 0xfa35c)
-	
-	# offsets to sections of file are at the beginning of the WORLD.LZW file
-	#var offsets_bytes = get_file_data("WORLD.LZW").slice(0, 0x80)
-	#for idx: int in offsets_bytes.size() / 4:
-		#world_lzw_offsets.append(offsets_bytes.decode_u32(idx * 4) + 0x80)
-	#
-	#var ability_names: String = text_to_string(get_file_data("BATTLE.BIN").slice(0xfcb88, 0xfdeb6 + 1))
-	#var map_names: String = text_to_string(get_file_data("WORLD.LZW").slice(0x74df, 0x7e69 + 1))
-	#var location_names: String = text_to_string(get_file_data("WORLD.LZW").slice(0x713b, 0x73e3 + 1))
-	#var section: int = 31
-	
-	# process text
-	#var offsets: PackedInt32Array = battle_bin_text_offsets
-	#var file_name: String = "BATTLE.BIN"
-	#var text_data_end: int = battle_bin_text_end
-	#for section_name in BATTLE_BIN_TEXT_SECTIONS:
-		#var text: String = ""
-		#var section_num = BATTLE_BIN_TEXT_SECTIONS[section_name]
-		#if section_num == offsets.size() - 1:
-			#text = text_to_string(get_file_data(file_name).slice(offsets[section_num], text_data_end))
-		#else:
-			#text = text_to_string(get_file_data(file_name).slice(offsets[section_num], offsets[section_num + 1]))
-		#
-		#push_warning(str(section_num) + " " + section_name + "\n" + text)
-	
-	#var text: String = text_to_string(get_file_data("SPELL.MES"))
-	#push_warning(text)
-
 
 
 func clear_data() -> void:
@@ -184,6 +133,7 @@ func process_rom() -> void:
 	
 	_load_battle_bin_sprite_data()
 	cache_associated_files()
+	fft_text.init_text()
 	
 	is_ready = true
 	rom_loaded.emit()
@@ -353,164 +303,3 @@ func get_file_data(file_name: String) -> PackedByteArray:
 	file_data.append_array(last_sector_data)
 	
 	return file_data
-
-
-# https://ffhacktics.com/wiki/Font
-# https://ffhacktics.com/wiki/Text_Format
-static func text_to_string(bytes_text: PackedByteArray) -> String:
-	var text : String = ""
-	
-	if bytes_text.size() == 0:                        
-		push_warning("No text data")
-		return text
-	
-	
-	var byte_index: int = 0
-	while byte_index < bytes_text.size():
-		var char_code: int = bytes_text[byte_index]
-		
-		if char_code > 0xda:
-			byte_index += 1
-		elif char_code > 0xcf:
-			var code_2bytes: String = bytes_text.slice(byte_index, byte_index + 2).hex_encode()
-			char_code = code_2bytes.hex_to_int()
-			#char_code = bytes_text.decode_u16(byte_index)
-			byte_index += 2
-		else:
-			byte_index += 1
-		
-		if char_code == 0xfa or char_code == 0xda73: # space
-			char_code = 0x20
-		elif char_code == 0xe0: # code for protaganists name
-			text += "[Ramza]"
-			continue
-		elif char_code == 0xe1: # code for printing unit's name
-			text += "[UnitName]"
-			continue
-		elif char_code == 0xe3: # code to change color
-			#text += "[UnitName]"
-			byte_index += 1
-			continue
-		elif [0xe4, 0xe6].has(char_code): # codes for printing text variable as decimal
-			text += "[Number]"
-			if char_code == 0xe6:
-				byte_index += 1
-			continue
-		elif [0xe5, 0xe9, 0xea, 0xeb].has(char_code): # code for printing text variable
-			text += "[TextVariable]"
-			continue
-		elif char_code == 0xe8: # code to provide space for decimals?
-			#text += "[UnitName]"
-			byte_index += 1
-			continue
-		elif char_code == 0xfe or char_code == 0xff: # end string TODO separate out the text
-			char_code = 0x0d
-		elif char_code == 0xfd: # code to prevent closing? TODO separate out the text
-			char_code = 0x0d # interpret as new line
-			#continue
-		elif char_code == 0xf8: # new line
-			#char_code = 0x0d # new line
-			char_code = 0x20 # use a space instead of new line
-		elif char_code < 10: # 0-9 are digits
-			char_code += 0x30
-		elif char_code < 36: # next 26 are upper case alphabet
-			char_code += (0x41 - 10)
-		elif char_code < 62: # next 26 are lower case alphabet
-			char_code += (0x61 - 36)
-		elif char_code == 62 or char_code == 0xd11a: # exclamation mark
-			char_code = 0x21
-		elif char_code == 63: # japanese
-			char_code = 0 # TODO fix
-		elif char_code == 64 or char_code == 0xd9c9: # question mark
-			char_code = 0x3f
-		elif char_code == 65: # japanese
-			char_code = 0 # TODO fix
-		elif char_code == 66 or char_code == 0xd11e: # plus sign
-			char_code = 0x2b
-		elif char_code == 67: # japanese
-			char_code = 0 # TODO fix
-		elif char_code == 68 or char_code == 0xd9c6: # forward slash
-			char_code = 0x2f
-		elif char_code == 69: # japanese
-			char_code = 0 # TODO fix
-		elif char_code == 70 or char_code == 0xd9bd: # colon
-			char_code = 0x3a
-		# 71 - 94 japanese
-		elif char_code == 95 or char_code == 0xd11c or char_code == 0xd9b6: # period
-			char_code = 0x2e
-		# 96 - 138 japanese
-		elif char_code == 139 or char_code == 0xd9bc: # middle dot
-			char_code = 0xb7
-		elif char_code == 140: # japanese
-			char_code = 0 # TODO fix
-		elif char_code == 141 or char_code == 0xd9be: # open parentheses
-			char_code = 0x28
-		elif char_code == 142 or char_code == 0xd9bf: # close parentheses
-			char_code = 0x29
-		# 143 - 144 japanese
-		elif char_code == 145 or char_code == 0xda77 or char_code == 0xd9c0: # double quote
-			char_code = 0x22
-		elif char_code == 147 or char_code == 0xda76 or char_code == 0xd9c1: # single quote, apostrophe
-			char_code = 0x27
-		elif char_code == 178: # music note
-			char_code = 0x1d160
-		elif char_code == 0xd110: # counter clockwise arrow
-			char_code = 0x2607
-		elif char_code == 181 or char_code == 0xd111: # asterisk
-			char_code = 0x2a
-		elif char_code == 0xd117: # minus sign
-			char_code = 0x2212
-		elif char_code == 0xd118: # left corner bracket
-			char_code = 0x300c
-		elif char_code == 0xd11b: # ellipsis
-			char_code = 0x2026
-		elif char_code == 0xd11d: # hyphen-minus
-			char_code = 0x2d
-		elif char_code == 0xd11f: # multiplication sign
-			char_code = 0xd7
-		elif char_code == 0xd120: # division sign
-			char_code = 0xf7
-		elif char_code == 0xd123 or char_code == 0xda70: # equal sign
-			char_code = 0x3d
-		elif char_code == 0xd125: # greater than
-			char_code = 0x3e
-		elif char_code == 0xd126: # less than
-			char_code = 0x3c
-		elif char_code == 0xd9b5: # infinity
-			char_code = 0x221e
-		elif char_code == 0xd9b7: # ampersand
-			char_code = 0x26
-		elif char_code == 0xd9b8: # percent
-			char_code = 0x25
-		elif char_code == 0xd9b9: # circle
-			char_code = 0x25cb
-		elif char_code == 0xd9c4: # right corner bracket
-			char_code = 0x300d
-		elif char_code == 0xd9c5: # tilde
-			char_code = 0x7e
-		elif char_code == 0xd9c7: # triangle
-			char_code = 0x25b3
-		elif char_code == 0xd9c8: # square
-			char_code = 0x25a1
-		elif char_code == 0xd9ca: # heart
-			char_code = 0x2665
-		elif char_code >= 0xd9cb and char_code <= 0xd9cf: # roman numerals
-			char_code = (char_code - 0xd9cb) + 0x2160
-		elif char_code >= 0xda00 and char_code <= 0xda0b: # zodiac signs
-			char_code = (char_code - 0xda00) + 0x2648
-		elif char_code == 0xda0c: # serpentarius zodiac signs
-			text += "[Serpentarius]"
-			continue
-		elif char_code == 0xda71: # dollar sign
-			char_code = 0x24
-		elif char_code == 0xda74: # comma
-			char_code = 0x2c
-		elif char_code == 0xda75: # semi colon
-			char_code = 0x3b
-		else:
-			text += ("%x" % char_code)
-			continue
-		
-		text += String.chr(char_code)
-	
-	return text

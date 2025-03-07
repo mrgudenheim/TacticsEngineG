@@ -247,7 +247,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				start_animation(new_animation, unit_sprites_manager.sprite_effect, true, false, false)
 			else:
 				push_warning("Error: QueueSpriteAnim: " + seq_part.to_string() + "\n" + fft_animation.sequence.to_string())
-		elif seq_part.opcode_name.begins_with("Move"): # TODO Move opcodes move the unit in 3d world space relative to facing
+		elif seq_part.opcode_name.begins_with("Move"):
 			if seq_part.opcode_name == "MoveUnitFB":
 				position_offset = unit_data.facing_vector * seq_part.parameters[0]
 			elif seq_part.opcode_name == "MoveUnitDU":

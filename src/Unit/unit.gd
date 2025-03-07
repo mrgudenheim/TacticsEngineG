@@ -6,6 +6,8 @@ extends Node3D
 @export var controller: UnitControllerRT
 @export var animation_manager: UnitAnimationManager
 
+var can_move: bool = true
+
 var map_position: Vector2i
 var facing: Facings = Facings.NORTH
 var facing_vector: Vector3 = Vector3.FORWARD:
@@ -27,6 +29,15 @@ const FacingVectors: Dictionary[Facings, Vector3] = {
 	}
 
 var is_in_air: bool = false
+
+var ability_id: int = 0:
+	get:
+		return ability_id
+	set(value):
+		ability_id = value
+		ability_data
+
+var ability_data: AbilityData = AbilityData.new()
 
 func _ready() -> void:
 	controller.velocity_set.connect(update_unit_facing)
@@ -58,6 +69,18 @@ func _process(delta: float) -> void:
 		if animation_manager.is_back_facing:
 			idle_animation += 1
 		animation_manager.unit_debug_menu.anim_id_spin.value = idle_animation
+
+
+func use_ability() -> void:
+	return # TODO implement playing a set of animations in a row
+	can_move = false
+	if ability_data.animation_start_id != 0:
+		animation_manager.unit_debug_menu.anim_id_spin.value = ability_data.animation_start_id
+	if ability_data.animation_charging_id != 0:
+		animation_manager.unit_debug_menu.anim_id_spin.value = ability_data.animation_charging_id
+	if ability_data.animation_executing_id != 0:
+		animation_manager.unit_debug_menu.anim_id_spin.value = ability_data.animation_executing_id
+	can_move = true
 
 
 func update_unit_facing(dir: Vector3) -> void:
@@ -125,3 +148,7 @@ func toggle_debug_menu() -> void:
 
 func hide_debug_menu() -> void:
 	animation_manager.unit_debug_menu.visible = false
+
+
+func set_ability(ability_id: int) -> void:
+	ability_data = RomReader.abilities[ability_id]

@@ -1,7 +1,5 @@
 class_name BattleBinData
 
-const NUM_ACTIVE_ABILITIES = 0x1C6
-
 var sounds_whoosh_start: int = 0x2cd40
 var sounds_hit_start: int = 0x2cd60
 var sounds_deflection_start: int = 0x2cd80
@@ -57,10 +55,10 @@ func init_from_battle_bin() -> void:
 	
 	# ability animations
 	entry_size = 3 # bytes
-	var ability_animation_id_bytes: PackedByteArray = battle_bytes.slice(ability_animation_ids_start, ability_animation_ids_start + (NUM_ACTIVE_ABILITIES * entry_size))
-	ability_animation_charging_set_ids.resize(NUM_ACTIVE_ABILITIES)
-	ability_animation_executing_ids.resize(NUM_ACTIVE_ABILITIES)
-	ability_animation_text_ids.resize(NUM_ACTIVE_ABILITIES)
+	var ability_animation_id_bytes: PackedByteArray = battle_bytes.slice(ability_animation_ids_start, ability_animation_ids_start + (RomReader.NUM_ACTIVE_ABILITIES * entry_size))
+	ability_animation_charging_set_ids.resize(RomReader.NUM_ACTIVE_ABILITIES)
+	ability_animation_executing_ids.resize(RomReader.NUM_ACTIVE_ABILITIES)
+	ability_animation_text_ids.resize(RomReader.NUM_ACTIVE_ABILITIES)
 	for ability_id: int in ability_animation_id_bytes.size() / entry_size:
 		ability_animation_charging_set_ids[ability_id] = ability_animation_id_bytes.decode_u8(ability_id * entry_size)
 		ability_animation_executing_ids[ability_id] = ability_animation_id_bytes.decode_u8((ability_id * entry_size) + 1)
@@ -68,8 +66,8 @@ func init_from_battle_bin() -> void:
 	
 	# ability vfx
 	entry_size = 2
-	var ability_effect_id_bytes: PackedByteArray = battle_bytes.slice(ability_effect_ids_start, ability_effect_ids_start + (NUM_ACTIVE_ABILITIES * entry_size))
-	ability_effect_ids.resize(NUM_ACTIVE_ABILITIES)
+	var ability_effect_id_bytes: PackedByteArray = battle_bytes.slice(ability_effect_ids_start, ability_effect_ids_start + (RomReader.NUM_ACTIVE_ABILITIES * entry_size))
+	ability_effect_ids.resize(RomReader.NUM_ACTIVE_ABILITIES)
 	for ability_id: int in ability_effect_id_bytes.size() / entry_size:
 		ability_animation_charging_set_ids[ability_id] = ability_animation_id_bytes.decode_u8(ability_id * entry_size)
 	

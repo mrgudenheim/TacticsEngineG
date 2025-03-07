@@ -47,6 +47,8 @@ var map_width: int = 0 # width in tiles
 var map_length: int = 0 # length in tiles
 var terrain_tiles: Array[TerrainTile] = []
 
+# TODO handle animated textures
+
 
 func _init(map_file_name: String) -> void:
 	file_name = map_file_name

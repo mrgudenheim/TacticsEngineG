@@ -49,11 +49,13 @@ radius = 0.25
 height = 0.5
 
 [sub_resource type="Gradient" id="Gradient_gjfh4"]
-offsets = PackedFloat32Array(0.594937, 1)
+offsets = PackedFloat32Array(0.5, 1)
 colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 0)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_6vwfi"]
 gradient = SubResource("Gradient_gjfh4")
+width = 80
+height = 80
 fill = 1
 fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(1, 0.5)
@@ -148,14 +150,14 @@ layout_mode = 2
 [node name="MapDropdown" type="OptionButton" parent="PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer"]
 layout_mode = 2
 
+[node name="MapSize" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer"]
+layout_mode = 2
+text = "Map Size: X x Y"
+
 [node name="OrthographicCheckBox" type="CheckBox" parent="PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer"]
 layout_mode = 2
 button_pressed = true
 text = "Orthographic"
-
-[node name="MapSize" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer"]
-layout_mode = 2
-text = "Map Size: X x Y"
 
 [node name="MenuReminder" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer2"]
 layout_mode = 2
@@ -212,7 +214,7 @@ item_list_filepath = "res://src/fftae/item_list.txt"
 
 [node name="UnitSpritesManager" parent="Unit/CharacterBody3D/UnitAnimationManager" instance=ExtResource("9_81hnw")]
 
-[node name="UnitDebugMenu" type="Control" parent="Unit/CharacterBody3D" node_paths=PackedStringArray("animation_manager", "sprite_options", "anim_id_spin", "weapon_options", "item_options", "other_type_options", "sprite_sheet_viewer")]
+[node name="UnitDebugMenu" type="Control" parent="Unit/CharacterBody3D" node_paths=PackedStringArray("animation_manager", "sprite_options", "anim_id_spin", "weapon_options", "item_options", "other_type_options", "ability_id_spin", "ability_name_line", "sprite_sheet_viewer")]
 visible = false
 layout_mode = 3
 anchors_preset = 0
@@ -220,11 +222,13 @@ offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("11_wboi1")
 animation_manager = NodePath("../UnitAnimationManager")
-sprite_options = NodePath("PanelContainer/MarginContainer/GridContainer/SprOptionButton")
-anim_id_spin = NodePath("PanelContainer/MarginContainer/GridContainer/AnimPtrIdSpinBox")
-weapon_options = NodePath("PanelContainer/MarginContainer/GridContainer/WeaponOptionButton")
-item_options = NodePath("PanelContainer/MarginContainer/GridContainer/ItemOptionButton")
-other_type_options = NodePath("PanelContainer/MarginContainer/GridContainer/OtherTypeOptionButton")
+sprite_options = NodePath("PanelContainer/MarginContainer/VBoxContainer/GridContainer/SprOptionButton")
+anim_id_spin = NodePath("PanelContainer/MarginContainer/VBoxContainer/GridContainer/AnimPtrIdSpinBox")
+weapon_options = NodePath("PanelContainer/MarginContainer/VBoxContainer/GridContainer/WeaponOptionButton")
+item_options = NodePath("PanelContainer/MarginContainer/VBoxContainer/GridContainer/ItemOptionButton")
+other_type_options = NodePath("PanelContainer/MarginContainer/VBoxContainer/GridContainer/OtherTypeOptionButton")
+ability_id_spin = NodePath("PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/AbilityIdSpinBox")
+ability_name_line = NodePath("PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/AbilityName")
 sprite_sheet_viewer = NodePath("../../../MapTexture")
 
 [node name="PanelContainer" type="PanelContainer" parent="Unit/CharacterBody3D/UnitDebugMenu"]
@@ -235,52 +239,83 @@ offset_bottom = 40.0
 [node name="MarginContainer" type="MarginContainer" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer"]
 layout_mode = 2
 
-[node name="GridContainer" type="GridContainer" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="GridContainer" type="GridContainer" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 columns = 2
 
-[node name="Sprite" type="Label" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
+[node name="Sprite" type="Label" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/GridContainer"]
 layout_mode = 2
 text = "Sprite: "
 horizontal_alignment = 2
 
-[node name="SprOptionButton" type="OptionButton" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
+[node name="SprOptionButton" type="OptionButton" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/GridContainer"]
 layout_mode = 2
 
-[node name="AnimationPtrId" type="Label" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
+[node name="AnimationPtrId" type="Label" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/GridContainer"]
 layout_mode = 2
 text = "Animation Ptr: "
 horizontal_alignment = 2
 
-[node name="AnimPtrIdSpinBox" type="SpinBox" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
+[node name="AnimPtrIdSpinBox" type="SpinBox" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/GridContainer"]
 layout_mode = 2
 max_value = 256.0
 rounded = true
 select_all_on_focus = true
 
-[node name="Weapon" type="Label" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
+[node name="Weapon" type="Label" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/GridContainer"]
 layout_mode = 2
 text = "Weapon: "
 horizontal_alignment = 2
 
-[node name="WeaponOptionButton" type="OptionButton" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
+[node name="WeaponOptionButton" type="OptionButton" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/GridContainer"]
 layout_mode = 2
 
-[node name="Item" type="Label" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
+[node name="Item" type="Label" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/GridContainer"]
 layout_mode = 2
 text = "Item: "
 horizontal_alignment = 2
 
-[node name="ItemOptionButton" type="OptionButton" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
+[node name="ItemOptionButton" type="OptionButton" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/GridContainer"]
 layout_mode = 2
 
-[node name="Other Type" type="Label" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
+[node name="Other Type" type="Label" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/GridContainer"]
 layout_mode = 2
 text = "Other: "
 horizontal_alignment = 2
 
-[node name="OtherTypeOptionButton" type="OptionButton" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/GridContainer"]
+[node name="OtherTypeOptionButton" type="OptionButton" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/GridContainer"]
 layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="AbilityId" type="Label" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Ability:"
+horizontal_alignment = 2
+
+[node name="AbilityIdSpinBox" type="SpinBox" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+max_value = 453.0
+rounded = true
+select_all_on_focus = true
+
+[node name="AbilityName" type="LineEdit" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "ability"
+editable = false
+
+[node name="AnimationFpsSpinBox" type="SpinBox" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+min_value = 0.1
+step = 0.1
+value = 59.0
+allow_greater = true
+suffix = "(Animation FPS)"
+select_all_on_focus = true
 
 [node name="MapTexture" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, -75, 0, 0)
@@ -321,3 +356,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -40)
 pixel_size = 0.05
 billboard = 1
 text = "(0, 0, -1)"
+
+[connection signal="value_changed" from="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/AnimationFpsSpinBox" to="Unit/CharacterBody3D/UnitAnimationManager" method="set_animation_fps"]

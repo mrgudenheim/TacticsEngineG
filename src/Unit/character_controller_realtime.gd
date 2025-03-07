@@ -12,29 +12,38 @@ const ROTATE_SPEED: float = 300.0 # degrees / sec
 const JUMP_VELOCITY: float = 4.5
 
 @export var phantom_camera: PhantomCamera3D
-var camera_facing: Facings = Facings.NORTHWEST
+var camera_facing: Directions = Directions.NORTHWEST
 
-enum Facings {
+enum Directions {
 	NORTHWEST,
 	NORTHEAST,
 	SOUTHWEST,
 	SOUTHEAST,
 	}
 
-const CameraFacingVectors: Dictionary[Facings, Vector3] = {
-	Facings.NORTHWEST: Vector3.LEFT + Vector3.FORWARD,
-	Facings.NORTHEAST: Vector3.RIGHT + Vector3.FORWARD,
-	Facings.SOUTHWEST: Vector3.LEFT + Vector3.BACK,
-	Facings.SOUTHEAST: Vector3.RIGHT + Vector3.BACK,
+const CameraFacingVectors: Dictionary[Directions, Vector3] = {
+	Directions.NORTHWEST: Vector3.LEFT + Vector3.FORWARD,
+	Directions.NORTHEAST: Vector3.RIGHT + Vector3.FORWARD,
+	Directions.SOUTHWEST: Vector3.LEFT + Vector3.BACK,
+	Directions.SOUTHEAST: Vector3.RIGHT + Vector3.BACK,
 	}
 
 
 var is_rotating: bool = false
+var unit: UnitData
+
+
+func _ready() -> void:
+	unit = get_parent()
+
 
 func _physics_process(delta: float) -> void:
 	# Add the gravity.
 	if not is_on_floor():
 		velocity += get_gravity() * delta
+	
+	if not unit.can_move:
+		return
 	
 	# Get the input direction and handle the movement/deceleration.
 	# As good practice, you should replace UI actions with custom gameplay actions.
@@ -57,9 +66,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		rotate_camera(-1)
 	elif event.is_action_pressed(&"camera_rotate_right", true):
 		rotate_camera(1)
-	# Handle jump.
-	elif Input.is_action_just_pressed("ui_accept") and is_on_floor():
+	# Handle jump
+	elif Input.is_action_just_pressed("ui_accept") and is_on_floor() and unit.can_move:
 		velocity.y = JUMP_VELOCITY
+	elif Input.is_action_just_pressed("primary_action") and is_on_floor():
+		unit.use_ability()
 
 
 func rotate_camera(dir: int) -> void:
@@ -92,15 +103,15 @@ func rotate_phantom_camera(new_rotation_degress: Vector3) -> void:
 	#var target_angle = fposmod(new_rotation_degress.y, 360)
 	var camera_angle_pos = fposmod(camera_angle, 360)
 		
-	var new_camera_facing: Facings = Facings.NORTHEAST
+	var new_camera_facing: Directions = Directions.NORTHEAST
 	if camera_angle_pos < 90:
-		new_camera_facing = Facings.NORTHWEST
+		new_camera_facing = Directions.NORTHWEST
 	elif camera_angle_pos < 180:
-		new_camera_facing = Facings.SOUTHWEST
+		new_camera_facing = Directions.SOUTHWEST
 	elif camera_angle_pos < 270:
-		new_camera_facing = Facings.SOUTHEAST
+		new_camera_facing = Directions.SOUTHEAST
 	elif camera_angle_pos < 360:
-		new_camera_facing = Facings.NORTHEAST
+		new_camera_facing = Directions.NORTHEAST
 	
 	if new_camera_facing != camera_facing:
 		camera_facing = new_camera_facing

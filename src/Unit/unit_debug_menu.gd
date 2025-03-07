@@ -1,7 +1,8 @@
 class_name UnitDebugMenu
 extends Control
 
-var unit: Node3D
+var unit: UnitData
+var unit_controller: UnitControllerRT
 @export var animation_manager: UnitAnimationManager
 
 @export var sprite_options: OptionButton
@@ -11,11 +12,16 @@ var unit: Node3D
 @export var item_options: OptionButton
 @export var other_type_options: OptionButton
 
+@export var ability_id_spin: SpinBox
+@export var ability_name_line: LineEdit
+
 @export var sprite_sheet_viewer: Sprite3D
 
 
 func _ready() -> void:
-	unit = get_parent()
+	unit_controller = get_parent() as UnitControllerRT
+	unit = get_parent().get_parent() as UnitData
+	
 	RomReader.rom_loaded.connect(populat_sprite_options)
 	sprite_options.item_selected.connect(_on_sprite_option_selected)
 	anim_id_spin.value_changed.connect(_on_anim_id_spin_value_changed)
@@ -24,12 +30,14 @@ func _ready() -> void:
 	item_options.item_selected.connect(func(idx) -> void: 
 		animation_manager.item_index = idx
 		animation_manager._on_animation_changed())
+	
+	ability_id_spin.value_changed.connect(_on_ability_id_value_changed)
 
 func _process(delta: float) -> void:
-	position = MapViewer.main_camera.unproject_position(unit.position) + Vector2(50, -50)
+	position = MapViewer.main_camera.unproject_position(unit_controller.position) + Vector2(50, -50)
 
 
-func populate_options() -> void:	
+func populate_options() -> void:
 	weapon_options.clear()
 	for weapon_index: int in UnitAnimationManager.weapon_table.size():
 		weapon_options.add_item(str(UnitAnimationManager.weapon_table[weapon_index][0]))
@@ -81,14 +89,14 @@ func _on_sprite_option_selected(index) -> void:
 	animation_manager.wep_spr = RomReader.sprs[RomReader.file_records["WEP.SPR"].type_index]
 	animation_manager.wep_shp = RomReader.shps[RomReader.file_records["WEP1.SHP"].type_index]
 	animation_manager.wep_seq = RomReader.seqs[RomReader.file_records["WEP1.SEQ"].type_index]
-
+	
 	animation_manager.eff_spr = RomReader.sprs[RomReader.file_records["EFF.SPR"].type_index]
 	animation_manager.eff_shp = RomReader.shps[RomReader.file_records["EFF1.SHP"].type_index]
 	animation_manager.eff_seq = RomReader.seqs[RomReader.file_records["EFF1.SEQ"].type_index]
-
+	
 	animation_manager.item_spr = RomReader.sprs[RomReader.file_records["ITEM.BIN"].type_index]
 	animation_manager.item_shp = RomReader.shps[RomReader.file_records["ITEM.SHP"].type_index]
-
+	
 	animation_manager.other_spr = RomReader.sprs[RomReader.file_records["OTHER.SPR"].type_index]
 	animation_manager.other_shp = RomReader.shps[RomReader.file_records["OTHER.SHP"].type_index]
 	
@@ -97,3 +105,8 @@ func _on_sprite_option_selected(index) -> void:
 
 func _on_anim_id_spin_value_changed(value: int) -> void:
 	animation_manager.global_animation_ptr_id = value
+
+
+func _on_ability_id_value_changed(value: int) -> void:
+	unit.set_ability(value)
+	ability_name_line.text = RomReader.fft_text.ability_names[value]

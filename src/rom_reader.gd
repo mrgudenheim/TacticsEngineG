@@ -19,6 +19,7 @@ const BYTES_PER_SECTOR_FOOTER: int = 280
 const DATA_BYTES_PER_SECTOR: int = 2048
 
 const NUM_ABILITIES = 512
+const NUM_ACTIVE_ABILITIES = 0x1C6
 const NUM_SPRITESHEETS = 0x9f
 const NUM_SKILLSETS = 0xe0
 const NUM_UNIT_SKILLSETS = 0xb0
@@ -89,6 +90,9 @@ func process_rom() -> void:
 	scus_data.init_from_scus()
 	
 	cache_associated_files()
+	
+	for ability_id: int in NUM_ACTIVE_ABILITIES:
+		abilities.append(AbilityData.new(ability_id))
 	
 	is_ready = true
 	rom_loaded.emit()

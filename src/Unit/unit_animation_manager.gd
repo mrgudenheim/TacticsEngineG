@@ -1,6 +1,8 @@
 class_name UnitAnimationManager
 extends Node3D
 
+signal animation_completed
+
 @export var unit_debug_menu: UnitDebugMenu
 
 #@export var ui_manager: UiManager
@@ -50,8 +52,8 @@ static var item_list: Array[PackedStringArray] = []
 #@export var opcode_text: LineEdit
 var opcode_frame_offset: int = 0
 var weapon_sheathe_check1_delay: int = 0
-var weapon_sheathe_check2_delay: int = 10
-var wait_for_input_delay: int = 10
+var weapon_sheathe_check2_delay: int = 0
+var wait_for_input_delay: int = 0
 
 
 @export var weapon_shp_num: int = 1 # TODO fix for type2
@@ -153,8 +155,8 @@ func play_animation(fft_animation: FftAnimation, draw_target: Sprite3D, isLoopin
 	while animation_part_id < fft_animation.sequence.seq_parts.size():
 		var seq_part:SeqPart = fft_animation.sequence.seq_parts[animation_part_id]
 		# break loop animation when stopped or on selected animation changed to prevent 2 loops playing at once
-		if (isLooping and (!animation_is_playing 
-				or fft_animation != global_fft_animation)):
+		if ((isLooping or fft_animation.is_primary_anim) 
+			and (!animation_is_playing or fft_animation != global_fft_animation)):
 			return
 		
 		animation_part_id = await process_seq_part(fft_animation, animation_part_id, draw_target)
@@ -163,12 +165,15 @@ func play_animation(fft_animation: FftAnimation, draw_target: Sprite3D, isLoopin
 			var delay_frames: int = seq_part.parameters[1]  # param 1 is delay
 			var delay_sec: float = delay_frames / animation_speed
 			await get_tree().create_timer(delay_sec).timeout
-		
-	if isLooping:
-		reset_sprites()
-		play_animation(fft_animation, draw_target, isLooping)
-	else: # clear image when animation is over
-		draw_target.texture = ImageTexture.create_from_image(fft_animation.shp.create_blank_frame())
+	
+	#if fft_animation.is_primary_anim:
+		#animation_completed.emit()
+	
+	#if isLooping:
+		#reset_sprites()
+		#play_animation(fft_animation, draw_target, isLooping)
+	#else: # clear image when animation is over
+		#draw_target.texture = ImageTexture.create_from_image(fft_animation.shp.create_blank_frame())
 
 
 func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target: Sprite3D) -> int:
@@ -283,8 +288,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				
 			unit_sprites_manager.global_position += position_offset * MapViewer.SCALE
 			#(draw_target.get_parent().get_parent() as Node3D).position += position_offset
-		# TODO fix for sprite3Ds
-		elif seq_part.opcode_name == "SetLayerPriority":
+		elif seq_part.opcode_name == "SetLayerPriority": # TODO fix for sprite3Ds
 			# print(layer_priority_table)
 			var layer_priority: Array = layer_priority_table[seq_part.parameters[0]]
 			for i in range(0, layer_priority.size() - 1):
@@ -377,9 +381,10 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				
 				for iteration in num_loops:
 					await start_animation(temp_fft_animation, draw_target, true, false, true)
-			
 		elif seq_part.opcode_name == "IncrementLoop":
-			pass # handled by animations looping by default
+			reset_sprites()
+			start_animation(fft_animation, draw_target, animation_is_playing, false)
+			#pass # handled by animations looping by default
 		elif seq_part.opcode_name == "WaitForInput":
 			var delay_frames: int = wait_for_input_delay
 			var loop_length: int = seq_part.parameters[0]
@@ -421,6 +426,11 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 		elif seq_part.opcode_name == "QueueDistortAnim":
 			# https://ffhacktics.com/wiki/Animate_Unit_Distorts
 			pass
+		elif seq_part.opcode_name == "EndAnimation":
+			reset_sprites()
+			draw_target.texture = ImageTexture.create_from_image(fft_animation.shp.create_blank_frame())
+		elif seq_part.opcode_name == "PauseAnimation":
+			pass# handled by animations looping by default
 		# Opcodes from animation rewraite ASM by Talcall
 		elif seq_part.opcode_name == "SetBackFacedOffset":
 			fft_animation.back_face_offset = seq_part.parameters[0]
@@ -470,7 +480,7 @@ func _on_animation_changed() -> void:
 	#animation_slider.tick_count = num_parts
 	#animation_slider.max_value = num_parts - 1
 	
-	start_animation(new_fft_animation, unit_sprites_manager.sprite_primary, animation_is_playing, true)
+	start_animation(new_fft_animation, unit_sprites_manager.sprite_primary, animation_is_playing, false)
 
 
 func reset_sprites() -> void:
@@ -532,3 +542,7 @@ func _on_submerged_options_item_selected(index: int) -> void:
 func _on_face_right_check_toggled(_toggled_on: bool) -> void:	
 	unit_sprites_manager.flip_h()
 	_on_animation_changed()
+
+
+func set_animation_fps(value: float) -> void:
+	animation_speed = value

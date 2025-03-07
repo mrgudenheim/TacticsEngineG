@@ -49,6 +49,9 @@ var vfx_data: VisualEffectData # BATTLE.BIN offset="14F3F0" - table of Effect ID
 
 
 func _init(new_id: int = 0) -> void:
+	if not RomReader.is_ready:
+		return
+	
 	id = new_id
 	
 	name = RomReader.fft_text.ability_names[id]

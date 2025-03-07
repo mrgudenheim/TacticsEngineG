@@ -18,6 +18,9 @@ const BYTES_PER_SECTOR_HEADER: int = 24
 const BYTES_PER_SECTOR_FOOTER: int = 280
 const DATA_BYTES_PER_SECTOR: int = 2048
 
+const NUM_ABILITIES = 512
+const NUM_SPRITESHEETS = 0x9f
+
 var sprs: Array[Spr] = []
 var spr_file_name_to_id: Dictionary[String, int] = {}
 
@@ -30,16 +33,7 @@ var abilities: Array[AbilityData] = []
 @export_file("*.txt") var item_frames_csv_filepath: String = "res://src/fftae/frame_data_item.txt"
 
 # BATTLE.BIN tables
-# https://ffhacktics.com/wiki/BATTLE.BIN_Data_Tables#Animation_.26_Display_Related_Data
-var sounds_attacks # BATTLE.BIN offset="2cd40" - table of sounds for miss, hit, and deflected, by weapong type
-var ability_animations # BATTLE.BIN offset="2ce10" - sets of 3 bytes total for 1) charging, 2) executing, and 3) text
-var wep_animation_offsets # BATTLE.BIN offset="2d364" - Weapon Change of Animation (multiplied by 2 (+1 if camera is behind the unit) to get true animation - applied to unit when attacking
-var item_graphics # BATTLE.BIN offset="2d3e4" - Item Graphic Data (0x7f total?), palettes (wep1 or wep2), and graphic id (multiple of 2)
-var unit_frame_sizes # BATTLE.BIN offset="2d53c" - Unit raw size measurements? all words. contains many possible raw size combinations (for the record, these are all *8 to get the true graphic size.)
-var wep_eff_frame_sizes # BATTLE.BIN offset="2d6c8" - weapon/effect raw size measurements? all words, with only a byte of data each. this is just inefficient.
-var spritesheet_data # BATTLE.BIN offset="2d748" - Spritesheet Data (4 bytes each, 0x9f total), SHP, SEQ, Flying, Graphic Height
-var frame_targeted # BATTLE.BIN offset="2d9c4" - called if target hasn't replaced target animation (e.g. shield)
-
+var battle_bin_data: BattleBinData = BattleBinData.new()
 
 # Images
 # https://github.com/Glain/FFTPatcher/blob/master/ShishiSpriteEditor/PSXImages.xml#L148
@@ -47,54 +41,6 @@ var frame_targeted # BATTLE.BIN offset="2d9c4" - called if target hasn't replace
 
 # Text
 var fft_text: FftText = FftText.new()
-# https://github.com/Glain/FFTPatcher/blob/master/FFTacText/notes.txt
-# https://ffhacktics.com/wiki/Load_FFTText
-# https://github.com/Glain/FFTPatcher/blob/master/FFTacText/PSXText.xml
-var world_lzw_offsets: PackedInt32Array = []
-enum WORLD_LZW_SECTIONS {
-	JOB_NAMES = 6,
-	ITEM_NAMES = 7,
-	ROSTER_UNIT_NAMES = 8,
-	UNIT_NAMES2 = 9,
-	BATTLE_MENUS = 10,
-	HELP_TEXT = 11,
-	PROPOSITION_OUTCOMES = 12,
-	ABILITY_NAMES = 14,
-	PROPOSITION_REWARDS = 15,
-	TIPS_NAMES = 16,
-	LOCATION_NAMES = 18,
-	WORLD_MAP_MENU = 20,
-	MAP_NAMES = 21,
-	SKILLSET_NAMES = 22,
-	BAR_TEXT = 23,
-	TUTORIAL_NAMES = 24,
-	RUMORS_NAMES = 25,
-	PROPOSITION_NAMES = 26,
-	UNEXPLORED_LANDS = 27,
-	TREASURE = 28,
-	RECORD = 29,
-	PERSON = 30,
-	PROPOSITION_OBJECTIVES = 31,
-	}
-
-var battle_bin_text_offsets: PackedInt32Array = []
-var battle_bin_text_end: int = 0xfee64
-enum BATTLE_BIN_TEXT_SECTIONS {
-	EVENT_TEXT = 0,
-	BATTLE_ACTION_DENIED = 2,
-	BATTLE_ACTION_EFFECT = 3,
-	JOB_NAMES = 6,
-	ITEM_NAMES = 7,
-	UNIT_NAMES = 8,
-	MISC_MENU = 10,
-	ROSTER_UNIT_NICKNAMES = 11,
-	ABILITY_NAMES = 14,
-	BATTLE_NAVIGATION_MESSAGES = 16,
-	STATUSES_NAMES = 17,
-	FORMATION_TEXT = 18,
-	SKILLSET_NAMES = 22,
-	SUMMON_DRAW_OUT_NAMES = 23,
-	}
 
 
 #func _init() -> void:
@@ -131,9 +77,11 @@ func process_rom() -> void:
 	
 	push_warning("Time to process ROM (ms): " + str(Time.get_ticks_msec() - start_time))
 	
-	_load_battle_bin_sprite_data()
-	cache_associated_files()
 	fft_text.init_text()
+	battle_bin_data.init_from_battle_bin()
+	
+	cache_associated_files()
+	
 	
 	is_ready = true
 	rom_loaded.emit()
@@ -260,29 +208,6 @@ func cache_associated_files() -> void:
 	sprs.append(item_spr)
 
 
-# https://ffhacktics.com/wiki/BATTLE.BIN_Data_Tables#Animation_.26_Display_Related_Data
-func _load_battle_bin_sprite_data() -> void:
-	# get BATTLE.BIN file data
-	# get item graphics
-	var battle_bin_record: FileRecord = FileRecord.new()
-	battle_bin_record.sector_location = 1000 # ITEM.BIN is in EVENT not BATTLE, so needs a new record created
-	battle_bin_record.size = 1397096
-	battle_bin_record.name = "BATTLE.BIN"
-	file_records[battle_bin_record.name] = battle_bin_record
-	
-	# look up spr file_name based on LBA
-	var spritesheet_file_data_length: int = 8
-	var battle_bin_bytes: PackedByteArray = file_records["BATTLE.BIN"].get_file_data(rom)
-	for sprite_id: int in range(0, 0x9f):
-		var spritesheet_file_data_start: int = 0x2dcd4 + (sprite_id * spritesheet_file_data_length)
-		var spritesheet_file_data_bytes: PackedByteArray = battle_bin_bytes.slice(spritesheet_file_data_start, spritesheet_file_data_start + spritesheet_file_data_length)
-		var spritesheet_lba: int = spritesheet_file_data_bytes.decode_u32(0)
-		var spritesheet_file_name: String = ""
-		if spritesheet_lba != 0:
-			spritesheet_file_name = lba_to_file_name[spritesheet_lba]
-		spr_file_name_to_id[spritesheet_file_name] = sprite_id
-
-
 func get_file_data(file_name: String) -> PackedByteArray:
 	var file_data: PackedByteArray = []
 	var sector_location: int = file_records[file_name].sector_location
@@ -303,3 +228,8 @@ func get_file_data(file_name: String) -> PackedByteArray:
 	file_data.append_array(last_sector_data)
 	
 	return file_data
+
+
+func init_abilities() -> void:
+	for ability_id: int in NUM_ABILITIES:
+		abilities[ability_id] = AbilityData.new(ability_id)

@@ -78,7 +78,7 @@ func use_ability() -> void:
 		await animation_manager.animation_completed
 	if ability_data.animation_charging_id != 0:
 		animation_manager.unit_debug_menu.anim_id_spin.value = ability_data.animation_charging_id + int(is_back_facing)
-		await get_tree().create_timer(1).timeout
+		await get_tree().create_timer(0.1 + (ability_data.ticks_charge_time * 0.1)).timeout
 	if ability_data.animation_executing_id != 0:
 		animation_manager.unit_debug_menu.anim_id_spin.value = ability_data.animation_executing_id + int(is_back_facing)
 		await animation_manager.animation_completed

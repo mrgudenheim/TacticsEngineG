@@ -4,7 +4,7 @@ class_name AbilityData
 # https://ffhacktics.com/wiki/BATTLE.BIN_Data_Tables#Animation_.26_Display_Related_Data
 
 enum AbilityType {
-	BLANK,
+	NONE,
 	NORMAL,
 	ITEM,
 	THROWING,
@@ -30,10 +30,13 @@ var chance_to_learn: float = 100 # percent
 var ability_type: AbilityType = AbilityType.NORMAL
 
 var formula # TODO store Callable?
-var target_range: int = 1
-var area_of_effect: int = 1
-var vertical_limit: int = 2
-var inflict_status: int = 0
+var formula_id: int = 0
+var formula_x: int = 0
+var formula_y: int = 0
+var targeting_range: int = 1
+var effect_radius: int = 1
+var vertical_tolerance: int = 2
+var inflict_status_id: int = 0
 var ticks_charge_time: int = 0
 var mp_cost: int = 0
 
@@ -61,6 +64,20 @@ func _init(new_id: int = 0) -> void:
 	animation_executing_id = RomReader.battle_bin_data.ability_animation_executing_ids[new_id] * 2
 	animation_text_id = RomReader.battle_bin_data.ability_animation_text_ids[new_id]
 	effect_text = RomReader.fft_text.battle_effect_text[animation_text_id]
+	
+	jp_cost = RomReader.scus_data.jp_costs[new_id]
+	chance_to_learn = RomReader.scus_data.chance_to_learn[new_id]
+	ability_type = RomReader.scus_data.ability_types[new_id]
+	formula_id = RomReader.scus_data.formula_id[new_id]
+	formula_x = RomReader.scus_data.formula_x[new_id]
+	formula_y = RomReader.scus_data.formula_y[new_id]
+	targeting_range = RomReader.scus_data.ranges[new_id]
+	effect_radius = RomReader.scus_data.effect_radius[new_id]
+	vertical_tolerance = RomReader.scus_data.vertical_tolerance[new_id]
+	inflict_status_id = RomReader.scus_data.inflict_status_id[new_id]
+	ticks_charge_time = RomReader.scus_data.ct[new_id]
+	
+	
 	
 	if animation_executing_id == 0:
 		animation_executing_id = 0x3e * 2 # TODO look up based on equiped weapon and target relative height

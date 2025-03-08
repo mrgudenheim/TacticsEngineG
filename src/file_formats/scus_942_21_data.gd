@@ -17,6 +17,34 @@ var jobs_data: Array[JobData] = []
 var skillsets_start: int = 0x55294 # 0x55311 start of 05 Basic Skill, 0x19 bytes long
 var skillsets_data: Array[SkillsetData] = []
 
+# https://ffhacktics.com/wiki/Ability_Data
+var ability_data_all_start: int = 0x4f3f0 # 0x200 entries, 0x08 bytes each
+var jp_costs: PackedInt32Array = []
+var chance_to_learn: PackedInt32Array = []
+var ability_types: Array[AbilityData.AbilityType] = [] # AbilityData.AbilityType.NORMAL
+
+var ability_data_normal_start: int = 0x503f0 # ids 0x000 - 0x16f, 0x170 entries, 0x0e bytes each
+var ranges: PackedInt32Array = []
+var effect_radius: PackedInt32Array = []
+var vertical_tolerance: PackedInt32Array = []
+var flags1: PackedInt32Array = []
+var flags2: PackedInt32Array = []
+var flags3: PackedInt32Array = []
+var flags4: PackedInt32Array = []
+var element_flags: PackedInt32Array = []
+var formula_id: PackedInt32Array = []
+var formula_x: PackedInt32Array = []
+var formula_y: PackedInt32Array = []
+var inflict_status_id: PackedInt32Array = []
+var ct: PackedInt32Array = []
+var mp_cost: PackedInt32Array = []
+
+var ability_data_item_start: int = 0x503f0 # ids 0x170 - 0x17d, 0x0e entries, 0x01 bytes each
+var ability_data_throw_start: int = 0x503f0 # ids 0x17e - 0x189, 0x0c entries, 0x01 bytes each
+var ability_data_jump_start: int = 0x503f0 # ids 0x18a - 0x195, 0x0c entries, 0x02 bytes each
+var ability_data_charge_start: int = 0x503f0 # ids 0x196 - 0x19d, 0x08 entries, 0x02 bytes each
+var ability_data_math_start: int = 0x503f0 # ids 0x19e - 0x1a5, 0x08 entries, 0x02 bytes each
+var ability_data_rsm_start: int = 0x503f0 # ids 0x1a6 - 0x1ff, 0x5a entries, 0x01 bytes each
 
 func init_from_scus() -> void:
 	var scus_bytes: PackedByteArray = RomReader.get_file_data("SCUS_942.21")
@@ -74,3 +102,51 @@ func init_from_scus() -> void:
 			skillset_data.action_ability_ids[skill_slot] = ability_id
 		
 		skillsets_data[skillset_id + RomReader.NUM_UNIT_SKILLSETS] = skillset_data
+	
+	# ability data all
+	jp_costs.resize(RomReader.NUM_ABILITIES)
+	chance_to_learn.resize(RomReader.NUM_ABILITIES)
+	ability_types.resize(RomReader.NUM_ABILITIES)
+	
+	entry_size = 0x08 # bytes
+	num_entries = RomReader.NUM_ABILITIES
+	var ability_data_bytes: PackedByteArray = scus_bytes.slice(ability_data_all_start, ability_data_all_start + (num_entries * entry_size))
+	for id: int in num_entries:
+		jp_costs[id] = ability_data_bytes.decode_u16(id * entry_size)
+		chance_to_learn[id] = ability_data_bytes.decode_u8((id * entry_size) + 2)
+		ability_types[id] = ability_data_bytes.decode_u8((id * entry_size) + 3) % 16
+	
+	# ability data normal
+	ranges.resize(RomReader.NUM_ABILITIES)
+	effect_radius.resize(RomReader.NUM_ABILITIES)
+	vertical_tolerance.resize(RomReader.NUM_ABILITIES)
+	flags1.resize(RomReader.NUM_ABILITIES)
+	flags2.resize(RomReader.NUM_ABILITIES)
+	flags3.resize(RomReader.NUM_ABILITIES)
+	flags4.resize(RomReader.NUM_ABILITIES)
+	element_flags.resize(RomReader.NUM_ABILITIES)
+	formula_id.resize(RomReader.NUM_ABILITIES)
+	formula_x.resize(RomReader.NUM_ABILITIES)
+	formula_y.resize(RomReader.NUM_ABILITIES)
+	inflict_status_id.resize(RomReader.NUM_ABILITIES)
+	ct.resize(RomReader.NUM_ABILITIES)
+	mp_cost.resize(RomReader.NUM_ABILITIES)
+	
+	entry_size = 0x0e # bytes
+	num_entries = 0x170
+	ability_data_bytes = scus_bytes.slice(ability_data_normal_start, ability_data_normal_start + (num_entries * entry_size))
+	for id: int in num_entries:
+		ranges[id] = ability_data_bytes.decode_u8(id * entry_size)
+		effect_radius[id] = ability_data_bytes.decode_u8((id * entry_size) + 1)
+		vertical_tolerance[id] = ability_data_bytes.decode_u8((id * entry_size) + 2)
+		flags1[id] = ability_data_bytes.decode_u8((id * entry_size) + 3)
+		flags2[id] = ability_data_bytes.decode_u8((id * entry_size) + 4)
+		flags3[id] = ability_data_bytes.decode_u8((id * entry_size) + 5)
+		flags4[id] = ability_data_bytes.decode_u8((id * entry_size) + 6)
+		element_flags[id] = ability_data_bytes.decode_u8((id * entry_size) + 7)
+		formula_id[id] = ability_data_bytes.decode_u8((id * entry_size) + 8)
+		formula_x[id] = ability_data_bytes.decode_u8((id * entry_size) + 9)
+		formula_y[id] = ability_data_bytes.decode_u8((id * entry_size) + 10)
+		inflict_status_id[id] = ability_data_bytes.decode_u8((id * entry_size) + 11)
+		ct[id] = ability_data_bytes.decode_u8((id * entry_size) + 12)
+		mp_cost[id] = ability_data_bytes.decode_u8((id * entry_size) + 13)

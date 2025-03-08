@@ -69,7 +69,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	# Handle jump
 	elif Input.is_action_just_pressed("ui_accept") and is_on_floor() and unit.can_move:
 		velocity.y = JUMP_VELOCITY
-	elif Input.is_action_just_pressed("primary_action") and is_on_floor():
+	elif Input.is_action_just_pressed("primary_action") and is_on_floor() and unit.can_move:
+		#push_warning("primary_action_clicked")
 		unit.use_ability()
 
 

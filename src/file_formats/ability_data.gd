@@ -48,18 +48,16 @@ var vfx_data: VisualEffectData # BATTLE.BIN offset="14F3F0" - table of Effect ID
 
 
 
-func _init(new_id: int = 0) -> void:
-	if not RomReader.is_ready:
-		return
-	
+func _init(new_id: int = 0) -> void:	
 	id = new_id
 	
 	name = RomReader.fft_text.ability_names[id]
-	spell_quote = RomReader.fft_text.ability_names[id]
+	spell_quote = RomReader.fft_text.spell_quotes[id]
+	
 	
 	animation_charging_set_id = RomReader.battle_bin_data.ability_animation_charging_set_ids[new_id]
 	animation_start_id = RomReader.battle_bin_data.ability_animation_start_ids[animation_charging_set_id] * 2
-	animation_charging_id = RomReader.battle_bin_data.ability_animation_executing_ids[animation_charging_set_id] * 2
+	animation_charging_id = RomReader.battle_bin_data.ability_animation_charging_ids[animation_charging_set_id] * 2
 	animation_executing_id = RomReader.battle_bin_data.ability_animation_executing_ids[new_id] * 2
 	animation_text_id = RomReader.battle_bin_data.ability_animation_text_ids[new_id]
 	effect_text = RomReader.fft_text.battle_effect_text[animation_text_id]

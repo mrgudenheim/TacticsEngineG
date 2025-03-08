@@ -163,6 +163,10 @@ func play_animation(fft_animation: FftAnimation, draw_target: Sprite3D, isLoopin
 		
 		if not seq_part.isOpcode:
 			var delay_frames: int = seq_part.parameters[1]  # param 1 is delay
+			if delay_frames == 0 and fft_animation.is_primary_anim:
+				animation_completed.emit()
+				return
+			
 			var delay_sec: float = delay_frames / animation_speed
 			await get_tree().create_timer(delay_sec).timeout
 	
@@ -381,10 +385,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				
 				for iteration in num_loops:
 					await start_animation(temp_fft_animation, draw_target, true, false, true)
-		elif seq_part.opcode_name == "IncrementLoop":
-			reset_sprites()
-			start_animation(fft_animation, draw_target, animation_is_playing, false)
-			#pass # handled by animations looping by default
+		
 		elif seq_part.opcode_name == "WaitForInput":
 			var delay_frames: int = wait_for_input_delay
 			var loop_length: int = seq_part.parameters[0]
@@ -426,11 +427,17 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 		elif seq_part.opcode_name == "QueueDistortAnim":
 			# https://ffhacktics.com/wiki/Animate_Unit_Distorts
 			pass
+		elif seq_part.opcode_name == "IncrementLoop":
+			reset_sprites()
+			start_animation(fft_animation, draw_target, animation_is_playing, false)
 		elif seq_part.opcode_name == "EndAnimation":
 			reset_sprites()
 			draw_target.texture = ImageTexture.create_from_image(fft_animation.shp.create_blank_frame())
+			if fft_animation.is_primary_anim:
+				animation_completed.emit()
 		elif seq_part.opcode_name == "PauseAnimation":
-			pass# handled by animations looping by default
+			if fft_animation.is_primary_anim:
+				animation_completed.emit()
 		# Opcodes from animation rewraite ASM by Talcall
 		elif seq_part.opcode_name == "SetBackFacedOffset":
 			fft_animation.back_face_offset = seq_part.parameters[0]

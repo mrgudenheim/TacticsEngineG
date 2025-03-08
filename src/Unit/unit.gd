@@ -10,6 +10,7 @@ var can_move: bool = true
 
 var map_position: Vector2i
 var facing: Facings = Facings.NORTH
+var is_back_facing: bool = false
 var facing_vector: Vector3 = Vector3.FORWARD:
 	get:
 		return FacingVectors[facing]
@@ -30,14 +31,10 @@ const FacingVectors: Dictionary[Facings, Vector3] = {
 
 var is_in_air: bool = false
 
-var ability_id: int = 0:
-	get:
-		return ability_id
-	set(value):
-		ability_id = value
-		ability_data
+var ability_id: int = 0
+var ability_data: AbilityData
+var idle_animation_id: int = 6
 
-var ability_data: AbilityData = AbilityData.new()
 
 func _ready() -> void:
 	controller.velocity_set.connect(update_unit_facing)
@@ -49,6 +46,7 @@ func _ready() -> void:
 
 func initialize_unit() -> void:
 	animation_manager.unit_debug_menu.anim_id_spin.value = 6
+	ability_data = AbilityData.new(1)
 
 
 func _process(delta: float) -> void:
@@ -72,14 +70,20 @@ func _process(delta: float) -> void:
 
 
 func use_ability() -> void:
-	return # TODO implement playing a set of animations in a row
 	can_move = false
+	push_warning("using: " + ability_data.name)
+	#push_warning("Animations: " + str(PackedInt32Array([ability_data.animation_start_id, ability_data.animation_charging_id, ability_data.animation_executing_id])))
 	if ability_data.animation_start_id != 0:
-		animation_manager.unit_debug_menu.anim_id_spin.value = ability_data.animation_start_id
+		animation_manager.unit_debug_menu.anim_id_spin.value = ability_data.animation_start_id + int(is_back_facing)
+		await animation_manager.animation_completed
 	if ability_data.animation_charging_id != 0:
-		animation_manager.unit_debug_menu.anim_id_spin.value = ability_data.animation_charging_id
+		animation_manager.unit_debug_menu.anim_id_spin.value = ability_data.animation_charging_id + int(is_back_facing)
+		await get_tree().create_timer(1).timeout
 	if ability_data.animation_executing_id != 0:
-		animation_manager.unit_debug_menu.anim_id_spin.value = ability_data.animation_executing_id
+		animation_manager.unit_debug_menu.anim_id_spin.value = ability_data.animation_executing_id + int(is_back_facing)
+		await animation_manager.animation_completed
+	
+	animation_manager.unit_debug_menu.anim_id_spin.value = idle_animation_id  + int(is_back_facing)
 	can_move = true
 
 
@@ -114,27 +118,27 @@ func update_animation_facing() -> void:
 	#push_warning(rad_to_deg(atan2(facing_difference.z, facing_difference.x)))
 	
 	var new_is_right_facing: bool = false
-	var new_is_back_facing: bool = false
+	#is_back_facing: bool = false
 	if facing_difference_angle < 90:
 		new_is_right_facing = true
-		new_is_back_facing = false
+		is_back_facing = false
 	elif facing_difference_angle < 180:
 		new_is_right_facing = true
-		new_is_back_facing = true
+		is_back_facing = true
 	elif facing_difference_angle < 270:
 		new_is_right_facing = false
-		new_is_back_facing = true
+		is_back_facing = true
 	elif facing_difference_angle < 360:
 		new_is_right_facing = false
-		new_is_back_facing = false
+		is_back_facing = false
 	
 	if (animation_manager.is_right_facing != new_is_right_facing
-			or animation_manager.is_back_facing != new_is_back_facing):
+			or animation_manager.is_back_facing != is_back_facing):
 		animation_manager.is_right_facing = new_is_right_facing
 		
-		if animation_manager.is_back_facing != new_is_back_facing:
-			animation_manager.is_back_facing = new_is_back_facing
-			if new_is_back_facing == true:
+		if animation_manager.is_back_facing != is_back_facing:
+			animation_manager.is_back_facing = is_back_facing
+			if is_back_facing == true:
 				animation_manager.unit_debug_menu.anim_id_spin.value += 1
 			else:
 				animation_manager.unit_debug_menu.anim_id_spin.value -= 1
@@ -150,5 +154,6 @@ func hide_debug_menu() -> void:
 	animation_manager.unit_debug_menu.visible = false
 
 
-func set_ability(ability_id: int) -> void:
-	ability_data = RomReader.abilities[ability_id]
+func set_ability(new_ability_id: int) -> void:
+	ability_id = new_ability_id
+	ability_data = RomReader.abilities[new_ability_id]

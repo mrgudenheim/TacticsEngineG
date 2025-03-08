@@ -69,7 +69,7 @@ func init_from_battle_bin() -> void:
 	var ability_effect_id_bytes: PackedByteArray = battle_bytes.slice(ability_effect_ids_start, ability_effect_ids_start + (RomReader.NUM_ACTIVE_ABILITIES * entry_size))
 	ability_effect_ids.resize(RomReader.NUM_ACTIVE_ABILITIES)
 	for ability_id: int in ability_effect_id_bytes.size() / entry_size:
-		ability_animation_charging_set_ids[ability_id] = ability_animation_id_bytes.decode_u8(ability_id * entry_size)
+		ability_effect_ids[ability_id] = ability_effect_id_bytes.decode_u8(ability_id * entry_size)
 	
 	_load_battle_bin_sprite_data()
 	

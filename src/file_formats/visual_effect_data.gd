@@ -116,6 +116,35 @@ func init_from_file() -> void:
 		frame_sets[frame_set_id] = frame_set
 	
 	#### image and palette data
+	section_num = VfxSections.PALETTE_IMAGE
+	section_start = header_start + section_offsets[section_num]
+	data_bytes = vfx_bytes.slice(section_start)
 	
+	var palette_bytes: PackedByteArray = []
+	if image_color_depth == 8:
+		palette_bytes = data_bytes.slice(0, 512)
+	elif image_color_depth == 4:
+		palette_bytes = data_bytes.slice(512, 1024)
+	else:
+		push_warning(file_name + " image_color_depth not set")
+	
+	var vfx_spr: Spr = Spr.new(file_name)
+	vfx_spr.bits_per_pixel = image_color_depth
+	vfx_spr.pixel_data_start = 1024 + 4
+	vfx_spr.num_colors = 256
+	var image_size_bytes: PackedByteArray = data_bytes.slice(1024, 1024 + 4)
+	if image_color_depth == 8 and image_size_bytes[2] == 0x01 and image_size_bytes[3] == 0x01:
+		vfx_spr.width = 256
+		vfx_spr.height = 256
+	else:
+		vfx_spr.height = image_size_bytes[1] * 2
+		vfx_spr.width = 1024 / image_color_depth
+	
+	vfx_spr.has_compressed = false
+	vfx_spr.num_pixels = vfx_spr.width * vfx_spr.height
+	vfx_spr.set_palette_data(palette_bytes)
+	vfx_spr.color_indices = vfx_spr.set_color_indices(data_bytes.slice(1024 + 4))
+	vfx_spr.set_pixel_colors()
+	vfx_spr.spritesheet = vfx_spr.get_rgba8_image()
 	
 	is_initialized = true

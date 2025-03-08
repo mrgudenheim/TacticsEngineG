@@ -1,14 +1,14 @@
 class_name Bmp
 
-var file_name:String = "file_name"
-var bits_per_pixel:int = BIT_DEPTH.EIGHT
-var pixel_data_start:int = 0
+var file_name: String = "file_name"
+var bits_per_pixel: int = BIT_DEPTH.EIGHT
+var pixel_data_start: int = 0
 var width: int = 0
 var height: int = 0
-var num_pixels:int = 0
-var palette_data_start := 0x0036
-var num_colors:int = 256
-var compression:int = 0
+var num_pixels: int = 0
+var palette_data_start: int = 0x0036
+var num_colors: int = 256
+var compression: int = 0
 
 var color_palette: PackedColorArray = []
 var color_indices: Array[int] = []
@@ -22,7 +22,7 @@ const BIT_DEPTH = {
 	TWENTYFOUR = 24
 }
 
-func _init(bmp_file:PackedByteArray = [], new_name:String = "file_name") -> void:
+func _init(bmp_file: PackedByteArray = [], new_name: String = "file_name") -> void:
 	file_name = new_name
 	if bmp_file.size() == 0:
 		file_name = "empty_file"
@@ -44,7 +44,7 @@ func _init(bmp_file:PackedByteArray = [], new_name:String = "file_name") -> void
 		push_warning("Bit depth > 8, no palette to extract") # a compressed 16bpp format can use a palette, but is not covered by this utility
 	else:
 		for i in num_colors:
-			var color:Color = Color.BLACK
+			var color: Color = Color.BLACK
 			color.b8 = bmp_file.decode_u8(palette_data_start + (i*4)) # blue
 			color.g8 = bmp_file.decode_u8(palette_data_start + (i*4) + 1) # green
 			color.r8 = bmp_file.decode_u8(palette_data_start + (i*4) + 2) # red

@@ -57,7 +57,6 @@ func _init(new_id: int = 0) -> void:
 	name = RomReader.fft_text.ability_names[id]
 	spell_quote = RomReader.fft_text.spell_quotes[id]
 	
-	
 	animation_charging_set_id = RomReader.battle_bin_data.ability_animation_charging_set_ids[new_id]
 	animation_start_id = RomReader.battle_bin_data.ability_animation_start_ids[animation_charging_set_id] * 2
 	animation_charging_id = RomReader.battle_bin_data.ability_animation_charging_ids[animation_charging_set_id] * 2
@@ -65,6 +64,7 @@ func _init(new_id: int = 0) -> void:
 	animation_text_id = RomReader.battle_bin_data.ability_animation_text_ids[new_id]
 	effect_text = RomReader.fft_text.battle_effect_text[animation_text_id]
 	vfx_id = RomReader.battle_bin_data.ability_vfx_ids[new_id]
+	RomReader.vfx[vfx_id].ability_names += name + " "
 	
 	jp_cost = RomReader.scus_data.jp_costs[new_id]
 	chance_to_learn = RomReader.scus_data.chance_to_learn[new_id]

@@ -25,6 +25,7 @@ const NUM_SKILLSETS = 0xe0
 const NUM_UNIT_SKILLSETS = 0xb0
 const NUM_MONSTER_SKILLSETS = 0xe0 - 0xb0
 const NUM_JOBS = 0xa0
+const NUM_VFX = 511
 
 var sprs: Array[Spr] = []
 var spr_file_name_to_id: Dictionary[String, int] = {}
@@ -98,7 +99,7 @@ func process_rom() -> void:
 	rom_loaded.emit()
 
 
-func process_file_records(sectors: PackedInt32Array) -> void:
+func process_file_records(sectors: PackedInt32Array, folder_name: String = "") -> void:
 	for sector: int in sectors:
 		var offset_start: int = 0
 		if sector == sectors[0]:
@@ -121,7 +122,10 @@ func process_file_records(sectors: PackedInt32Array) -> void:
 				#push_warning("Getting files from folder: " + record.name)
 				var data_length_sectors: int = ceil(float(record.size) / DATA_BYTES_PER_SECTOR)
 				var directory_sectors: PackedInt32Array = range(record.sector_location, record.sector_location + data_length_sectors)
-				process_file_records(directory_sectors)
+				process_file_records(directory_sectors, record.name)
+			elif folder_name == "EFFECT":
+				record.type_index = vfx.size()
+				vfx.append(VisualEffectData.new(record.name))
 			elif file_extension == "SPR":
 				record.type_index = sprs.size()
 				sprs.append(Spr.new(record.name))

@@ -37,8 +37,12 @@ var targeted_front_frame_id: PackedInt32Array = []
 var targeted_back_frame_id_start: int = 0x2d9d0 # 0x0c entries
 var targeted_back_frame_id: PackedInt32Array = []
 
-var ability_effect_ids_start: int = 0x14f3f0 # 2 bytes each - uint16
-var ability_effect_ids: PackedInt32Array = [] 
+var ability_vfx_header_offsets_start: int = 0x14d8d0 # 511 entries, 8 bytes each, 2 uint32 each
+var ability_vfx_header_offsets: PackedInt32Array = [] 
+
+var ability_vfx_ids_start: int = 0x14f3f0 # 2 bytes each - uint16
+var ability_vfx_ids: PackedInt32Array = [] 
+
 
 func init_from_battle_bin() -> void:
 	var battle_bytes: PackedByteArray = RomReader.get_file_data("BATTLE.BIN")
@@ -64,12 +68,20 @@ func init_from_battle_bin() -> void:
 		ability_animation_executing_ids[ability_id] = ability_animation_id_bytes.decode_u8((ability_id * entry_size) + 1)
 		ability_animation_text_ids[ability_id] = ability_animation_id_bytes.decode_u8((ability_id * entry_size) + 2)
 	
+	# ability vfx header offsets
+	entry_size = 4
+	num_entries = RomReader.NUM_VFX
+	var data_bytes: PackedByteArray = battle_bytes.slice(ability_vfx_header_offsets_start, ability_vfx_header_offsets_start + (num_entries * entry_size))
+	ability_vfx_header_offsets.resize(RomReader.NUM_VFX)
+	for id: int in data_bytes.size() / entry_size:
+		ability_vfx_header_offsets[id] = data_bytes.decode_u32(id * entry_size) - 0x801c2500
+	
 	# ability vfx
 	entry_size = 2
-	var ability_effect_id_bytes: PackedByteArray = battle_bytes.slice(ability_effect_ids_start, ability_effect_ids_start + (RomReader.NUM_ACTIVE_ABILITIES * entry_size))
-	ability_effect_ids.resize(RomReader.NUM_ACTIVE_ABILITIES)
-	for ability_id: int in ability_effect_id_bytes.size() / entry_size:
-		ability_effect_ids[ability_id] = ability_effect_id_bytes.decode_u8(ability_id * entry_size)
+	var ability_vfx_id_bytes: PackedByteArray = battle_bytes.slice(ability_vfx_ids_start, ability_vfx_ids_start + (RomReader.NUM_ACTIVE_ABILITIES * entry_size))
+	ability_vfx_ids.resize(RomReader.NUM_ACTIVE_ABILITIES)
+	for ability_id: int in ability_vfx_id_bytes.size() / entry_size:
+		ability_vfx_ids[ability_id] = ability_vfx_id_bytes.decode_u8(ability_id * entry_size)
 	
 	_load_battle_bin_sprite_data()
 	

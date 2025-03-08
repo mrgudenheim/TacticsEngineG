@@ -48,7 +48,7 @@ var animation_text_id: int # BATTLE.BIN offset="2ce10" - table of animations IDs
 var effect_text: String = "ability effect"
 
 var vfx_data: VisualEffectData # BATTLE.BIN offset="14F3F0" - table of Effect IDs used by Ability ID
-
+var vfx_id: int = 0
 
 
 func _init(new_id: int = 0) -> void:	
@@ -64,6 +64,7 @@ func _init(new_id: int = 0) -> void:
 	animation_executing_id = RomReader.battle_bin_data.ability_animation_executing_ids[new_id] * 2
 	animation_text_id = RomReader.battle_bin_data.ability_animation_text_ids[new_id]
 	effect_text = RomReader.fft_text.battle_effect_text[animation_text_id]
+	vfx_id = RomReader.battle_bin_data.ability_effect_ids[new_id]
 	
 	jp_cost = RomReader.scus_data.jp_costs[new_id]
 	chance_to_learn = RomReader.scus_data.chance_to_learn[new_id]

@@ -32,7 +32,7 @@ var spr_file_name_to_id: Dictionary[String, int] = {}
 var shps: Array[Shp] = []
 var seqs: Array[Seq] = []
 var maps: Array[MapData] = []
-var effects: Array[VisualEffectData] = []
+var vfx: Array[VisualEffectData] = []
 var abilities: Array[AbilityData] = []
 
 @export_file("*.txt") var item_frames_csv_filepath: String = "res://src/fftae/frame_data_item.txt"
@@ -71,7 +71,7 @@ func clear_data() -> void:
 	shps.clear()
 	seqs.clear()
 	maps.clear()
-	effects.clear()
+	vfx.clear()
 	abilities.clear()
 
 

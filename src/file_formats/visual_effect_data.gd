@@ -22,10 +22,8 @@ class VfxFrame:
 	var quad: Rect2i = Rect2i()
 
 
-var spritesheet: Image
+var vfx_spr: Spr
 var image_color_depth: int = 0 # 8bpp or 4bpp
-var image_height: int = 0 # pixels
-var image_width = image_color_depth * 16 # unless full 256 x 256
 
 # SINGLE - camera will point at the targeted location
 # SEQUENTIAL - camera will move between each each target
@@ -58,7 +56,6 @@ func init_from_file() -> void:
 	
 	#### header data
 	header_start = RomReader.battle_bin_data.ability_vfx_header_offsets[vfx_id]
-	var section_offsets_bytes: PackedByteArray = vfx_bytes.slice(header_start, header_start + 40)
 	var entry_size = 4
 	var num_entries = 10
 	var data_bytes: PackedByteArray = vfx_bytes.slice(header_start, header_start + (entry_size * num_entries))
@@ -68,18 +65,19 @@ func init_from_file() -> void:
 	
 	#### frame data (and image color depth)
 	var section_num = VfxSections.FRAMES
-	var section_start: int = header_start + section_offsets[section_num]
-	data_bytes = vfx_bytes.slice(section_start, header_start + section_offsets[section_num + 1])
+	var section_start: int = section_offsets[section_num]
+	data_bytes = vfx_bytes.slice(section_start, section_offsets[section_num + 1])
 	
 	var frame_sets_data_start: int = data_bytes.decode_u16(6)
 	var num_frame_sets: int = (frame_sets_data_start - 6) / 2
 	frame_sets.resize(num_frame_sets)
 	var frame_set_offsets: PackedInt32Array = []
+	frame_set_offsets.resize(num_frame_sets)
 	for id: int in num_frame_sets:
 		frame_set_offsets[id] = data_bytes.decode_u16(6 + (2 * id)) + 4
 	
 	# image color depth from first frame in first frame_set
-	if data_bytes.decode_u8(frame_set_offsets[0] + 1) & 0x80 == 0:
+	if data_bytes.decode_u8(frame_set_offsets[0]) & 0x80 == 0 and data_bytes.decode_u8(0) == 1:
 		image_color_depth = 4
 	else:
 		image_color_depth = 8
@@ -117,7 +115,7 @@ func init_from_file() -> void:
 	
 	#### image and palette data
 	section_num = VfxSections.PALETTE_IMAGE
-	section_start = header_start + section_offsets[section_num]
+	section_start = section_offsets[section_num]
 	data_bytes = vfx_bytes.slice(section_start)
 	
 	var palette_bytes: PackedByteArray = []
@@ -128,7 +126,7 @@ func init_from_file() -> void:
 	else:
 		push_warning(file_name + " image_color_depth not set")
 	
-	var vfx_spr: Spr = Spr.new(file_name)
+	vfx_spr = Spr.new(file_name)
 	vfx_spr.bits_per_pixel = image_color_depth
 	vfx_spr.pixel_data_start = 1024 + 4
 	vfx_spr.num_colors = 256
@@ -144,6 +142,7 @@ func init_from_file() -> void:
 	vfx_spr.num_pixels = vfx_spr.width * vfx_spr.height
 	vfx_spr.set_palette_data(palette_bytes)
 	vfx_spr.color_indices = vfx_spr.set_color_indices(data_bytes.slice(1024 + 4))
+	vfx_spr.color_palette[vfx_spr.color_indices[0]].a8 = 0 # set background color (ie. color of top left pixel) as transparent
 	vfx_spr.set_pixel_colors()
 	vfx_spr.spritesheet = vfx_spr.get_rgba8_image()
 	

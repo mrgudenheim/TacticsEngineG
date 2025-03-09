@@ -15,7 +15,7 @@ var unit_controller: UnitControllerRT
 @export var ability_id_spin: SpinBox
 @export var ability_name_line: LineEdit
 
-@export var sprite_sheet_viewer: Sprite3D
+@export var sprite_viewer: Sprite3D
 
 
 func _ready() -> void:
@@ -100,7 +100,7 @@ func _on_sprite_option_selected(index) -> void:
 	animation_manager.other_spr = RomReader.sprs[RomReader.file_records["OTHER.SPR"].type_index]
 	animation_manager.other_shp = RomReader.shps[RomReader.file_records["OTHER.SHP"].type_index]
 	
-	sprite_sheet_viewer.texture = ImageTexture.create_from_image(spr.spritesheet)
+	sprite_viewer.texture = ImageTexture.create_from_image(spr.spritesheet)
 
 
 func _on_anim_id_spin_value_changed(value: int) -> void:

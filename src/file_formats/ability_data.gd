@@ -51,7 +51,7 @@ var vfx_data: VisualEffectData # BATTLE.BIN offset="14F3F0" - table of Effect ID
 var vfx_id: int = 0
 
 
-func _init(new_id: int = 0) -> void:	
+func _init(new_id: int = 0) -> void:
 	id = new_id
 	
 	name = RomReader.fft_text.ability_names[id]
@@ -64,7 +64,16 @@ func _init(new_id: int = 0) -> void:
 	animation_text_id = RomReader.battle_bin_data.ability_animation_text_ids[new_id]
 	effect_text = RomReader.fft_text.battle_effect_text[animation_text_id]
 	vfx_id = RomReader.battle_bin_data.ability_vfx_ids[new_id]
-	RomReader.vfx[vfx_id].ability_names += name + " "
+	if [0x11d, 0x11f].has(vfx_id): # Ball
+		vfx_data = RomReader.vfx[0] # TODO handle special cases without vfx files, 0x11d (Ball), 0x11f (ability 0x2d)
+	elif vfx_id < RomReader.NUM_VFX:
+		RomReader.vfx[vfx_id].ability_names += name + " "
+		vfx_data = RomReader.vfx[vfx_id]
+	elif vfx_id == 0xffff:
+		vfx_data = RomReader.vfx[0] # TODO handle when vfx_id is 0xffff
+	else:
+		vfx_data = RomReader.vfx[0]
+		push_warning(vfx_id)
 	
 	jp_cost = RomReader.scus_data.jp_costs[new_id]
 	chance_to_learn = RomReader.scus_data.chance_to_learn[new_id]

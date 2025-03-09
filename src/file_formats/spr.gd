@@ -102,16 +102,19 @@ func set_palette_data(palette_bytes: PackedByteArray) -> void:
 
 func set_color_indices(pixel_bytes: PackedByteArray) -> Array[int]:
 	var new_color_indicies: Array[int] = []
-	new_color_indicies.resize(pixel_bytes.size() * 2)
+	new_color_indicies.resize(pixel_bytes.size() * (8 / bits_per_pixel))
 	
 	for i: int in new_color_indicies.size():
 		var pixel_offset: int = (i * bits_per_pixel)/8
 		var byte: int = pixel_bytes.decode_u8(pixel_offset)
 		
-		if i % 2 == 1: # get 4 leftmost bits
-			new_color_indicies[i] = byte >> 4
-		else:
-			new_color_indicies[i] = byte & 0b0000_1111 # get 4 rightmost bits
+		if bits_per_pixel == 4:
+			if i % 2 == 1: # get 4 leftmost bits
+				new_color_indicies[i] = byte >> 4
+			else:
+				new_color_indicies[i] = byte & 0b0000_1111 # get 4 rightmost bits
+		elif bits_per_pixel == 8:
+			new_color_indicies[i] = byte
 	
 	return new_color_indicies
 

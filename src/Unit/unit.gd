@@ -45,8 +45,12 @@ func _ready() -> void:
 
 
 func initialize_unit() -> void:
-	animation_manager.unit_debug_menu.anim_id_spin.value = 6
-	ability_data = AbilityData.new(1)
+	animation_manager.unit_debug_menu.anim_id_spin.value = idle_animation_id
+	
+	# 1 cure
+	# 0xc8 blood suck
+	# 0x9b stasis sword
+	set_ability(1)
 
 
 func _process(delta: float) -> void:
@@ -157,3 +161,8 @@ func hide_debug_menu() -> void:
 func set_ability(new_ability_id: int) -> void:
 	ability_id = new_ability_id
 	ability_data = RomReader.abilities[new_ability_id]
+	
+	if not ability_data.vfx_data.is_initialized:
+		ability_data.vfx_data.init_from_file()
+	
+	animation_manager.unit_debug_menu.sprite_viewer.texture = ImageTexture.create_from_image(ability_data.vfx_data.vfx_spr.spritesheet)

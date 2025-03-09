@@ -81,7 +81,9 @@ func init_from_battle_bin() -> void:
 	var ability_vfx_id_bytes: PackedByteArray = battle_bytes.slice(ability_vfx_ids_start, ability_vfx_ids_start + (RomReader.NUM_ACTIVE_ABILITIES * entry_size))
 	ability_vfx_ids.resize(RomReader.NUM_ACTIVE_ABILITIES)
 	for ability_id: int in ability_vfx_id_bytes.size() / entry_size:
-		ability_vfx_ids[ability_id] = ability_vfx_id_bytes.decode_u8(ability_id * entry_size)
+		ability_vfx_ids[ability_id] = ability_vfx_id_bytes.decode_u16(ability_id * entry_size)
+	
+	# TODO get vfx_ids for items, reations (support and movement don't have vfx)
 	
 	_load_battle_bin_sprite_data()
 	

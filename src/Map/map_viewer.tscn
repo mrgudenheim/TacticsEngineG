@@ -70,7 +70,7 @@ material = SubResource("StandardMaterial3D_05x7e")
 script = ExtResource("1_ojbyw")
 phantom_camera = NodePath("PhantomCamera3D")
 load_rom_button = NodePath("PanelContainer/MarginContainer/VBoxContainer2/LoadRom")
-texture_viewer = NodePath("MapTexture")
+texture_viewer = NodePath("SpriteViewer")
 camera_controller = NodePath("CameraController")
 background_gradient = NodePath("BackgroundCanvasLayer/TextureRect")
 menu_list = NodePath("PanelContainer/MarginContainer/VBoxContainer2/VBoxContainer")
@@ -114,7 +114,7 @@ script = ExtResource("6_yx7fd")
 transform = Transform3D(1, 0, 0, 0, 0.999999, 0, 0, 0, 1, 0, 0, 0)
 visible = false
 script = ExtResource("3_dpuna")
-sprite = NodePath("../MapTexture")
+sprite = NodePath("../SpriteViewer")
 camera = NodePath("../Camera3D")
 camera_pivot = NodePath("CameraPivot")
 zoom_in_max = 0.5
@@ -216,7 +216,7 @@ item_list_filepath = "res://src/fftae/item_list.txt"
 
 [node name="UnitSpritesManager" parent="Unit/CharacterBody3D/UnitAnimationManager" instance=ExtResource("9_81hnw")]
 
-[node name="UnitDebugMenu" type="Control" parent="Unit/CharacterBody3D" node_paths=PackedStringArray("animation_manager", "sprite_options", "anim_id_spin", "weapon_options", "item_options", "other_type_options", "ability_id_spin", "ability_name_line", "sprite_sheet_viewer")]
+[node name="UnitDebugMenu" type="Control" parent="Unit/CharacterBody3D" node_paths=PackedStringArray("animation_manager", "sprite_options", "anim_id_spin", "weapon_options", "item_options", "other_type_options", "ability_id_spin", "ability_name_line", "sprite_viewer")]
 visible = false
 layout_mode = 3
 anchors_preset = 0
@@ -231,7 +231,7 @@ item_options = NodePath("PanelContainer/MarginContainer/VBoxContainer/GridContai
 other_type_options = NodePath("PanelContainer/MarginContainer/VBoxContainer/GridContainer/OtherTypeOptionButton")
 ability_id_spin = NodePath("PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/AbilityIdSpinBox")
 ability_name_line = NodePath("PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/AbilityName")
-sprite_sheet_viewer = NodePath("../../../MapTexture")
+sprite_viewer = NodePath("../../../SpriteViewer")
 
 [node name="PanelContainer" type="PanelContainer" parent="Unit/CharacterBody3D/UnitDebugMenu"]
 layout_mode = 0
@@ -315,7 +315,6 @@ horizontal_alignment = 2
 [node name="AbilityIdSpinBox" type="SpinBox" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 max_value = 453.0
-value = 1.0
 rounded = true
 select_all_on_focus = true
 
@@ -324,10 +323,10 @@ layout_mode = 2
 text = "ability"
 editable = false
 
-[node name="MapTexture" type="Sprite3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, -75, 0, 0)
-visible = false
+[node name="SpriteViewer" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 5, 0)
 pixel_size = 0.05
+billboard = 1
 texture_filter = 0
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]

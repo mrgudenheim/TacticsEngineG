@@ -92,3 +92,54 @@ func _init(new_id: int = 0) -> void:
 	if animation_executing_id == 0:
 		animation_executing_id = 0x3e * 2 # TODO look up based on equiped weapon and target relative height
 		# use RomReader.battle_bin_data.weapon_animation_ids
+
+
+func display_vfx(location: Node3D) -> void:
+	if vfx_id != 163: # TODO handle vfx other than stasis sword
+		return
+	
+	var children: Array[Node] = location.get_children()
+	for child: Node in children:
+		child.queue_free()
+	
+	
+	var frame_meshes: Array[ArrayMesh] = []
+	for frameset_idx: int in [0, 1, 2, 17, 34, 55, 76, 98, 110]:
+		frame_meshes.append(vfx_data.get_frame_mesh(frameset_idx))  
+	
+	for frame_mesh_idx: int in range(2, frame_meshes.size() - 2):
+		var mesh_instance: MeshInstance3D = MeshInstance3D.new()
+		mesh_instance.mesh = frame_meshes[frame_mesh_idx]
+		location.add_child(mesh_instance)
+		
+		mesh_instance.position.y += 5
+		var target_pos: Vector3 = Vector3.ZERO
+		if frame_mesh_idx == 5:
+			target_pos.y -= 15 * MapData.SCALE
+		
+		# https://docs.godotengine.org/en/stable/classes/class_tween.html
+		var tween: Tween = location.create_tween()
+		tween.tween_property(mesh_instance, "position", target_pos, 0.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		
+		await location.get_tree().create_timer(0.4).timeout
+	
+	await location.get_tree().create_timer(0.4).timeout
+	
+	children = location.get_children() # store current children to remove later
+	
+	for frame_mesh_idx: int in [1, 0]:
+		var mesh_instance: MeshInstance3D = MeshInstance3D.new()
+		mesh_instance.mesh = frame_meshes[frame_mesh_idx]
+		location.add_child(mesh_instance)
+	
+	await location.get_tree().create_timer(0.2).timeout
+	
+	for child: Node in children:
+		child.queue_free()
+	
+	await location.get_tree().create_timer(0.6).timeout
+	
+	children = location.get_children()
+	for child: Node in children:
+		child.queue_free()
+	

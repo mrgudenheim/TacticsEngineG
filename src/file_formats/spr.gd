@@ -94,8 +94,14 @@ func set_palette_data(palette_bytes: PackedByteArray) -> void:
 		color.g8 = roundi(255 * (color.g8 / float(31)))
 		color.r8 = roundi(255 * (color.r8 / float(31)))
 		
-		if color == Color.BLACK or alpha_bit == 1:
+		if color == Color.BLACK:
+			color.a8 = 0
+		elif alpha_bit == 1:
 			color.a8 = roundi(color.v * 255)
+			#color.a8 = 127
+			#if color.v < 0.5:
+				#color.a8 = roundi(color.v * 255)
+			#color.a8 = 127 + roundi(color.v * 255)
 		
 		# if first color in 16 color palette is black, treat it as transparent
 		if (i % 16 == 0

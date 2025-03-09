@@ -16,6 +16,7 @@ class VfxFrameSet:
 	var frame_set: Array[VfxFrame] = []
 
 class VfxFrame:
+	var vram_bytes: PackedByteArray = []
 	var top_left_uv: Vector2i = Vector2i.ZERO
 	var uv_width: int = 0
 	var uv_height: int = 0
@@ -109,11 +110,21 @@ func init_from_file() -> void:
 		for frame_id: int in num_frames:
 			var frame_bytes: PackedByteArray = frame_set_bytes.slice(4 + (frame_id * frame_data_length))
 			var new_frame: VfxFrame = VfxFrame.new()
+			new_frame.vram_bytes = frame_bytes.slice(0, 4)
 			var top_left_u: int = frame_bytes.decode_u8(4)
 			var top_left_v: int = frame_bytes.decode_u8(5)
 			new_frame.top_left_uv = Vector2i(top_left_u, top_left_v)
+			
+			if new_frame.vram_bytes[1] & 0x10 != 0:
 			new_frame.uv_width = frame_bytes.decode_s8(6)
+			else:
+				new_frame.uv_width = frame_bytes.decode_u8(6)
+			if new_frame.vram_bytes[1] & 0x20 != 0:
 			new_frame.uv_height = frame_bytes.decode_s8(7)
+			else:
+				new_frame.uv_height = frame_bytes.decode_u8(7)
+			#new_frame.uv_width = frame_bytes.decode_s8(6)
+			#new_frame.uv_height = frame_bytes.decode_s8(7)
 			var top_left_x: int = frame_bytes.decode_s16(8)
 			var top_left_y: int = frame_bytes.decode_s16(0xa)
 			new_frame.top_left_xy = Vector2i(top_left_x, top_left_y)

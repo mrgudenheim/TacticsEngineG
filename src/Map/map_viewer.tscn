@@ -320,7 +320,7 @@ select_all_on_focus = true
 
 [node name="AbilityName" type="LineEdit" parent="Unit/CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
-text = "ability"
+size_flags_horizontal = 3
 editable = false
 
 [node name="SpriteViewer" type="Sprite3D" parent="."]

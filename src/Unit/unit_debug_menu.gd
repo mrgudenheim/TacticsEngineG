@@ -32,6 +32,7 @@ func _ready() -> void:
 		animation_manager._on_animation_changed())
 	
 	ability_id_spin.value_changed.connect(_on_ability_id_value_changed)
+	unit.ability_set.connect(func(id): ability_id_spin.value = id)
 
 func _process(delta: float) -> void:
 	position = MapViewer.main_camera.unproject_position(unit_controller.position) + Vector2(50, -50)

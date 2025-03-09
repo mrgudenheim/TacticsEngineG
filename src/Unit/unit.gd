@@ -3,6 +3,8 @@ extends Node3D
 
 # https://ffhacktics.com/wiki/Miscellaneous_Unit_Data
 
+signal ability_set(id: int)
+
 @export var controller: UnitControllerRT
 @export var animation_manager: UnitAnimationManager
 
@@ -166,3 +168,5 @@ func set_ability(new_ability_id: int) -> void:
 		ability_data.vfx_data.init_from_file()
 	
 	animation_manager.unit_debug_menu.sprite_viewer.texture = ImageTexture.create_from_image(ability_data.vfx_data.vfx_spr.spritesheet)
+	
+	ability_set.emit(new_ability_id)

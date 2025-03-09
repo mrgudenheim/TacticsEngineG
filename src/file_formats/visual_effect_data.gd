@@ -17,9 +17,18 @@ class VfxFrameSet:
 
 class VfxFrame:
 	var top_left_uv: Vector2i = Vector2i.ZERO
-	var width: int = 0
-	var height: int = 0
-	var quad: Rect2i = Rect2i()
+	var uv_width: int = 0
+	var uv_height: int = 0
+	var top_left_xy: Vector2i = Vector2i.ZERO
+	var top_right_xy: Vector2i = Vector2i.ZERO
+	var bottom_left_xy: Vector2i = Vector2i.ZERO
+	var bottom_right_xy: Vector2i = Vector2i.ZERO
+	var quad_width: float = 0
+	var quad_height: float = 0
+	var quad_rotation_deg: float = 0
+	var quad_vertices: PackedVector3Array = []
+	var quad_uvs_pixels: PackedVector2Array = []
+	var quad_uvs: PackedVector2Array = []
 
 
 var vfx_spr: Spr
@@ -93,7 +102,7 @@ func init_from_file() -> void:
 		if frame_set_id < num_frame_sets - 1:
 			next_section_start = frame_set_offsets[frame_set_id + 1]
 		
-		var frame_set_bytes: PackedByteArray = data_bytes.slice(frame_set_offsets[frame_set_id] + 4, next_section_start)
+		var frame_set_bytes: PackedByteArray = data_bytes.slice(frame_set_offsets[frame_set_id], next_section_start)
 		var frame_data_length: int = 0x18
 		var num_frames: int = (frame_set_bytes.size() - 4) / frame_data_length
 		frame_set.frame_set.resize(num_frames)
@@ -103,14 +112,37 @@ func init_from_file() -> void:
 			var top_left_u: int = frame_bytes.decode_u8(4)
 			var top_left_v: int = frame_bytes.decode_u8(5)
 			new_frame.top_left_uv = Vector2i(top_left_u, top_left_v)
-			new_frame.width = frame_bytes.decode_s8(6)
-			new_frame.height = frame_bytes.decode_s8(7)
+			new_frame.uv_width = frame_bytes.decode_s8(6)
+			new_frame.uv_height = frame_bytes.decode_s8(7)
 			var top_left_x: int = frame_bytes.decode_s16(8)
 			var top_left_y: int = frame_bytes.decode_s16(0xa)
+			new_frame.top_left_xy = Vector2i(top_left_x, top_left_y)
+			var top_right_x: int = frame_bytes.decode_s16(0xc)
+			var top_right_y: int = frame_bytes.decode_s16(0xe)
+			new_frame.top_right_xy = Vector2i(top_right_x, top_right_y)
+			var bottom_left_x: int = frame_bytes.decode_s16(0x10)
+			var bottom_left_y: int = frame_bytes.decode_s16(0x12)
+			new_frame.bottom_left_xy = Vector2i(bottom_left_x, bottom_left_y)
 			var bottom_right_x: int = frame_bytes.decode_s16(0x14)
 			var bottom_right_y: int = frame_bytes.decode_s16(0x16)
-			new_frame.quad.position = Vector2i(top_left_x, top_left_y)
-			new_frame.quad.end = Vector2i(bottom_right_x, bottom_right_y)
+			new_frame.bottom_right_xy = Vector2i(bottom_right_x, bottom_right_y)
+			var vertices_xy: PackedVector2Array = []
+			vertices_xy.append(new_frame.top_left_xy)
+			vertices_xy.append(new_frame.top_right_xy)
+			vertices_xy.append(new_frame.bottom_left_xy)
+			vertices_xy.append(new_frame.bottom_right_xy)
+			
+			new_frame.quad_uvs_pixels.append(Vector2(top_left_u, top_left_v)) # top left
+			new_frame.quad_uvs_pixels.append(Vector2((top_left_u + new_frame.uv_width), top_left_v)) # top right
+			new_frame.quad_uvs_pixels.append(Vector2(top_left_u, (top_left_v + new_frame.uv_height))) # bottom left
+			new_frame.quad_uvs_pixels.append(Vector2((top_left_u + new_frame.uv_width), (top_left_v + new_frame.uv_height))) # bottom right
+			
+			new_frame.quad_width = new_frame.top_left_xy.distance_to(new_frame.top_right_xy)
+			new_frame.quad_height = new_frame.top_left_xy.distance_to(new_frame.bottom_left_xy)
+			new_frame.quad_rotation_deg = rad_to_deg(Vector2(new_frame.top_right_xy - new_frame.top_left_xy).angle())
+			
+			for vertex_idx: int in vertices_xy.size():
+				new_frame.quad_vertices.append(Vector3(vertices_xy[vertex_idx].x, -vertices_xy[vertex_idx].y, 0) * MapData.SCALE)
 			
 			frame_set.frame_set[frame_id] = new_frame
 		
@@ -156,4 +188,52 @@ func init_from_file() -> void:
 	vfx_spr.set_pixel_colors()
 	vfx_spr.spritesheet = vfx_spr.get_rgba8_image()
 	
+	# set frame uvs based on spr
+	for frameset_idx: int in frame_sets.size():
+		for frame_idx: int in frame_sets[frameset_idx].frame_set.size():
+			var vfx_frame: VfxFrame = frame_sets[frameset_idx].frame_set[frame_idx]
+			vfx_frame.quad_uvs.resize(vfx_frame.quad_uvs_pixels.size())
+			for vert_idx: int in vfx_frame.quad_uvs_pixels.size():
+				vfx_frame.quad_uvs[vert_idx] = Vector2(vfx_frame.quad_uvs_pixels[vert_idx].x / float(vfx_spr.width), 
+					vfx_frame.quad_uvs_pixels[vert_idx].y / float(vfx_spr.height))
+	
 	is_initialized = true
+
+
+func get_frame_mesh(frame_set_idx: int, frame_idx: int = 0) -> Mesh:
+	var vfx_frame: VfxFrame = frame_sets[frame_set_idx].frame_set[frame_idx]
+	
+	var st = SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	
+	for vert_index: int in [0, 1, 2]:
+		#st.set_normal(quad_normals[vert_index] * SCALE)
+		st.set_uv(vfx_frame.quad_uvs[vert_index])
+		st.set_color(Color.WHITE)
+		st.add_vertex(vfx_frame.quad_vertices[vert_index])
+	
+	for vert_index: int in [2, 1, 3]:
+		#st.set_normal(quad_normals[vert_index] * SCALE)
+		st.set_uv(vfx_frame.quad_uvs[vert_index])
+		st.set_color(Color.WHITE)
+		st.add_vertex(vfx_frame.quad_vertices[vert_index])
+	
+	st.generate_normals()
+	var mesh: ArrayMesh = st.commit()
+	
+	var mesh_material: StandardMaterial3D
+	var albedo_texture: Texture2D
+	albedo_texture = ImageTexture.create_from_image(vfx_spr.spritesheet)
+	mesh_material = StandardMaterial3D.new()
+	mesh_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mesh_material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+	mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	#mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+	#mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_DISABLED
+	mesh_material.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
+	mesh_material.vertex_color_use_as_albedo = true
+	mesh_material.set_texture(BaseMaterial3D.TEXTURE_ALBEDO, albedo_texture)
+	mesh.surface_set_material(0, mesh_material)
+	
+	
+	return mesh

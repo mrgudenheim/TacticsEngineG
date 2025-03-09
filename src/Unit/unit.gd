@@ -8,6 +8,8 @@ signal ability_set(id: int)
 @export var controller: UnitControllerRT
 @export var animation_manager: UnitAnimationManager
 
+@export var particle_vfx: CPUParticles3D
+
 var can_move: bool = true
 
 var map_position: Vector2i
@@ -52,7 +54,7 @@ func initialize_unit() -> void:
 	# 1 cure
 	# 0xc8 blood suck
 	# 0x9b stasis sword
-	set_ability(1)
+	set_ability(0x9b)
 
 
 func _process(delta: float) -> void:
@@ -168,5 +170,6 @@ func set_ability(new_ability_id: int) -> void:
 		ability_data.vfx_data.init_from_file()
 	
 	animation_manager.unit_debug_menu.sprite_viewer.texture = ImageTexture.create_from_image(ability_data.vfx_data.vfx_spr.spritesheet)
+	particle_vfx.mesh = ability_data.vfx_data.get_frame_mesh(2, 0)
 	
 	ability_set.emit(new_ability_id)

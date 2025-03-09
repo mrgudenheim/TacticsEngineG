@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://card26cltbba1"]
+[gd_scene load_steps=30 format=3 uid="uid://card26cltbba1"]
 
 [ext_resource type="Script" uid="uid://cd31vmh881wm5" path="res://src/Map/map_viewer.gd" id="1_ojbyw"]
 [ext_resource type="PackedScene" uid="uid://26tg32417lfm" path="res://src/load_rom.tscn" id="2_4wnqg"]
@@ -65,6 +65,21 @@ metadata/_snap_enabled = true
 
 [sub_resource type="QuadMesh" id="QuadMesh_foefj"]
 material = SubResource("StandardMaterial3D_05x7e")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_p2e2h"]
+shading_mode = 0
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_tjj5r"]
+material = SubResource("StandardMaterial3D_p2e2h")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tjj5r"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_cqdh8"]
+material = SubResource("StandardMaterial3D_tjj5r")
 
 [node name="MapViewer" type="Node3D" node_paths=PackedStringArray("phantom_camera", "load_rom_button", "texture_viewer", "camera_controller", "background_gradient", "menu_list", "map_dropdown", "orthographic_check", "menu_reminder", "map_size_label", "maps", "unit")]
 script = ExtResource("1_ojbyw")
@@ -174,10 +189,11 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("GradientTexture2D_1dnhu")
 
-[node name="Unit" type="Node3D" parent="." node_paths=PackedStringArray("controller", "animation_manager")]
+[node name="Unit" type="Node3D" parent="." node_paths=PackedStringArray("controller", "animation_manager", "particle_vfx")]
 script = ExtResource("8_o41s4")
 controller = NodePath("CharacterBody3D")
 animation_manager = NodePath("CharacterBody3D/UnitAnimationManager")
+particle_vfx = NodePath("../CPUParticles3D")
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="Unit" node_paths=PackedStringArray("phantom_camera")]
 transform = Transform3D(0.707107, 0, 0.707107, 0, 0.999999, 0, -0.707107, 0, 0.707107, 0, 0, 0)
@@ -325,6 +341,7 @@ editable = false
 
 [node name="SpriteViewer" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 5, 0)
+visible = false
 pixel_size = 0.05
 billboard = 1
 texture_filter = 0
@@ -336,6 +353,15 @@ transform = Transform3D(1, 0, 0, 0, 0.553391, -0.832921, 0, 0.832921, 0.553391, 
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 12, -48, 12)
 visible = false
 mesh = SubResource("QuadMesh_foefj")
+
+[node name="CPUParticles3D" type="CPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 5, 4, -5)
+amount = 1
+mesh = SubResource("QuadMesh_tjj5r")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CPUParticles3D"]
+visible = false
+mesh = SubResource("BoxMesh_cqdh8")
 
 [node name="Maps" type="Node3D" parent="."]
 

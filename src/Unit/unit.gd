@@ -9,6 +9,7 @@ signal ability_set(id: int)
 @export var animation_manager: UnitAnimationManager
 
 @export var particle_vfx: CPUParticles3D
+@export var vfx_frame_quad: MeshInstance3D
 
 var can_move: bool = true
 
@@ -171,5 +172,7 @@ func set_ability(new_ability_id: int) -> void:
 	
 	animation_manager.unit_debug_menu.sprite_viewer.texture = ImageTexture.create_from_image(ability_data.vfx_data.vfx_spr.spritesheet)
 	particle_vfx.mesh = ability_data.vfx_data.get_frame_mesh(2, 0)
+	vfx_frame_quad.mesh = ability_data.vfx_data.get_frame_mesh(2, 0)
+	
 	
 	ability_set.emit(new_ability_id)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://card26cltbba1"]
+[gd_scene load_steps=34 format=3 uid="uid://card26cltbba1"]
 
 [ext_resource type="Script" uid="uid://cd31vmh881wm5" path="res://src/Map/map_viewer.gd" id="1_ojbyw"]
 [ext_resource type="PackedScene" uid="uid://26tg32417lfm" path="res://src/load_rom.tscn" id="2_4wnqg"]
@@ -60,6 +60,18 @@ fill = 1
 fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(1, 0.5)
 metadata/_snap_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cqdh8"]
+shading_mode = 0
+
+[sub_resource type="QuadMesh" id="QuadMesh_l6aii"]
+material = SubResource("StandardMaterial3D_cqdh8")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3osdg"]
+albedo_color = Color(0.728, 1, 0.68, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_j8w6k"]
+material = SubResource("StandardMaterial3D_3osdg")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_05x7e"]
 
@@ -189,11 +201,12 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("GradientTexture2D_1dnhu")
 
-[node name="Unit" type="Node3D" parent="." node_paths=PackedStringArray("controller", "animation_manager", "particle_vfx")]
+[node name="Unit" type="Node3D" parent="." node_paths=PackedStringArray("controller", "animation_manager", "particle_vfx", "vfx_frame_quad")]
 script = ExtResource("8_o41s4")
 controller = NodePath("CharacterBody3D")
 animation_manager = NodePath("CharacterBody3D/UnitAnimationManager")
 particle_vfx = NodePath("../CPUParticles3D")
+vfx_frame_quad = NodePath("CharacterBody3D/VfxFrameViewer")
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="Unit" node_paths=PackedStringArray("phantom_camera")]
 transform = Transform3D(0.707107, 0, 0.707107, 0, 0.999999, 0, -0.707107, 0, 0.707107, 0, 0, 0)
@@ -339,6 +352,15 @@ layout_mode = 2
 size_flags_horizontal = 3
 editable = false
 
+[node name="VfxFrameViewer" type="MeshInstance3D" parent="Unit/CharacterBody3D"]
+transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, 0, 5, 0)
+mesh = SubResource("QuadMesh_l6aii")
+skeleton = NodePath("../../..")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Unit/CharacterBody3D/VfxFrameViewer"]
+transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 0, 0)
+mesh = SubResource("BoxMesh_j8w6k")
+
 [node name="SpriteViewer" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 5, 0)
 visible = false
@@ -355,13 +377,22 @@ visible = false
 mesh = SubResource("QuadMesh_foefj")
 
 [node name="CPUParticles3D" type="CPUParticles3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 5, 4, -5)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 5, 0, -5)
 amount = 1
+lifetime = 1.2
 mesh = SubResource("QuadMesh_tjj5r")
+emission_shape = 4
+emission_points = PackedVector3Array(0, 0, -10)
+gravity = Vector3(0, 0, 0)
+radial_accel_min = -9.8
+radial_accel_max = -9.8
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="CPUParticles3D"]
 visible = false
 mesh = SubResource("BoxMesh_cqdh8")
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+visible = false
 
 [node name="Maps" type="Node3D" parent="."]
 

@@ -81,7 +81,8 @@ func set_palette_data(palette_bytes: PackedByteArray) -> void:
 	for i: int in num_colors:
 		var color: Color = Color.BLACK
 		var color_bits: int = palette_bytes.decode_u16(palette_data_start + (i*2))
-		color.a8 = 1 - ((color_bits & 0b1000_0000_0000_0000) >> 15) # first bit is alpha (if bit is zero, color is opaque)
+		var alpha_bit: int = (color_bits & 0b1000_0000_0000_0000) >> 15 # first bit is alpha
+		#color.a8 = 1 - () # first bit is alpha (if bit is zero, color is opaque)
 		color.b8 = (color_bits & 0b0111_1100_0000_0000) >> 10 # then 5 bits each: blue, green, red
 		color.g8 = (color_bits & 0b0000_0011_1110_0000) >> 5
 		color.r8 = color_bits & 0b0000_0000_0001_1111
@@ -92,6 +93,9 @@ func set_palette_data(palette_bytes: PackedByteArray) -> void:
 		color.b8 = roundi(255 * (color.b8 / float(31))) # then 5 bits each: blue, green, red
 		color.g8 = roundi(255 * (color.g8 / float(31)))
 		color.r8 = roundi(255 * (color.r8 / float(31)))
+		
+		if color == Color.BLACK or alpha_bit == 1:
+			color.a8 = roundi(color.v * 255)
 		
 		# if first color in 16 color palette is black, treat it as transparent
 		if (i % 16 == 0

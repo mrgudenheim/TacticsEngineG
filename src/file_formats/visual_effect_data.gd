@@ -73,8 +73,11 @@ func init_from_file() -> void:
 	frame_sets.resize(num_frame_sets)
 	var frame_set_offsets: PackedInt32Array = []
 	frame_set_offsets.resize(num_frame_sets)
+	var initial_offset: int = 6
+	if data_bytes.decode_u8(0) == 2:
+		initial_offset += 2
 	for id: int in num_frame_sets:
-		frame_set_offsets[id] = data_bytes.decode_u16(6 + (2 * id)) + 4
+		frame_set_offsets[id] = data_bytes.decode_u16(initial_offset + (2 * id)) + 4
 	
 	# image color depth from first frame in first frame_set
 	if data_bytes.decode_u8(frame_set_offsets[0]) & 0x80 == 0 and data_bytes.decode_u8(0) == 1:
@@ -142,7 +145,14 @@ func init_from_file() -> void:
 	vfx_spr.num_pixels = vfx_spr.width * vfx_spr.height
 	vfx_spr.set_palette_data(palette_bytes)
 	vfx_spr.color_indices = vfx_spr.set_color_indices(data_bytes.slice(1024 + 4))
+	
+	# TODO fix transparency - some frames should be opaque, like summons (Odin), some should just be less transparent, like songs and some geomancy (waterfall)
+	#for color_idx: int in vfx_spr.color_palette.size():
+		##vfx_spr.color_palette[color_idx].a8 = roundi(0.5 * 255)
+		#vfx_spr.color_palette[color_idx].a8 = roundi(vfx_spr.color_palette[color_idx].v * 255)
+	
 	vfx_spr.color_palette[vfx_spr.color_indices[0]].a8 = 0 # set background color (ie. color of top left pixel) as transparent
+	
 	vfx_spr.set_pixel_colors()
 	vfx_spr.spritesheet = vfx_spr.get_rgba8_image()
 	

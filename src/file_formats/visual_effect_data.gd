@@ -116,11 +116,11 @@ func init_from_file() -> void:
 			new_frame.top_left_uv = Vector2i(top_left_u, top_left_v)
 			
 			if new_frame.vram_bytes[1] & 0x10 != 0:
-			new_frame.uv_width = frame_bytes.decode_s8(6)
+				new_frame.uv_width = frame_bytes.decode_s8(6)
 			else:
 				new_frame.uv_width = frame_bytes.decode_u8(6)
 			if new_frame.vram_bytes[1] & 0x20 != 0:
-			new_frame.uv_height = frame_bytes.decode_s8(7)
+				new_frame.uv_height = frame_bytes.decode_s8(7)
 			else:
 				new_frame.uv_height = frame_bytes.decode_u8(7)
 			#new_frame.uv_width = frame_bytes.decode_s8(6)
@@ -246,5 +246,10 @@ func get_frame_mesh(frame_set_idx: int, frame_idx: int = 0) -> Mesh:
 	mesh_material.set_texture(BaseMaterial3D.TEXTURE_ALBEDO, albedo_texture)
 	mesh.surface_set_material(0, mesh_material)
 	
+	# TODO is byte 0, bit 0x40 actually the bit that determines transparency? Seems to work for Odin, but not for Cyclops
+	# maybe 0x20? maybe not any of them?
+	if vfx_frame.vram_bytes[0] & 0x40 != 0: 
+		mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+		mesh_material.alpha_scissor_threshold = 0.01
 	
 	return mesh

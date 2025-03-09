@@ -364,6 +364,7 @@ mesh = SubResource("BoxMesh_j8w6k")
 
 [node name="SpriteViewer" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 5, 0)
+visible = false
 pixel_size = 0.05
 billboard = 1
 texture_filter = 0
@@ -376,6 +377,9 @@ transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 12, -4
 visible = false
 mesh = SubResource("QuadMesh_foefj")
 
+[node name="VfxEmitter" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.553391, -0.832921, 0, 0.832921, 0.553391, 0, 3.51982, 2.72607)
+
 [node name="CPUParticles3D" type="CPUParticles3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 5, 0, -5)
 amount = 1
@@ -383,16 +387,10 @@ lifetime = 1.2
 mesh = SubResource("QuadMesh_tjj5r")
 emission_shape = 4
 emission_points = PackedVector3Array(0, 0, -10)
-gravity = Vector3(0, 0, 0)
-radial_accel_min = -9.8
-radial_accel_max = -9.8
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="CPUParticles3D"]
 visible = false
 mesh = SubResource("BoxMesh_cqdh8")
-
-[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
-visible = false
 
 [node name="Maps" type="Node3D" parent="."]
 

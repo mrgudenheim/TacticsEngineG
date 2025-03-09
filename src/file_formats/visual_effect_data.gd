@@ -211,7 +211,7 @@ func init_from_file() -> void:
 	is_initialized = true
 
 
-func get_frame_mesh(frame_set_idx: int, frame_idx: int = 0) -> Mesh:
+func get_frame_mesh(frame_set_idx: int, frame_idx: int = 0) -> ArrayMesh:
 	var vfx_frame: VfxFrame = frame_sets[frame_set_idx].frame_set[frame_idx]
 	
 	var st = SurfaceTool.new()

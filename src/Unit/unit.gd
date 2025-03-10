@@ -10,7 +10,6 @@ signal ability_set(id: int)
 
 @export var particle_vfx: CPUParticles3D
 @export var vfx_frame_quad: MeshInstance3D
-@export var vfx_location: Node3D
 
 var can_move: bool = true
 

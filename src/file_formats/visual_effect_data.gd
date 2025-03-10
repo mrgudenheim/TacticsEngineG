@@ -239,6 +239,7 @@ func get_frame_mesh(frame_set_idx: int, frame_idx: int = 0) -> ArrayMesh:
 	mesh_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	mesh_material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 	mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mesh_material.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
 	#mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
 	#mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_DISABLED
 	mesh_material.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES

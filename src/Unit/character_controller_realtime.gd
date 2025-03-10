@@ -73,8 +73,8 @@ func _physics_process(delta: float) -> void:
 		#query.collide_with_areas = true
 
 		var result: Dictionary = space_state.intersect_ray(query)
-		
-		unit.use_ability(result["position"])
+		if not result.is_empty():
+			unit.use_ability(result["position"])
 
 
 func _unhandled_input(event: InputEvent) -> void:

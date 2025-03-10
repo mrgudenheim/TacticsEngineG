@@ -52,7 +52,7 @@ static var item_list: Array[PackedStringArray] = []
 #@export var opcode_text: LineEdit
 var opcode_frame_offset: int = 0
 @export var weapon_sheathe_check1_delay: int = 0
-@export var weapon_sheathe_check2_delay: int = 50
+@export var weapon_sheathe_check2_delay: int = 25
 @export var wait_for_input_delay: int = 0
 
 

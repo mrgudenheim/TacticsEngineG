@@ -127,7 +127,7 @@ func display_vfx(location: Node3D) -> void:
 	
 	children = location.get_children() # store current children to remove later
 	
-	for frame_mesh_idx: int in [1, 0]:
+	for frame_mesh_idx: int in [0]:
 		var mesh_instance: MeshInstance3D = MeshInstance3D.new()
 		mesh_instance.mesh = frame_meshes[frame_mesh_idx]
 		location.add_child(mesh_instance)
@@ -142,4 +142,6 @@ func display_vfx(location: Node3D) -> void:
 	children = location.get_children()
 	for child: Node in children:
 		child.queue_free()
+	location.queue_free()
+	
 	

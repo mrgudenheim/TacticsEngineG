@@ -79,7 +79,7 @@ func _process(delta: float) -> void:
 		animation_manager.unit_debug_menu.anim_id_spin.value = idle_animation
 
 
-func use_ability() -> void:
+func use_ability(pos: Vector3) -> void:
 	can_move = false
 	push_warning("using: " + ability_data.name)
 	#push_warning("Animations: " + str(PackedInt32Array([ability_data.animation_start_id, ability_data.animation_charging_id, ability_data.animation_executing_id])))
@@ -91,7 +91,13 @@ func use_ability() -> void:
 		await get_tree().create_timer(0.1 + (ability_data.ticks_charge_time * 0.1)).timeout
 	if ability_data.animation_executing_id != 0:
 		animation_manager.unit_debug_menu.anim_id_spin.value = ability_data.animation_executing_id + int(is_back_facing)
-		ability_data.display_vfx(vfx_location)
+		
+		var new_vfx_location: Node3D = Node3D.new()
+		new_vfx_location.position = pos
+		new_vfx_location.position.y += 3.4 # TODO set position dependent on ability vfx data
+		new_vfx_location.name = "VfxLocation"
+		get_parent().add_child(new_vfx_location)
+		ability_data.display_vfx(new_vfx_location)
 		
 		await animation_manager.animation_completed
 	

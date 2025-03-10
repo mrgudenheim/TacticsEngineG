@@ -94,6 +94,8 @@ func set_palette_data(palette_bytes: PackedByteArray) -> void:
 		color.g8 = roundi(255 * (color.g8 / float(31)))
 		color.r8 = roundi(255 * (color.r8 / float(31)))
 		
+		# psx transparency: https://www.psxdev.net/forum/viewtopic.php?t=953
+		# TODO might need to think about mode 1 or 3, where brightness builds up from a dark background instead of normal transparency
 		if color == Color.BLACK:
 			color.a8 = 0
 		elif alpha_bit == 1:

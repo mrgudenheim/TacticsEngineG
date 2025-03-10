@@ -365,7 +365,6 @@ mesh = SubResource("BoxMesh_j8w6k")
 
 [node name="SpriteViewer" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 5, 0)
-visible = false
 pixel_size = 0.05
 billboard = 1
 texture_filter = 0

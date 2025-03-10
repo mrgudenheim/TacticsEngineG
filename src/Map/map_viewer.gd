@@ -86,9 +86,12 @@ func on_rom_loaded() -> void:
 	push_warning("on rom loaded")
 	load_rom_button.visible = false
 	
-	for file_name in RomReader.file_records.keys():
-		if file_name.contains(".GNS"):
-			map_dropdown.add_item(file_name)
+	for file_record: FileRecord in RomReader.file_records.values():
+		if file_record.name.contains(".GNS"):
+			var map_name: String = ""
+			if RomReader.fft_text.map_names.size() > file_record.type_index:
+				map_name = " " + RomReader.fft_text.map_names[file_record.type_index]
+			map_dropdown.add_item(file_record.name + map_name)
 	
 	var default_map_index: int = 56 # Orbonne
 	default_map_index = 22 # Gariland

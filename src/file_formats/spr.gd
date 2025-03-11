@@ -98,8 +98,8 @@ func set_palette_data(palette_bytes: PackedByteArray) -> void:
 		# TODO use Material3D blend mode Add for mode 1 or 3, where brightness builds up from a dark background instead of normal transparency
 		if color == Color.BLACK:
 			color.a8 = 0
-		elif alpha_bit == 1:
-			color.a8 = roundi(color.v * 255)
+		#elif alpha_bit == 1:
+			#color.a8 = roundi(color.v * 255)
 			#color.a8 = 127
 			#color.a8 = 255
 			#if color.v < 0.5:

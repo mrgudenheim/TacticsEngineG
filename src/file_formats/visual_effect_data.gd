@@ -33,9 +33,8 @@ class VfxFrame:
 
 
 var vfx_spr: Spr
+var texture: Texture2D
 var image_color_depth: int = 0 # 8bpp or 4bpp
-var image_mode_0: Image
-var image_mode_3: Image
 
 # SINGLE - camera will point at the targeted location
 # SEQUENTIAL - camera will move between each each target
@@ -192,14 +191,13 @@ func init_from_file() -> void:
 	vfx_spr.color_indices = vfx_spr.set_color_indices(data_bytes.slice(1024 + 4))
 	
 	# TODO fix transparency - some frames should be opaque, like summons (Odin), some should just be less transparent, like songs and some geomancy (waterfall)
-	#for color_idx: int in vfx_spr.color_palette.size():
-		##vfx_spr.color_palette[color_idx].a8 = roundi(0.5 * 255)
-		#vfx_spr.color_palette[color_idx].a8 = roundi(vfx_spr.color_palette[color_idx].v * 255)
 	
 	vfx_spr.color_palette[vfx_spr.color_indices[0]].a8 = 0 # set background color (ie. color of top left pixel) as transparent
 	
 	vfx_spr.set_pixel_colors()
 	vfx_spr.spritesheet = vfx_spr.get_rgba8_image()
+	
+	texture = ImageTexture.create_from_image(vfx_spr.spritesheet)
 	
 	# set frame uvs based on spr
 	for frameset_idx: int in frame_sets.size():
@@ -209,18 +207,6 @@ func init_from_file() -> void:
 			for vert_idx: int in vfx_frame.quad_uvs_pixels.size():
 				vfx_frame.quad_uvs[vert_idx] = Vector2(vfx_frame.quad_uvs_pixels[vert_idx].x / float(vfx_spr.width), 
 					vfx_frame.quad_uvs_pixels[vert_idx].y / float(vfx_spr.height))
-	
-	image_mode_0 = vfx_spr.spritesheet.duplicate()
-	image_mode_3 = vfx_spr.spritesheet.duplicate()
-	#image_mode_0.copy_from(vfx_spr.spritesheet)
-	#image_mode_3.copy_from(vfx_spr.spritesheet)
-	
-	for x: int in vfx_spr.spritesheet.get_width():
-		for y: int in vfx_spr.spritesheet.get_height():
-			var transparent_color: Color = image_mode_0.get_pixel(x, y)
-			transparent_color.a = transparent_color.a * 0.5
-			image_mode_0.set_pixel(x, y, transparent_color)
-			image_mode_3.set_pixel(x, y, image_mode_3.get_pixel(x, y) * 0.25)
 	
 	is_initialized = true
 
@@ -247,8 +233,7 @@ func get_frame_mesh(frame_set_idx: int, frame_idx: int = 0) -> ArrayMesh:
 	var mesh: ArrayMesh = st.commit()
 	
 	var mesh_material: StandardMaterial3D
-	var albedo_texture: Texture2D
-	#albedo_texture = ImageTexture.create_from_image(vfx_spr.spritesheet)
+	var albedo_texture: Texture2D = texture
 	mesh_material = StandardMaterial3D.new()
 	mesh_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	mesh_material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
@@ -258,25 +243,26 @@ func get_frame_mesh(frame_set_idx: int, frame_idx: int = 0) -> ArrayMesh:
 	
 	
 	# TODO is byte 0, bit 0x40 actually the bit that determines transparency? Seems to work for Odin, but not for Cyclops
-	# maybe 0x20? maybe not any of them? maybe byte 1 0x06?
-	# TODO do this as a shader? It depends per pixel on the semi-transparency bit of the color
-	var semi_transparency_mode = (vfx_frame.vram_bytes[0] & 0x60) >> 5 # maybe byte 0, bit 0x60?
+	var semi_transparency_mode = (vfx_frame.vram_bytes[0] & 0x60) >> 5 # maybe byte 0, bit 0x60 is semi-transparency mode?
 	#var semi_transparency_mode = (vfx_frame.vram_bytes[1] & 0x06) >> 1 # maybe byte 1 0x06?
 	if semi_transparency_mode == 0: # 0.5 back + 0.5 forward
-		albedo_texture = ImageTexture.create_from_image(image_mode_0)
+		#albedo_texture = ImageTexture.create_from_image(image_mode_0)
+		mesh_material.albedo_color = Color(1, 1, 1, 0.5)
 		mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 		mesh_material.blend_mode = BaseMaterial3D.BLEND_MODE_MIX
 	elif semi_transparency_mode == 1: # 1 back + 1 forward
-		albedo_texture = ImageTexture.create_from_image(vfx_spr.spritesheet)
+		#albedo_texture = ImageTexture.create_from_image(vfx_spr.spritesheet)
 		#albedo_texture = ImageTexture.create_from_image(image_mode_0)
+		#mesh_material.albedo_color = Color(0.75, 0.75, 0.75, 1)
 		mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 		mesh_material.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
 	elif semi_transparency_mode == 2: # 1 back - 1 forward
-		albedo_texture = ImageTexture.create_from_image(vfx_spr.spritesheet)
+		#albedo_texture = ImageTexture.create_from_image(vfx_spr.spritesheet)
 		mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 		mesh_material.blend_mode = BaseMaterial3D.BLEND_MODE_SUB
 	elif semi_transparency_mode == 3: # 1 back + 0.25 forward
-		albedo_texture = ImageTexture.create_from_image(image_mode_3)
+		#albedo_texture = ImageTexture.create_from_image(image_mode_3)
+		mesh_material.albedo_color = Color(0.25, 0.25, 0.25, 1)
 		mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 		mesh_material.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
 		#mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR

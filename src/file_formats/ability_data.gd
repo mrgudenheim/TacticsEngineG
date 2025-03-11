@@ -104,20 +104,24 @@ func display_vfx(location: Node3D) -> void:
 		child.queue_free()
 	
 	var frame_meshes: Array[ArrayMesh] = []
-	for frameset_idx: int in range(0, min(15, vfx_data.frame_sets.size())):
-		frame_meshes.append(vfx_data.get_frame_mesh(frameset_idx))
+	var framesets_num = vfx_data.frame_sets.size()
+	#for frameset_idx: int in range(0, framesets_num):
+		#frame_meshes.append(vfx_data.get_frame_mesh(frameset_idx))
 	
-	for frame_mesh_idx: int in frame_meshes.size():
-		var mesh_instance: MeshInstance3D = MeshInstance3D.new()
-		mesh_instance.mesh = frame_meshes[frame_mesh_idx]
-		location.add_child(mesh_instance)
-		
-		mesh_instance.position.y += 5
-		var target_pos: Vector3 = Vector3.ZERO
-		
-		# https://docs.godotengine.org/en/stable/classes/class_tween.html
-		var tween: Tween = location.create_tween()
-		tween.tween_property(mesh_instance, "position", target_pos, 0.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	#for frame_mesh_idx: int in frame_meshes.size():
+	for frameset_idx: int in range(0, framesets_num):
+		for frame_idx: int in vfx_data.frame_sets[frameset_idx].frame_set.size():
+			var mesh_instance: MeshInstance3D = MeshInstance3D.new()
+			#mesh_instance.mesh = frame_meshes[frame_mesh_idx]
+			mesh_instance.mesh = vfx_data.get_frame_mesh(frameset_idx, frame_idx)
+			location.add_child(mesh_instance)
+			
+			mesh_instance.position.y += 5
+			var target_pos: Vector3 = Vector3.ZERO
+			
+			# https://docs.godotengine.org/en/stable/classes/class_tween.html
+			var tween: Tween = location.create_tween()
+			tween.tween_property(mesh_instance, "position", target_pos, 0.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 		
 		await location.get_tree().create_timer(0.4).timeout
 	

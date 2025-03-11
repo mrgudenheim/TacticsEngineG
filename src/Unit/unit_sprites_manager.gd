@@ -28,7 +28,9 @@ func reset_sprites(flip_h: bool = false) -> void:
 	# reset layer priority, TODO fix for sprite3Ds
 	sprite_primary.position.z = -2 * LAYERING_OFFSET
 	sprite_weapon.position.z = -3 * LAYERING_OFFSET
+	sprite_weapon.texture = ImageTexture.create_from_image(Image.create_empty(120, 120, false, Image.FORMAT_RGBA8))
 	sprite_effect.position.z = -1 * LAYERING_OFFSET
+	sprite_effect.texture = ImageTexture.create_from_image(Image.create_empty(120, 120, false, Image.FORMAT_RGBA8))
 	sprite_text.position.z = 0 * LAYERING_OFFSET
 	
 	pivot_primary.rotation_degrees.y = 0

@@ -286,9 +286,6 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				position_offset = unit_data.facing_vector * 2
 			else:
 				push_warning("can't interpret " + seq_part.opcode_name)
-			
-			#if fft_animation.flipped_h:
-				#position_offset = position_offset * Vector3(-1, 1, 1)
 				
 			unit_sprites_manager.global_position += position_offset * MapViewer.SCALE
 			#(draw_target.get_parent().get_parent() as Node3D).position += position_offset

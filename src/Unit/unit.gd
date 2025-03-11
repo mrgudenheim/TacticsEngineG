@@ -98,10 +98,13 @@ func use_ability(pos: Vector3) -> void:
 		get_parent().add_child(new_vfx_location)
 		ability_data.display_vfx(new_vfx_location)
 		
-		get_tree().create_timer(2).timeout.connect(func() -> void: can_move = true) # TODO implement proper timeout for abilities that execute using an infinite loop animation
+		# TODO implement proper timeout for abilities that execute using an infinite loop animation
+		# this implementation can overwrite can_move when in the middle of another ability
+		get_tree().create_timer(2).timeout.connect(func() -> void: can_move = true) 
 		
 		await animation_manager.animation_completed
 	
+	animation_manager.reset_sprites()
 	animation_manager.unit_debug_menu.anim_id_spin.value = idle_animation_id  + int(is_back_facing)
 	can_move = true
 

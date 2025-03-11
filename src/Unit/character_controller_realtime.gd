@@ -45,6 +45,9 @@ func _physics_process(delta: float) -> void:
 	if not unit.can_move:
 		return
 	
+	if MapViewer.main_camera.get_viewport().is_input_handled() == true:
+		return
+	
 	# Get the input direction and handle the movement/deceleration.
 	# As good practice, you should replace UI actions with custom gameplay actions.
 	var input_dir := Input.get_vector("camera_left", "camera_right", "camera_up", "camera_down")
@@ -60,7 +63,7 @@ func _physics_process(delta: float) -> void:
 		velocity_set.emit(direction)
 	move_and_slide()
 	
-	if Input.is_action_just_pressed("primary_action") and is_on_floor() and unit.can_move:
+	if Input.is_action_just_pressed("primary_action") and is_on_floor():
 		# https://docs.godotengine.org/en/stable/tutorials/physics/ray-casting.html
 		# get 3d click location based on raycast
 		var space_state := get_world_3d().direct_space_state

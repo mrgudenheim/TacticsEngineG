@@ -5,6 +5,8 @@ This engine is intended to create a game similar to Final Fantasy Tactics (FFT),
 
 # Features
 - Displays maps
+- Displays unit animations
+- Dipslays vfx frames (not 3d models or movement)
 - FFTae allows exporting a grid sheet of all shp frames
 - FFTae allows exporting a gif of an animation - Ignores all Opcodes and rotations
 ...
@@ -16,5 +18,5 @@ This engine is intended to create a game similar to Final Fantasy Tactics (FFT),
 ...
 
 # Building From Source
-This project is built with Godot 4.3 
+This project is built with Godot 4.4
 https://godotengine.org/

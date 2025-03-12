@@ -242,31 +242,36 @@ func get_frame_mesh(frame_set_idx: int, frame_idx: int = 0) -> ArrayMesh:
 	mesh_material.vertex_color_use_as_albedo = true
 	
 	
-	# TODO is byte 0, bit 0x40 actually the bit that determines transparency? Seems to work for Odin, but not for Cyclops
-	var semi_transparency_mode = (vfx_frame.vram_bytes[0] & 0x60) >> 5 # maybe byte 0, bit 0x60 is semi-transparency mode?
-	#var semi_transparency_mode = (vfx_frame.vram_bytes[1] & 0x06) >> 1 # maybe byte 1 0x06?
-	if semi_transparency_mode == 0: # 0.5 back + 0.5 forward
-		#albedo_texture = ImageTexture.create_from_image(image_mode_0)
-		mesh_material.albedo_color = Color(1, 1, 1, 0.5)
-		mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		mesh_material.blend_mode = BaseMaterial3D.BLEND_MODE_MIX
-	elif semi_transparency_mode == 1: # 1 back + 1 forward
-		#albedo_texture = ImageTexture.create_from_image(vfx_spr.spritesheet)
-		#albedo_texture = ImageTexture.create_from_image(image_mode_0)
-		#mesh_material.albedo_color = Color(0.75, 0.75, 0.75, 1)
-		mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		mesh_material.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
-	elif semi_transparency_mode == 2: # 1 back - 1 forward
-		#albedo_texture = ImageTexture.create_from_image(vfx_spr.spritesheet)
-		mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		mesh_material.blend_mode = BaseMaterial3D.BLEND_MODE_SUB
-	elif semi_transparency_mode == 3: # 1 back + 0.25 forward
-		#albedo_texture = ImageTexture.create_from_image(image_mode_3)
-		mesh_material.albedo_color = Color(0.25, 0.25, 0.25, 1)
-		mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		mesh_material.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
-		#mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
-		#mesh_material.alpha_scissor_threshold = 0.01
+	# TODO maybe byte 1, bit 0x04 turns semi-transparency on or off?
+	# Mostly (only?) affects Summons creature and texture squares
+	var semi_transparency_on = ((vfx_frame.vram_bytes[1] & 0x02) >> 1) == 1
+	if not semi_transparency_on:
+		mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+		mesh_material.alpha_scissor_threshold = 0.5
+	else:
+		var semi_transparency_mode = (vfx_frame.vram_bytes[0] & 0x60) >> 5 # TODO maybe byte 0, bit 0x60 is semi-transparency mode?
+		if semi_transparency_mode == 0: # 0.5 back + 0.5 forward
+			#albedo_texture = ImageTexture.create_from_image(image_mode_0)
+			mesh_material.albedo_color = Color(1, 1, 1, 0.5)
+			mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			mesh_material.blend_mode = BaseMaterial3D.BLEND_MODE_MIX
+		elif semi_transparency_mode == 1: # 1 back + 1 forward
+			#albedo_texture = ImageTexture.create_from_image(vfx_spr.spritesheet)
+			#albedo_texture = ImageTexture.create_from_image(image_mode_0)
+			#mesh_material.albedo_color = Color(0.75, 0.75, 0.75, 1)
+			mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			mesh_material.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+		elif semi_transparency_mode == 2: # 1 back - 1 forward
+			#albedo_texture = ImageTexture.create_from_image(vfx_spr.spritesheet)
+			mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			mesh_material.blend_mode = BaseMaterial3D.BLEND_MODE_SUB
+		elif semi_transparency_mode == 3: # 1 back + 0.25 forward
+			#albedo_texture = ImageTexture.create_from_image(image_mode_3)
+			mesh_material.albedo_color = Color(0.25, 0.25, 0.25, 1)
+			mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			mesh_material.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+			#mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+			#mesh_material.alpha_scissor_threshold = 0.01
 	
 	mesh_material.set_texture(BaseMaterial3D.TEXTURE_ALBEDO, albedo_texture)
 	mesh.surface_set_material(0, mesh_material)

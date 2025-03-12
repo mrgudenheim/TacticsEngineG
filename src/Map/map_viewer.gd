@@ -114,21 +114,9 @@ func on_map_selected(index: int) -> void:
 	
 	texture_viewer.texture = map_data.albedo_texture
 	
-	for child: Node in maps.get_children():
-		child.queue_free()
+	clear_maps()
 	
-	instantiate_map(map_data, Vector3.ZERO, Vector3.ONE)
-	
-	if not walled_maps.has(index):
-		instantiate_map(map_data, Vector3.ZERO, Vector3(1, 1, -1))
-		instantiate_map(map_data, Vector3.FORWARD * map_data.map_length * 2, Vector3(1, 1, -1))
-		instantiate_map(map_data, Vector3.ZERO, Vector3(-1, 1, 1))
-		instantiate_map(map_data, Vector3.RIGHT * map_data.map_width * 2, Vector3(-1, 1, 1))
-		instantiate_map(map_data, Vector3.ZERO, Vector3(-1, 1, -1))
-		instantiate_map(map_data, Vector3.FORWARD * map_data.map_length * 2, Vector3(-1, 1, -1))
-		instantiate_map(map_data, Vector3.RIGHT * map_data.map_width * 2, Vector3(-1, 1, -1))
-		instantiate_map(map_data, (Vector3.RIGHT * map_data.map_width * 2) + (Vector3.FORWARD * map_data.map_length * 2), Vector3(-1, 1, -1))
-	
+	maps.add_child(instantiate_map(index, not walled_maps.has(index)))
 	
 	var middle_height: float = (map_data.terrain_tiles[map_data.terrain_tiles.size() / 2].height * SCALED_UNITS_PER_HEIGHT) + 2
 	var middle_position: Vector3 = Vector3(map_data.map_width / 2.0, middle_height, -map_data.map_length / 2.0)
@@ -145,9 +133,8 @@ func on_map_selected(index: int) -> void:
 	hide_debug_ui()
 
 
-func instantiate_map(new_map_data: MapData, position: Vector3, scale: Vector3) -> void:
+func get_map(new_map_data: MapData, position: Vector3, scale: Vector3) -> Map:
 	var new_map_instance: Map = map_tscn.instantiate()
-	maps.add_child(new_map_instance)
 	new_map_instance.mesh.mesh = new_map_data.mesh
 	new_map_instance.mesh.scale = scale
 	new_map_instance.position = position
@@ -158,6 +145,8 @@ func instantiate_map(new_map_data: MapData, position: Vector3, scale: Vector3) -
 		new_map_instance.collision_shape.shape = new_map_data.mesh.create_trimesh_shape()
 	else:
 		new_map_instance.collision_shape.shape = get_scaled_collision_shape(new_map_data.mesh, scale)
+	
+	return new_map_instance
 
 
 func get_scaled_collision_shape(mesh: Mesh, scale: Vector3) -> ConcavePolygonShape3D:
@@ -181,3 +170,30 @@ func on_orthographic_check_toggled(toggled_on: bool) -> void:
 		main_camera.projection = Camera3D.PROJECTION_PERSPECTIVE
 		phantom_camera.set_spring_length(7)
 		#phantom_camera.set_collision_mask(1)
+
+
+func instantiate_map(map_idx: int, mirror: bool) -> Node3D:
+	var map_holder: Node3D = Node3D.new()
+	
+	var map_data: MapData = RomReader.maps[map_idx]
+	if not map_data.is_initialized:
+		map_data.init_map()
+	
+	map_holder.add_child(get_map(map_data, Vector3.ZERO, Vector3.ONE))
+	
+	if mirror:
+		map_holder.add_child(get_map(map_data, Vector3.ZERO, Vector3(1, 1, -1)))
+		map_holder.add_child(get_map(map_data, Vector3.FORWARD * map_data.map_length * 2, Vector3(1, 1, -1)))
+		map_holder.add_child(get_map(map_data, Vector3.ZERO, Vector3(-1, 1, 1)))
+		map_holder.add_child(get_map(map_data, Vector3.RIGHT * map_data.map_width * 2, Vector3(-1, 1, 1)))
+		map_holder.add_child(get_map(map_data, Vector3.ZERO, Vector3(-1, 1, -1)))
+		map_holder.add_child(get_map(map_data, Vector3.FORWARD * map_data.map_length * 2, Vector3(-1, 1, -1)))
+		map_holder.add_child(get_map(map_data, Vector3.RIGHT * map_data.map_width * 2, Vector3(-1, 1, -1)))
+		map_holder.add_child(get_map(map_data, (Vector3.RIGHT * map_data.map_width * 2) + (Vector3.FORWARD * map_data.map_length * 2), Vector3(-1, 1, -1)))
+	
+	return map_holder
+
+
+func clear_maps() -> void:
+	for child: Node in maps.get_children():
+		child.queue_free()

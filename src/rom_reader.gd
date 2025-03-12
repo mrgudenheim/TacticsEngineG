@@ -95,6 +95,17 @@ func process_rom() -> void:
 	for ability_id: int in NUM_ACTIVE_ABILITIES:
 		abilities.append(AbilityData.new(ability_id))
 	
+	# testing vfx vram data
+	#for ability_id: int in NUM_ACTIVE_ABILITIES:
+		#abilities[ability_id].vfx_data.init_from_file()
+		#var ability: AbilityData = abilities[ability_id]
+		#for frameset_idx: int in ability.vfx_data.frame_sets.size():
+			#for frame_idx: int in ability.vfx_data.frame_sets[frameset_idx].frame_set.size():
+				#var frame_data: VisualEffectData.VfxFrame = ability.vfx_data.frame_sets[frameset_idx].frame_set[frame_idx]
+				#if ((frame_data.vram_bytes[1] & 0x02) >> 1) == 0:
+					#push_warning([ability_id, ability.name, frameset_idx, frame_idx])
+		
+	
 	is_ready = true
 	rom_loaded.emit()
 

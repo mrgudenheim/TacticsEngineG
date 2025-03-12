@@ -38,8 +38,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.714, 0)
 
 [node name="EffSprite3D" type="Sprite3D" parent="EffPivot"]
 transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, 0, 0.714, 0)
+modulate = Color(1, 1, 1, 0.498039)
 pixel_size = 0.0357
-alpha_cut = 1
 texture_filter = 0
 
 [node name="TextPivot" type="Node3D" parent="."]

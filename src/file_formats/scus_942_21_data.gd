@@ -2,9 +2,35 @@ class_name ScusData
 
 # https://ffhacktics.com/wiki/SCUS_942.21_Data_Tables#MURATA_Main_Program_Data
 
+# Job Data
 class JobData:
 	var skillset_id: int = 0
 	#var innate_abilities:
+	# equippable items
+	# hp growth
+	# hp multiplier
+	# mp growth
+	# mp multiplier
+	# speed growth
+	# speed multiplier
+	# pa growth
+	# pa multiplier
+	# ma growth
+	# ma multiplier
+	# move
+	# jump
+	# c-evade
+	# innate statuses
+	# status immunities
+	# starting statuses
+	# absorbed elements
+	# nullified elements
+	# halved elements
+	# element weaknesses
+	# portrait?
+	# palette?
+	# sprite?
+	
 
 class SkillsetData:
 	var action_ability_ids: PackedInt32Array = []
@@ -45,6 +71,11 @@ var ability_data_jump_start: int = 0x503f0 # ids 0x18a - 0x195, 0x0c entries, 0x
 var ability_data_charge_start: int = 0x503f0 # ids 0x196 - 0x19d, 0x08 entries, 0x02 bytes each
 var ability_data_math_start: int = 0x503f0 # ids 0x19e - 0x1a5, 0x08 entries, 0x02 bytes each
 var ability_data_rsm_start: int = 0x503f0 # ids 0x1a6 - 0x1ff, 0x5a entries, 0x01 bytes each
+
+
+# Item data
+# https://ffhacktics.com/wiki/Item_Data
+
 
 func init_from_scus() -> void:
 	var scus_bytes: PackedByteArray = RomReader.get_file_data("SCUS_942.21")

@@ -89,8 +89,8 @@ func on_rom_loaded() -> void:
 	for file_record: FileRecord in RomReader.file_records.values():
 		if file_record.name.contains(".GNS"):
 			var map_name: String = ""
-			if RomReader.fft_text.map_names.size() > file_record.type_index:
-				map_name = " " + RomReader.fft_text.map_names[file_record.type_index]
+			if file_record.type_index != 0 and file_record.type_index <= RomReader.fft_text.map_names.size():
+				map_name = " " + RomReader.fft_text.map_names[file_record.type_index - 1]
 			map_dropdown.add_item(file_record.name + map_name)
 	
 	var default_map_index: int = 56 # Orbonne

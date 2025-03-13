@@ -251,10 +251,7 @@ func get_frame_mesh(frame_set_idx: int, frame_idx: int = 0) -> ArrayMesh:
 	# TODO maybe byte 1, bit 0x02 turns semi-transparency on or off?
 	# Mostly (only?) affects Summon's creature and texture squares, meteor, pitfall, carve model, local quake, small bomb, empty black squares on some others
 	var semi_transparency_on = ((vfx_frame.vram_bytes[1] & 0x02) >> 1) == 1
-	if not semi_transparency_on:
-		mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
-		mesh_material.alpha_scissor_threshold = 0.5
-	else:
+	if semi_transparency_on:
 		var semi_transparency_mode = (vfx_frame.vram_bytes[0] & 0x60) >> 5 # TODO maybe byte 0, bit 0x60 is semi-transparency mode?
 		if semi_transparency_mode == 0: # 0.5 back + 0.5 forward
 			#albedo_texture = ImageTexture.create_from_image(image_mode_0)
@@ -278,6 +275,9 @@ func get_frame_mesh(frame_set_idx: int, frame_idx: int = 0) -> ArrayMesh:
 			mesh_material.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
 			#mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
 			#mesh_material.alpha_scissor_threshold = 0.01
+	else:
+		mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+		mesh_material.alpha_scissor_threshold = 0.5
 	
 	mesh_material.set_texture(BaseMaterial3D.TEXTURE_ALBEDO, albedo_texture)
 	mesh.surface_set_material(0, mesh_material)

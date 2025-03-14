@@ -15,7 +15,7 @@ const SUBFRAME_RECT_SIZES: PackedVector2Array = [
 	Vector2( 32, 24 ),
 	Vector2( 32, 32 ),
 	Vector2( 32, 40 ),
-	Vector2( 48, 16 ),
+	Vector2( 40, 16 ),
 	Vector2( 40, 32 ),
 	Vector2( 48, 48 ),
 	Vector2( 56, 56 ),

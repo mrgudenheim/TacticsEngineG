@@ -65,11 +65,34 @@ enum BattleBinTextSections {
 	SUMMON_DRAW_OUT_NAMES = 23,
 	}
 
+enum HelpLzwSections {
+	UNIT_STATS = 1,
+	MISC_MENUS = 2,
+	TERRAIN_DESCRIPTIONS = 11,
+	JOB_DESCRIPTIONS = 12,
+	ITEM_DESCRIPTIONS = 13,
+	ABILITY_DESCRIPTIONS = 15,
+	SKILLSET_DESCRIPTIONS = 19,
+	STATUS_DESCRIPTIONS = 20,
+	}
+
+enum AttackHelpLzwSections {
+	UNIT_STATS = 11,
+	JOB_DESCRIPTIONS = 12,
+	ITEM_DESCRIPTIONS = 13,
+	ABILITY_DESCRIPTIONS = 15,
+	SKILLSET_DESCRIPTIONS = 19,
+	}
+
 var battle_text: FftTextFile = FftTextFile.new(0xfa2dc, 32, 0xfee64, BattleBinTextSections)
 var world_text: FftTextFile = FftTextFile.new(0, 32, 0, WorldLzwSections)
+var help_text: FftTextFile = FftTextFile.new(0, 32, 0, HelpLzwSections)
+var attack_help_text: FftTextFile = FftTextFile.new(0, 32, 0, AttackHelpLzwSections)
 var file_layouts: Dictionary[String, FftTextFile] = {
 	"BATTLE.BIN" : battle_text,
 	"WORLD.LZW" : world_text,
+	"HELP.LZW" : help_text,
+	"ATCHELP.LZW" : attack_help_text,
 	} 
 
 
@@ -77,6 +100,8 @@ var ability_names: PackedStringArray = []
 var spell_quotes: PackedStringArray = []
 var battle_effect_text: PackedStringArray = []
 var item_names: PackedStringArray = []
+var item_descriptions: PackedStringArray = []
+var equipment_types: PackedStringArray = []
 
 var map_names: PackedStringArray = []
 var location_names: PackedStringArray = []
@@ -85,11 +110,31 @@ var location_names: PackedStringArray = []
 func init_text() -> void:
 	init_text_from_file("BATTLE.BIN")
 	init_text_from_file("WORLD.LZW")
+	init_text_from_file("HELP.LZW")
+	init_text_from_file("ATCHELP.LZW")
 	
 	ability_names = battle_text.text_arrays[BattleBinTextSections.ABILITY_NAMES]
 	spell_quotes = text_to_string(RomReader.get_file_data("SPELL.MES"))
 	battle_effect_text = battle_text.text_arrays[BattleBinTextSections.BATTLE_ACTION_EFFECT]
 	item_names = battle_text.text_arrays[BattleBinTextSections.ITEM_NAMES]
+	item_descriptions = attack_help_text.text_arrays[AttackHelpLzwSections.ITEM_DESCRIPTIONS]
+	#equipment_types.resize(ItemData.ItemType.CLOTH + 1)
+	for idx: int in item_descriptions.size():
+		var type: String = ""
+		var text_split: PackedStringArray = item_descriptions[idx].split(": Sq")
+		
+		if text_split.size() == 2: # normal equipment
+			type = text_split[0].split(" ")[-1]
+			if type[0].to_lower() == type[0]: # get multi word types
+				type = text_split[0].split(" ")[-2] + " " + type
+		else: # try get Women's equipment
+			text_split = item_descriptions[idx].split("Women's ")
+			if text_split.size() > 1:
+				type = text_split[-1].split(" ")[0].capitalize()
+		
+		if equipment_types.find(type) == -1:
+				equipment_types.append(type)
+	equipment_types[0] = "Fist"
 	
 	map_names = world_text.text_arrays[WorldLzwSections.MAP_NAMES]
 	location_names = world_text.text_arrays[WorldLzwSections.LOCATION_NAMES]

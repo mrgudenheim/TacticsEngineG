@@ -43,7 +43,7 @@ func populate_options() -> void:
 	#for weapon_index: int in UnitAnimationManager.weapon_table.size():
 		#weapon_options.add_item(str(UnitAnimationManager.weapon_table[weapon_index][0]))
 	for weapon_index: int in RomReader.NUM_WEAPONS:
-		weapon_options.add_item(RomReader.items[weapon_index].name + " (" + str(RomReader.items[weapon_index].item_type) + ")")
+		weapon_options.add_item(str(weapon_index) + " - " + RomReader.items[weapon_index].name + " (" + RomReader.fft_text.equipment_types[RomReader.items[weapon_index].item_type] + ")")
 	
 	item_options.clear()
 	for item_list_index: int in UnitAnimationManager.item_list.size():

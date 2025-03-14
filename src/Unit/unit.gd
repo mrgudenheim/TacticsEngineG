@@ -9,6 +9,7 @@ signal ability_completed()
 
 @export var controller: UnitControllerRT
 @export var animation_manager: UnitAnimationManager
+@export var debug_menu: UnitDebugMenu
 
 @export var unit_nickname: String = "Unit Nickname"
 @export var job_nickname: String = "Job Nickname"
@@ -121,8 +122,8 @@ func _ready() -> void:
 
 
 func initialize_unit() -> void:
-	animation_manager.unit_debug_menu.populate_options()
-	animation_manager.unit_debug_menu.anim_id_spin.value = idle_animation_id
+	debug_menu.populate_options()
+	debug_menu.anim_id_spin.value = idle_animation_id
 	
 	# 1 cure
 	# 0xc8 blood suck
@@ -141,14 +142,14 @@ func _process(delta: float) -> void:
 		var mid_jump_animation: int = 62 # front facing mid jump animation
 		if animation_manager.is_back_facing:
 			mid_jump_animation += 1
-		animation_manager.unit_debug_menu.anim_id_spin.value = mid_jump_animation
+		debug_menu.anim_id_spin.value = mid_jump_animation
 	elif controller.velocity.y == 0 and is_in_air == true:
 		is_in_air = false
 		
 		var idle_animation: int = 6 # front facing mid jump animation
 		if animation_manager.is_back_facing:
 			idle_animation += 1
-		animation_manager.unit_debug_menu.anim_id_spin.value = idle_animation
+		debug_menu.anim_id_spin.value = idle_animation
 
 
 func use_ability(pos: Vector3) -> void:
@@ -156,18 +157,18 @@ func use_ability(pos: Vector3) -> void:
 	push_warning("using: " + ability_data.name)
 	#push_warning("Animations: " + str(PackedInt32Array([ability_data.animation_start_id, ability_data.animation_charging_id, ability_data.animation_executing_id])))
 	if ability_data.animation_start_id != 0:
-		animation_manager.unit_debug_menu.anim_id_spin.value = ability_data.animation_start_id + int(is_back_facing)
+		debug_menu.anim_id_spin.value = ability_data.animation_start_id + int(is_back_facing)
 		await animation_manager.animation_completed
 	if ability_data.animation_charging_id != 0:
-		animation_manager.unit_debug_menu.anim_id_spin.value = ability_data.animation_charging_id + int(is_back_facing)
+		debug_menu.anim_id_spin.value = ability_data.animation_charging_id + int(is_back_facing)
 		await get_tree().create_timer(0.1 + (ability_data.ticks_charge_time * 0.1)).timeout
 	if ability_data.animation_executing_id != 0:
 		if ability_data.animation_executing_id == 0:
 			#animation_executing_id = 0x3e * 2 # TODO look up based on equiped weapon and target relative height
 			#animation_manager.unit_debug_menu.anim_id_spin.value = 0x3e * 2 # TODO look up based on equiped weapon and target relative height
-			animation_manager.unit_debug_menu.anim_id_spin.value = RomReader.battle_bin_data.weapon_animation_ids[primary_weapon.item_type].y * 2 # TODO lookup based on target relative height
+			debug_menu.anim_id_spin.value = RomReader.battle_bin_data.weapon_animation_ids[primary_weapon.item_type].y * 2 # TODO lookup based on target relative height
 		else:
-			animation_manager.unit_debug_menu.anim_id_spin.value = ability_data.animation_executing_id + int(is_back_facing)
+			debug_menu.anim_id_spin.value = ability_data.animation_executing_id + int(is_back_facing)
 		
 		var new_vfx_location: Node3D = Node3D.new()
 		new_vfx_location.position = pos
@@ -184,7 +185,7 @@ func use_ability(pos: Vector3) -> void:
 	
 	ability_completed.emit()
 	animation_manager.reset_sprites()
-	animation_manager.unit_debug_menu.anim_id_spin.value = idle_animation_id  + int(is_back_facing)
+	debug_menu.anim_id_spin.value = idle_animation_id  + int(is_back_facing)
 	can_move = true
 
 
@@ -240,19 +241,19 @@ func update_animation_facing() -> void:
 		if animation_manager.is_back_facing != is_back_facing:
 			animation_manager.is_back_facing = is_back_facing
 			if is_back_facing == true:
-				animation_manager.unit_debug_menu.anim_id_spin.value += 1
+				debug_menu.anim_id_spin.value += 1
 			else:
-				animation_manager.unit_debug_menu.anim_id_spin.value -= 1
+				debug_menu.anim_id_spin.value -= 1
 		else:
 			animation_manager._on_animation_changed()
 
 
 func toggle_debug_menu() -> void:
-	animation_manager.unit_debug_menu.visible = not animation_manager.unit_debug_menu.visible
+	debug_menu.visible = not debug_menu.visible
 
 
 func hide_debug_menu() -> void:
-	animation_manager.unit_debug_menu.visible = false
+	debug_menu.visible = false
 
 
 func set_ability(new_ability_id: int) -> void:
@@ -262,7 +263,7 @@ func set_ability(new_ability_id: int) -> void:
 	if not ability_data.vfx_data.is_initialized:
 		ability_data.vfx_data.init_from_file()
 	
-	animation_manager.unit_debug_menu.sprite_viewer.texture = ImageTexture.create_from_image(ability_data.vfx_data.vfx_spr.spritesheet)
+	debug_menu.sprite_viewer.texture = ImageTexture.create_from_image(ability_data.vfx_data.vfx_spr.spritesheet)
 	
 	ability_assigned.emit(new_ability_id)
 

@@ -3,8 +3,6 @@ extends Node3D
 
 signal animation_completed
 
-@export var unit_debug_menu: UnitDebugMenu
-
 #@export var ui_manager: UiManager
 @export var unit_data: UnitData
 @export var unit_sprites_manager: UnitSpritesManager
@@ -207,7 +205,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			draw_target.texture = ImageTexture.create_from_image(assembled_image)
 		else:
 			var assembled_image: Image = fft_animation.shp.get_assembled_frame(
-					new_frame_id, fft_animation.image, global_animation_ptr_id, unit_debug_menu.other_type_options.selected, weapon_v_offset, submerged_depth)
+					new_frame_id, fft_animation.image, global_animation_ptr_id, unit_data.debug_menu.other_type_options.selected, weapon_v_offset, submerged_depth)
 			draw_target.texture = ImageTexture.create_from_image(assembled_image)
 			var y_rotation: float = fft_animation.shp.get_frame(new_frame_id, fft_animation.submerged_depth).y_rotation
 			if fft_animation.flipped_h != fft_animation.flipped_v:
@@ -334,21 +332,21 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				
 				if item_index <= 187: # load crystal
 					item_frame_id = item_index - 179
-					unit_debug_menu.other_type_options.select(2) # to update ui
+					unit_data.debug_menu.other_type_options.select(2) # to update ui
 					#other_type_index = 2 # to set v_offset is correct
 				elif item_index == 188: # load chest 1
 					item_frame_id = 15
-					unit_debug_menu.other_type_options.select(0)
+					unit_data.debug_menu.other_type_options.select(0)
 					#other_type_index = 0
 				elif item_index == 189: # load chest 2
 					item_frame_id = 16
-					unit_debug_menu.other_type_options.select(0)
+					unit_data.debug_menu.other_type_options.select(0)
 					#other_type_index = 0
 			
 			frame_id_label = str(item_index)
 			
 			var assembled_image: Image = item_sheet_type.get_assembled_frame(
-					item_frame_id, item_image, global_animation_ptr_id, unit_debug_menu.other_type_options.selected, weapon_v_offset, submerged_depth)
+					item_frame_id, item_image, global_animation_ptr_id, unit_data.debug_menu.other_type_options.selected, weapon_v_offset, submerged_depth)
 			var target_sprite: Sprite3D = unit_sprites_manager.sprite_item
 			target_sprite.texture = ImageTexture.create_from_image(assembled_image)
 			var y_rotation: float = item_sheet_type.get_frame(item_frame_id, submerged_depth).y_rotation

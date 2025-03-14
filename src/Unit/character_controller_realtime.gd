@@ -63,7 +63,7 @@ func _physics_process(delta: float) -> void:
 		velocity_set.emit(direction)
 	move_and_slide()
 	
-	if Input.is_action_just_pressed("primary_action") and is_on_floor():
+	if Input.is_action_just_pressed("secondary_action") and is_on_floor():
 		# https://docs.godotengine.org/en/stable/tutorials/physics/ray-casting.html
 		# get 3d click location based on raycast
 		var space_state := get_world_3d().direct_space_state

@@ -103,8 +103,6 @@ func _ready() -> void:
 		weapon_table = load_csv(weapon_table_filepath)
 	if item_list.size() == 0:
 		item_list = load_csv(item_list_filepath)
-	
-	unit_debug_menu.populate_options()
 
 
 func load_csv(filepath: String) -> Array[PackedStringArray]:
@@ -289,7 +287,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				
 			unit_sprites_manager.global_position += position_offset * MapViewer.SCALE
 			#(draw_target.get_parent().get_parent() as Node3D).position += position_offset
-		elif seq_part.opcode_name == "SetLayerPriority": # TODO fix for sprite3Ds
+		elif seq_part.opcode_name == "SetLayerPriority": # TODO fix for sprite3Ds, use sorting_offset property?
 			# print(layer_priority_table)
 			var layer_priority: Array = layer_priority_table[seq_part.parameters[0]]
 			for i in range(0, layer_priority.size() - 1):

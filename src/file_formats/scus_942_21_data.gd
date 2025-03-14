@@ -5,7 +5,7 @@ class_name ScusData
 # Job Data
 class JobData:
 	var skillset_id: int = 0
-	#var innate_abilities:
+	#var innate_abilities: PackedInt32Array = []
 	# equippable items
 	# hp growth
 	# hp multiplier

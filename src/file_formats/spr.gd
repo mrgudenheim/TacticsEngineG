@@ -95,7 +95,7 @@ func set_palette_data(palette_bytes: PackedByteArray) -> void:
 		color.r8 = roundi(255 * (color.r8 / float(31)))
 		
 		# psx transparency: https://www.psxdev.net/forum/viewtopic.php?t=953
-		# TODO use Material3D blend mode Add for mode 1 or 3, where brightness builds up from a dark background instead of normal transparency
+		# TODO use Material3D blend mode Add for mode 1 or 3, where brightness builds up from a dark background instead of normal "mix" transparency
 		if color == Color.BLACK:
 			color.a8 = 0
 		#elif alpha_bit == 1:

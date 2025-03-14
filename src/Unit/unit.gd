@@ -9,8 +9,75 @@ signal ability_set(id: int)
 @export var controller: UnitControllerRT
 @export var animation_manager: UnitAnimationManager
 
-@export var particle_vfx: CPUParticles3D
-@export var vfx_frame_quad: MeshInstance3D
+@export var unit_nickname: String = "Unit Nickname"
+@export var job_nickname: String = "Job Nickname"
+
+var character_id: int = 0
+var unit_index_formation: int = 0
+var job_id: int = 0
+var sprite_palette_id: int = 0
+var team_id: int = 0
+var player_control: bool = true
+
+var immortal: bool = false
+var immune_knockback: bool = false
+var game_over_trigger: bool = false
+var type_id = 0 # male, female, monster
+var death_counter: int = 3
+var zodiac = "Libra"
+
+var innate_ability_ids: PackedInt32Array = []
+var skillsets: Array = []
+var reaction_abilities: Array = []
+var support_ability: Array = []
+var movement_ability: Array = []
+
+var equipment: Array = []
+
+var exp: int = 0
+var level: int = 0
+
+var brave_base: int = 70
+var brave_current: int = 70 # min 0, max 100
+var faith_base: int = 70
+var faith_current: int = 70 # min 0, max 100
+
+var ct_current: int = 0
+var ct_max: int = 100
+
+var hp_base: int = 100
+var hp_max: int = 100
+var hp_current: int = 70
+var mp_base: int = 100
+var mp_max: int = 100
+var mp_current: int = 70
+
+var physical_power_base: int = 5
+var physical_power_current: int = 5
+var magical_power_base: int = 5
+var magical_power_current: int = 5
+var speed_base: int = 5
+var speed_current: int = 5
+var move_base: int = 5
+var move_current: int = 5
+var jump_base: int = 5
+var jump_current: int = 5
+
+var innate_statuses: Array = []
+var immune_status_types: Array = []
+var current_statuses: Array = [] # Status may have a corresponding CT countdown?
+
+var learned_abilities: Array = []
+var job_levels
+var job_jp
+
+var ability_remaining_ct: int = 0 # TODO this should be tracked per ability?
+var sprite_id: int = 0
+var portrait_palette_id: int = 0
+var unit_id: int = 0
+var special_job_skillset_id: int = 0
+
+
 
 var can_move: bool = true
 
@@ -185,8 +252,5 @@ func set_ability(new_ability_id: int) -> void:
 		ability_data.vfx_data.init_from_file()
 	
 	animation_manager.unit_debug_menu.sprite_viewer.texture = ImageTexture.create_from_image(ability_data.vfx_data.vfx_spr.spritesheet)
-	particle_vfx.mesh = ability_data.vfx_data.get_frame_mesh(2, 0)
-	vfx_frame_quad.mesh = ability_data.vfx_data.get_frame_mesh(2, 0)
-	
 	
 	ability_set.emit(new_ability_id)

@@ -201,12 +201,10 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("GradientTexture2D_1dnhu")
 
-[node name="Unit" type="Node3D" parent="." node_paths=PackedStringArray("controller", "animation_manager", "particle_vfx", "vfx_frame_quad")]
+[node name="Unit" type="Node3D" parent="." node_paths=PackedStringArray("controller", "animation_manager")]
 script = ExtResource("8_o41s4")
 controller = NodePath("CharacterBody3D")
 animation_manager = NodePath("CharacterBody3D/UnitAnimationManager")
-particle_vfx = NodePath("../CPUParticles3D")
-vfx_frame_quad = NodePath("CharacterBody3D/VfxFrameViewer")
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="Unit" node_paths=PackedStringArray("phantom_camera")]
 transform = Transform3D(0.707107, 0, 0.707107, 0, 0.999999, 0, -0.707107, 0, 0.707107, 0, 0, 0)

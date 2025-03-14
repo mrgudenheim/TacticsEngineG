@@ -17,6 +17,13 @@ class VfxFrameSet:
 
 class VfxFrame:
 	var vram_bytes: PackedByteArray = []
+	var palette_id: int = 0 # 0 = 4bpp, 1 = 8bpp
+	var semi_transparency_mode: int = 0
+	var image_color_depth: int = 0
+	var semi_transparency_on: bool = true
+	var frame_width_signed: bool = false
+	var frame_height_signed: bool = false
+	
 	var top_left_uv: Vector2i = Vector2i.ZERO
 	var uv_width: int = 0
 	var uv_height: int = 0
@@ -118,15 +125,22 @@ func init_from_file() -> void:
 			var frame_bytes: PackedByteArray = frame_set_bytes.slice(4 + (frame_id * frame_data_length))
 			var new_frame: VfxFrame = VfxFrame.new()
 			new_frame.vram_bytes = frame_bytes.slice(0, 4)
+			new_frame.palette_id = new_frame.vram_bytes[0] & 0x0f
+			new_frame.semi_transparency_mode = (new_frame.vram_bytes[0] & 0x60) >> 5
+			new_frame.image_color_depth = 4 + ((new_frame.vram_bytes[0] & 0x80) >> 5)
+			new_frame.semi_transparency_on = (new_frame.vram_bytes[1] & 0x02) >> 1 == 1
+			new_frame.frame_width_signed = (new_frame.vram_bytes[1] & 0x10) >> 4 == 1
+			new_frame.frame_height_signed = (new_frame.vram_bytes[1] & 0x20) >> 4 == 1
+			
 			var top_left_u: int = frame_bytes.decode_u8(4)
 			var top_left_v: int = frame_bytes.decode_u8(5)
 			new_frame.top_left_uv = Vector2i(top_left_u, top_left_v)
 			
-			if new_frame.vram_bytes[1] & 0x10 != 0:
+			if new_frame.frame_width_signed:
 				new_frame.uv_width = frame_bytes.decode_s8(6)
 			else:
 				new_frame.uv_width = frame_bytes.decode_u8(6)
-			if new_frame.vram_bytes[1] & 0x20 != 0:
+			if new_frame.frame_height_signed:
 				new_frame.uv_height = frame_bytes.decode_s8(7)
 			else:
 				new_frame.uv_height = frame_bytes.decode_u8(7)
@@ -198,7 +212,7 @@ func init_from_file() -> void:
 	
 	# TODO fix transparency - some frames should be opaque, like summons (Odin), some should just be less transparent, like songs and some geomancy (waterfall)
 	
-	vfx_spr.color_palette[vfx_spr.color_indices[0]].a8 = 0 # set background color (ie. color of top left pixel) as transparent
+	#vfx_spr.color_palette[vfx_spr.color_indices[0]].a8 = 0 # set background color (ie. color of top left pixel) as transparent
 	
 	vfx_spr.set_pixel_colors()
 	vfx_spr.spritesheet = vfx_spr.get_rgba8_image()
@@ -250,25 +264,25 @@ func get_frame_mesh(frame_set_idx: int, frame_idx: int = 0) -> ArrayMesh:
 	
 	# TODO maybe byte 1, bit 0x02 turns semi-transparency on or off?
 	# Mostly (only?) affects Summon's creature and texture squares, meteor, pitfall, carve model, local quake, small bomb, empty black squares on some others
-	var semi_transparency_on = ((vfx_frame.vram_bytes[1] & 0x02) >> 1) == 1
-	if semi_transparency_on:
-		var semi_transparency_mode = (vfx_frame.vram_bytes[0] & 0x60) >> 5 # TODO maybe byte 0, bit 0x60 is semi-transparency mode?
-		if semi_transparency_mode == 0: # 0.5 back + 0.5 forward
+	#var semi_transparency_on = ((vfx_frame.vram_bytes[1] & 0x02) >> 1) == 1
+	if vfx_frame.semi_transparency_on:
+		#var semi_transparency_mode = (vfx_frame.vram_bytes[0] & 0x60) >> 5 # TODO maybe byte 0, bit 0x60 is semi-transparency mode?
+		if vfx_frame.semi_transparency_mode == 0: # 0.5 back + 0.5 forward
 			#albedo_texture = ImageTexture.create_from_image(image_mode_0)
 			mesh_material.albedo_color = Color(1, 1, 1, 0.5)
 			mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 			mesh_material.blend_mode = BaseMaterial3D.BLEND_MODE_MIX
-		elif semi_transparency_mode == 1: # 1 back + 1 forward
+		elif vfx_frame.semi_transparency_mode == 1: # 1 back + 1 forward
 			#albedo_texture = ImageTexture.create_from_image(vfx_spr.spritesheet)
 			#albedo_texture = ImageTexture.create_from_image(image_mode_0)
 			#mesh_material.albedo_color = Color(0.75, 0.75, 0.75, 1)
 			mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 			mesh_material.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
-		elif semi_transparency_mode == 2: # 1 back - 1 forward
+		elif vfx_frame.semi_transparency_mode == 2: # 1 back - 1 forward
 			#albedo_texture = ImageTexture.create_from_image(vfx_spr.spritesheet)
 			mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 			mesh_material.blend_mode = BaseMaterial3D.BLEND_MODE_SUB
-		elif semi_transparency_mode == 3: # 1 back + 0.25 forward
+		elif vfx_frame.semi_transparency_mode == 3: # 1 back + 0.25 forward
 			#albedo_texture = ImageTexture.create_from_image(image_mode_3)
 			mesh_material.albedo_color = Color(0.25, 0.25, 0.25, 1)
 			mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA

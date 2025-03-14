@@ -26,6 +26,8 @@ const NUM_UNIT_SKILLSETS = 0xb0
 const NUM_MONSTER_SKILLSETS = 0xe0 - 0xb0
 const NUM_JOBS = 0xa0
 const NUM_VFX = 511
+const NUM_ITEMS = 254 # 256?
+const NUM_WEAPONS = 122
 
 var sprs: Array[Spr] = []
 var spr_file_name_to_id: Dictionary[String, int] = {}
@@ -35,6 +37,7 @@ var seqs: Array[Seq] = []
 var maps: Array[MapData] = []
 var vfx: Array[VisualEffectData] = []
 var abilities: Array[AbilityData] = []
+var items: Array[ItemData] = []
 
 @export_file("*.txt") var item_frames_csv_filepath: String = "res://src/fftae/frame_data_item.txt"
 
@@ -94,6 +97,10 @@ func process_rom() -> void:
 	
 	for ability_id: int in NUM_ACTIVE_ABILITIES:
 		abilities.append(AbilityData.new(ability_id))
+	
+	items.resize(NUM_ITEMS)
+	for id: int in NUM_ITEMS:
+		items[id] = (ItemData.new(id))
 	
 	# testing vfx vram data
 	#for ability_id: int in NUM_ACTIVE_ABILITIES:

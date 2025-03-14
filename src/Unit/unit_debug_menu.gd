@@ -22,7 +22,7 @@ func _ready() -> void:
 	unit_controller = get_parent() as UnitControllerRT
 	unit = get_parent().get_parent() as UnitData
 	
-	RomReader.rom_loaded.connect(populat_sprite_options)
+	RomReader.rom_loaded.connect(populate_sprite_options)
 	sprite_options.item_selected.connect(_on_sprite_option_selected)
 	anim_id_spin.value_changed.connect(_on_anim_id_spin_value_changed)
 	weapon_options.item_selected.connect(func(idx) -> void: 
@@ -32,7 +32,7 @@ func _ready() -> void:
 		animation_manager._on_animation_changed())
 	
 	ability_id_spin.value_changed.connect(_on_ability_id_value_changed)
-	unit.ability_set.connect(func(id): ability_id_spin.value = id)
+	unit.ability_assigned.connect(func(id): ability_id_spin.value = id)
 
 func _process(delta: float) -> void:
 	position = MapViewer.main_camera.unproject_position(unit_controller.position) + Vector2(50, -50)
@@ -40,8 +40,10 @@ func _process(delta: float) -> void:
 
 func populate_options() -> void:
 	weapon_options.clear()
-	for weapon_index: int in UnitAnimationManager.weapon_table.size():
-		weapon_options.add_item(str(UnitAnimationManager.weapon_table[weapon_index][0]))
+	#for weapon_index: int in UnitAnimationManager.weapon_table.size():
+		#weapon_options.add_item(str(UnitAnimationManager.weapon_table[weapon_index][0]))
+	for weapon_index: int in RomReader.NUM_WEAPONS:
+		weapon_options.add_item(RomReader.items[weapon_index].name + " (" + str(RomReader.items[weapon_index].item_type) + ")")
 	
 	item_options.clear()
 	for item_list_index: int in UnitAnimationManager.item_list.size():
@@ -50,7 +52,7 @@ func populate_options() -> void:
 		item_options.add_item(str(UnitAnimationManager.item_list[item_list_index][1]))
 
 
-func populat_sprite_options() -> void:
+func populate_sprite_options() -> void:
 	sprite_options.clear()
 	for spr: Spr in RomReader.sprs:
 		sprite_options.add_item(spr.file_name)

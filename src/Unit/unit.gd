@@ -4,7 +4,8 @@ extends Node3D
 # https://ffhacktics.com/wiki/Miscellaneous_Unit_Data
 # https://ffhacktics.com/wiki/Battle_Stats
 
-signal ability_set(id: int)
+signal ability_assigned(id: int)
+signal ability_completed()
 
 @export var controller: UnitControllerRT
 @export var animation_manager: UnitAnimationManager
@@ -24,7 +25,7 @@ var immune_knockback: bool = false
 var game_over_trigger: bool = false
 var type_id = 0 # male, female, monster
 var death_counter: int = 3
-var zodiac = "Libra"
+var zodiac = "Ares"
 
 var innate_ability_ids: PackedInt32Array = []
 var skillsets: Array = []
@@ -32,7 +33,8 @@ var reaction_abilities: Array = []
 var support_ability: Array = []
 var movement_ability: Array = []
 
-var equipment: Array = []
+var primary_weapon: ItemData
+var equipment: PackedInt32Array = []
 
 var exp: int = 0
 var level: int = 0
@@ -71,7 +73,8 @@ var learned_abilities: Array = []
 var job_levels
 var job_jp
 
-var ability_remaining_ct: int = 0 # TODO this should be tracked per ability?
+var charging_abilities_ids: PackedInt32Array = []
+var charging_abilities_remaining_ct: PackedInt32Array = [] # TODO this should be tracked per ability?
 var sprite_id: int = 0
 var portrait_palette_id: int = 0
 var unit_id: int = 0
@@ -118,12 +121,14 @@ func _ready() -> void:
 
 
 func initialize_unit() -> void:
+	animation_manager.unit_debug_menu.populate_options()
 	animation_manager.unit_debug_menu.anim_id_spin.value = idle_animation_id
 	
 	# 1 cure
 	# 0xc8 blood suck
 	# 0x9b stasis sword
 	set_ability(0x9b)
+	set_primary_weapon(1)
 
 
 func _process(delta: float) -> void:
@@ -157,7 +162,12 @@ func use_ability(pos: Vector3) -> void:
 		animation_manager.unit_debug_menu.anim_id_spin.value = ability_data.animation_charging_id + int(is_back_facing)
 		await get_tree().create_timer(0.1 + (ability_data.ticks_charge_time * 0.1)).timeout
 	if ability_data.animation_executing_id != 0:
-		animation_manager.unit_debug_menu.anim_id_spin.value = ability_data.animation_executing_id + int(is_back_facing)
+		if ability_data.animation_executing_id == 0:
+			#animation_executing_id = 0x3e * 2 # TODO look up based on equiped weapon and target relative height
+			#animation_manager.unit_debug_menu.anim_id_spin.value = 0x3e * 2 # TODO look up based on equiped weapon and target relative height
+			animation_manager.unit_debug_menu.anim_id_spin.value = RomReader.battle_bin_data.weapon_animation_ids[primary_weapon.item_type].y * 2 # TODO lookup based on target relative height
+		else:
+			animation_manager.unit_debug_menu.anim_id_spin.value = ability_data.animation_executing_id + int(is_back_facing)
 		
 		var new_vfx_location: Node3D = Node3D.new()
 		new_vfx_location.position = pos
@@ -172,6 +182,7 @@ func use_ability(pos: Vector3) -> void:
 		
 		await animation_manager.animation_completed
 	
+	ability_completed.emit()
 	animation_manager.reset_sprites()
 	animation_manager.unit_debug_menu.anim_id_spin.value = idle_animation_id  + int(is_back_facing)
 	can_move = true
@@ -253,4 +264,10 @@ func set_ability(new_ability_id: int) -> void:
 	
 	animation_manager.unit_debug_menu.sprite_viewer.texture = ImageTexture.create_from_image(ability_data.vfx_data.vfx_spr.spritesheet)
 	
-	ability_set.emit(new_ability_id)
+	ability_assigned.emit(new_ability_id)
+
+func set_primary_weapon(new_weapon_id: int) -> void:
+	#ability_id = new_ability_id
+	primary_weapon = RomReader.items[new_weapon_id]
+	
+	#ability_assigned.emit(new_ability_id)

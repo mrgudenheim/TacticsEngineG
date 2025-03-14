@@ -86,12 +86,6 @@ func _init(new_id: int = 0) -> void:
 	vertical_tolerance = RomReader.scus_data.vertical_tolerance[new_id]
 	inflict_status_id = RomReader.scus_data.inflict_status_id[new_id]
 	ticks_charge_time = RomReader.scus_data.ct[new_id]
-	
-	
-	
-	if animation_executing_id == 0:
-		animation_executing_id = 0x3e * 2 # TODO look up based on equiped weapon and target relative height
-		# use RomReader.battle_bin_data.weapon_animation_ids
 
 
 func display_vfx(location: Node3D) -> void:

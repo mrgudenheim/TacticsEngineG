@@ -70,12 +70,13 @@ var world_text: FftTextFile = FftTextFile.new(0, 32, 0, WorldLzwSections)
 var file_layouts: Dictionary[String, FftTextFile] = {
 	"BATTLE.BIN" : battle_text,
 	"WORLD.LZW" : world_text,
-	}
+	} 
 
 
 var ability_names: PackedStringArray = []
 var spell_quotes: PackedStringArray = []
 var battle_effect_text: PackedStringArray = []
+var item_names: PackedStringArray = []
 
 var map_names: PackedStringArray = []
 var location_names: PackedStringArray = []
@@ -88,6 +89,7 @@ func init_text() -> void:
 	ability_names = battle_text.text_arrays[BattleBinTextSections.ABILITY_NAMES]
 	spell_quotes = text_to_string(RomReader.get_file_data("SPELL.MES"))
 	battle_effect_text = battle_text.text_arrays[BattleBinTextSections.BATTLE_ACTION_EFFECT]
+	item_names = battle_text.text_arrays[BattleBinTextSections.ITEM_NAMES]
 	
 	map_names = world_text.text_arrays[WorldLzwSections.MAP_NAMES]
 	location_names = world_text.text_arrays[WorldLzwSections.LOCATION_NAMES]

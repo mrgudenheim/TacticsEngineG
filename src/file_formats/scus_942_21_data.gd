@@ -75,6 +75,17 @@ var ability_data_rsm_start: int = 0x503f0 # ids 0x1a6 - 0x1ff, 0x5a entries, 0x0
 
 # Item data
 # https://ffhacktics.com/wiki/Item_Data
+var item_data_base_start: int = 0x536b8 # 0xfd entries, 0x0c bytes each
+var item_entries: int = 0xfe
+var item_entry_length: int = 0x0c
+var item_palettes: PackedInt32Array = []
+var item_sprite_ids: PackedInt32Array = []
+var item_min_levels: PackedInt32Array = []
+var item_slot_types: PackedInt32Array = []
+var item_types: PackedInt32Array = []
+var item_attributes # TODO
+var item_prices: PackedInt32Array = []
+var item_shop_availability: PackedInt32Array = []
 
 
 func init_from_scus() -> void:
@@ -181,3 +192,23 @@ func init_from_scus() -> void:
 		inflict_status_id[id] = ability_data_bytes.decode_u8((id * entry_size) + 11)
 		ct[id] = ability_data_bytes.decode_u8((id * entry_size) + 12)
 		mp_cost[id] = ability_data_bytes.decode_u8((id * entry_size) + 13)
+	
+	# item data base
+	item_palettes.resize(item_entries)
+	item_sprite_ids.resize(item_entries)
+	item_min_levels.resize(item_entries)
+	item_slot_types.resize(item_entries)
+	item_types.resize(item_entries)
+	# item_attributes # TODO
+	item_prices.resize(item_entries)
+	item_shop_availability.resize(item_entries)
+	
+	var item_data_bytes: PackedByteArray = scus_bytes.slice(item_data_base_start, item_data_base_start + (item_entries * item_entry_length))
+	for id: int in item_entries:
+		item_palettes[id] = item_data_bytes.decode_u8(id * item_entry_length)
+		item_sprite_ids[id] = item_data_bytes.decode_u8((id * item_entry_length) + 1)
+		item_min_levels[id] = item_data_bytes.decode_u8((id * item_entry_length) + 2)
+		item_slot_types[id] = item_data_bytes.decode_u8((id * item_entry_length) + 3)
+		item_types[id] = item_data_bytes.decode_u8((id * item_entry_length) + 5)
+		item_prices[id] = item_data_bytes.decode_u16((id * item_entry_length) + 8)
+		item_shop_availability[id] = item_data_bytes.decode_u8((id * item_entry_length) + 10)

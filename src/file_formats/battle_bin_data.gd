@@ -69,9 +69,17 @@ func init_from_battle_bin() -> void:
 		ability_animation_text_ids[ability_id] = ability_animation_id_bytes.decode_u8((ability_id * entry_size) + 2)
 	
 	# ability vfx header offsets
+	entry_size = 3
+	num_entries = ItemData.ItemType.CLOTH + 1
+	weapon_animation_ids.resize(num_entries)
+	var data_bytes: PackedByteArray = battle_bytes.slice(weapon_animation_ids_start, weapon_animation_ids_start + (num_entries * entry_size))
+	for id: int in data_bytes.size() / entry_size:
+		weapon_animation_ids[id] = Vector3(data_bytes.decode_u8(id * entry_size), data_bytes.decode_u8(id * entry_size) + 1, data_bytes.decode_u8(id * entry_size) + 2)
+	
+	# ability vfx header offsets
 	entry_size = 4
 	num_entries = RomReader.NUM_VFX
-	var data_bytes: PackedByteArray = battle_bytes.slice(ability_vfx_header_offsets_start, ability_vfx_header_offsets_start + (num_entries * entry_size))
+	data_bytes = battle_bytes.slice(ability_vfx_header_offsets_start, ability_vfx_header_offsets_start + (num_entries * entry_size))
 	ability_vfx_header_offsets.resize(RomReader.NUM_VFX)
 	for id: int in data_bytes.size() / entry_size:
 		ability_vfx_header_offsets[id] = data_bytes.decode_u32(id * entry_size) - 0x801c2500

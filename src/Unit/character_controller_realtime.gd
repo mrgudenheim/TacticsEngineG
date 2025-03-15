@@ -80,6 +80,9 @@ func _physics_process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if not RomReader.is_ready:
+		return
+	
 	if event.is_action_pressed(&"camera_rotate_left", true):
 		rotate_camera(-1)
 	elif event.is_action_pressed(&"camera_rotate_right", true):
@@ -92,7 +95,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		#unit.use_ability()
 	
 	if Input.is_action_just_pressed("primary_action") and unit.char_body.is_on_floor():
-			unit.use_attack()
+		unit.use_attack()
 
 func rotate_camera(dir: int) -> void:
 	if is_rotating:

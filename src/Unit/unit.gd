@@ -117,6 +117,7 @@ var ability_id: int = 0
 var ability_data: AbilityData
 
 var idle_animation_id: int = 6
+var idle_walk_animation_id: int = 6
 var taking_damage_animation_id: int = 0x32
 var knocked_out_animation_id: int = 0x34
 
@@ -184,7 +185,7 @@ func use_attack() -> void:
 		#animation_manager.unit_debug_menu.anim_id_spin.value = 0x3e * 2 # TODO look up based on equiped weapon and target relative height
 	
 	# execute atttack
-	debug_menu.anim_id_spin.value = RomReader.battle_bin_data.weapon_animation_ids[primary_weapon.item_type].y * 2 # TODO lookup based on target relative height
+	debug_menu.anim_id_spin.value = (RomReader.battle_bin_data.weapon_animation_ids[primary_weapon.item_type].y * 2) + int(is_back_facing) # TODO lookup based on target relative height
 	
 	# TODO implement proper timeout for abilities that execute using an infinite loop animation
 	# this implementation can overwrite can_move when in the middle of another ability
@@ -214,7 +215,7 @@ func use_ability(pos: Vector3) -> void:
 	if ability_data.animation_executing_id == 0:
 		#animation_executing_id = 0x3e * 2 # TODO look up based on equiped weapon and target relative height
 		#animation_manager.unit_debug_menu.anim_id_spin.value = 0x3e * 2 # TODO look up based on equiped weapon and target relative height
-		debug_menu.anim_id_spin.value = RomReader.battle_bin_data.weapon_animation_ids[primary_weapon.item_type].y * 2 # TODO lookup based on target relative height
+		debug_menu.anim_id_spin.value = (RomReader.battle_bin_data.weapon_animation_ids[primary_weapon.item_type].y * 2) + int(is_back_facing) # TODO lookup based on target relative height
 	else:
 		debug_menu.anim_id_spin.value = ability_data.animation_executing_id + int(is_back_facing)
 		
@@ -243,7 +244,8 @@ func process_targeted() -> void:
 	
 	# set being targeted frame
 	var targeted_frame_index: int = RomReader.battle_bin_data.targeted_front_frame_id[animation_manager.global_spr.seq_id]
-	animation_manager.global_animation_ptr_id = 0
+	#animation_manager.global_animation_ptr_id = 0
+	debug_menu.anim_id_spin.value = 0
 	var assembled_image: Image = animation_manager.global_shp.get_assembled_frame(targeted_frame_index, animation_manager.global_spr.spritesheet, 0, 
 		0, 0, 0)
 	animation_manager.unit_sprites_manager.sprite_primary.texture = ImageTexture.create_from_image(assembled_image)
@@ -251,15 +253,17 @@ func process_targeted() -> void:
 	await get_tree().create_timer(0.2).timeout
 	
 	# take damage animation
-	animation_manager.global_animation_ptr_id = taking_damage_animation_id
+	#animation_manager.global_animation_ptr_id = taking_damage_animation_id
+	debug_menu.anim_id_spin.value = taking_damage_animation_id
 	
 	# show result / damage numbers
 	
-	
+	# TODO await ability.vfx_completed? Or does ability_completed just need to wait to post numbers? aka WaitWeaponSheathe1/2 opcode?
 	await UnitControllerRT.unit.ability_completed
 	# show death animation
-	animation_manager.global_animation_ptr_id = knocked_out_animation_id
-	
+	#animation_manager.global_animation_ptr_id = knocked_out_animation_id
+	debug_menu.anim_id_spin.value = knocked_out_animation_id
+	idle_animation_id = knocked_out_animation_id
 	
 	knocked_out.emit()
 

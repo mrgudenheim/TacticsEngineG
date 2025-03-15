@@ -38,8 +38,8 @@ func _physics_process(delta: float) -> void:
 		return
 	
 	# Add the gravity.
-	if not unit.char_body.is_on_floor():
-		unit.char_body.velocity += unit.char_body.get_gravity() * delta
+	#if not unit.char_body.is_on_floor():
+		#unit.char_body.velocity += unit.char_body.get_gravity() * delta
 	
 	if not unit.can_move:
 		return

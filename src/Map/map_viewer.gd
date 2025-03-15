@@ -135,11 +135,21 @@ func on_map_selected(index: int) -> void:
 	new_unit.initialize_unit()
 	new_unit.char_body.global_position = middle_position + Vector3(-0.5, 0, 0)
 	new_unit.char_body.global_position = Vector3(5.5, 15, -5.5)
+	#new_unit.set_sprite_file("AGURI.SPR") # Agrias
+	new_unit.is_player_controlled = true
+	
 	controller.unit = new_unit
 	controller.velocity_set.connect(controller.unit.update_unit_facing)
 	#controller.camera_facing_changed.connect(controller.unit.update_animation_facing) # handled in controller with a call_group command
-	
 	phantom_camera.follow_target = new_unit.char_body
+	
+	# add non-player unit
+	var new_unit2: UnitData = unit_tscn.instantiate()
+	add_child(new_unit2)
+	new_unit2.initialize_unit()
+	new_unit2.char_body.global_position = middle_position + Vector3(-0.5, 0, 0)
+	new_unit2.char_body.global_position = Vector3(3.5, 15, -5.5)
+	new_unit2.set_sprite_file("ARU.SPR") # Algus
 	
 	hide_debug_ui()
 

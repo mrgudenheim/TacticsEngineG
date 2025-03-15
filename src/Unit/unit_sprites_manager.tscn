@@ -21,6 +21,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.714, 0)
 [node name="UnitSprite3D" type="Sprite3D" parent="UnitPivot"]
 transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, 0, 0.714, 0)
 pixel_size = 0.0357
+billboard = 1
 alpha_cut = 1
 texture_filter = 0
 
@@ -30,6 +31,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.714, 0)
 [node name="WepSprite3D" type="Sprite3D" parent="WepPivot"]
 transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, 0, 0.714, 0)
 pixel_size = 0.0357
+billboard = 1
 alpha_cut = 1
 texture_filter = 0
 
@@ -40,6 +42,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.714, 0)
 transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, 0, 0.714, 0)
 modulate = Color(1, 1, 1, 0.498039)
 pixel_size = 0.0357
+billboard = 1
 texture_filter = 0
 
 [node name="TextPivot" type="Node3D" parent="."]

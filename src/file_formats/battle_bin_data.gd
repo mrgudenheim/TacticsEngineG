@@ -34,7 +34,7 @@ var spritesheet_seq_id: PackedInt32Array = []
 var spritesheet_flying: PackedByteArray = [] # bool
 var spritesheet_graphic_height: PackedInt32Array = [] # pixels
 
-var targeted_front_frame_id_start: int = 0x2d9c4 # 0x0c entries, 1 byte each
+var targeted_front_frame_id_start: int = 0x2d9c4 # 0x0c entries, 1 byte each, index is seq type?
 var targeted_front_frame_id: PackedInt32Array = []
 var targeted_back_frame_id_start: int = 0x2d9d0 # 0x0c entries
 var targeted_back_frame_id: PackedInt32Array = []
@@ -93,6 +93,8 @@ func init_from_battle_bin() -> void:
 	for ability_id: int in ability_vfx_id_bytes.size() / entry_size:
 		ability_vfx_ids[ability_id] = ability_vfx_id_bytes.decode_u16(ability_id * entry_size)
 	
+	# TODO get vfx_ids for items, reactions (support and movement don't have vfx)
+	
 	# weapon/shield shp frame vertical offsets
 	entry_size = 2
 	num_entries = 0x90
@@ -111,7 +113,15 @@ func init_from_battle_bin() -> void:
 	for id: int in num_entries:
 		shp_subframe_sizes[id] = Vector2(data_bytes.decode_u32(id * entry_size), data_bytes.decode_u32((id * entry_size) + 1)) * 8
 	
-	# TODO get vfx_ids for items, reactions (support and movement don't have vfx)
+	# being targeted frame ids
+	entry_size = 1
+	num_entries = 12
+	targeted_front_frame_id.resize(num_entries)
+	targeted_back_frame_id.resize(num_entries)
+	data_bytes = battle_bytes.slice(targeted_front_frame_id_start, targeted_front_frame_id_start + (num_entries * entry_size))
+	for id: int in num_entries:
+		targeted_front_frame_id[id] = data_bytes.decode_u8(id * entry_size)
+		targeted_back_frame_id[id] = data_bytes.decode_u8((id * entry_size) + (targeted_back_frame_id_start - targeted_front_frame_id_start))
 	
 	_load_battle_bin_sprite_data()
 	

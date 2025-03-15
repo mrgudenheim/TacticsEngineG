@@ -177,4 +177,5 @@ layout_mode = 2
 size_flags_horizontal = 3
 editable = false
 
+[connection signal="input_event" from="CharacterBody3D" to="." method="_on_character_body_3d_input_event"]
 [connection signal="value_changed" from="CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/GridContainer/AnimationFpsSpinBox" to="CharacterBody3D/UnitAnimationManager" method="set_animation_fps"]

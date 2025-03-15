@@ -8,6 +8,7 @@ signal ability_assigned(id: int)
 signal ability_completed()
 signal primary_weapon_assigned(idx: int)
 signal image_changed(new_image: ImageTexture)
+signal knocked_out()
 
 var is_player_controlled: bool = false
 
@@ -114,8 +115,10 @@ var is_in_air: bool = false
 
 var ability_id: int = 0
 var ability_data: AbilityData
-var idle_animation_id: int = 6
 
+var idle_animation_id: int = 6
+var taking_damage_animation_id: int = 0x32
+var knocked_out_animation_id: int = 0x34
 
 func _ready() -> void:
 	if not RomReader.is_ready:
@@ -217,7 +220,7 @@ func use_ability(pos: Vector3) -> void:
 		
 	var new_vfx_location: Node3D = Node3D.new()
 	new_vfx_location.position = pos
-	new_vfx_location.position.y += 3.4 # TODO set position dependent on ability vfx data
+	new_vfx_location.position.y += 3.2 # TODO set position dependent on ability vfx data
 	new_vfx_location.name = "VfxLocation"
 	get_parent().add_child(new_vfx_location)
 	ability_data.display_vfx(new_vfx_location)
@@ -232,6 +235,33 @@ func use_ability(pos: Vector3) -> void:
 	animation_manager.reset_sprites()
 	debug_menu.anim_id_spin.value = idle_animation_id  + int(is_back_facing)
 	can_move = true
+
+
+func process_targeted() -> void:
+	if UnitControllerRT.unit == self:
+		return
+	
+	# set being targeted frame
+	var targeted_frame_index: int = RomReader.battle_bin_data.targeted_front_frame_id[animation_manager.global_spr.seq_id]
+	animation_manager.global_animation_ptr_id = 0
+	var assembled_image: Image = animation_manager.global_shp.get_assembled_frame(targeted_frame_index, animation_manager.global_spr.spritesheet, 0, 
+		0, 0, 0)
+	animation_manager.unit_sprites_manager.sprite_primary.texture = ImageTexture.create_from_image(assembled_image)
+	
+	await get_tree().create_timer(0.2).timeout
+	
+	# take damage animation
+	animation_manager.global_animation_ptr_id = taking_damage_animation_id
+	
+	# show result / damage numbers
+	
+	
+	await UnitControllerRT.unit.ability_completed
+	# show death animation
+	animation_manager.global_animation_ptr_id = knocked_out_animation_id
+	
+	
+	knocked_out.emit()
 
 
 func update_unit_facing(dir: Vector3) -> void:
@@ -328,3 +358,9 @@ func set_sprite_file(sprite_file_name: String) -> void:
 	debug_menu.sprite_options.select(RomReader.file_records[sprite_file_name].type_index)
 	debug_menu.sprite_options.item_selected.emit(debug_menu.sprite_options.selected)
 	debug_menu.anim_id_spin.value = idle_animation_id
+
+
+func _on_character_body_3d_input_event(camera: Node, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
+	if Input.is_action_just_pressed("secondary_action") and UnitControllerRT.unit.char_body.is_on_floor():
+		UnitControllerRT.unit.use_ability(char_body.position)
+		process_targeted()

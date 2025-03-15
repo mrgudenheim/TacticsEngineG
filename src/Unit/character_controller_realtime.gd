@@ -27,7 +27,7 @@ const CameraFacingVectors: Dictionary[Directions, Vector3] = {
 
 
 var is_rotating: bool = false
-var unit: UnitData
+static var unit: UnitData
 
 @export var phantom_camera: PhantomCamera3D
 static var camera_facing: Directions = Directions.NORTHWEST

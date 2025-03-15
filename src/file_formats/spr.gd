@@ -12,6 +12,11 @@ var shp_name: String = ""
 var seq_name: String = ""
 var sprite_id: int = 0
 
+var shp_id: int = 0
+var seq_id: int = 0
+var flying_flag: int = 0
+var graphic_height: int = 0
+
 
 func _init(new_file_name: String) -> void:
 	file_name = new_file_name
@@ -254,10 +259,10 @@ func set_spritesheet_data(new_sprite_id: int) -> void:
 	var spritesheet_data_start: int = 0x2d748 + (sprite_id * spritesheet_data_length)
 	
 	var spritesheet_data_bytes: PackedByteArray = battle_bin_bytes.slice(spritesheet_data_start, spritesheet_data_start + spritesheet_data_length)
-	var shp_id: int = spritesheet_data_bytes[0]
-	var seq_id: int = spritesheet_data_bytes[1]
-	var flying_flag: int = spritesheet_data_bytes[2]
-	var graphic_height: int = spritesheet_data_bytes[3]
+	shp_id = spritesheet_data_bytes[0]
+	seq_id = spritesheet_data_bytes[1]
+	flying_flag = spritesheet_data_bytes[2]
+	graphic_height = spritesheet_data_bytes[3]
 	
 	match shp_id:
 		0:

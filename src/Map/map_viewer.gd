@@ -6,7 +6,7 @@ static var main_camera: Camera3D
 @export var phantom_camera: PhantomCamera3D
 @export var load_rom_button: LoadRomButton
 @export var texture_viewer: Sprite3D
-@export var camera_controller: CameraController
+#@export var camera_controller: CameraController
 @export var background_gradient: TextureRect
 
 @export var menu_list: Control

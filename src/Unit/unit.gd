@@ -138,6 +138,8 @@ func initialize_unit() -> void:
 	# 0x9b stasis sword
 	set_ability(0x9b)
 	set_primary_weapon(1)
+	
+	update_unit_facing(FacingVectors[Facings.SOUTH])
 
 
 func _physics_process(delta: float) -> void:

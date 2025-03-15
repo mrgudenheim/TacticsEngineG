@@ -30,24 +30,24 @@ func _ready() -> void:
 	camera.size = zoom
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed(&"zoom_in", false, true):  # Wheel Up Event
-		zoom_camera(1)
-	elif event.is_action_pressed(&"zoom_out", false, true):  # Wheel Down Event
-		zoom_camera(-1)
-	elif event is InputEventMagnifyGesture:  # Zoom gesture on touchscreens
-		if event.factor >= 1:  # Zoom in
-			zoom_camera(1)
-		else:  # Zoom out
-			zoom_camera(-1)
-	elif event.is_action(&"camera_rotate_left", true):
-		rotate_camera(-1)
-	elif event.is_action(&"camera_rotate_right", true):
-		rotate_camera(1)
-	else:
-		var dir := Input.get_vector(&"camera_left", &"camera_right", &"camera_up", &"camera_down")
-		if dir != Vector2.ZERO:
-			pan_camera(dir)
+#func _unhandled_input(event: InputEvent) -> void:
+	#if event.is_action_pressed(&"zoom_in", false, true):  # Wheel Up Event
+		#zoom_camera(1)
+	#elif event.is_action_pressed(&"zoom_out", false, true):  # Wheel Down Event
+		#zoom_camera(-1)
+	#elif event is InputEventMagnifyGesture:  # Zoom gesture on touchscreens
+		#if event.factor >= 1:  # Zoom in
+			#zoom_camera(1)
+		#else:  # Zoom out
+			#zoom_camera(-1)
+	#elif event.is_action(&"camera_rotate_left", true):
+		#rotate_camera(-1)
+	#elif event.is_action(&"camera_rotate_right", true):
+		#rotate_camera(1)
+	#else:
+		#var dir := Input.get_vector(&"camera_left", &"camera_right", &"camera_up", &"camera_down")
+		#if dir != Vector2.ZERO:
+			#pan_camera(dir)
 
 
 func zoom_camera(dir: int) -> void:

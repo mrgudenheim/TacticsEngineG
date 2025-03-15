@@ -54,12 +54,11 @@ material = SubResource("StandardMaterial3D_p2e2h")
 [sub_resource type="BoxMesh" id="BoxMesh_cqdh8"]
 material = SubResource("StandardMaterial3D_tjj5r")
 
-[node name="MapViewer" type="Node3D" node_paths=PackedStringArray("phantom_camera", "load_rom_button", "texture_viewer", "camera_controller", "background_gradient", "menu_list", "map_dropdown", "orthographic_check", "menu_reminder", "map_size_label", "maps", "units", "controller", "icon_counter")]
+[node name="MapViewer" type="Node3D" node_paths=PackedStringArray("phantom_camera", "load_rom_button", "texture_viewer", "background_gradient", "menu_list", "map_dropdown", "orthographic_check", "menu_reminder", "map_size_label", "maps", "units", "controller", "icon_counter")]
 script = ExtResource("1_ojbyw")
 phantom_camera = NodePath("PhantomCamera3D")
 load_rom_button = NodePath("DebugOptions/MarginContainer/VBoxContainer2/LoadRom")
 texture_viewer = NodePath("SpriteViewer")
-camera_controller = NodePath("CameraController")
 background_gradient = NodePath("BackgroundCanvasLayer/TextureRect")
 menu_list = NodePath("DebugOptions/MarginContainer/VBoxContainer2/VBoxContainer")
 map_dropdown = NodePath("DebugOptions/MarginContainer/VBoxContainer2/VBoxContainer/MapDropdown")

@@ -4,13 +4,16 @@ class_name ItemData
 
 var name: String = "Item name"
 var id: int = 0
-var sprite_id: int = 0
+var item_graphic_id: int = 0
 var palette_id: int = 0
 var min_level: int = 0
 var slot_type: SlotType
 var item_type: ItemType = ItemType.FISTS
 var price: int = 100
 var shop_availability_start: int = 0
+
+var wep_frame_v_offset: int = 0
+var wep_frame_palette: int = 0
 
 enum SlotType {
 	WEAPON = 0x80,
@@ -66,11 +69,15 @@ func _init(idx: int = 0) -> void:
 	item_type = RomReader.scus_data.item_types[idx]
 	slot_type = RomReader.scus_data.item_slot_types[idx]
 	
-	sprite_id = RomReader.scus_data.item_sprite_ids[idx]
+	item_graphic_id = RomReader.scus_data.item_sprite_ids[idx]
 	palette_id = RomReader.scus_data.item_palettes[idx]
 	min_level = RomReader.scus_data.item_min_levels[idx]
 	price = RomReader.scus_data.item_prices[idx]
 	shop_availability_start = RomReader.scus_data.item_shop_availability[idx]
+	
+	if idx < 0x90: # weapons and shields
+		wep_frame_palette = RomReader.battle_bin_data.weapon_graphic_palettes[idx]
+		wep_frame_v_offset = RomReader.battle_bin_data.weapon_frames_vertical_offsets[idx]
 	
 	#if idx >= 1:
 		#item_type = RomReader.scus_data.item_types[idx - 1]

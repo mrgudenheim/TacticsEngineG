@@ -17,14 +17,16 @@ var ability_animation_text_ids: PackedInt32Array = [] # index into BATTLE_ACTION
 var weapon_animation_ids_start: int = 0x2d364 # 3 bytes per entry, 1 entry per item type
 var weapon_animation_ids: PackedVector3Array = [] # attack high, mid, low - multiplied by 2 (+1 if unit is backfacing) to get true animation, Fists/Unarmed used by MON
 
-var item_graphic_data_start: int = 0x2d3e4
-var item_graphic_palettes: PackedInt32Array = [] # 0xF0 - WEP1 Palette, 0x0F - WEP2 Palette
-var item_graphic_ids: PackedInt32Array = [] 
+var weapon_graphic_data_start: int = 0x2d3e4
+var weapon_graphic_palettes: PackedInt32Array = [] # 0xF0 - WEP1 Palette, 0x0F - WEP2 Palette
+var weapon_frames_vertical_offsets: PackedInt32Array = [] # WEP.SHP vertical offsets
 
 var unit_subframe_sizes_start: int = 0x2d53c # 8 bytes each, two uint16 per entry, 32 entries
 var unit_subframe_sizes: PackedVector2Array = []
 var wep_eff_subframe_sizes_start: int = 0x2d6c8 # 8 bytes each, two uint16 per entry, 32 entries
 var wep_eff_subframe_sizes: PackedVector2Array = []
+var shp_subframe_sizes_start: int = 0x2d6c8 # 8 bytes each, two uint32 per entry, 15 entries
+var shp_subframe_sizes: PackedVector2Array = []
 
 var spritesheet_data_start: int = 0x2d748 # 4 bytes each
 var spritesheet_shp_id: PackedInt32Array = [] # Type 1, 2, cyoko, mon, other, ruka, arute, kanzen
@@ -91,7 +93,25 @@ func init_from_battle_bin() -> void:
 	for ability_id: int in ability_vfx_id_bytes.size() / entry_size:
 		ability_vfx_ids[ability_id] = ability_vfx_id_bytes.decode_u16(ability_id * entry_size)
 	
-	# TODO get vfx_ids for items, reations (support and movement don't have vfx)
+	# weapon/shield shp frame vertical offsets
+	entry_size = 2
+	num_entries = 0x90
+	weapon_graphic_palettes.resize(num_entries)
+	weapon_frames_vertical_offsets.resize(num_entries)
+	data_bytes = battle_bytes.slice(weapon_graphic_data_start, weapon_graphic_data_start + (num_entries * entry_size))
+	for id: int in num_entries:
+		weapon_graphic_palettes[id] = data_bytes.decode_u8(id * entry_size)
+		weapon_frames_vertical_offsets[id] = data_bytes.decode_u8((id * entry_size) + 1) * 8
+	
+	# WEP and EFF subframe sizes
+	entry_size = 8
+	num_entries = 15
+	shp_subframe_sizes.resize(num_entries)
+	data_bytes = battle_bytes.slice(shp_subframe_sizes_start, shp_subframe_sizes_start + (num_entries * entry_size))
+	for id: int in num_entries:
+		shp_subframe_sizes[id] = Vector2(data_bytes.decode_u32(id * entry_size), data_bytes.decode_u32((id * entry_size) + 1)) * 8
+	
+	# TODO get vfx_ids for items, reactions (support and movement don't have vfx)
 	
 	_load_battle_bin_sprite_data()
 	

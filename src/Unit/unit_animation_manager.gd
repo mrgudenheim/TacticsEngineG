@@ -55,20 +55,21 @@ var opcode_frame_offset: int = 0
 
 
 @export var weapon_shp_num: int = 1 # TODO fix for type2
-var weapon_v_offset: int = 0: # v_offset to lookup for weapon frames
-	get:
-		return weapon_table[weapon_id][3] as int
+var weapon_v_offset: int = 0 # v_offset to lookup for weapon frames
+#var weapon_v_offset: int = 0: # v_offset to lookup for weapon frames
+	#get:
+		#return weapon_table[weapon_id][3] as int
 var effect_type: int = 1
 
 
-var global_weapon_frame_offset_index: int = 0: # index to lookup frame offset for wep and eff animations
-	get:
-		return global_weapon_frame_offset_index
-	set(value):
-		if (value != global_weapon_frame_offset_index):
-			global_weapon_frame_offset_index = value
-			if global_seq != null: # check if data is ready
-				_on_animation_changed()
+#var global_weapon_frame_offset_index: int = 0: # index to lookup frame offset for wep and eff animations
+	#get:
+		#return global_weapon_frame_offset_index
+	#set(value):
+		#if (value != global_weapon_frame_offset_index):
+			#global_weapon_frame_offset_index = value
+			#if global_seq != null: # check if data is ready
+				#_on_animation_changed()
 
 @export var global_animation_id: int = 0:
 	get:
@@ -231,7 +232,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				var wep_file_name: String = "WEP" + str(weapon_shp_num)
 				new_animation.seq = wep_seq
 				new_animation.shp = wep_shp
-				new_animation.weapon_frame_offset_index = global_weapon_frame_offset_index
+				new_animation.weapon_frame_offset_index = RomReader.items[weapon_id].item_type
 				new_animation.sequence = new_animation.seq.sequences[new_animation.seq.sequence_pointers[seq_part.parameters[1]]]
 				new_animation.image = wep_spr.spritesheet
 				new_animation.is_primary_anim = false
@@ -243,7 +244,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				var eff_file_name: String = "EFF" + str(effect_type)
 				new_animation.seq = eff_seq
 				new_animation.shp = eff_shp
-				new_animation.weapon_frame_offset_index = global_weapon_frame_offset_index
+				new_animation.weapon_frame_offset_index = RomReader.items[weapon_id].item_type
 				new_animation.sequence = new_animation.seq.sequences[new_animation.seq.sequence_pointers[seq_part.parameters[1]]]
 				new_animation.image = eff_spr.spritesheet
 				new_animation.is_primary_anim = false
@@ -439,18 +440,18 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 	return next_seq_part_id
 
 
-func get_animation_frame_offset(weapon_frame_offset_index: int, shp: Shp, back_faced_offset: int) -> int:
+func get_animation_frame_offset(local_frame_offset_index: int, shp: Shp, back_faced_offset: int) -> int:
 	if ((shp.file_name.contains("WEP") or shp.file_name.contains("EFF"))
-		and shp.zero_frames.size() > 0):
-		return shp.zero_frames[weapon_frame_offset_index]
+			and shp.zero_frames.size() > 0):
+		return shp.zero_frames[local_frame_offset_index]
 	else:
-		if is_back_facing:
+		if is_back_facing: # TODO how to handle combination of weapon and back facing?
 			return back_faced_offset
 		else:
 			return 0
 
 
-func get_sub_animation(length:int, sub_animation_end_part_id:int, parent_animation:Sequence) -> Sequence:
+func get_sub_animation(length: int, sub_animation_end_part_id: int, parent_animation: Sequence) -> Sequence:
 	var sub_anim_length: int = 0
 	var sub_anim: Sequence = Sequence.new()
 	var previous_anim_part_id: int = sub_animation_end_part_id - 1
@@ -495,7 +496,7 @@ func get_animation_from_globals() -> FftAnimation:
 	fft_animation.seq = global_seq
 	fft_animation.shp = global_shp
 	fft_animation.sequence = global_seq.sequences[global_animation_id]
-	fft_animation.weapon_frame_offset_index = global_weapon_frame_offset_index
+	fft_animation.weapon_frame_offset_index = RomReader.items[weapon_id].item_type
 	fft_animation.image = global_spr.spritesheet
 	fft_animation.flipped_h = is_right_facing
 	fft_animation.flipped_v = false
@@ -507,8 +508,8 @@ func get_animation_from_globals() -> FftAnimation:
 
 
 func _on_weapon_options_item_selected(index: int) -> void:
-	global_weapon_frame_offset_index = weapon_table[index][2] as int
-	weapon_v_offset = weapon_table[index][3] as int
+	#global_weapon_frame_offset_index = RomReader.items[index].item_type
+	weapon_v_offset = RomReader.items[index].wep_frame_v_offset
 	_on_animation_changed()
 
 

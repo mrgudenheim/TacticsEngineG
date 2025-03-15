@@ -212,7 +212,7 @@ func set_data_from_shp_bytes(bytes: PackedByteArray) -> void:
 	if (file_name.begins_with("WEP") or file_name.begins_with("EFF")):
 		attack_start_index = 9999; # these types do not have a second (lower) half
 		
-		var initial_offset: int = 6 # skip first bytes and unarmed
+		var initial_offset: int = 4 # skip first bytes
 		for index in ((section1_length - initial_offset) / 2):
 			var zero_frame: int = bytes.decode_u16(initial_offset + (index*2))
 			zero_frames.append(zero_frame)

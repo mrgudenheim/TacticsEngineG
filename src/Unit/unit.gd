@@ -6,6 +6,7 @@ extends Node3D
 
 signal ability_assigned(id: int)
 signal ability_completed()
+signal primary_weapon_assigned(idx: int)
 
 @export var controller: UnitControllerRT
 @export var animation_manager: UnitAnimationManager
@@ -266,11 +267,8 @@ func set_ability(new_ability_id: int) -> void:
 		ability_data.vfx_data.init_from_file()
 	
 	debug_menu.sprite_viewer.texture = ImageTexture.create_from_image(ability_data.vfx_data.vfx_spr.spritesheet)
-	
 	ability_assigned.emit(new_ability_id)
 
 func set_primary_weapon(new_weapon_id: int) -> void:
-	#ability_id = new_ability_id
 	primary_weapon = RomReader.items[new_weapon_id]
-	
-	#ability_assigned.emit(new_ability_id)
+	primary_weapon_assigned.emit(new_weapon_id)

@@ -3,6 +3,16 @@
 # About
 This engine is intended to create a game similar to Final Fantasy Tactics (FFT), including reading data from an FFT ROM
 
+
+Controls:
+WASD: Move
+Q/E: Rotate camera
+Space: Jump
+Right Click: Use ability (only Stasis Sword vfx work)
+Left Click: Attack (not implemented)
+Escape: Open/Close debug menus
+
+
 # Features
 - Displays maps
 - Displays unit animations
@@ -12,7 +22,7 @@ This engine is intended to create a game similar to Final Fantasy Tactics (FFT),
 ...
 
 # Limitations and Notes
-...
+- A new map may need to be manually loaded (through the debug menu) if the players falls off the edge or through a hole. Also it may be impossible to reach Algus on some maps.
 
 # Future Improvements
 ...

@@ -102,6 +102,8 @@ func _on_sprite_option_selected(index) -> void:
 	animation_manager.other_spr = RomReader.sprs[RomReader.file_records["OTHER.SPR"].type_index]
 	animation_manager.other_shp = RomReader.shps[RomReader.file_records["OTHER.SHP"].type_index]
 	
+	animation_manager._on_animation_changed()
+	
 	spritesheet_changed.emit(ImageTexture.create_from_image(spr.spritesheet)) # TODO hook up to sprite for debug purposes
 	
 	#sprite_viewer.texture = ImageTexture.create_from_image(spr.spritesheet)

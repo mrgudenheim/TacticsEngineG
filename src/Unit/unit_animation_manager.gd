@@ -56,16 +56,6 @@ var opcode_frame_offset: int = 0
 var weapon_v_offset: int = 0 # v_offset to lookup for weapon frames
 var effect_type: int = 1
 
-
-#var global_weapon_frame_offset_index: int = 0: # index to lookup frame offset for wep and eff animations
-	#get:
-		#return global_weapon_frame_offset_index
-	#set(value):
-		#if (value != global_weapon_frame_offset_index):
-			#global_weapon_frame_offset_index = value
-			#if global_seq != null: # check if data is ready
-				#_on_animation_changed()
-
 @export var global_animation_id: int = 0:
 	get:
 		return global_animation_id

@@ -9,6 +9,8 @@ signal ability_completed()
 signal primary_weapon_assigned(idx: int)
 signal image_changed(new_image: ImageTexture)
 
+var is_player_controlled: bool = false
+
 @export var char_body: CharacterBody3D
 @export var animation_manager: UnitAnimationManager
 @export var debug_menu: UnitDebugMenu
@@ -125,15 +127,22 @@ func _ready() -> void:
 func initialize_unit() -> void:
 	debug_menu.populate_options()
 	
-	debug_menu.sprite_options.select(RomReader.file_records["RAMUZA.SPR"].type_index)
-	debug_menu.sprite_options.item_selected.emit(debug_menu.sprite_options.selected)
-	debug_menu.anim_id_spin.value = idle_animation_id
+	set_sprite_file("RAMUZA.SPR")
 	
 	# 1 cure
 	# 0xc8 blood suck
 	# 0x9b stasis sword
 	set_ability(0x9b)
 	set_primary_weapon(1)
+
+
+func _physics_process(delta: float) -> void:
+	# Add the gravity.
+	if not char_body.is_on_floor():
+		char_body.velocity += char_body.get_gravity() * delta
+	
+	if not is_player_controlled:
+		char_body.move_and_slide()
 
 
 func _process(delta: float) -> void:
@@ -273,6 +282,19 @@ func set_ability(new_ability_id: int) -> void:
 	#debug_menu.sprite_viewer.texture = ImageTexture.create_from_image(ability_data.vfx_data.vfx_spr.spritesheet)
 	ability_assigned.emit(new_ability_id)
 
+
 func set_primary_weapon(new_weapon_id: int) -> void:
 	primary_weapon = RomReader.items[new_weapon_id]
 	primary_weapon_assigned.emit(new_weapon_id)
+
+
+func set_sprite(sprite_id: int) -> void:
+	debug_menu.sprite_options.select(sprite_id)
+	debug_menu.sprite_options.item_selected.emit(debug_menu.sprite_options.selected)
+	debug_menu.anim_id_spin.value = idle_animation_id
+
+
+func set_sprite_file(sprite_file_name: String) -> void:
+	debug_menu.sprite_options.select(RomReader.file_records[sprite_file_name].type_index)
+	debug_menu.sprite_options.item_selected.emit(debug_menu.sprite_options.selected)
+	debug_menu.anim_id_spin.value = idle_animation_id

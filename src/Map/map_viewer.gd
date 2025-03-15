@@ -151,6 +151,8 @@ func on_map_selected(index: int) -> void:
 	new_unit2.char_body.global_position = Vector3(3.5, 15, -5.5)
 	new_unit2.set_sprite_file("ARU.SPR") # Algus
 	
+	new_unit2.knocked_out.connect(load_random_map)
+	
 	hide_debug_ui()
 
 
@@ -218,3 +220,11 @@ func instantiate_map(map_idx: int, mirror: bool) -> Node3D:
 func clear_maps() -> void:
 	for child: Node in maps.get_children():
 		child.queue_free()
+
+
+func load_random_map() -> void:
+	await get_tree().create_timer(2).timeout
+	
+	var new_map_idx: int = randi_range(1, map_dropdown.item_count - 1)
+	map_dropdown.select(new_map_idx)
+	map_dropdown.item_selected.emit(new_map_idx)

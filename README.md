@@ -16,6 +16,8 @@ Right Click: Use ability (only Stasis Sword vfx work)
 
 Left Click: Attack (not implemented)
 
+Scroll Wheel: Zoom in/out
+
 Escape: Open/Close debug menus
 
 

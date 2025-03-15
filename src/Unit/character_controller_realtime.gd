@@ -90,7 +90,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	#elif Input.is_action_just_pressed("primary_action") and is_on_floor() and unit.can_move:
 		#push_warning("primary_action_clicked")
 		#unit.use_ability()
-
+	
+	if Input.is_action_just_pressed("primary_action") and unit.char_body.is_on_floor():
+			unit.use_attack()
 
 func rotate_camera(dir: int) -> void:
 	if is_rotating:

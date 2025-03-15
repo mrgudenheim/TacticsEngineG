@@ -165,6 +165,36 @@ func _process(delta: float) -> void:
 		debug_menu.anim_id_spin.value = idle_animation
 
 
+func use_attack() -> void:
+	can_move = false
+	push_warning("using attack: " + primary_weapon.name)
+	#push_warning("Animations: " + str(PackedInt32Array([ability_data.animation_start_id, ability_data.animation_charging_id, ability_data.animation_executing_id])))
+	#if ability_data.animation_start_id != 0:
+		#debug_menu.anim_id_spin.value = ability_data.animation_start_id + int(is_back_facing)
+		#await animation_manager.animation_completed
+	#
+	#if ability_data.animation_charging_id != 0:
+		#debug_menu.anim_id_spin.value = ability_data.animation_charging_id + int(is_back_facing)
+		#await get_tree().create_timer(0.1 + (ability_data.ticks_charge_time * 0.1)).timeout
+	
+		#animation_executing_id = 0x3e * 2 # TODO look up based on equiped weapon and target relative height
+		#animation_manager.unit_debug_menu.anim_id_spin.value = 0x3e * 2 # TODO look up based on equiped weapon and target relative height
+	
+	# execute atttack
+	debug_menu.anim_id_spin.value = RomReader.battle_bin_data.weapon_animation_ids[primary_weapon.item_type].y * 2 # TODO lookup based on target relative height
+	
+	# TODO implement proper timeout for abilities that execute using an infinite loop animation
+	# this implementation can overwrite can_move when in the middle of another ability
+	get_tree().create_timer(2).timeout.connect(func() -> void: can_move = true) 
+		
+	await animation_manager.animation_completed
+
+	#ability_completed.emit()
+	animation_manager.reset_sprites()
+	debug_menu.anim_id_spin.value = idle_animation_id  + int(is_back_facing)
+	can_move = true
+
+
 func use_ability(pos: Vector3) -> void:
 	can_move = false
 	push_warning("using: " + ability_data.name)

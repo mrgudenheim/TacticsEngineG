@@ -2,7 +2,7 @@ class_name ScusData
 
 # https://ffhacktics.com/wiki/SCUS_942.21_Data_Tables#MURATA_Main_Program_Data
 
-# Job Data
+# Job Data # 800610b8 in RAM
 class JobData:
 	var skillset_id: int = 0
 	#var innate_abilities: PackedInt32Array = []

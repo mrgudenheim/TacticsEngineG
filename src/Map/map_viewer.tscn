@@ -54,7 +54,7 @@ material = SubResource("StandardMaterial3D_p2e2h")
 [sub_resource type="BoxMesh" id="BoxMesh_cqdh8"]
 material = SubResource("StandardMaterial3D_tjj5r")
 
-[node name="MapViewer" type="Node3D" node_paths=PackedStringArray("phantom_camera", "load_rom_button", "texture_viewer", "camera_controller", "background_gradient", "menu_list", "map_dropdown", "orthographic_check", "menu_reminder", "map_size_label", "maps", "controller")]
+[node name="MapViewer" type="Node3D" node_paths=PackedStringArray("phantom_camera", "load_rom_button", "texture_viewer", "camera_controller", "background_gradient", "menu_list", "map_dropdown", "orthographic_check", "menu_reminder", "map_size_label", "maps", "units", "controller", "icon_counter")]
 script = ExtResource("1_ojbyw")
 phantom_camera = NodePath("PhantomCamera3D")
 load_rom_button = NodePath("DebugOptions/MarginContainer/VBoxContainer2/LoadRom")
@@ -68,8 +68,10 @@ menu_reminder = NodePath("DebugOptions/MarginContainer/VBoxContainer2/MenuRemind
 map_size_label = NodePath("DebugOptions/MarginContainer/VBoxContainer2/VBoxContainer/MapSize")
 maps = NodePath("Maps")
 map_tscn = ExtResource("8_0n3mn")
+units = NodePath("Units")
 unit_tscn = ExtResource("8_pysrt")
 controller = NodePath("CharacterController")
+icon_counter = NodePath("IconGridContainer")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_njvnp")
@@ -196,6 +198,8 @@ mesh = SubResource("BoxMesh_cqdh8")
 
 [node name="Maps" type="Node3D" parent="."]
 
+[node name="Units" type="Node3D" parent="."]
+
 [node name="EastLabel3D" type="Label3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, 0)
 visible = false
@@ -223,3 +227,9 @@ visible = false
 pixel_size = 0.05
 billboard = 1
 text = "North (0, 0, -1)"
+
+[node name="IconGridContainer" type="GridContainer" parent="."]
+layout_direction = 3
+offset_right = 40.0
+offset_bottom = 40.0
+columns = 5

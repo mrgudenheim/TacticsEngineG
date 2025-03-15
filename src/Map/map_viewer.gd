@@ -18,13 +18,17 @@ static var main_camera: Camera3D
 @export var maps: Node3D
 @export var map_tscn: PackedScene
 
+@export var units: Node3D
 @export var unit_tscn: PackedScene
 @export var controller: UnitControllerRT
+
+@export var icon_counter: GridContainer
 
 @export var mirror: bool = true
 var walled_maps: PackedInt32Array = [
 	3,
 	4,
+	7,
 	8,
 	10,
 	11,
@@ -116,6 +120,7 @@ func on_map_selected(index: int) -> void:
 	texture_viewer.texture = map_data.albedo_texture
 	
 	clear_maps()
+	clear_units()
 	
 	maps.add_child(instantiate_map(index, not walled_maps.has(index)))
 	
@@ -131,7 +136,7 @@ func on_map_selected(index: int) -> void:
 	
 	# add player unit
 	var new_unit: UnitData = unit_tscn.instantiate()
-	add_child(new_unit)
+	units.add_child(new_unit)
 	new_unit.initialize_unit()
 	new_unit.char_body.global_position = middle_position + Vector3(-0.5, 0, 0)
 	new_unit.char_body.global_position = Vector3(5.5, 15, -5.5)
@@ -145,13 +150,14 @@ func on_map_selected(index: int) -> void:
 	
 	# add non-player unit
 	var new_unit2: UnitData = unit_tscn.instantiate()
-	add_child(new_unit2)
+	units.add_child(new_unit2)
 	new_unit2.initialize_unit()
 	new_unit2.char_body.global_position = middle_position + Vector3(-0.5, 0, 0)
 	new_unit2.char_body.global_position = Vector3(3.5, 15, -5.5)
 	new_unit2.set_sprite_file("ARU.SPR") # Algus
 	
 	new_unit2.knocked_out.connect(load_random_map)
+	new_unit2.knocked_out.connect(increment_counter)
 	
 	hide_debug_ui()
 
@@ -222,9 +228,23 @@ func clear_maps() -> void:
 		child.queue_free()
 
 
-func load_random_map() -> void:
-	await get_tree().create_timer(2).timeout
+func clear_units() -> void:
+	for child: Node in units.get_children():
+		child.queue_free()
+
+
+func load_random_map(_unit: UnitData) -> void:
+	await get_tree().create_timer(3).timeout
 	
 	var new_map_idx: int = randi_range(1, map_dropdown.item_count - 1)
 	map_dropdown.select(new_map_idx)
 	map_dropdown.item_selected.emit(new_map_idx)
+
+
+func increment_counter(unit: UnitData) -> void:
+	var knocked_out_icon: Image = unit.animation_manager.global_shp.get_assembled_frame(0x17, unit.animation_manager.global_spr.spritesheet, 0, 0, 0, 0)
+	knocked_out_icon = knocked_out_icon.get_region(Rect2i(40, 50, 40, 40))
+	
+	var icon_rect: TextureRect = TextureRect.new()
+	icon_rect.texture = ImageTexture.create_from_image(knocked_out_icon)
+	icon_counter.add_child(icon_rect)

@@ -8,7 +8,7 @@ signal ability_assigned(id: int)
 signal ability_completed()
 signal primary_weapon_assigned(idx: int)
 signal image_changed(new_image: ImageTexture)
-signal knocked_out()
+signal knocked_out(unit: UnitData)
 
 var is_player_controlled: bool = false
 
@@ -268,7 +268,7 @@ func process_targeted() -> void:
 	debug_menu.anim_id_spin.value = knocked_out_animation_id
 	idle_animation_id = knocked_out_animation_id
 	
-	knocked_out.emit()
+	knocked_out.emit(self)
 
 
 func update_unit_facing(dir: Vector3) -> void:

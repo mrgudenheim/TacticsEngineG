@@ -244,6 +244,9 @@ func process_targeted() -> void:
 	
 	# set being targeted frame
 	var targeted_frame_index: int = RomReader.battle_bin_data.targeted_front_frame_id[animation_manager.global_spr.seq_id]
+	if is_back_facing:
+		targeted_frame_index = RomReader.battle_bin_data.targeted_back_frame_id[animation_manager.global_spr.seq_id]
+	
 	#animation_manager.global_animation_ptr_id = 0
 	debug_menu.anim_id_spin.value = 0
 	var assembled_image: Image = animation_manager.global_shp.get_assembled_frame(targeted_frame_index, animation_manager.global_spr.spritesheet, 0, 

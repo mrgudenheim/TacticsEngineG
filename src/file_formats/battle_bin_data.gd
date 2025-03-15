@@ -118,7 +118,7 @@ func init_from_battle_bin() -> void:
 	num_entries = 12
 	targeted_front_frame_id.resize(num_entries)
 	targeted_back_frame_id.resize(num_entries)
-	data_bytes = battle_bytes.slice(targeted_front_frame_id_start, targeted_front_frame_id_start + (num_entries * entry_size))
+	data_bytes = battle_bytes.slice(targeted_front_frame_id_start, targeted_front_frame_id_start + (num_entries * entry_size * 2))
 	for id: int in num_entries:
 		targeted_front_frame_id[id] = data_bytes.decode_u8(id * entry_size)
 		targeted_back_frame_id[id] = data_bytes.decode_u8((id * entry_size) + (targeted_back_frame_id_start - targeted_front_frame_id_start))

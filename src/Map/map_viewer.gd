@@ -147,6 +147,8 @@ func on_map_selected(index: int) -> void:
 	controller.velocity_set.connect(controller.unit.update_unit_facing)
 	#controller.camera_facing_changed.connect(controller.unit.update_animation_facing) # handled in controller with a call_group command
 	phantom_camera.follow_target = new_unit.char_body
+	controller.rotate_camera(1)
+	#controller.rotate_phantom_camera(Vector3(-26.54, 45, 0))
 	
 	# add non-player unit
 	var new_unit2: UnitData = unit_tscn.instantiate()

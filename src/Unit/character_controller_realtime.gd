@@ -30,10 +30,13 @@ var is_rotating: bool = false
 var unit: UnitData
 
 @export var phantom_camera: PhantomCamera3D
-var camera_facing: Directions = Directions.NORTHWEST
+static var camera_facing: Directions = Directions.NORTHWEST
 
 
 func _physics_process(delta: float) -> void:
+	if not is_instance_valid(unit):
+		return
+	
 	# Add the gravity.
 	if not unit.char_body.is_on_floor():
 		unit.char_body.velocity += unit.char_body.get_gravity() * delta
@@ -132,3 +135,4 @@ func rotate_phantom_camera(new_rotation_degress: Vector3) -> void:
 	if new_camera_facing != camera_facing:
 		camera_facing = new_camera_facing
 		camera_facing_changed.emit()
+		get_tree().call_group("Units", "update_animation_facing", CameraFacingVectors[camera_facing])

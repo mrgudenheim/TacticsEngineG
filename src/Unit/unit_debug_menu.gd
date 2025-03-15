@@ -1,8 +1,10 @@
 class_name UnitDebugMenu
 extends Control
 
-var unit: UnitData
-var unit_controller: UnitControllerRT
+signal spritesheet_changed(new_image: ImageTexture)
+
+@export var unit: UnitData
+@export var unit_char_body: CharacterBody3D
 @export var animation_manager: UnitAnimationManager
 
 @export var sprite_options: OptionButton
@@ -15,14 +17,10 @@ var unit_controller: UnitControllerRT
 @export var ability_id_spin: SpinBox
 @export var ability_name_line: LineEdit
 
-@export var sprite_viewer: Sprite3D
+#@export var sprite_viewer: Sprite3D
 
 
 func _ready() -> void:
-	unit_controller = get_parent() as UnitControllerRT
-	unit = get_parent().get_parent() as UnitData
-	
-	RomReader.rom_loaded.connect(populate_sprite_options)
 	sprite_options.item_selected.connect(_on_sprite_option_selected)
 	anim_id_spin.value_changed.connect(_on_anim_id_spin_value_changed)
 	weapon_options.item_selected.connect(func(idx) -> void: 
@@ -37,13 +35,11 @@ func _ready() -> void:
 	unit.primary_weapon_assigned.connect(func(id): weapon_options.select(id))
 
 func _process(delta: float) -> void:
-	position = MapViewer.main_camera.unproject_position(unit_controller.position) + Vector2(50, -50)
+	position = MapViewer.main_camera.unproject_position(unit_char_body.position) + Vector2(50, -50)
 
 
 func populate_options() -> void:
 	weapon_options.clear()
-	#for weapon_index: int in UnitAnimationManager.weapon_table.size():
-		#weapon_options.add_item(str(UnitAnimationManager.weapon_table[weapon_index][0]))
 	for weapon_index: int in RomReader.NUM_WEAPONS:
 		weapon_options.add_item(str(weapon_index) + " - " + RomReader.items[weapon_index].name + " (" + RomReader.fft_text.equipment_types[RomReader.items[weapon_index].item_type] + ")")
 	
@@ -52,15 +48,16 @@ func populate_options() -> void:
 		if UnitAnimationManager.item_list[item_list_index].size() < 2: # ignore blank lines
 			break
 		item_options.add_item(str(UnitAnimationManager.item_list[item_list_index][1]))
+	
+	sprite_options.clear()
+	for spr: Spr in RomReader.sprs:
+		sprite_options.add_item(spr.file_name)
 
 
 func populate_sprite_options() -> void:
 	sprite_options.clear()
 	for spr: Spr in RomReader.sprs:
 		sprite_options.add_item(spr.file_name)
-	
-	sprite_options.select(RomReader.file_records["RAMUZA.SPR"].type_index)
-	sprite_options.item_selected.emit(sprite_options.selected)
 
 
 func enable_ui() -> void:
@@ -105,7 +102,9 @@ func _on_sprite_option_selected(index) -> void:
 	animation_manager.other_spr = RomReader.sprs[RomReader.file_records["OTHER.SPR"].type_index]
 	animation_manager.other_shp = RomReader.shps[RomReader.file_records["OTHER.SHP"].type_index]
 	
-	sprite_viewer.texture = ImageTexture.create_from_image(spr.spritesheet)
+	spritesheet_changed.emit(ImageTexture.create_from_image(spr.spritesheet)) # TODO hook up to sprite for debug purposes
+	
+	#sprite_viewer.texture = ImageTexture.create_from_image(spr.spritesheet)
 
 
 func _on_anim_id_spin_value_changed(value: int) -> void:

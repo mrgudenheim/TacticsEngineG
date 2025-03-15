@@ -129,12 +129,17 @@ func on_map_selected(index: int) -> void:
 	
 	push_warning(middle_position)
 	
+	# add player unit
 	var new_unit: UnitData = unit_tscn.instantiate()
 	add_child(new_unit)
 	new_unit.initialize_unit()
 	new_unit.char_body.global_position = middle_position + Vector3(-0.5, 0, 0)
 	new_unit.char_body.global_position = Vector3(5.5, 15, -5.5)
 	controller.unit = new_unit
+	controller.velocity_set.connect(controller.unit.update_unit_facing)
+	#controller.camera_facing_changed.connect(controller.unit.update_animation_facing) # handled in controller with a call_group command
+	
+	phantom_camera.follow_target = new_unit.char_body
 	
 	hide_debug_ui()
 

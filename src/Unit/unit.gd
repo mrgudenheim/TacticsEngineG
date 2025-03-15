@@ -7,8 +7,8 @@ extends Node3D
 signal ability_assigned(id: int)
 signal ability_completed()
 signal primary_weapon_assigned(idx: int)
+signal image_changed(new_image: ImageTexture)
 
-@export var controller: UnitControllerRT
 @export var char_body: CharacterBody3D
 @export var animation_manager: UnitAnimationManager
 @export var debug_menu: UnitDebugMenu
@@ -116,15 +116,17 @@ var idle_animation_id: int = 6
 
 
 func _ready() -> void:
-	controller.velocity_set.connect(update_unit_facing)
-	controller.camera_facing_changed.connect(update_animation_facing)
-	RomReader.rom_loaded.connect(initialize_unit)
+	if not RomReader.is_ready:
+		RomReader.rom_loaded.connect(initialize_unit)
 	
 	add_to_group("Units")
 
 
 func initialize_unit() -> void:
 	debug_menu.populate_options()
+	
+	debug_menu.sprite_options.select(RomReader.file_records["RAMUZA.SPR"].type_index)
+	debug_menu.sprite_options.item_selected.emit(debug_menu.sprite_options.selected)
 	debug_menu.anim_id_spin.value = idle_animation_id
 	
 	# 1 cure
@@ -138,17 +140,17 @@ func _process(delta: float) -> void:
 	if not RomReader.is_ready:
 		return
 	
-	if controller.velocity.y != 0 and is_in_air == false:
+	if char_body.velocity.y != 0 and is_in_air == false:
 		is_in_air = true
 		
 		var mid_jump_animation: int = 62 # front facing mid jump animation
 		if animation_manager.is_back_facing:
 			mid_jump_animation += 1
 		debug_menu.anim_id_spin.value = mid_jump_animation
-	elif controller.velocity.y == 0 and is_in_air == true:
+	elif char_body.velocity.y == 0 and is_in_air == true:
 		is_in_air = false
 		
-		var idle_animation: int = 6 # front facing mid jump animation
+		var idle_animation: int = 6 # front facing idle walk animation
 		if animation_manager.is_back_facing:
 			idle_animation += 1
 		debug_menu.anim_id_spin.value = idle_animation
@@ -207,19 +209,19 @@ func update_unit_facing(dir: Vector3) -> void:
 	
 	if new_facing != facing:
 		facing = new_facing
-		update_animation_facing()
+		update_animation_facing(UnitControllerRT.CameraFacingVectors[UnitControllerRT.camera_facing])
 
 
-func update_animation_facing() -> void:
-	var unt_facing_vector: Vector3 = FacingVectors[facing]
-	var camera_facing_vector: Vector3 = controller.CameraFacingVectors[controller.camera_facing]
+func update_animation_facing(camera_facing_vector: Vector3) -> void:
+	var unit_facing_vector: Vector3 = FacingVectors[facing]
+	#var camera_facing_vector: Vector3 = UnitControllerRT.CameraFacingVectors[controller.camera_facing]
 	#var facing_difference: Vector3 = camera_facing_vector - unt_facing_vectorwad
 	
-	var unit_facing_angle = fposmod(rad_to_deg(atan2(unt_facing_vector.z, unt_facing_vector.x)), 360)
+	var unit_facing_angle = fposmod(rad_to_deg(atan2(unit_facing_vector.z, unit_facing_vector.x)), 360)
 	var camera_facing_angle = fposmod(rad_to_deg(atan2(-camera_facing_vector.z, -camera_facing_vector.x)), 360)
 	var facing_difference_angle = fposmod(camera_facing_angle - unit_facing_angle, 360)
 		
-	#push_warning("Difference: " + str(facing_difference) + ", UnitFacing: " + str(unt_facing_vector) + ", CameraFacing: " + str(camera_facing_vector))
+	#push_warning("Difference: " + str(facing_difference) + ", UnitFacing: " + str(unit_facing_vector) + ", CameraFacing: " + str(camera_facing_vector))
 	push_warning("Difference: " + str(facing_difference_angle) + ", UnitFacing: " + str(unit_facing_angle) + ", CameraFacing: " + str(camera_facing_angle))
 	#push_warning(rad_to_deg(atan2(facing_difference.z, facing_difference.x)))
 	
@@ -267,7 +269,8 @@ func set_ability(new_ability_id: int) -> void:
 	if not ability_data.vfx_data.is_initialized:
 		ability_data.vfx_data.init_from_file()
 	
-	debug_menu.sprite_viewer.texture = ImageTexture.create_from_image(ability_data.vfx_data.vfx_spr.spritesheet)
+	image_changed.emit(ImageTexture.create_from_image(ability_data.vfx_data.vfx_spr.spritesheet))
+	#debug_menu.sprite_viewer.texture = ImageTexture.create_from_image(ability_data.vfx_data.vfx_spr.spritesheet)
 	ability_assigned.emit(new_ability_id)
 
 func set_primary_weapon(new_weapon_id: int) -> void:

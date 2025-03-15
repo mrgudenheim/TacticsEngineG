@@ -211,14 +211,14 @@ func update_unit_facing(dir: Vector3) -> void:
 
 func update_animation_facing() -> void:
 	var unt_facing_vector: Vector3 = FacingVectors[facing]
-	var camear_facing_vector: Vector3 = controller.CameraFacingVectors[controller.camera_facing]
-	#var facing_difference: Vector3 = camear_facing_vector - unt_facing_vectorwad
+	var camera_facing_vector: Vector3 = controller.CameraFacingVectors[controller.camera_facing]
+	#var facing_difference: Vector3 = camera_facing_vector - unt_facing_vectorwad
 	
 	var unit_facing_angle = fposmod(rad_to_deg(atan2(unt_facing_vector.z, unt_facing_vector.x)), 360)
-	var camera_facing_angle = fposmod(rad_to_deg(atan2(-camear_facing_vector.z, -camear_facing_vector.x)), 360)
+	var camera_facing_angle = fposmod(rad_to_deg(atan2(-camera_facing_vector.z, -camera_facing_vector.x)), 360)
 	var facing_difference_angle = fposmod(camera_facing_angle - unit_facing_angle, 360)
 		
-	#push_warning("Difference: " + str(facing_difference) + ", UnitFacing: " + str(unt_facing_vector) + ", CameraFacing: " + str(camear_facing_vector))
+	#push_warning("Difference: " + str(facing_difference) + ", UnitFacing: " + str(unt_facing_vector) + ", CameraFacing: " + str(camera_facing_vector))
 	push_warning("Difference: " + str(facing_difference_angle) + ", UnitFacing: " + str(unit_facing_angle) + ", CameraFacing: " + str(camera_facing_angle))
 	#push_warning(rad_to_deg(atan2(facing_difference.z, facing_difference.x)))
 	

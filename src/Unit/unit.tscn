@@ -7,7 +7,7 @@
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_omsuf"]
 radius = 0.25
-height = 0.5
+height = 1.25
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h85aw"]
 
@@ -42,6 +42,7 @@ axis_lock_angular_y = true
 axis_lock_angular_z = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.375, 0)
 shape = SubResource("CapsuleShape3D_omsuf")
 
 [node name="UnitReferenceSphere" type="MeshInstance3D" parent="CharacterBody3D/CollisionShape3D"]

@@ -30,11 +30,11 @@ func _ready() -> void:
 	camera.size = zoom
 
 
-#func _unhandled_input(event: InputEvent) -> void:
-	#if event.is_action_pressed(&"zoom_in", false, true):  # Wheel Up Event
-		#zoom_camera(1)
-	#elif event.is_action_pressed(&"zoom_out", false, true):  # Wheel Down Event
-		#zoom_camera(-1)
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed(&"zoom_in", false, true):  # Wheel Up Event
+		zoom_camera(1)
+	elif event.is_action_pressed(&"zoom_out", false, true):  # Wheel Down Event
+		zoom_camera(-1)
 	#elif event is InputEventMagnifyGesture:  # Zoom gesture on touchscreens
 		#if event.factor >= 1:  # Zoom in
 			#zoom_camera(1)

@@ -5,11 +5,17 @@ This engine is intended to create a game similar to Final Fantasy Tactics (FFT),
 
 
 Controls:
+
 WASD: Move
+
 Q/E: Rotate camera
+
 Space: Jump
+
 Right Click: Use ability (only Stasis Sword vfx work)
+
 Left Click: Attack (not implemented)
+
 Escape: Open/Close debug menus
 
 

@@ -123,11 +123,17 @@ func on_map_selected(index: int) -> void:
 	clear_units()
 	
 	maps.add_child(instantiate_map(index, not walled_maps.has(index)))
+	var map_width_range: Vector2i = Vector2i(0, map_data.map_width)
+	var map_length_range: Vector2i = Vector2i(0, map_data.map_length)
+	if not walled_maps.has(index):
+		map_width_range = Vector2i(-map_data.map_width + 1, map_data.map_width * 2 - 2)
+		map_length_range = Vector2i(-map_data.map_length + 1, map_data.map_length * 2 - 2)
 	
 	var middle_height: float = (map_data.terrain_tiles[map_data.terrain_tiles.size() / 2].height * SCALED_UNITS_PER_HEIGHT) + 2
 	var middle_position: Vector3 = Vector3(map_data.map_width / 2.0, middle_height, -map_data.map_length / 2.0)
-	camera_controller.position = middle_position
-	camera_controller.camera_pivot.rotation_degrees = Vector3(-CameraController.LOW_ANGLE, 45, 0)
+	var random_position: Vector3 = Vector3(randi_range(map_width_range.x, map_width_range.y) + 0.5, randi_range(10, 15), -randi_range(map_length_range.x, map_length_range.y) - 0.5)
+	#camera_controller.position = middle_position
+	#camera_controller.camera_pivot.rotation_degrees = Vector3(-CameraController.LOW_ANGLE, 45, 0)
 	
 	push_warning("Time to create map (ms): " + str(Time.get_ticks_msec() - start_time))
 	push_warning("Map_created")
@@ -138,8 +144,9 @@ func on_map_selected(index: int) -> void:
 	var new_unit: UnitData = unit_tscn.instantiate()
 	units.add_child(new_unit)
 	new_unit.initialize_unit()
-	new_unit.char_body.global_position = middle_position + Vector3(-0.5, 0, 0)
-	new_unit.char_body.global_position = Vector3(5.5, 15, -5.5)
+	new_unit.char_body.global_position = middle_position + Vector3(-0.5, 5, 0)
+	new_unit.char_body.global_position = random_position
+	#new_unit.char_body.global_position = Vector3(5.5, 15, -5.5)
 	#new_unit.set_sprite_file("AGURI.SPR") # Agrias
 	new_unit.is_player_controlled = true
 	
@@ -154,8 +161,9 @@ func on_map_selected(index: int) -> void:
 	var new_unit2: UnitData = unit_tscn.instantiate()
 	units.add_child(new_unit2)
 	new_unit2.initialize_unit()
-	new_unit2.char_body.global_position = middle_position + Vector3(-0.5, 0, 0)
-	new_unit2.char_body.global_position = Vector3(3.5, 15, -5.5)
+	random_position = Vector3(randi_range(map_width_range.x, map_width_range.y) + 0.5, randi_range(10, 15), -randi_range(map_length_range.x, map_length_range.y) - 0.5)
+	new_unit2.char_body.global_position = random_position
+	#new_unit2.char_body.global_position = Vector3(3.5, 15, -5.5)
 	new_unit2.set_sprite_file("ARU.SPR") # Algus
 	
 	new_unit2.knocked_out.connect(load_random_map)

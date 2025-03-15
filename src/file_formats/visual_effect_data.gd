@@ -259,6 +259,7 @@ func get_frame_mesh(frame_set_idx: int, frame_idx: int = 0) -> ArrayMesh:
 	mesh_material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 	#mesh_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
 	mesh_material.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
+	#mesh_material.billboard_mode = BaseMaterial3D.BILLBOARD_FIXED_Y
 	mesh_material.vertex_color_use_as_albedo = true
 	
 	

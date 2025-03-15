@@ -1,0 +1,179 @@
+[gd_scene load_steps=10 format=3 uid="uid://dkudrb304m7t1"]
+
+[ext_resource type="Script" uid="uid://b1ogscpjrty2b" path="res://src/Unit/unit.gd" id="1_lcmw7"]
+[ext_resource type="Script" uid="uid://cmjcg2ou16liv" path="res://src/Unit/unit_animation_manager.gd" id="3_l3ow2"]
+[ext_resource type="PackedScene" uid="uid://cw8mvbkue4ibk" path="res://src/Unit/unit_sprites_manager.tscn" id="4_h8uk5"]
+[ext_resource type="Script" uid="uid://x1o6jl12c6sh" path="res://src/Unit/unit_debug_menu.gd" id="5_aqiwa"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_omsuf"]
+radius = 0.25
+height = 0.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h85aw"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_46deq"]
+material = SubResource("StandardMaterial3D_h85aw")
+radius = 0.25
+height = 0.5
+
+[sub_resource type="Gradient" id="Gradient_gjfh4"]
+offsets = PackedFloat32Array(0.5, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_6vwfi"]
+gradient = SubResource("Gradient_gjfh4")
+width = 24
+height = 24
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+metadata/_snap_enabled = true
+
+[node name="Unit" type="Node3D" node_paths=PackedStringArray("controller", "char_body", "animation_manager", "debug_menu")]
+script = ExtResource("1_lcmw7")
+controller = NodePath("CharacterBody3D")
+char_body = NodePath("CharacterBody3D")
+animation_manager = NodePath("CharacterBody3D/UnitAnimationManager")
+debug_menu = NodePath("CharacterBody3D/UnitDebugMenu")
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 0.999999, 0, -0.707107, 0, 0.707107, 0, 0, 0)
+axis_lock_angular_x = true
+axis_lock_angular_y = true
+axis_lock_angular_z = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+shape = SubResource("CapsuleShape3D_omsuf")
+
+[node name="UnitReferenceSphere" type="MeshInstance3D" parent="CharacterBody3D/CollisionShape3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 2.98024e-08, 0, -2.98024e-08, 1, 0, 0, 0)
+visible = false
+mesh = SubResource("CapsuleMesh_46deq")
+
+[node name="ShadowSpringArm3D" type="SpringArm3D" parent="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+spring_length = 5.0
+
+[node name="DropShadowSprite3D" type="Sprite3D" parent="CharacterBody3D/ShadowSpringArm3D"]
+transform = Transform3D(0.707107, -0.707107, 0, 0.707107, 0.707107, 0, 0, 0, 1, 0, 0, 0)
+pixel_size = 0.0357
+texture = SubResource("GradientTexture2D_6vwfi")
+
+[node name="UnitAnimationManager" type="Node3D" parent="CharacterBody3D" node_paths=PackedStringArray("unit_data", "unit_sprites_manager")]
+transform = Transform3D(1, 0, 0, 0, 0.894934, 0.446198, 0, -0.446198, 0.894934, 0, 0.643, 0)
+script = ExtResource("3_l3ow2")
+unit_data = NodePath("../..")
+unit_sprites_manager = NodePath("UnitSpritesManager")
+layer_priority_table_filepath = "res://src/fftae/layer_priority_table.txt"
+weapon_table_filepath = "res://src/fftae/weapons.txt"
+item_list_filepath = "res://src/fftae/item_list.txt"
+
+[node name="UnitSpritesManager" parent="CharacterBody3D/UnitAnimationManager" instance=ExtResource("4_h8uk5")]
+
+[node name="UnitDebugMenu" type="Control" parent="CharacterBody3D" node_paths=PackedStringArray("animation_manager", "sprite_options", "anim_id_spin", "weapon_options", "item_options", "other_type_options", "ability_id_spin", "ability_name_line")]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("5_aqiwa")
+animation_manager = NodePath("../UnitAnimationManager")
+sprite_options = NodePath("PanelContainer/MarginContainer/VBoxContainer/GridContainer/SprOptionButton")
+anim_id_spin = NodePath("PanelContainer/MarginContainer/VBoxContainer/GridContainer/AnimPtrIdSpinBox")
+weapon_options = NodePath("PanelContainer/MarginContainer/VBoxContainer/GridContainer/WeaponOptionButton")
+item_options = NodePath("PanelContainer/MarginContainer/VBoxContainer/GridContainer/ItemOptionButton")
+other_type_options = NodePath("PanelContainer/MarginContainer/VBoxContainer/GridContainer/OtherTypeOptionButton")
+ability_id_spin = NodePath("PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/AbilityIdSpinBox")
+ability_name_line = NodePath("PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/AbilityName")
+
+[node name="PanelContainer" type="PanelContainer" parent="CharacterBody3D/UnitDebugMenu"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="MarginContainer" type="MarginContainer" parent="CharacterBody3D/UnitDebugMenu/PanelContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="GridContainer" type="GridContainer" parent="CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+columns = 2
+
+[node name="Sprite" type="Label" parent="CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Sprite: "
+horizontal_alignment = 2
+
+[node name="SprOptionButton" type="OptionButton" parent="CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+
+[node name="AnimationPtrId" type="Label" parent="CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Animation Ptr: "
+horizontal_alignment = 2
+
+[node name="AnimPtrIdSpinBox" type="SpinBox" parent="CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+max_value = 256.0
+rounded = true
+select_all_on_focus = true
+
+[node name="Weapon" type="Label" parent="CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Weapon: "
+horizontal_alignment = 2
+
+[node name="WeaponOptionButton" type="OptionButton" parent="CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+
+[node name="Item" type="Label" parent="CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Item: "
+horizontal_alignment = 2
+
+[node name="ItemOptionButton" type="OptionButton" parent="CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+
+[node name="Other Type" type="Label" parent="CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Other: "
+horizontal_alignment = 2
+
+[node name="OtherTypeOptionButton" type="OptionButton" parent="CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+
+[node name="AnimationFps" type="Label" parent="CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Animation FPS: "
+horizontal_alignment = 2
+
+[node name="AnimationFpsSpinBox" type="SpinBox" parent="CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+min_value = 0.1
+step = 0.1
+value = 59.0
+allow_greater = true
+select_all_on_focus = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="AbilityId" type="Label" parent="CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Ability:"
+horizontal_alignment = 2
+
+[node name="AbilityIdSpinBox" type="SpinBox" parent="CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+max_value = 453.0
+rounded = true
+select_all_on_focus = true
+
+[node name="AbilityName" type="LineEdit" parent="CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+editable = false
+
+[connection signal="value_changed" from="CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/GridContainer/AnimationFpsSpinBox" to="CharacterBody3D/UnitAnimationManager" method="set_animation_fps"]

@@ -1,5 +1,5 @@
 class_name UnitControllerRT
-extends CharacterBody3D
+extends Node3D
 
 signal velocity_set(direction: Vector3)
 signal camera_facing_changed()
@@ -10,9 +10,6 @@ const ROTATE_INTERVAL: float = 90.0 # degrees
 const ROTATE_SPEED: float = 300.0 # degrees / sec
 #const ROTATION_DURATION: float = 0.1 # seconds
 const JUMP_VELOCITY: float = 4.5
-
-@export var phantom_camera: PhantomCamera3D
-var camera_facing: Directions = Directions.NORTHWEST
 
 enum Directions {
 	NORTHWEST,
@@ -32,15 +29,14 @@ const CameraFacingVectors: Dictionary[Directions, Vector3] = {
 var is_rotating: bool = false
 var unit: UnitData
 
-
-func _ready() -> void:
-	unit = get_parent()
+@export var phantom_camera: PhantomCamera3D
+var camera_facing: Directions = Directions.NORTHWEST
 
 
 func _physics_process(delta: float) -> void:
 	# Add the gravity.
-	if not is_on_floor():
-		velocity += get_gravity() * delta
+	if not unit.char_body.is_on_floor():
+		unit.char_body.velocity += unit.char_body.get_gravity() * delta
 	
 	if not unit.can_move:
 		return
@@ -53,17 +49,17 @@ func _physics_process(delta: float) -> void:
 	var input_dir := Input.get_vector("camera_left", "camera_right", "camera_up", "camera_down")
 	var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	if direction:
-		velocity.x = direction.x * SPEED
-		velocity.z = direction.z * SPEED
+		unit.char_body.velocity.x = direction.x * SPEED
+		unit.char_body.velocity.z = direction.z * SPEED
 	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
-		velocity.z = move_toward(velocity.z, 0, SPEED)
+		unit.char_body.velocity.x = move_toward(unit.char_body.velocity.x, 0, SPEED)
+		unit.char_body.velocity.z = move_toward(unit.char_body.velocity.z, 0, SPEED)
 	
-	if velocity * Vector3(1, 0, 1) != Vector3.ZERO:
+	if unit.char_body.velocity * Vector3(1, 0, 1) != Vector3.ZERO:
 		velocity_set.emit(direction)
-	move_and_slide()
+	unit.char_body.move_and_slide()
 	
-	if Input.is_action_just_pressed("secondary_action") and is_on_floor():
+	if Input.is_action_just_pressed("secondary_action") and unit.char_body.is_on_floor():
 		# https://docs.godotengine.org/en/stable/tutorials/physics/ray-casting.html
 		# get 3d click location based on raycast
 		var space_state := get_world_3d().direct_space_state
@@ -86,8 +82,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event.is_action_pressed(&"camera_rotate_right", true):
 		rotate_camera(1)
 	# Handle jump
-	elif Input.is_action_just_pressed("ui_accept") and is_on_floor() and unit.can_move:
-		velocity.y = JUMP_VELOCITY
+	elif Input.is_action_just_pressed("ui_accept") and unit.char_body.is_on_floor() and unit.can_move:
+		unit.char_body.velocity.y = JUMP_VELOCITY
 	#elif Input.is_action_just_pressed("primary_action") and is_on_floor() and unit.can_move:
 		#push_warning("primary_action_clicked")
 		#unit.use_ability()

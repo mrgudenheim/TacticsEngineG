@@ -9,6 +9,7 @@ signal ability_completed()
 signal primary_weapon_assigned(idx: int)
 
 @export var controller: UnitControllerRT
+@export var char_body: CharacterBody3D
 @export var animation_manager: UnitAnimationManager
 @export var debug_menu: UnitDebugMenu
 
@@ -38,7 +39,7 @@ var movement_ability: Array = []
 var primary_weapon: ItemData
 var equipment: PackedInt32Array = []
 
-var exp: int = 0
+var unit_exp: int = 0
 var level: int = 0
 
 var brave_base: int = 70

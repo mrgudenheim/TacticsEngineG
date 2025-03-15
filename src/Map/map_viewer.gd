@@ -18,7 +18,8 @@ static var main_camera: Camera3D
 @export var maps: Node3D
 @export var map_tscn: PackedScene
 
-@export var unit: CharacterBody3D
+@export var unit_tscn: PackedScene
+@export var controller: UnitControllerRT
 
 @export var mirror: bool = true
 var walled_maps: PackedInt32Array = [
@@ -127,8 +128,13 @@ func on_map_selected(index: int) -> void:
 	push_warning("Map_created")
 	
 	push_warning(middle_position)
-	unit.global_position = middle_position + Vector3(-0.5, 0, 0)
-	unit.global_position = Vector3(5.5, 15, -5.5)
+	
+	var new_unit: UnitData = unit_tscn.instantiate()
+	add_child(new_unit)
+	new_unit.initialize_unit()
+	new_unit.char_body.global_position = middle_position + Vector3(-0.5, 0, 0)
+	new_unit.char_body.global_position = Vector3(5.5, 15, -5.5)
+	controller.unit = new_unit
 	
 	hide_debug_ui()
 

@@ -39,8 +39,6 @@ var other_shp: Shp
 
 @export_file("*.txt") var layer_priority_table_filepath: String
 static var layer_priority_table: Array[PackedStringArray] = []
-@export_file("*.txt") var weapon_table_filepath: String
-static var weapon_table: Array[PackedStringArray] = []
 @export_file("*.txt") var item_list_filepath: String
 static var item_list: Array[PackedStringArray] = []
 
@@ -56,9 +54,6 @@ var opcode_frame_offset: int = 0
 
 @export var weapon_shp_num: int = 1 # TODO fix for type2
 var weapon_v_offset: int = 0 # v_offset to lookup for weapon frames
-#var weapon_v_offset: int = 0: # v_offset to lookup for weapon frames
-	#get:
-		#return weapon_table[weapon_id][3] as int
 var effect_type: int = 1
 
 
@@ -98,8 +93,6 @@ var effect_type: int = 1
 func _ready() -> void:
 	if layer_priority_table.size() == 0:
 		layer_priority_table = load_csv(layer_priority_table_filepath)
-	if weapon_table.size() == 0:
-		weapon_table = load_csv(weapon_table_filepath)
 	if item_list.size() == 0:
 		item_list = load_csv(item_list_filepath)
 

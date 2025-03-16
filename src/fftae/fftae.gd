@@ -126,7 +126,7 @@ func initialize_ui() -> void:
 	#ui_manager.preview_viewport.sprite_primary.texture = ImageTexture.create_from_image(spr.spritesheet)
 	
 	var background_image: Image = shp.create_blank_frame(Color.BLACK)
-	preview_manager.unit.animation_manager.unit_sprites_manager.sprite_background.texture = ImageTexture.create_from_image(background_image)
+	#preview_manager.unit.animation_manager.unit_sprites_manager.sprite_background.texture = ImageTexture.create_from_image(background_image)
 	#sprite_background.texture = ImageTexture.create_from_image(background_image)
 	
 	var new_fft_animation: FftAnimation = preview_manager.unit.animation_manager.get_animation_from_globals()

@@ -143,6 +143,9 @@ func initialize_unit() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if not is_instance_valid(MapViewer.main_camera):
+		return
+	
 	# Add the gravity.
 	if not char_body.is_on_floor():
 		char_body.velocity += char_body.get_gravity() * delta

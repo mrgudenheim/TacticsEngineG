@@ -21,7 +21,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.714, 0)
 [node name="UnitSprite3D" type="Sprite3D" parent="UnitPivot"]
 transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, 0, 0.714, 0)
 pixel_size = 0.0357
-billboard = 1
 alpha_cut = 1
 texture_filter = 0
 

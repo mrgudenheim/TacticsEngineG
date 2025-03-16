@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://dgp4s8ucc0j6n"]
+[gd_scene load_steps=11 format=3 uid="uid://dgp4s8ucc0j6n"]
 
 [ext_resource type="Theme" uid="uid://bhwwwa4jiaiop" path="res://src/ui_theme.tres" id="1_kwydp"]
 [ext_resource type="Script" uid="uid://bnyoqmlgtnvkt" path="res://src/fftae/fftae.gd" id="2_2hqs7"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://b64ivxoaj2sr1" path="res://src/fftae/ui_manager.gd" id="5_1m40y"]
 [ext_resource type="Script" uid="uid://c7jtka1a8nsqu" path="res://src/fftae/preview_manager.gd" id="6_4j3la"]
 [ext_resource type="PackedScene" uid="uid://g0s3vevocg3" path="res://src/fftae/preview_subviewport_container.tscn" id="7_aevi7"]
+[ext_resource type="PackedScene" uid="uid://dkudrb304m7t1" path="res://src/Unit/unit.tscn" id="7_fg5ho"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_8s6nw"]
 font_size = 14
@@ -156,6 +157,7 @@ layout_mode = 2
 script = ExtResource("6_4j3la")
 ui_manager = NodePath("../../..")
 preview_viewport = NodePath("PreviewSubViewportContainer")
+unit_tscn = ExtResource("7_fg5ho")
 weapon_options = NodePath("../../../../SettingsPanel/MarginContainer/VBoxContainer/Settings/WeaponOptions")
 item_options = NodePath("../../../../SettingsPanel/MarginContainer/VBoxContainer/Settings/ItemOptions")
 other_type_options = NodePath("../../../../SettingsPanel/MarginContainer/VBoxContainer/Settings/OtherTypeOptions")
@@ -163,9 +165,6 @@ submerged_depth_options = NodePath("../../../../SettingsPanel/MarginContainer/VB
 face_right_check = NodePath("../../../../SettingsPanel/MarginContainer/VBoxContainer/Settings/FaceRightCheckBox")
 is_playing_check = NodePath("../SliderContainer/PlayCheckBox")
 is_back_facing_check = NodePath("../../../../SettingsPanel/MarginContainer/VBoxContainer/GridContainer/FaceBackCheck")
-layer_priority_table_filepath = "res://src/fftae/layer_priority_table.txt"
-weapon_table_filepath = "res://src/fftae/weapons.txt"
-item_list_filepath = "res://src/fftae/item_list.txt"
 animation_slider = NodePath("../SliderContainer/HSlider")
 opcode_text = NodePath("../Opcode")
 
@@ -380,6 +379,7 @@ disabled = true
 selected = 0
 item_count = 3
 popup/item_0/text = "Chicken/Chest"
+popup/item_0/id = 0
 popup/item_1/text = "Frog"
 popup/item_1/id = 1
 popup/item_2/text = "Crystal"
@@ -396,6 +396,7 @@ disabled = true
 selected = 0
 item_count = 3
 popup/item_0/text = "0"
+popup/item_0/id = 0
 popup/item_1/text = "1"
 popup/item_1/id = 1
 popup/item_2/text = "2"

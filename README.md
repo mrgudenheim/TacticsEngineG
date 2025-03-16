@@ -29,14 +29,19 @@ Escape: Open/Close debug menus
 - FFTae allows exporting a gif of an animation - Ignores all Opcodes and rotations
 ...
 
+
 # Limitations and Notes
-- A new map may need to be manually loaded (through the debug menu) if the players falls off the edge or through a hole. Also it may be impossible to reach Algus on some maps.
+- vfx do not display 3d models
+...
+
 
 # Future Improvements
 - Animated textures on maps
 - Generally improve ability vfx by using more data from vfx files
 - UI for unit hp, mp, ct
 - UI to deploy units on maps
+...
+
 
 # Building From Source
 This project is built with Godot 4.4

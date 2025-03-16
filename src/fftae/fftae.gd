@@ -98,12 +98,15 @@ func initialize_ui() -> void:
 				# SP2 handled by Spr
 				pass
 			_:
-				push_warning(record.name + ": File extension not recognized")
+				#push_warning(record.name + ": File extension not recognized")
+				pass
 	
 	#push_warning("Time to get file records (ms): " + str(Time.get_ticks_msec() - start_time))
 	#cache_associated_files()
 	#push_warning("Time to cache files (ms): " + str(Time.get_ticks_msec() - start_time))
 	preview_manager.enable_ui()
+	preview_manager.initialize()
+	
 	ui_manager.enable_ui()
 	
 	save_xml_button.disabled = false
@@ -123,11 +126,12 @@ func initialize_ui() -> void:
 	#ui_manager.preview_viewport.sprite_primary.texture = ImageTexture.create_from_image(spr.spritesheet)
 	
 	var background_image: Image = shp.create_blank_frame(Color.BLACK)
-	ui_manager.preview_viewport.sprite_background.texture = ImageTexture.create_from_image(background_image)
+	preview_manager.unit.animation_manager.unit_sprites_manager.sprite_background.texture = ImageTexture.create_from_image(background_image)
+	#sprite_background.texture = ImageTexture.create_from_image(background_image)
 	
-	var new_fft_animation: FftAnimation = preview_manager.get_animation_from_globals()
+	var new_fft_animation: FftAnimation = preview_manager.unit.animation_manager.get_animation_from_globals()
 	
-	preview_manager.start_animation(new_fft_animation, ui_manager.preview_viewport.sprite_primary, preview_manager.animation_is_playing, true)
+	preview_manager.unit.animation_manager.start_animation(new_fft_animation, preview_manager.unit.animation_manager.unit_sprites_manager.sprite_primary, preview_manager.animation_is_playing, true)
 	ui_manager.preview_viewport.camera_control._update_viewport_transform()
 	
 	#push_warning("Time to process ROM (ms): " + str(Time.get_ticks_msec() - start_time))
@@ -422,7 +426,7 @@ func populate_frame_list(frame_list_parent: VBoxContainer, shp_local: Shp) -> vo
 		
 		var preview_image_size: Vector2i = Vector2i(120, 120)
 		var preview_image: Image = shp_local.create_blank_frame(Color.BLACK, preview_image_size)
-		var assembled_frame: Image = shp_local.get_assembled_frame(frame_index, spr.spritesheet, ui_manager.animation_id_spinbox.value, preview_manager.other_type_options.selected, preview_manager.weapon_v_offset, preview_manager.submerged_depth_options.selected, Vector2i(60, 60), 15)
+		var assembled_frame: Image = shp_local.get_assembled_frame(frame_index, spr.spritesheet, ui_manager.animation_id_spinbox.value, preview_manager.other_type_options.selected, preview_manager.unit.animation_manager.weapon_v_offset, preview_manager.submerged_depth_options.selected, Vector2i(60, 60), 15)
 		assembled_frame.resize(preview_image_size.x, preview_image_size.y, Image.INTERPOLATE_NEAREST)
 		preview_image.blend_rect(assembled_frame, Rect2i(Vector2i.ZERO, preview_image_size), Vector2i.ZERO)
 		row_ui.preview_rect.texture = ImageTexture.create_from_image(preview_image)
@@ -545,13 +549,13 @@ func _on_seq_file_options_item_selected(index: int, select_shp: bool = true) -> 
 	
 	UiManager.option_button_select_text(ui_manager.shp_options, seq.shp_name)
 	ui_manager.shp_options.item_selected.emit(ui_manager.shp_options.selected)
-	preview_manager._on_animation_changed()
+	preview_manager.unit.animation_manager._on_animation_changed()
 
 
 func _on_shp_file_options_item_selected(_index: int) -> void:
 	frame_list_container.get_parent().get_parent().get_parent().name = shp.file_name + " Frames"
 	populate_frame_list(frame_list_container, shp)
-	preview_manager._on_animation_changed()
+	preview_manager.unit.animation_manager._on_animation_changed()
 
 
 func _on_sprite_options_item_selected(_index: int) -> void:

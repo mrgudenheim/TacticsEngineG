@@ -1,6 +1,7 @@
+class_name ViewportControl
 extends Node2D
 
-@export var sprite: Sprite2D
+@export var sprite: Sprite3D
 
 signal zoom_changed
 signal offset_changed

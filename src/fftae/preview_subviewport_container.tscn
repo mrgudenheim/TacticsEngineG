@@ -1,13 +1,26 @@
-[gd_scene load_steps=2 format=3 uid="uid://g0s3vevocg3"]
+[gd_scene load_steps=2 format=3 uid="uid://bv02jnbunskj4"]
 
-[ext_resource type="Script" uid="uid://bulnax26131mm" path="res://src/fftae/preview_subviewport_container.gd" id="1_hh70j"]
+[sub_resource type="GDScript" id="GDScript_ex6ab"]
+script/source = "class_name PreviewSubViewportContainer
+extends SubViewportContainer
+
+@export var camera_control: ViewportControl
+@export var subviewport: SubViewport
+
+func _on_mouse_entered() -> void:
+	camera_control.set_process_input(true)
+
+
+func _on_mouse_exited() -> void:
+	camera_control.set_process_input(false)
+"
 
 [node name="PreviewSubViewportContainer" type="SubViewportContainer" node_paths=PackedStringArray("camera_control", "subviewport")]
 texture_filter = 1
 size_flags_horizontal = 3
 size_flags_vertical = 3
 stretch = true
-script = ExtResource("1_hh70j")
+script = SubResource("GDScript_ex6ab")
 camera_control = NodePath("SubViewport/ViewportControl")
 subviewport = NodePath("SubViewport")
 

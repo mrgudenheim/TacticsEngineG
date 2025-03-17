@@ -441,9 +441,9 @@ func populate_frame_list(frame_list_parent: VBoxContainer, shp_local: Shp) -> vo
 
 func draw_assembled_frame(frame_index: int) -> void:
 	var assembled_image: Image = shp.get_assembled_frame(frame_index, spr.spritesheet, ui_manager.animation_id_spinbox.value, preview_manager.other_type_options.selected, preview_manager.weapon_v_offset, preview_manager.submerged_depth_options.selected)
-	ui_manager.preview_viewport.sprite_primary.texture = ImageTexture.create_from_image(assembled_image)
+	preview_manager.unit.animation_manager.unit_sprites_manager.sprite_primary.texture = ImageTexture.create_from_image(assembled_image)
 	var image_rotation: float = shp.get_frame(frame_index, preview_manager.submerged_depth_options.selected).y_rotation
-	(ui_manager.preview_viewport.sprite_primary.get_parent() as Node2D).rotation_degrees = image_rotation
+	(preview_manager.unit.animation_manager.unit_sprites_manager.sprite_primary.get_parent() as Node2D).rotation_degrees = image_rotation
 
 
 func _on_animation_option_button_item_selected(index: int) -> void:
@@ -565,7 +565,7 @@ func _on_sprite_options_item_selected(_index: int) -> void:
 	ui_manager.seq_options.item_selected.emit(ui_manager.seq_options.selected)
 	#UiManager.option_button_select_text(ui_manager.shp_options, spr.shp_name)
 	#ui_manager.shp_options.item_selected.emit(ui_manager.shp_options.selected)
-	preview_manager._on_animation_changed()
+	preview_manager.unit.animation_manager._on_animation_changed()
 
 
 func _on_animation_rewrite_check_toggled(toggled_on: bool) -> void:
@@ -578,7 +578,7 @@ func _on_save_frame_grid_pressed() -> void:
 
 
 func _on_save_frame_grid_dialog_file_selected(path: String) -> void:
-	var frame_grid: Image = spr.create_frame_grid(preview_manager.global_animation_id, preview_manager.other_type_options.selected, preview_manager.weapon_v_offset, preview_manager.submerged_depth_options.selected)
+	var frame_grid: Image = spr.create_frame_grid(preview_manager.unit.animation_manager.global_animation_id, preview_manager.other_type_options.selected, preview_manager.weapon_v_offset, preview_manager.submerged_depth_options.selected)
 	frame_grid.save_png(path)
 	
 	save_frame_grid_dialog.visible = false

@@ -25,8 +25,6 @@ extends Node
 @export var create_pointer: Button
 @export var delete_pointer: Button
 
-@export var preview_viewport: PreviewSubViewportContainer
-
 var patch_name: String = "default patch name":
 	get:
 		if not patch_name_edit.text.is_empty():

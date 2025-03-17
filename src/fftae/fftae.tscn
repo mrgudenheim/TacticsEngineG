@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dgp4s8ucc0j6n"]
+[gd_scene load_steps=12 format=3 uid="uid://dgp4s8ucc0j6n"]
 
 [ext_resource type="Theme" uid="uid://bhwwwa4jiaiop" path="res://src/ui_theme.tres" id="1_kwydp"]
 [ext_resource type="Script" uid="uid://bnyoqmlgtnvkt" path="res://src/fftae/fftae.gd" id="2_2hqs7"]
@@ -7,8 +7,7 @@
 [ext_resource type="Script" uid="uid://b64ivxoaj2sr1" path="res://src/fftae/ui_manager.gd" id="5_1m40y"]
 [ext_resource type="Script" uid="uid://c7jtka1a8nsqu" path="res://src/fftae/preview_manager.gd" id="6_4j3la"]
 [ext_resource type="PackedScene" uid="uid://dkudrb304m7t1" path="res://src/Unit/unit.tscn" id="7_fg5ho"]
-[ext_resource type="Script" uid="uid://c1qnswnanl7v4" path="res://src/fftae/subviewport_texture_rect.gd" id="8_fg5ho"]
-[ext_resource type="Script" uid="uid://b75vgl1odewrk" path="res://src/fftae/subviewport_camera_controller.gd" id="9_bdm0e"]
+[ext_resource type="Script" uid="uid://c1qnswnanl7v4" path="res://src/fftae/subviewport_camera_controller.gd" id="8_fg5ho"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_fg5ho"]
 viewport_path = NodePath("HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer/PreviewSubViewport")
@@ -171,14 +170,14 @@ is_back_facing_check = NodePath("../../../../SettingsPanel/MarginContainer/VBoxC
 animation_slider = NodePath("../SliderContainer/HSlider")
 opcode_text = NodePath("../Opcode")
 
-[node name="TextureRect" type="TextureRect" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer" node_paths=PackedStringArray("camera_controller")]
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer" node_paths=PackedStringArray("camera")]
 texture_filter = 1
 custom_minimum_size = Vector2(200, 200)
 layout_mode = 2
 texture = SubResource("ViewportTexture_fg5ho")
 stretch_mode = 5
 script = ExtResource("8_fg5ho")
-camera_controller = NodePath("../PreviewSubViewport/PreviewCamera3D")
+camera = NodePath("../PreviewSubViewport/PreviewCamera3D")
 
 [node name="PreviewSubViewport" type="SubViewport" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer"]
 transparent_bg = true
@@ -188,7 +187,6 @@ size = Vector2i(120, 120)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 2.5)
 projection = 1
 size = 2.0
-script = ExtResource("9_bdm0e")
 
 [node name="SliderContainer" type="HBoxContainer" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2

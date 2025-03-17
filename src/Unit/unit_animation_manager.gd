@@ -500,9 +500,9 @@ func _on_is_playing_check_box_toggled(toggled_on: bool) -> void:
 	animation_is_playing = toggled_on
 	
 	if toggled_on:
-		animation_completed.connect(replay_animation)
+		animation_completed.connect(_on_animation_changed)
 	else:
-		animation_completed.disconnect(replay_animation)
+		animation_completed.disconnect(_on_animation_changed)
 	#animation_slider.editable = !toggled_on
 	
 	#if (!toggled_on):
@@ -511,10 +511,6 @@ func _on_is_playing_check_box_toggled(toggled_on: bool) -> void:
 	if global_seq.sequences.size() == 0:
 		return
 	_on_animation_changed()
-
-
-func replay_animation() -> void:
-	start_animation(global_fft_animation, unit_sprites_manager.sprite_primary, true, false)
 
 
 func _on_animation_id_spin_box_value_changed(value: int) -> void:

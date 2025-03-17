@@ -75,16 +75,25 @@ func _on_weapon_options_item_selected(index: int) -> void:
 
 
 func _on_is_playing_check_box_toggled(toggled_on: bool) -> void:
+	animation_slider.editable = !toggled_on
+	
+	if (!toggled_on):
+		animation_slider.value = 0
+	
 	unit.animation_manager._on_is_playing_check_box_toggled(toggled_on)
 
 
 func _on_animation_id_spin_box_value_changed(value: int) -> void:
 	#global_animation_id = value
 	unit.animation_manager._on_animation_id_spin_box_value_changed(value)
+	
+	var num_parts: int = unit.animation_manager.global_fft_animation.sequence.seq_parts.size()
+	animation_slider.tick_count = num_parts
+	animation_slider.max_value = num_parts - 1
 
 
 func _on_animation_h_slider_value_changed(value: int) -> void:
-	if(animation_is_playing):
+	if(unit.animation_manager.animation_is_playing):
 		return
 	
 	unit.animation_manager.process_seq_part(unit.animation_manager.global_fft_animation, value, unit.animation_manager.unit_sprites_manager.sprite_primary)

@@ -499,14 +499,10 @@ func _on_weapon_options_item_selected(index: int) -> void:
 func _on_is_playing_check_box_toggled(toggled_on: bool) -> void:
 	animation_is_playing = toggled_on
 	
-	if toggled_on:
+	if toggled_on and not animation_completed.is_connected(_on_animation_changed):
 		animation_completed.connect(_on_animation_changed)
-	else:
+	elif !toggled_on and animation_completed.is_connected(_on_animation_changed):
 		animation_completed.disconnect(_on_animation_changed)
-	#animation_slider.editable = !toggled_on
-	
-	#if (!toggled_on):
-		#animation_slider.value = 0
 	
 	if global_seq.sequences.size() == 0:
 		return

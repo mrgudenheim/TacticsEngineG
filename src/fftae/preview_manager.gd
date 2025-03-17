@@ -74,15 +74,7 @@ func _on_weapon_options_item_selected(index: int) -> void:
 	unit.animation_manager._on_weapon_options_item_selected(index)
 
 
-func _on_is_playing_check_box_toggled(toggled_on: bool) -> void:
-	#animation_is_playing = toggled_on
-	#animation_slider.editable = !toggled_on
-	#
-	#if (!toggled_on):
-		#animation_slider.value = 0
-	#
-	#if FFTae.ae.seq.sequences.size() == 0:
-		#return
+func _on_is_playing_check_box_toggled(toggled_on: bool) -> void:	
 	unit.animation_manager._on_is_playing_check_box_toggled(toggled_on)
 
 

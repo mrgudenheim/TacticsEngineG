@@ -51,7 +51,7 @@ anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="PatchPanel" type="PanelContainer" parent="HBoxContainer" node_paths=PackedStringArray("seq_options", "animations_pointers_text", "animations_bytes_text", "shp_options", "sprite_options", "palette_spinbox", "animation_scroll_container", "patch_name_edit", "author_name_edit", "patch_description_edit", "animation_id_spinbox", "animation_name_options", "row_spinbox", "pointer_index_spinbox", "create_animation", "delete_animation", "create_opcode", "delete_opcode", "create_pointer", "delete_pointer", "preview_viewport")]
+[node name="PatchPanel" type="PanelContainer" parent="HBoxContainer" node_paths=PackedStringArray("seq_options", "animations_pointers_text", "animations_bytes_text", "shp_options", "sprite_options", "palette_spinbox", "animation_scroll_container", "patch_name_edit", "author_name_edit", "patch_description_edit", "animation_id_spinbox", "animation_name_options", "row_spinbox", "pointer_index_spinbox", "create_animation", "delete_animation", "create_opcode", "delete_opcode", "create_pointer", "delete_pointer")]
 layout_mode = 2
 script = ExtResource("5_1m40y")
 seq_options = NodePath("../SettingsPanel/MarginContainer/VBoxContainer/Settings/SeqFileOptions")
@@ -74,7 +74,6 @@ create_opcode = NodePath("../AnimationEditor/MarginContainer/VBoxContainer/Funct
 delete_opcode = NodePath("../AnimationEditor/MarginContainer/VBoxContainer/Functions/DeleteOpcode")
 create_pointer = NodePath("../TabContainer/Animations/VBoxContainer/AddPointer")
 delete_pointer = NodePath("../TabContainer/Animations/VBoxContainer/Functions/DeletePointer")
-preview_viewport = NodePath("")
 
 [node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/PatchPanel"]
 layout_mode = 2

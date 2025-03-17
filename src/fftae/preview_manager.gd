@@ -2,7 +2,8 @@ class_name PreviewManager
 extends PanelContainer
 
 @export var ui_manager: UiManager
-@export var preview_viewport: PreviewSubViewportContainer
+#@export var preview_viewport: PreviewSubViewportContainer
+@export var preview_viewport2: SubViewport
 @export var unit_tscn: PackedScene
 @export var unit: UnitData
 
@@ -50,12 +51,14 @@ func add_unit() -> void:
 		unit.queue_free()
 	
 	var new_unit: UnitData = unit_tscn.instantiate()
-	preview_viewport.subviewport.add_child(new_unit)
+	#preview_viewport.subviewport.add_child(new_unit)
+	preview_viewport2.add_child(new_unit)
 	new_unit.initialize_unit()
 	new_unit.char_body.rotation_degrees = Vector3.ZERO
 	new_unit.animation_manager.rotation_degrees = Vector3.ZERO
 	unit = new_unit
-	preview_viewport.camera_control.sprite = unit.animation_manager.unit_sprites_manager.sprite_primary
+	#preview_viewport.camera_control.sprite = unit.animation_manager.unit_sprites_manager.sprite_primary
+	
 
 
 func enable_ui() -> void:

@@ -73,7 +73,7 @@ func _init(new_id: int = 0) -> void:
 		vfx_data = RomReader.vfx[0] # TODO handle when vfx_id is 0xffff
 	else:
 		vfx_data = RomReader.vfx[0]
-		push_warning(vfx_id)
+		#push_warning(vfx_id)
 	
 	jp_cost = RomReader.scus_data.jp_costs[new_id]
 	chance_to_learn = RomReader.scus_data.chance_to_learn[new_id]

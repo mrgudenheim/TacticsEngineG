@@ -6,8 +6,10 @@
 [ext_resource type="PackedScene" uid="uid://cxr41bg8c7dir" path="res://src/fftae/row_frame.tscn" id="4_omu1g"]
 [ext_resource type="Script" uid="uid://b64ivxoaj2sr1" path="res://src/fftae/ui_manager.gd" id="5_1m40y"]
 [ext_resource type="Script" uid="uid://c7jtka1a8nsqu" path="res://src/fftae/preview_manager.gd" id="6_4j3la"]
-[ext_resource type="PackedScene" uid="uid://g0s3vevocg3" path="res://src/fftae/preview_subviewport_container.tscn" id="7_aevi7"]
 [ext_resource type="PackedScene" uid="uid://dkudrb304m7t1" path="res://src/Unit/unit.tscn" id="7_fg5ho"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_fg5ho"]
+viewport_path = NodePath("HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer/PreviewSubViewport")
 
 [sub_resource type="LabelSettings" id="LabelSettings_8s6nw"]
 font_size = 14
@@ -72,7 +74,7 @@ create_opcode = NodePath("../AnimationEditor/MarginContainer/VBoxContainer/Funct
 delete_opcode = NodePath("../AnimationEditor/MarginContainer/VBoxContainer/Functions/DeleteOpcode")
 create_pointer = NodePath("../TabContainer/Animations/VBoxContainer/AddPointer")
 delete_pointer = NodePath("../TabContainer/Animations/VBoxContainer/Functions/DeletePointer")
-preview_viewport = NodePath("MarginContainer/VBoxContainer/PreviewContainer/PreviewSubViewportContainer")
+preview_viewport = NodePath("")
 
 [node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/PatchPanel"]
 layout_mode = 2
@@ -152,11 +154,11 @@ wrap_mode = 1
 layout_mode = 2
 text = "Preview:"
 
-[node name="PreviewContainer" type="PanelContainer" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer" node_paths=PackedStringArray("ui_manager", "preview_viewport", "weapon_options", "item_options", "other_type_options", "submerged_depth_options", "face_right_check", "is_playing_check", "is_back_facing_check", "animation_slider", "opcode_text")]
+[node name="PreviewContainer" type="PanelContainer" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer" node_paths=PackedStringArray("ui_manager", "preview_viewport2", "weapon_options", "item_options", "other_type_options", "submerged_depth_options", "face_right_check", "is_playing_check", "is_back_facing_check", "animation_slider", "opcode_text")]
 layout_mode = 2
 script = ExtResource("6_4j3la")
 ui_manager = NodePath("../../..")
-preview_viewport = NodePath("PreviewSubViewportContainer")
+preview_viewport2 = NodePath("PreviewSubViewport")
 unit_tscn = ExtResource("7_fg5ho")
 weapon_options = NodePath("../../../../SettingsPanel/MarginContainer/VBoxContainer/Settings/WeaponOptions")
 item_options = NodePath("../../../../SettingsPanel/MarginContainer/VBoxContainer/Settings/ItemOptions")
@@ -168,9 +170,21 @@ is_back_facing_check = NodePath("../../../../SettingsPanel/MarginContainer/VBoxC
 animation_slider = NodePath("../SliderContainer/HSlider")
 opcode_text = NodePath("../Opcode")
 
-[node name="PreviewSubViewportContainer" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer" instance=ExtResource("7_aevi7")]
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer"]
+texture_filter = 1
 custom_minimum_size = Vector2(200, 200)
 layout_mode = 2
+texture = SubResource("ViewportTexture_fg5ho")
+stretch_mode = 5
+
+[node name="PreviewSubViewport" type="SubViewport" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer"]
+transparent_bg = true
+size = Vector2i(120, 120)
+
+[node name="Camera3D" type="Camera3D" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer/PreviewSubViewport"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 2.5)
+projection = 1
+size = 2.0
 
 [node name="SliderContainer" type="HBoxContainer" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2

@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://g0s3vevocg3"]
+[gd_scene load_steps=2 format=3 uid="uid://g0s3vevocg3"]
 
 [ext_resource type="Script" uid="uid://bulnax26131mm" path="res://src/fftae/preview_subviewport_container.gd" id="1_hh70j"]
-[ext_resource type="Script" uid="uid://dersaruijs1yk" path="res://src/fftae/preview_subviewport_control.gd" id="2_j0ikk"]
 
 [node name="PreviewSubViewportContainer" type="SubViewportContainer" node_paths=PackedStringArray("camera_control", "subviewport")]
+texture_filter = 1
 size_flags_horizontal = 3
 size_flags_vertical = 3
 stretch = true
@@ -16,15 +16,14 @@ transparent_bg = true
 handle_input_locally = false
 canvas_item_default_texture_filter = 0
 size = Vector2i(2, 2)
+render_target_update_mode = 4
 
-[node name="ViewportControl" type="Node2D" parent="SubViewport" node_paths=PackedStringArray("sprite")]
-script = ExtResource("2_j0ikk")
-sprite = NodePath("")
+[node name="ViewportControl" type="Node2D" parent="SubViewport"]
 
 [node name="Camera3D" type="Camera3D" parent="SubViewport"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 2.527)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 2.5)
 projection = 1
-size = 3.0
+size = 2.3
 
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]

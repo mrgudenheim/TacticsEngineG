@@ -132,7 +132,7 @@ func initialize_ui() -> void:
 	var new_fft_animation: FftAnimation = preview_manager.unit.animation_manager.get_animation_from_globals()
 	
 	preview_manager.unit.animation_manager.start_animation(new_fft_animation, preview_manager.unit.animation_manager.unit_sprites_manager.sprite_primary, preview_manager.animation_is_playing, true)
-	ui_manager.preview_viewport.camera_control._update_viewport_transform()
+	#ui_manager.preview_viewport.camera_control._update_viewport_transform()
 	
 	#push_warning("Time to process ROM (ms): " + str(Time.get_ticks_msec() - start_time))
 

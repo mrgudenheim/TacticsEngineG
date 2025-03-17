@@ -74,7 +74,7 @@ func _on_weapon_options_item_selected(index: int) -> void:
 	unit.animation_manager._on_weapon_options_item_selected(index)
 
 
-func _on_is_playing_check_box_toggled(toggled_on: bool) -> void:	
+func _on_is_playing_check_box_toggled(toggled_on: bool) -> void:
 	unit.animation_manager._on_is_playing_check_box_toggled(toggled_on)
 
 

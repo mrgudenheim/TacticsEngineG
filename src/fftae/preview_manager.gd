@@ -4,6 +4,7 @@ extends PanelContainer
 @export var ui_manager: UiManager
 #@export var preview_viewport: PreviewSubViewportContainer
 @export var preview_viewport2: SubViewport
+@export var preview_rect: TextureRect
 @export var unit_tscn: PackedScene
 @export var unit: UnitData
 

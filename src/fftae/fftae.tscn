@@ -154,11 +154,12 @@ wrap_mode = 1
 layout_mode = 2
 text = "Preview:"
 
-[node name="PreviewContainer" type="PanelContainer" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer" node_paths=PackedStringArray("ui_manager", "preview_viewport2", "weapon_options", "item_options", "other_type_options", "submerged_depth_options", "face_right_check", "is_playing_check", "is_back_facing_check", "animation_slider", "opcode_text")]
+[node name="PreviewContainer" type="PanelContainer" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer" node_paths=PackedStringArray("ui_manager", "preview_viewport2", "preview_rect", "weapon_options", "item_options", "other_type_options", "submerged_depth_options", "face_right_check", "is_playing_check", "is_back_facing_check", "animation_slider", "opcode_text")]
 layout_mode = 2
 script = ExtResource("6_4j3la")
 ui_manager = NodePath("../../..")
 preview_viewport2 = NodePath("PreviewSubViewport")
+preview_rect = NodePath("PreviewTextureRect")
 unit_tscn = ExtResource("7_fg5ho")
 weapon_options = NodePath("../../../../SettingsPanel/MarginContainer/VBoxContainer/Settings/WeaponOptions")
 item_options = NodePath("../../../../SettingsPanel/MarginContainer/VBoxContainer/Settings/ItemOptions")
@@ -170,7 +171,7 @@ is_back_facing_check = NodePath("../../../../SettingsPanel/MarginContainer/VBoxC
 animation_slider = NodePath("../SliderContainer/HSlider")
 opcode_text = NodePath("../Opcode")
 
-[node name="TextureRect" type="TextureRect" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer" node_paths=PackedStringArray("camera")]
+[node name="PreviewTextureRect" type="TextureRect" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer" node_paths=PackedStringArray("camera")]
 texture_filter = 1
 custom_minimum_size = Vector2(200, 200)
 layout_mode = 2

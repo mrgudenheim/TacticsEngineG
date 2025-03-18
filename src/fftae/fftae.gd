@@ -17,6 +17,7 @@ static var global_fft_animation: FftAnimation = FftAnimation.new()
 @export var save_frame_grid_dialog: FileDialog
 @export var save_gif_button: Button
 @export var save_gif_dialog: FileDialog
+@export var is_recording_gif: bool = false
 
 @export var animation_list_container: VBoxContainer
 @export var animation_list_row_tscn: PackedScene
@@ -593,8 +594,7 @@ func _on_save_animation_gif_pressed() -> void:
 
 
 # ignores all opcodes and rotation
-# TODO get texture rect texture every (2 / fps) seconds until animation_completed signal
-func _on_save_animation_gif_dialog_file_selected(path: String) -> void:
+func _on_save_animation_gif_dialog_file_selected2(path: String) -> void:
 	var fft_animation: FftAnimation = preview_manager.global_fft_animation
 	var gif_exporter = GIFExporter.new(fft_animation.shp.frame_size.x, fft_animation.shp.frame_size.y)
 	
@@ -625,3 +625,36 @@ func _on_save_animation_gif_dialog_file_selected(path: String) -> void:
 	file.close()
 	
 	save_frame_grid_dialog.visible = false
+
+
+# TODO get texture rect texture every (2 / fps) seconds until animation_completed signal
+func _on_save_animation_gif_dialog_file_selected(path: String) -> void:
+	var gif_exporter = GIFExporter.new(preview_manager.preview_rect.texture.get_width(), preview_manager.preview_rect.texture.get_height())
+	
+	preview_manager.unit.animation_manager.start_animation(
+		preview_manager.unit.animation_manager.global_fft_animation, 
+		preview_manager.unit.animation_manager.unit_sprites_manager.sprite_primary, true, false)
+	#var animation_is_playing: bool = true
+	is_recording_gif = true
+	preview_manager.unit.animation_manager.animation_completed.connect(end_recording_gif)
+	preview_manager.unit.animation_manager.animation_completed.connect(func(): push_warning("animation_completed"))
+	push_warning("start recording gif")
+	while is_recording_gif:
+		var preview_image: Image = preview_manager.preview_rect.texture.get_image()
+		
+		var delay: float = 2.0 / preview_manager.unit.animation_manager.animation_speed # delay for an animation frame is always multiple of 2
+		gif_exporter.add_frame(preview_image, delay, MedianCutQuantization)
+		
+		await get_tree().create_timer(delay).timeout
+	
+	push_warning("end recording gif")
+	var file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
+	# save data stream into file
+	file.store_buffer(gif_exporter.export_file_data())
+	file.close()
+	
+	save_frame_grid_dialog.visible = false
+
+
+func end_recording_gif() -> void:
+	is_recording_gif = false

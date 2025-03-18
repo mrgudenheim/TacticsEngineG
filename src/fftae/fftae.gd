@@ -636,6 +636,9 @@ func _on_save_animation_gif_dialog_file_selected(path: String) -> void:
 		preview_manager.unit.animation_manager.unit_sprites_manager.sprite_primary, true, false)
 	#var animation_is_playing: bool = true
 	is_recording_gif = true
+	preview_manager.is_playing_check.button_pressed = false
+	preview_manager.animation_slider.value = 0
+	preview_manager.is_playing_check.button_pressed = true
 	preview_manager.unit.animation_manager.animation_completed.connect(end_recording_gif)
 	preview_manager.unit.animation_manager.animation_completed.connect(func(): push_warning("animation_completed"))
 	push_warning("start recording gif")

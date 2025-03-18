@@ -9,8 +9,21 @@ var zoom_out_max: int = 10
 
 var is_dragging: bool = false
 
-var pan_bounds_x: Vector2 = Vector2(-4.5, 4.5)
-var pan_bounds_y: Vector2 = Vector2(-4.5, 4.5)
+var pan_distance_max: float = 4.5
+
+var pan_bounds_min: Vector3
+var pan_bounds_max: Vector3
+
+
+func _ready() -> void:
+	mouse_entered.connect(_on_mouse_enter)
+	mouse_exited.connect(_on_mouse_exit)
+	
+	set_process_input(false)
+	
+	var pan_length: float = pan_distance_max * sqrt(2)/2
+	pan_bounds_min = Vector3(2.5 - pan_length, -pan_distance_max, 2.5 - pan_length)
+	pan_bounds_max = Vector3(2.5 + pan_length, pan_distance_max, 2.5 + pan_length)
 
 
 func _input(event: InputEvent) -> void:
@@ -28,16 +41,24 @@ func _input(event: InputEvent) -> void:
 	# pan camera
 	if event is InputEventMouseMotion:
 		if is_dragging:
-			camera.position.x += -event.relative.x * camera.size * pan_speed * get_process_delta_time() * 0.3
-			camera.position.y += event.relative.y * camera.size * pan_speed * get_process_delta_time() * 0.3
+			var dir: Vector2 = event.relative * camera.size * pan_speed * get_process_delta_time() * 0.3
+			camera.translate_object_local(Vector3(-dir.x, dir.y, 0))
 	else:
 		var dir := Input.get_vector(&"camera_left", &"camera_right", &"camera_up", &"camera_down")
-		if dir != Vector2.ZERO: # and !_has_selection_tool():
-			camera.position.x += dir.x * camera.size * pan_speed * get_process_delta_time()
-			camera.position.y += -dir.y * camera.size * pan_speed * get_process_delta_time()
+		if dir != Vector2.ZERO:
+			dir = dir  * camera.size * pan_speed * get_process_delta_time()
+			camera.translate_object_local(Vector3(dir.x, -dir.y, 0))
 	
-	camera.position.x = clamp(camera.position.x, pan_bounds_x.x, pan_bounds_x.y)
-	camera.position.y = clamp(camera.position.y, pan_bounds_y.x, pan_bounds_y.y)
+	camera.position = camera.position.clamp(pan_bounds_min, pan_bounds_max)
+
+
+func _on_mouse_enter() -> void:
+	set_process_input(true)
+
+
+func _on_mouse_exit() -> void:
+	set_process_input(false)
+	is_dragging = false
 
 
 func zoom_camera(dir: float) -> void:

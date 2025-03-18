@@ -593,6 +593,7 @@ func _on_save_animation_gif_pressed() -> void:
 
 
 # ignores all opcodes and rotation
+# TODO get texture rect texture every (2 / fps) seconds until animation_completed signal
 func _on_save_animation_gif_dialog_file_selected(path: String) -> void:
 	var fft_animation: FftAnimation = preview_manager.global_fft_animation
 	var gif_exporter = GIFExporter.new(fft_animation.shp.frame_size.x, fft_animation.shp.frame_size.y)

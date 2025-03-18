@@ -72,7 +72,8 @@ func enable_ui() -> void:
 
 
 func _on_weapon_options_item_selected(index: int) -> void:
-	unit.animation_manager._on_weapon_options_item_selected(index)
+	#unit.animation_manager._on_weapon_options_item_selected(index)
+	unit.animation_manager.weapon_id = index
 	#unit.debug_menu.weapon_options.select(index)
 
 

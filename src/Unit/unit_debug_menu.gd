@@ -79,8 +79,6 @@ func _on_sprite_option_selected(index) -> void:
 	if not shp.is_initialized:
 		shp.set_data_from_shp_bytes(RomReader.get_file_data(shp.file_name))
 	
-	animation_manager.global_spr = spr
-	
 	var seq: Seq = RomReader.seqs[RomReader.file_records[spr.seq_name].type_index]
 	if not seq.is_initialized:
 		seq.set_data_from_seq_bytes(RomReader.get_file_data(seq.file_name))

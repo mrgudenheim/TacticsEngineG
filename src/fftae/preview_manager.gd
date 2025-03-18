@@ -60,6 +60,7 @@ func add_unit() -> void:
 	unit = new_unit
 	#preview_viewport.camera_control.sprite = unit.animation_manager.unit_sprites_manager.sprite_primary
 	
+	unit.animation_manager.processing_opcode.connect(update_preview_slider)
 
 
 func enable_ui() -> void:
@@ -97,6 +98,7 @@ func _on_animation_id_spin_box_value_changed(value: int) -> void:
 
 
 func _on_animation_h_slider_value_changed(value: int) -> void:
+	opcode_text.text = unit.animation_manager.global_fft_animation.sequence.seq_parts[value].to_string()
 	if(unit.animation_manager.animation_is_playing):
 		return
 	
@@ -120,3 +122,7 @@ func _on_palette_spin_box_value_changed(value: float) -> void:
 	#unit.animation_manager.global_spr.spritesheet = unit.animation_manager.global_spr.get_rgba8_image()
 	#
 	#unit.animation_manager._on_animation_changed()
+
+
+func update_preview_slider(index: int) -> void:
+	animation_slider.value = index

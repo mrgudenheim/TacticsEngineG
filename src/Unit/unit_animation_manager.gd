@@ -2,6 +2,7 @@ class_name UnitAnimationManager
 extends Node3D
 
 signal animation_completed
+signal processing_opcode(index: int)
 
 #@export var ui_manager: UiManager
 @export var unit_data: UnitData
@@ -134,6 +135,9 @@ func play_animation(fft_animation: FftAnimation, draw_target: Sprite3D, isLoopin
 	var animation_part_id: int = 0
 	while animation_part_id < fft_animation.sequence.seq_parts.size():
 		var seq_part:SeqPart = fft_animation.sequence.seq_parts[animation_part_id]
+		if fft_animation.is_primary_anim:
+			processing_opcode.emit(animation_part_id)
+		
 		# break loop animation when stopped or on selected animation changed to prevent 2 loops playing at once
 		if ((isLooping or fft_animation.is_primary_anim) 
 			and (!animation_is_playing or fft_animation != global_fft_animation)):

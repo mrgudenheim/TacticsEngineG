@@ -524,7 +524,7 @@ func _on_animation_h_slider_value_changed(value: int) -> void:
 	process_seq_part(global_fft_animation, value, unit_sprites_manager.sprite_primary)
 
 
-func _on_palette_spin_box_value_changed(value: float) -> void:	
+func _on_palette_spin_box_value_changed(value: float) -> void:
 	global_spr.set_pixel_colors(value)
 	global_spr.spritesheet = global_spr.get_rgba8_image()
 	
@@ -535,8 +535,11 @@ func _on_submerged_options_item_selected(index: int) -> void:
 	_on_animation_changed()
 
 
-func _on_face_right_check_toggled(_toggled_on: bool) -> void:	
-	unit_sprites_manager.flip_h()
+func _on_face_right_check_toggled(toggled_on: bool) -> void:
+	#unit_sprites_manager.flip_h()
+	is_right_facing = toggled_on
+	
+	#unit_sprites_manager.scale.x = unit_sprites_manager.scale.x * -1
 	_on_animation_changed()
 
 

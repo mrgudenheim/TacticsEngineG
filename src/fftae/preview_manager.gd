@@ -111,18 +111,11 @@ func _on_submerged_options_item_selected(index: int) -> void:
 
 
 func _on_face_right_check_toggled(toggled_on: bool) -> void:
-	# TODO face right
 	unit.animation_manager._on_face_right_check_toggled(toggled_on)
-	#unit.animation_manager._on_animation_changed()
 
 
 func _on_palette_spin_box_value_changed(value: float) -> void:
 	unit.animation_manager._on_palette_spin_box_value_changed(value)
-	
-	#unit.animation_manager.global_spr.set_pixel_colors(value)
-	#unit.animation_manager.global_spr.spritesheet = unit.animation_manager.global_spr.get_rgba8_image()
-	#
-	#unit.animation_manager._on_animation_changed()
 
 
 func update_preview_slider(index: int) -> void:

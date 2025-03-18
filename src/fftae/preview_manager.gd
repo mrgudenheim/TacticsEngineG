@@ -73,6 +73,7 @@ func enable_ui() -> void:
 
 func _on_weapon_options_item_selected(index: int) -> void:
 	unit.animation_manager._on_weapon_options_item_selected(index)
+	#unit.debug_menu.weapon_options.select(index)
 
 
 func _on_is_playing_check_box_toggled(toggled_on: bool) -> void:
@@ -87,6 +88,7 @@ func _on_is_playing_check_box_toggled(toggled_on: bool) -> void:
 func _on_animation_id_spin_box_value_changed(value: int) -> void:
 	#global_animation_id = value
 	unit.animation_manager._on_animation_id_spin_box_value_changed(value)
+	#unit.debug_menu.anim_id_spin.value = value
 	
 	var num_parts: int = unit.animation_manager.global_fft_animation.sequence.seq_parts.size()
 	animation_slider.tick_count = num_parts

@@ -549,22 +549,26 @@ func _on_seq_file_options_item_selected(index: int, select_shp: bool = true) -> 
 	
 	UiManager.option_button_select_text(ui_manager.shp_options, seq.shp_name)
 	ui_manager.shp_options.item_selected.emit(ui_manager.shp_options.selected)
+	preview_manager.unit.animation_manager.global_seq = RomReader.seqs[index]
 	preview_manager.unit.animation_manager._on_animation_changed()
 
 
-func _on_shp_file_options_item_selected(_index: int) -> void:
+func _on_shp_file_options_item_selected(index: int) -> void:
 	frame_list_container.get_parent().get_parent().get_parent().name = shp.file_name + " Frames"
 	populate_frame_list(frame_list_container, shp)
+	preview_manager.unit.animation_manager.global_shp = RomReader.shps[index]
 	preview_manager.unit.animation_manager._on_animation_changed()
 
 
-func _on_sprite_options_item_selected(_index: int) -> void:
+func _on_sprite_options_item_selected(index: int) -> void:
 	#ui_manager.preview_viewport.sprite_primary.texture = ImageTexture.create_from_image(spr.spritesheet)
 	#populate_frame_list(frame_list_container, shp)
 	UiManager.option_button_select_text(ui_manager.seq_options, spr.seq_name)
 	ui_manager.seq_options.item_selected.emit(ui_manager.seq_options.selected)
 	#UiManager.option_button_select_text(ui_manager.shp_options, spr.shp_name)
 	#ui_manager.shp_options.item_selected.emit(ui_manager.shp_options.selected)
+	
+	preview_manager.unit.animation_manager.global_spr = RomReader.sprs[index]
 	preview_manager.unit.animation_manager._on_animation_changed()
 
 

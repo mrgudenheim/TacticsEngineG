@@ -2,6 +2,7 @@ class_name UnitAnimationManager
 extends Node3D
 
 signal animation_completed
+signal animation_loop_completed
 signal processing_opcode(index: int)
 
 #@export var ui_manager: UiManager
@@ -409,6 +410,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			# https://ffhacktics.com/wiki/Animate_Unit_Distorts
 			pass
 		elif seq_part.opcode_name == "IncrementLoop":
+			animation_loop_completed.emit()
 			reset_sprites()
 			start_animation(fft_animation, draw_target, animation_is_playing, false)
 		elif seq_part.opcode_name == "EndAnimation":

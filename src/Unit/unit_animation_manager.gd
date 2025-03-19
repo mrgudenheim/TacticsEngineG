@@ -532,6 +532,7 @@ func _on_palette_spin_box_value_changed(value: float) -> void:
 
 
 func _on_submerged_options_item_selected(index: int) -> void:
+	submerged_depth = index
 	_on_animation_changed()
 
 

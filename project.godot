@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="FFT-like-engine"
-run/main_scene="res://src/Map/map_viewer.tscn"
+run/main_scene="uid://dgp4s8ucc0j6n"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 
 [autoload]

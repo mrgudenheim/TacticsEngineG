@@ -627,7 +627,6 @@ func _on_save_animation_gif_dialog_file_selected2(path: String) -> void:
 	save_frame_grid_dialog.visible = false
 
 
-# TODO get texture rect texture every (2 / fps) seconds until animation_completed signal
 func _on_save_animation_gif_dialog_file_selected(path: String) -> void:
 	var gif_exporter = GIFExporter.new(preview_manager.preview_rect.texture.get_width(), preview_manager.preview_rect.texture.get_height())
 	
@@ -644,7 +643,7 @@ func _on_save_animation_gif_dialog_file_selected(path: String) -> void:
 	#preview_manager.unit.animation_manager.animation_completed.connect(func(): push_warning("animation_completed"))
 	push_warning("start recording gif")
 	while is_recording_gif:
-		await get_tree().process_frame
+		await get_tree().process_frame # wait for frame to render
 		var preview_image: Image = preview_manager.preview_rect.texture.get_image()
 		
 		var delay: float = 2.0 / preview_manager.unit.animation_manager.animation_speed # delay for an animation frame is always multiple of 2

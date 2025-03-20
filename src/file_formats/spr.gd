@@ -252,6 +252,7 @@ func set_sp2_data(base_spr: Spr) -> void:
 func set_spritesheet_data(new_sprite_id: int) -> void:
 	# WEP and EFF partially handled directly in preview_manager QueueSpriteAnim opcode
 	# TODO handle WEP and EFF when direclty selected
+	# TODO move this data table to battle_bin_data
 	var battle_bin_bytes: PackedByteArray = RomReader.get_file_data("BATTLE.BIN")
 	
 	sprite_id = new_sprite_id

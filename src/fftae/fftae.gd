@@ -67,7 +67,8 @@ var spr: Spr:
 		var spr: Spr = RomReader.sprs[sprite_index]
 		if not spr.is_initialized:
 			spr.set_data(RomReader.get_file_data(ui_manager.sprite_options.get_item_text(sprite_index)))
-			spr.set_spritesheet_data(RomReader.spr_file_name_to_id[spr.file_name])
+			if spr.file_name != "WEP.SPR" and spr.file_name != "EFF.SPR":
+				spr.set_spritesheet_data(RomReader.spr_file_name_to_id[spr.file_name])
 		
 		return spr
 

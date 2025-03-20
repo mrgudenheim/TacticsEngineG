@@ -1,7 +1,7 @@
 class_name UnitSpritesManager
 extends Node3D
 
-const LAYERING_OFFSET: float = 0.0000001
+const LAYERING_OFFSET: float = 0.001
 
 @export var sprite_primary: Sprite3D
 @export var sprite_weapon: Sprite3D

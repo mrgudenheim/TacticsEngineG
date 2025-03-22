@@ -28,12 +28,6 @@ var item_shp: Shp
 var other_spr: Spr
 var other_shp: Shp
 
-#@export var weapon_id: int = 0:
-	#get:
-		#return weapon_id
-	#set(value):
-		#weapon_id = value
-		#_on_weapon_options_item_selected(value)
 @export var item_index: int = 0
 @export var submerged_depth: int = 0
 @export var is_right_facing: bool = false
@@ -47,8 +41,6 @@ static var item_list: Array[PackedStringArray] = []
 
 @export var animation_is_playing: bool = true
 @export var animation_speed: float = 59 # frames per sec
-#@export var animation_slider: Slider
-#@export var opcode_text: LineEdit
 var opcode_frame_offset: int = 0
 @export var weapon_sheathe_check1_delay: int = 0
 @export var weapon_sheathe_check2_delay: int = 25
@@ -56,7 +48,6 @@ var opcode_frame_offset: int = 0
 
 
 @export var weapon_shp_num: int = 1 # TODO fix for type2
-#var weapon_v_offset: int = 0 # v_offset to lookup for weapon frames
 var effect_type: int = 1
 
 @export var global_animation_id: int = 0:
@@ -127,14 +118,11 @@ func start_animation(fft_animation: FftAnimation, draw_target: Sprite3D, is_play
 	if num_parts == 0:
 		#draw_target.visible = false
 		draw_target.frame = (draw_target.hframes * draw_target.vframes) - 1
-		await get_tree().create_timer(0.001).timeout # prevent infinite loop from Wait opcodes looping only opcodes
+		await get_tree().create_timer(0.001).timeout # prevent infinite loop
 		return
 	elif fft_animation.is_primary_anim and only_opcodes: # TODO only_opcodes should play instead of showing a blank image, ie. if only a loop, but need to handle broken MON MFItem animation infinite loop
 		# draw a blank image
-		#var assembled_image: Image = fft_animation.shp.create_blank_frame()
-		#unit_sprites_manager.sprite_primary.texture = ImageTexture.create_from_image(assembled_image)
-		#draw_target.frame = 255 # TODO fix this, set blank by setting visible = false?
-		draw_target.frame = (draw_target.hframes * draw_target.vframes) - 1
+		draw_target.frame = (draw_target.hframes * draw_target.vframes) - 1 # TODO fix this, set blank by setting visible = false?
 		#draw_target.visible = false
 		await get_tree().create_timer(0.001).timeout # prevent infinite loop from Wait opcodes looping only opcodes
 		return
@@ -173,15 +161,6 @@ func play_animation(fft_animation: FftAnimation, draw_target: Sprite3D, isLoopin
 			
 			var delay_sec: float = delay_frames / animation_speed
 			await get_tree().create_timer(delay_sec).timeout
-	
-	#if fft_animation.is_primary_anim:
-		#animation_completed.emit()
-	
-	#if isLooping:
-		#reset_sprites()
-		#play_animation(fft_animation, draw_target, isLooping)
-	#else: # clear image when animation is over
-		#draw_target.texture = ImageTexture.create_from_image(fft_animation.shp.create_blank_frame())
 
 
 func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target: Sprite3D) -> int:
@@ -195,11 +174,8 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 	else:
 		frame_id_label = str(seq_part.parameters[0])
 	
-	#var new_anim_opcode_part_id: int = 0
 	if fft_animation.primary_anim_opcode_part_id == 0:
-		#primary_anim_opcode_part_id = fft_animation.sequence.seq_parts.size()
 		fft_animation.primary_anim_opcode_part_id = fft_animation.sequence.seq_parts.size()
-		#new_anim_opcode_part_id = fft_animation.sequence.seq_parts.size()
 	
 	# handle LoadFrameWait
 	if not seq_part.isOpcode:
@@ -209,8 +185,6 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 		frame_id_label = str(new_frame_id)
 		
 		if new_frame_id >= fft_animation.shp.frames.size(): # high frame offsets (such as shuriken) can only be used with certain animations
-			#var assembled_image: Image = fft_animation.shp.create_blank_frame()
-			#draw_target.texture = ImageTexture.create_from_image(assembled_image)
 			draw_target.frame = (draw_target.hframes * draw_target.vframes) - 1 # TODO fix this so a 255th frame can actually be made/set - set draw_target.visible = false?
 			#draw_target.visible = false
 			pass
@@ -221,26 +195,21 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				y_rotation = -y_rotation
 			(draw_target.get_parent() as Node3D).rotation_degrees = Vector3(0, 0, -y_rotation)
 			
-			#var assembled_image: Image = fft_animation.shp.get_assembled_frame(
-					#new_frame_id, fft_animation.image, global_animation_ptr_id, unit_data.debug_menu.other_type_options.selected, weapon_v_offset, submerged_depth)
-			#draw_target.texture = ImageTexture.create_from_image(assembled_image)
 			draw_target.frame = new_frame_id
 			
 			if fft_animation.is_primary_anim:
 				animation_frame_loaded.emit()
 	# Handle opcodes
 	elif seq_part.isOpcode:
-		#print(anim_part_start)
+		#push_warning(anim_part_start)
 		if seq_part.opcode_name == "QueueSpriteAnim":
-			#print("Performing " + anim_part_start) 
+			#push_warning("Performing " + anim_part_start) 
 			if seq_part.parameters[0] == 1: # play weapon animation
 				weapon_shp_num = 2 if global_shp.file_name.to_upper().contains("TYPE2") else 1
 				var new_animation := FftAnimation.new()
 				var wep_file_name: String = "WEP" + str(weapon_shp_num)
 				new_animation.seq = wep_seq
 				new_animation.shp = wep_shp
-				#new_animation.weapon_frame_offset_index = RomReader.items[weapon_id].item_type
-				#new_animation.weapon_frame_offset_index = unit_data.primary_weapon.item_type
 				new_animation.sequence = new_animation.seq.sequences[new_animation.seq.sequence_pointers[seq_part.parameters[1]]]
 				new_animation.image = wep_spr.spritesheet
 				new_animation.is_primary_anim = false
@@ -253,8 +222,6 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				var eff_file_name: String = "EFF" + str(effect_type)
 				new_animation.seq = eff_seq
 				new_animation.shp = eff_shp
-				#new_animation.weapon_frame_offset_index = RomReader.items[weapon_id].item_type
-				#new_animation.weapon_frame_offset_index = unit_data.primary_weapon.item_type
 				new_animation.sequence = new_animation.seq.sequences[new_animation.seq.sequence_pointers[seq_part.parameters[1]]]
 				new_animation.image = eff_spr.spritesheet
 				new_animation.is_primary_anim = false
@@ -297,23 +264,18 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				push_warning("can't interpret " + seq_part.opcode_name)
 				
 			unit_sprites_manager.global_position += position_offset * MapViewer.SCALE
-			#(draw_target.get_parent().get_parent() as Node3D).position += position_offset
 		elif seq_part.opcode_name == "SetLayerPriority": # TODO fix for sprite3Ds, use sorting_offset property?
-			# print(layer_priority_table)
+			# push_warning(layer_priority_table)
 			var layer_priority: Array = layer_priority_table[seq_part.parameters[0]]
 			for i in range(0, layer_priority.size() - 1):
 				var layer_name: String = layer_priority[i + 1] # skip set_id
 				if layer_name == "unit":
-					#unit_sprites_manager.sprite_primary.z_index = -i
 					unit_sprites_manager.sprite_primary.position.z = -i * UnitSpritesManager.LAYERING_OFFSET
 				elif layer_name == "weapon":
-					#unit_sprites_manager.sprite_weapon.z_index = -i
 					unit_sprites_manager.sprite_weapon.position.z = -i * UnitSpritesManager.LAYERING_OFFSET
 				elif layer_name == "effect":
-					#unit_sprites_manager.sprite_effect.z_index = -i
 					unit_sprites_manager.sprite_effect.position.z = -i * UnitSpritesManager.LAYERING_OFFSET
 				elif layer_name == "text":
-					#unit_sprites_manager.sprite_text.z_index = -i
 					unit_sprites_manager.sprite_text.position.z = -i * UnitSpritesManager.LAYERING_OFFSET
 		elif seq_part.opcode_name == "SetFrameOffset":
 			opcode_frame_offset = seq_part.parameters[0] # use global var since SetFrameOffset is only used in animations that do not call other animations
@@ -380,7 +342,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				var num_loops: int = seq_part.parameters[1]
 				
 				var primary_animation_part_id: int = seq_part_id + fft_animation.primary_anim_opcode_part_id - fft_animation.sequence.seq_parts.size()
-				# print_debug(str(primary_animation_part_id) + "\t" + str(animation_part_id) + "\t" + str(primary_anim_opcode_part_id) + "\t" + str(animation.size() - 3))
+				# push_warning(str(primary_animation_part_id) + "\t" + str(animation_part_id) + "\t" + str(primary_anim_opcode_part_id) + "\t" + str(animation.size() - 3))
 				
 				var temp_seq: Sequence = get_sub_animation(loop_length, primary_animation_part_id, fft_animation.parent_anim.sequence)
 				var temp_fft_animation: FftAnimation = fft_animation.get_duplicate()
@@ -407,12 +369,12 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			temp_fft_animation.primary_anim = fft_animation.primary_anim
 			temp_fft_animation.primary_anim_opcode_part_id = primary_animation_part_id
 			
-			# print_debug(str(temp_anim))
+			# push_warning(str(temp_anim))
 			var timer: SceneTreeTimer = get_tree().create_timer(delay_frames / animation_speed)
 			while timer.time_left > 0:
 				if temp_fft_animation.primary_anim != global_fft_animation:
 					break
-				# print(str(timer.time_left) + " " + str(temp_anim))
+				# push_warning(str(timer.time_left) + " " + str(temp_anim))
 				await start_animation(temp_fft_animation, draw_target, true, false, true)
 		elif seq_part.opcode_name.begins_with("WeaponSheatheCheck"):
 			var delay_frames: int = weapon_sheathe_check1_delay
@@ -421,7 +383,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			
 			var loop_length: int = seq_part.parameters[0]
 			var primary_animation_part_id: int = seq_part_id + fft_animation.primary_anim_opcode_part_id - fft_animation.sequence.seq_parts.size()
-			# print_debug(str(primary_animation_part_id) + "\t" + str(animation_part_id) + "\t" + str(primary_anim_opcode_part_id) + "\t" + str(animation.size() - 3))
+			# push_warning(str(primary_animation_part_id) + "\t" + str(animation_part_id) + "\t" + str(primary_anim_opcode_part_id) + "\t" + str(animation.size() - 3))
 			
 			var temp_seq: Sequence = get_sub_animation(loop_length, primary_animation_part_id, fft_animation.parent_anim.sequence)
 			var temp_fft_animation: FftAnimation = fft_animation.get_duplicate()
@@ -448,11 +410,9 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				reset_sprites()
 			start_animation(fft_animation, draw_target, animation_is_playing, false)
 		elif seq_part.opcode_name == "EndAnimation":
-			#reset_sprites()
+			#reset_sprites() # TODO reset position and rotation of draw_target (and pivot)
 			draw_target.frame = (draw_target.hframes * draw_target.vframes) - 1 # TODO fix this so a 255th frame can actually be made
 			#draw_target.visible = false
-			#draw_target.modulate.a = 0
-			#draw_target.texture = ImageTexture.create_from_image(fft_animation.shp.create_blank_frame())
 			if fft_animation.is_primary_anim:
 				reset_sprites()
 				animation_completed.emit()
@@ -483,9 +443,9 @@ func get_sub_animation(length: int, sub_animation_end_part_id: int, parent_anima
 	var sub_anim: Sequence = Sequence.new()
 	var previous_anim_part_id: int = sub_animation_end_part_id - 1
 	
-	# print_debug(str(animation) + "\n" + str(previous_anim_part_id))
+	# push_warning(str(animation) + "\n" + str(previous_anim_part_id))
 	while sub_anim_length < abs(length):
-		# print_debug(str(previous_anim_part_id) + "\t" + str(sub_anim_length) + "\t" + str(parent_animation[previous_anim_part_id + 3]) + "\t" + str(parent_animation[sub_animation_end_part_id + 3][0]))
+		# push_warning(str(previous_anim_part_id) + "\t" + str(sub_anim_length) + "\t" + str(parent_animation[previous_anim_part_id + 3]) + "\t" + str(parent_animation[sub_animation_end_part_id + 3][0]))
 		var previous_anim_part: SeqPart = parent_animation.seq_parts[previous_anim_part_id]
 		sub_anim.seq_parts.insert(0, previous_anim_part)
 		sub_anim_length += previous_anim_part.length
@@ -500,21 +460,14 @@ func get_sub_animation(length: int, sub_animation_end_part_id: int, parent_anima
 
 func _on_animation_changed() -> void:
 	reset_sprites()
-	
-	#if (FFTae.ae.seqs.has(FFTae.ae.seq.name_alias)):
 	var new_fft_animation: FftAnimation = get_animation_from_globals()
-	
 	var num_parts: int = new_fft_animation.sequence.seq_parts.size()
-	#animation_slider.tick_count = num_parts
-	#animation_slider.max_value = num_parts - 1
-	
 	start_animation(new_fft_animation, unit_sprites_manager.sprite_primary, animation_is_playing, false)
 
 
 func reset_sprites() -> void:
 	# reset frame offset
 	opcode_frame_offset = 0
-	
 	unit_sprites_manager.reset_sprites(is_right_facing)
 
 
@@ -531,12 +484,6 @@ func get_animation_from_globals() -> FftAnimation:
 	
 	global_fft_animation = fft_animation
 	return fft_animation
-
-
-#func _on_weapon_options_item_selected(index: int) -> void:
-	##global_weapon_frame_offset_index = RomReader.items[index].item_type
-	#weapon_v_offset = RomReader.items[index].wep_frame_v_offset
-	#_on_animation_changed()
 
 
 func _on_is_playing_check_box_toggled(toggled_on: bool) -> void:

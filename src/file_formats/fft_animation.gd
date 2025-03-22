@@ -21,6 +21,7 @@ var parent_anim: FftAnimation = null: # used for nested loops in animations
 	set(value):
 		parent_anim = value
 var is_primary_anim: bool = true # false if this animation created through an opcode of another animation, such as QueueSpriteAnim
+var primary_anim: FftAnimation = self
 var primary_anim_opcode_part_id: int = 0 # used for nested loops in animations
 
 

@@ -108,6 +108,9 @@ func load_csv(filepath: String) -> Array[PackedStringArray]:
 
 
 func start_animation(fft_animation: FftAnimation, draw_target: Sprite3D, is_playing: bool, isLooping: bool, force_loop: bool = false) -> void:
+	if fft_animation.primary_anim != global_fft_animation:
+		return
+	
 	var num_parts: int = fft_animation.sequence.seq_parts.size()
 	
 	var only_opcodes: bool = true
@@ -124,7 +127,7 @@ func start_animation(fft_animation: FftAnimation, draw_target: Sprite3D, is_play
 	if num_parts == 0:
 		#draw_target.visible = false
 		draw_target.frame = (draw_target.hframes * draw_target.vframes) - 1
-		await get_tree().create_timer(.001).timeout # prevent infinite loop from Wait opcodes looping only opcodes
+		await get_tree().create_timer(0.001).timeout # prevent infinite loop from Wait opcodes looping only opcodes
 		return
 	elif fft_animation.is_primary_anim and only_opcodes: # TODO only_opcodes should play instead of showing a blank image, ie. if only a loop, but need to handle broken MON MFItem animation infinite loop
 		# draw a blank image
@@ -133,7 +136,7 @@ func start_animation(fft_animation: FftAnimation, draw_target: Sprite3D, is_play
 		#draw_target.frame = 255 # TODO fix this, set blank by setting visible = false?
 		draw_target.frame = (draw_target.hframes * draw_target.vframes) - 1
 		#draw_target.visible = false
-		await get_tree().create_timer(.001).timeout # prevent infinite loop from Wait opcodes looping only opcodes
+		await get_tree().create_timer(0.001).timeout # prevent infinite loop from Wait opcodes looping only opcodes
 		return
 	elif (num_parts == 1 and not force_loop):
 		process_seq_part(fft_animation, 0, draw_target)
@@ -148,7 +151,7 @@ func start_animation(fft_animation: FftAnimation, draw_target: Sprite3D, is_play
 func play_animation(fft_animation: FftAnimation, draw_target: Sprite3D, isLooping: bool) -> void:
 	var animation_part_id: int = 0
 	while animation_part_id < fft_animation.sequence.seq_parts.size():
-		if fft_animation.is_primary_anim and fft_animation != global_fft_animation:
+		if fft_animation.primary_anim != global_fft_animation:
 			return
 		
 		var seq_part: SeqPart = fft_animation.sequence.seq_parts[animation_part_id]
@@ -241,6 +244,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				new_animation.sequence = new_animation.seq.sequences[new_animation.seq.sequence_pointers[seq_part.parameters[1]]]
 				new_animation.image = wep_spr.spritesheet
 				new_animation.is_primary_anim = false
+				new_animation.primary_anim = fft_animation.primary_anim
 				new_animation.flipped_h = fft_animation.flipped_h
 				
 				start_animation(new_animation, unit_sprites_manager.sprite_weapon, true, false, false)
@@ -254,6 +258,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				new_animation.sequence = new_animation.seq.sequences[new_animation.seq.sequence_pointers[seq_part.parameters[1]]]
 				new_animation.image = eff_spr.spritesheet
 				new_animation.is_primary_anim = false
+				new_animation.primary_anim = fft_animation.primary_anim
 				new_animation.flipped_h = fft_animation.flipped_h
 				
 				start_animation(new_animation, unit_sprites_manager.sprite_effect, true, false, false)
@@ -382,9 +387,12 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				temp_fft_animation.sequence = temp_seq
 				temp_fft_animation.parent_anim = fft_animation
 				temp_fft_animation.is_primary_anim = false
+				temp_fft_animation.primary_anim = fft_animation.primary_anim
 				temp_fft_animation.primary_anim_opcode_part_id = primary_animation_part_id
 				
 				for iteration in num_loops:
+					if temp_fft_animation.primary_anim != global_fft_animation:
+						break
 					await start_animation(temp_fft_animation, draw_target, true, false, true)
 		
 		elif seq_part.opcode_name == "WaitForInput":
@@ -396,11 +404,14 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			temp_fft_animation.sequence = temp_seq
 			temp_fft_animation.parent_anim = fft_animation
 			temp_fft_animation.is_primary_anim = false
+			temp_fft_animation.primary_anim = fft_animation.primary_anim
 			temp_fft_animation.primary_anim_opcode_part_id = primary_animation_part_id
 			
 			# print_debug(str(temp_anim))
 			var timer: SceneTreeTimer = get_tree().create_timer(delay_frames / animation_speed)
 			while timer.time_left > 0:
+				if temp_fft_animation.primary_anim != global_fft_animation:
+					break
 				# print(str(timer.time_left) + " " + str(temp_anim))
 				await start_animation(temp_fft_animation, draw_target, true, false, true)
 		elif seq_part.opcode_name.begins_with("WeaponSheatheCheck"):
@@ -417,11 +428,14 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			temp_fft_animation.sequence = temp_seq
 			temp_fft_animation.parent_anim = fft_animation
 			temp_fft_animation.is_primary_anim = false
+			temp_fft_animation.primary_anim = fft_animation.primary_anim
 			temp_fft_animation.primary_anim_opcode_part_id = primary_animation_part_id
 			
 			# print_debug(str(temp_anim))
 			var timer: SceneTreeTimer = get_tree().create_timer(delay_frames / animation_speed)
 			while timer.time_left > 0:
+				if temp_fft_animation.primary_anim != global_fft_animation:
+					break
 				await start_animation(temp_fft_animation, draw_target, true, false, true)
 		elif seq_part.opcode_name == "WaitForDistort":
 			pass

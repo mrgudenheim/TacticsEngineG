@@ -376,8 +376,7 @@ func set_sprite_file(sprite_file_name: String) -> void:
 
 
 func update_spritesheet_grid_texture(spr: Spr) -> void:
-	unit_spritesheet_grid = ImageTexture.create_from_image(spr.create_frame_grid())
-	animation_manager.unit_sprites_manager.sprite_primary.texture = unit_spritesheet_grid
+	animation_manager.unit_sprites_manager.sprite_primary.texture = ImageTexture.create_from_image(spr.create_frame_grid())
 
 
 func on_sprite_idx_selected(index: int) -> void:

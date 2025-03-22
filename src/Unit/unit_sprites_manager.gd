@@ -13,7 +13,7 @@ const LAYERING_OFFSET: float = 0.001
 
 
 
-func reset_sprites(flip_h: bool = false) -> void:
+func reset_sprites(new_flip_h: bool = false) -> void:
 	# reset position
 	self.position = Vector3.ZERO
 	sprite_item.position = Vector3.ZERO
@@ -36,10 +36,10 @@ func reset_sprites(flip_h: bool = false) -> void:
 	sprite_text.rotation_degrees.y = 0
 	
 	# reset flip_h
-	sprite_primary.flip_h = flip_h
-	sprite_weapon.flip_h = flip_h
-	sprite_effect.flip_h = flip_h
-	sprite_text.flip_h = flip_h
+	sprite_primary.flip_h = new_flip_h
+	sprite_weapon.flip_h = new_flip_h
+	sprite_effect.flip_h = new_flip_h
+	sprite_text.flip_h = new_flip_h
 	
 	# reset flip_v
 	sprite_primary.flip_v = false

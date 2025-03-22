@@ -209,7 +209,6 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				new_animation.seq = wep_seq
 				new_animation.shp = wep_shp
 				new_animation.sequence = new_animation.seq.sequences[new_animation.seq.sequence_pointers[seq_part.parameters[1]]]
-				new_animation.image = wep_spr.spritesheet
 				new_animation.is_primary_anim = false
 				new_animation.primary_anim = fft_animation.primary_anim
 				new_animation.flipped_h = fft_animation.flipped_h
@@ -221,7 +220,6 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				new_animation.seq = eff_seq
 				new_animation.shp = eff_shp
 				new_animation.sequence = new_animation.seq.sequences[new_animation.seq.sequence_pointers[seq_part.parameters[1]]]
-				new_animation.image = eff_spr.spritesheet
 				new_animation.is_primary_anim = false
 				new_animation.primary_anim = fft_animation.primary_anim
 				new_animation.flipped_h = fft_animation.flipped_h
@@ -476,7 +474,6 @@ func get_animation_from_globals() -> FftAnimation:
 	fft_animation.seq = global_seq
 	fft_animation.shp = global_shp
 	fft_animation.sequence = global_seq.sequences[global_animation_id]
-	fft_animation.image = global_spr.spritesheet
 	fft_animation.flipped_h = is_right_facing
 	fft_animation.flipped_v = false
 	fft_animation.submerged_depth = submerged_depth

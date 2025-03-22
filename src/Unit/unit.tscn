@@ -66,6 +66,7 @@ unit_data = NodePath("../..")
 unit_sprites_manager = NodePath("UnitSpritesManager")
 layer_priority_table_filepath = "res://src/fftae/layer_priority_table.txt"
 item_list_filepath = "res://src/fftae/item_list.txt"
+weapon_sheathe_check2_delay = 0
 
 [node name="UnitSpritesManager" parent="CharacterBody3D/UnitAnimationManager" instance=ExtResource("4_h8uk5")]
 

@@ -666,6 +666,8 @@ func _on_save_animation_gif_dialog_file_selected(path: String) -> void:
 
 
 func add_gif_frame() -> void:
+	await get_tree().process_frame # wait for frame to render
+	#await get_tree().process_frame # wait for frame to render
 	#await get_tree().process_frame # wait for frame to render
 	#var preview_image: Image = preview_manager.preview_rect.texture.get_image()
 	var preview_image: Image = preview_manager.preview_viewport2.get_texture().get_image()

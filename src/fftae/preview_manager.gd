@@ -48,6 +48,7 @@ func initialize() -> void:
 		item_options.add_item(str(UnitAnimationManager.item_list[item_list_index][1]))
 	
 	is_playing_check.button_pressed = true
+	unit.animation_manager.animation_frame_loaded.connect(update_preview_render)
 
 
 func add_unit() -> void:
@@ -76,6 +77,10 @@ func enable_ui() -> void:
 	submerged_depth_options.disabled = false
 	face_right_check.disabled = false
 	is_playing_check.disabled = false
+
+
+func update_preview_render() -> void:
+	preview_viewport2.render_target_update_mode = SubViewport.UPDATE_ONCE
 
 
 func _on_weapon_options_item_selected(index: int) -> void:

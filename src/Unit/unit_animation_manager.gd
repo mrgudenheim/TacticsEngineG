@@ -144,7 +144,7 @@ func play_animation(fft_animation: FftAnimation, draw_target: Sprite3D, isLoopin
 		
 		var seq_part: SeqPart = fft_animation.sequence.seq_parts[animation_part_id]
 		if fft_animation.is_primary_anim:
-			processing_opcode.emit(animation_part_id)
+			processing_opcode.emit(animation_part_id) # update animation slider in FFTae
 		
 		# break loop animation when stopped or on selected animation changed to prevent 2 loops playing at once
 		if ((isLooping or fft_animation.is_primary_anim) 

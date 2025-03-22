@@ -182,12 +182,12 @@ camera = NodePath("../PreviewSubViewport/PreviewCamera3D")
 
 [node name="PreviewSubViewport" type="SubViewport" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer"]
 transparent_bg = true
-size = Vector2i(120, 120)
+size = Vector2i(400, 400)
 
 [node name="PreviewCamera3D" type="Camera3D" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer/PreviewSubViewport"]
 transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 2.5, 0, 2.5)
 projection = 1
-size = 2.0
+size = 2.5
 
 [node name="SliderContainer" type="HBoxContainer" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2

@@ -3,6 +3,7 @@ extends Node3D
 
 signal animation_completed
 signal animation_loop_completed
+signal animation_frame_loaded
 signal processing_opcode(index: int)
 
 #@export var ui_manager: UiManager
@@ -202,13 +203,13 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			
 			(draw_target.get_parent() as Node3D).rotation_degrees = Vector3(0, 0, -y_rotation)
 	
-	# only update ui for primary animation, not animations called through opcodes
-	#if fft_animation.is_primary_anim:
-		#animation_slider.value = seq_part_id
-		#opcode_text.text = seq_part.to_string()
-	
-	var position_offset: Vector3 = Vector3.ZERO
-	
+			#var assembled_image: Image = fft_animation.shp.get_assembled_frame(
+					#new_frame_id, fft_animation.image, global_animation_ptr_id, unit_data.debug_menu.other_type_options.selected, weapon_v_offset, submerged_depth)
+			#draw_target.texture = ImageTexture.create_from_image(assembled_image)
+			draw_target.frame = new_frame_id
+			
+			if fft_animation.is_primary_anim:
+				animation_frame_loaded.emit()
 	# Handle opcodes
 	if seq_part.isOpcode:
 		#print(anim_part_start)

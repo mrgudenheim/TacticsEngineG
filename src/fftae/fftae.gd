@@ -18,6 +18,7 @@ static var global_fft_animation: FftAnimation = FftAnimation.new()
 @export var save_gif_button: Button
 @export var save_gif_dialog: FileDialog
 @export var is_recording_gif: bool = false
+var gif_exporter: GIFExporter
 
 @export var animation_list_container: VBoxContainer
 @export var animation_list_row_tscn: PackedScene
@@ -629,7 +630,7 @@ func _on_save_animation_gif_dialog_file_selected2(path: String) -> void:
 
 
 func _on_save_animation_gif_dialog_file_selected(path: String) -> void:
-	var gif_exporter = GIFExporter.new(preview_manager.preview_rect.texture.get_width(), preview_manager.preview_rect.texture.get_height())
+	gif_exporter = GIFExporter.new(preview_manager.preview_rect.texture.get_width(), preview_manager.preview_rect.texture.get_height())
 	
 	preview_manager.unit.animation_manager.start_animation(
 		preview_manager.unit.animation_manager.global_fft_animation, 
@@ -641,20 +642,20 @@ func _on_save_animation_gif_dialog_file_selected(path: String) -> void:
 	preview_manager.is_playing_check.button_pressed = true
 	preview_manager.unit.animation_manager.animation_completed.connect(end_recording_gif)
 	preview_manager.unit.animation_manager.animation_loop_completed.connect(end_recording_gif)
+	preview_manager.unit.animation_manager.animation_frame_loaded.connect(add_gif_frame)
 	#preview_manager.unit.animation_manager.animation_completed.connect(func(): push_warning("animation_completed"))
 	push_warning("start recording gif")
 	while is_recording_gif:
 		await get_tree().process_frame # wait for frame to render
-		var preview_image: Image = preview_manager.preview_rect.texture.get_image()
-		
-		var delay: float = 2.0 / preview_manager.unit.animation_manager.animation_speed # delay for an animation frame is always multiple of 2
-		gif_exporter.add_frame(preview_image, delay, MedianCutQuantization)
-		
-		await get_tree().create_timer(delay).timeout
-	
+		#await get_tree().process_frame # wait for frame to render
+		#var preview_image: Image = preview_manager.preview_rect.texture.get_image()
+		#
+		#var delay: float = 0.5 / preview_manager.unit.animation_manager.animation_speed # delay for an animation frame is always multiple of 2
+		#gif_exporter.add_frame(preview_image, delay, MedianCutQuantization)
+		#
+		#await get_tree().create_timer(delay).timeout
+	#
 	push_warning("end recording gif")
-	preview_manager.unit.animation_manager.animation_completed.disconnect(end_recording_gif)
-	preview_manager.unit.animation_manager.animation_loop_completed.disconnect(end_recording_gif)
 	
 	var file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
 	# save data stream into file
@@ -664,5 +665,19 @@ func _on_save_animation_gif_dialog_file_selected(path: String) -> void:
 	save_frame_grid_dialog.visible = false
 
 
+func add_gif_frame() -> void:
+	#await get_tree().process_frame # wait for frame to render
+	#var preview_image: Image = preview_manager.preview_rect.texture.get_image()
+	var preview_image: Image = preview_manager.preview_viewport2.get_texture().get_image()
+	var seq_part_id: int = preview_manager.animation_slider.value
+	
+	#var delay: float = preview_manager.unit.animation_manager.global_fft_animation.sequence.seq_parts[seq_part_id].parameters[1] / preview_manager.unit.animation_manager.animation_speed
+	var delay: float = preview_manager.unit.animation_manager.global_fft_animation.sequence.seq_parts[seq_part_id].parameters[1] / 59.0
+	gif_exporter.add_frame(preview_image, delay, MedianCutQuantization)
+
+
 func end_recording_gif() -> void:
+	preview_manager.unit.animation_manager.animation_frame_loaded.disconnect(add_gif_frame)
+	preview_manager.unit.animation_manager.animation_completed.disconnect(end_recording_gif)
+	preview_manager.unit.animation_manager.animation_loop_completed.disconnect(end_recording_gif)
 	is_recording_gif = false

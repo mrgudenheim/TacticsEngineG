@@ -46,6 +46,8 @@ func initialize() -> void:
 		if UnitAnimationManager.item_list[item_list_index].size() < 2: # ignore blank lines
 			break
 		item_options.add_item(str(UnitAnimationManager.item_list[item_list_index][1]))
+	
+	is_playing_check.button_pressed = true
 
 
 func add_unit() -> void:

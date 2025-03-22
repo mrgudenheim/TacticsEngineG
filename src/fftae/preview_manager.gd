@@ -64,6 +64,7 @@ func add_unit() -> void:
 	#preview_viewport.camera_control.sprite = unit.animation_manager.unit_sprites_manager.sprite_primary
 	
 	unit.animation_manager.processing_opcode.connect(update_preview_slider)
+	#unit.spritesheet_changed.connect(func(new_texture: ImageTexture): preview_rect.texture = new_texture)
 
 
 func enable_ui() -> void:
@@ -77,7 +78,8 @@ func enable_ui() -> void:
 
 func _on_weapon_options_item_selected(index: int) -> void:
 	#unit.animation_manager._on_weapon_options_item_selected(index)
-	unit.animation_manager.weapon_id = index
+	#unit.animation_manager.weapon_id = index
+	unit.set_primary_weapon(index)
 	#unit.debug_menu.weapon_options.select(index)
 
 

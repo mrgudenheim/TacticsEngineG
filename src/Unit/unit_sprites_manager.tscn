@@ -23,6 +23,8 @@ transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, 0, 0.71
 pixel_size = 0.0357
 alpha_cut = 1
 texture_filter = 0
+hframes = 16
+vframes = 16
 
 [node name="WepPivot" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.714, 0)
@@ -32,6 +34,8 @@ transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, 0, 0.71
 pixel_size = 0.0357
 alpha_cut = 1
 texture_filter = 0
+hframes = 16
+vframes = 32
 
 [node name="EffPivot" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.714, 0)
@@ -41,6 +45,8 @@ transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, 0, 0.71
 modulate = Color(1, 1, 1, 0.498039)
 pixel_size = 0.0357
 texture_filter = 0
+hframes = 16
+vframes = 16
 
 [node name="TextPivot" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.714, 0)

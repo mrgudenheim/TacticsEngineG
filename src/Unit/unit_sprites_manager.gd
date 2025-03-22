@@ -23,14 +23,20 @@ func reset_sprites(flip_h: bool = false) -> void:
 	self.position = Vector3.ZERO
 	sprite_item.position = Vector3.ZERO
 	sprite_item.rotation = Vector3.ZERO
-	sprite_item.texture = ImageTexture.create_from_image(Image.create_empty(120, 120, false, Image.FORMAT_RGBA8))
+	sprite_item.texture = ImageTexture.create_from_image(Image.create_empty(120, 120, false, Image.FORMAT_RGBA8)) # TODO don't create texture every time...
 	
-	# reset layer priority, TODO fix for sprite3Ds, use sorting_offset property?
+	# reset layer priority
 	sprite_primary.position.z = -2 * LAYERING_OFFSET
 	sprite_weapon.position.z = -3 * LAYERING_OFFSET
-	sprite_weapon.texture = ImageTexture.create_from_image(Image.create_empty(120, 120, false, Image.FORMAT_RGBA8))
+	#sprite_weapon.frame = 511 # TODO fix setting blank, set visible = false?
+	sprite_weapon.frame = (sprite_weapon.hframes * sprite_weapon.vframes) - 1
+	#sprite_weapon.visible = false
+	#sprite_weapon.texture = ImageTexture.create_from_image(Image.create_empty(120, 120, false, Image.FORMAT_RGBA8))
 	sprite_effect.position.z = -1 * LAYERING_OFFSET
-	sprite_effect.texture = ImageTexture.create_from_image(Image.create_empty(120, 120, false, Image.FORMAT_RGBA8))
+	#sprite_effect.frame = 255 # TODO fix setting blank, set visible = false?
+	sprite_effect.frame = (sprite_effect.hframes * sprite_effect.vframes) - 1
+	#sprite_effect.visible = false
+	#sprite_effect.texture = ImageTexture.create_from_image(Image.create_empty(120, 120, false, Image.FORMAT_RGBA8))
 	sprite_text.position.z = 0 * LAYERING_OFFSET
 	
 	pivot_primary.rotation_degrees.y = 0

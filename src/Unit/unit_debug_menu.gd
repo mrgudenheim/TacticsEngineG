@@ -67,45 +67,8 @@ func enable_ui() -> void:
 	other_type_options.disabled = false
 
 
-func _on_sprite_option_selected(index) -> void:
-	var spr: Spr = RomReader.sprs[index]
-	if not spr.is_initialized:
-		spr.set_data(RomReader.get_file_data(sprite_options.get_item_text(index)))
-		spr.set_spritesheet_data(RomReader.spr_file_name_to_id[spr.file_name])
-	
-	animation_manager.global_spr = spr
-	
-	var shp: Shp = RomReader.shps[RomReader.file_records[spr.shp_name].type_index]
-	if not shp.is_initialized:
-		shp.set_data_from_shp_bytes(RomReader.get_file_data(shp.file_name))
-	
-	var seq: Seq = RomReader.seqs[RomReader.file_records[spr.seq_name].type_index]
-	if not seq.is_initialized:
-		seq.set_data_from_seq_bytes(RomReader.get_file_data(seq.file_name))
-	
-	animation_manager.global_spr = spr
-	animation_manager.global_shp = shp
-	animation_manager.global_seq = seq
-	
-	animation_manager.wep_spr = RomReader.sprs[RomReader.file_records["WEP.SPR"].type_index]
-	animation_manager.wep_shp = RomReader.shps[RomReader.file_records["WEP1.SHP"].type_index]
-	animation_manager.wep_seq = RomReader.seqs[RomReader.file_records["WEP1.SEQ"].type_index]
-	
-	animation_manager.eff_spr = RomReader.sprs[RomReader.file_records["EFF.SPR"].type_index]
-	animation_manager.eff_shp = RomReader.shps[RomReader.file_records["EFF1.SHP"].type_index]
-	animation_manager.eff_seq = RomReader.seqs[RomReader.file_records["EFF1.SEQ"].type_index]
-	
-	animation_manager.item_spr = RomReader.sprs[RomReader.file_records["ITEM.BIN"].type_index]
-	animation_manager.item_shp = RomReader.shps[RomReader.file_records["ITEM.SHP"].type_index]
-	
-	animation_manager.other_spr = RomReader.sprs[RomReader.file_records["OTHER.SPR"].type_index]
-	animation_manager.other_shp = RomReader.shps[RomReader.file_records["OTHER.SHP"].type_index]
-	
-	animation_manager._on_animation_changed()
-	
-	spritesheet_changed.emit(ImageTexture.create_from_image(spr.spritesheet)) # TODO hook up to sprite for debug purposes
-	
-	#sprite_viewer.texture = ImageTexture.create_from_image(spr.spritesheet)
+func _on_sprite_option_selected(index: int) -> void:
+	unit.on_sprite_idx_selected(index)
 
 
 func _on_anim_id_spin_value_changed(value: int) -> void:

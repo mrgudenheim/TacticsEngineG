@@ -55,7 +55,7 @@ func get_sub_spr(new_name: String, start_pixel: int, end_pixel: int) -> Spr:
 	return sub_spr
 
 
-func set_data(spr_file: PackedByteArray) -> void:
+func set_data(spr_file: PackedByteArray = RomReader.get_file_data(file_name)) -> void:
 	var num_palette_bytes: int = num_colors * 2
 	var palette_bytes: PackedByteArray = spr_file.slice(0, num_palette_bytes)
 	var num_bytes_top: int = (width * 256) /2
@@ -304,15 +304,19 @@ func set_spritesheet_data(new_sprite_id: int) -> void:
 
 func create_frame_grid(anim_idx: int = 0, other_idx: int = 0, wep_v_offset: int = 0, submerged_depth: int = 0) -> Image:
 	var shp: Shp = RomReader.shps[RomReader.file_records[shp_name].type_index]
+	var num_cells_wide: int = 16
+	var num_cells_tall: int = 16
+	if shp.frames.size() > 256:
+		num_cells_tall = 32
 	
 	var cell_width: int = shp.frame_size.x
 	var cell_height: int = shp.frame_size.y
 	
-	var frame_grid: Image = Image.create_empty(cell_width * 16, cell_height * 16, false, Image.FORMAT_RGBA8)
+	var frame_grid: Image = Image.create_empty(cell_width * num_cells_wide, cell_height * num_cells_tall, false, Image.FORMAT_RGBA8)
 	
 	for frame_idx: int in shp.frames.size():
-		var cell_x: int = frame_idx % 16
-		var cell_y: int = frame_idx / 16
+		var cell_x: int = frame_idx % num_cells_wide
+		var cell_y: int = frame_idx / num_cells_wide
 		
 		var frame_image: Image = shp.get_assembled_frame(frame_idx, spritesheet, anim_idx, other_idx, wep_v_offset, submerged_depth)
 		frame_grid.blit_rect(frame_image, Rect2i(0, 0, frame_image.get_size().x, frame_image.get_size().y), Vector2i(cell_x * cell_width, cell_y * cell_height))

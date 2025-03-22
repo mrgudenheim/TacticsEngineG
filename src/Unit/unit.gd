@@ -9,6 +9,7 @@ signal ability_completed()
 signal primary_weapon_assigned(idx: int)
 signal image_changed(new_image: ImageTexture)
 signal knocked_out(unit: UnitData)
+signal spritesheet_changed(new_spritesheet: ImageTexture)
 
 var is_player_controlled: bool = false
 
@@ -86,8 +87,6 @@ var portrait_palette_id: int = 0
 var unit_id: int = 0
 var special_job_skillset_id: int = 0
 
-
-
 var can_move: bool = true
 
 var map_position: Vector2i
@@ -131,13 +130,12 @@ func _ready() -> void:
 func initialize_unit() -> void:
 	debug_menu.populate_options()
 	
-	set_sprite_file("RAMUZA.SPR")
-	
 	# 1 cure
 	# 0xc8 blood suck
 	# 0x9b stasis sword
 	set_ability(0x9b)
 	set_primary_weapon(1)
+	set_sprite_file("RAMUZA.SPR")
 	
 	update_unit_facing(FacingVectors[Facings.SOUTH])
 
@@ -154,7 +152,7 @@ func _physics_process(delta: float) -> void:
 		char_body.move_and_slide()
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if not RomReader.is_ready:
 		return
 	
@@ -357,22 +355,76 @@ func set_ability(new_ability_id: int) -> void:
 
 func set_primary_weapon(new_weapon_id: int) -> void:
 	primary_weapon = RomReader.items[new_weapon_id]
+	#animation_manager.weapon_id = new_weapon_id
 	primary_weapon_assigned.emit(new_weapon_id)
 
 
-func set_sprite(sprite_id: int) -> void:
-	debug_menu.sprite_options.select(sprite_id)
-	debug_menu.sprite_options.item_selected.emit(debug_menu.sprite_options.selected)
+func set_sprite(new_sprite_idx: int) -> void:
+	var spr: Spr = RomReader.sprs[new_sprite_idx]
+	if RomReader.spr_file_name_to_id.has(spr.file_name):
+		sprite_id = RomReader.spr_file_name_to_id[spr.file_name]
+	debug_menu.sprite_options.select(new_sprite_idx)
+	on_sprite_idx_selected(new_sprite_idx)
+	update_spritesheet_grid_texture(spr)
+	
 	debug_menu.anim_id_spin.value = idle_animation_id
 
 
 func set_sprite_file(sprite_file_name: String) -> void:
-	debug_menu.sprite_options.select(RomReader.file_records[sprite_file_name].type_index)
-	debug_menu.sprite_options.item_selected.emit(debug_menu.sprite_options.selected)
-	debug_menu.anim_id_spin.value = idle_animation_id
+	var new_sprite_idx: int = RomReader.file_records[sprite_file_name].type_index
+	set_sprite(new_sprite_idx)
 
 
-func _on_character_body_3d_input_event(camera: Node, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
+func update_spritesheet_grid_texture(spr: Spr) -> void:
+	unit_spritesheet_grid = ImageTexture.create_from_image(spr.create_frame_grid())
+	animation_manager.unit_sprites_manager.sprite_primary.texture = unit_spritesheet_grid
+
+
+func on_sprite_idx_selected(index: int) -> void:
+	var spr: Spr = RomReader.sprs[index]
+	if not spr.is_initialized:
+		spr.set_data()
+		spr.set_spritesheet_data(RomReader.spr_file_name_to_id[spr.file_name])
+	
+	animation_manager.global_spr = spr
+	
+	var shp: Shp = RomReader.shps[RomReader.file_records[spr.shp_name].type_index]
+	if not shp.is_initialized:
+		shp.set_data_from_shp_bytes(RomReader.get_file_data(shp.file_name))
+	
+	var seq: Seq = RomReader.seqs[RomReader.file_records[spr.seq_name].type_index]
+	if not seq.is_initialized:
+		seq.set_data_from_seq_bytes(RomReader.get_file_data(seq.file_name))
+	
+	animation_manager.global_spr = spr
+	animation_manager.global_shp = shp
+	animation_manager.global_seq = seq
+	
+	animation_manager.wep_spr = RomReader.sprs[RomReader.file_records["WEP.SPR"].type_index]
+	animation_manager.wep_shp = RomReader.shps[RomReader.file_records["WEP1.SHP"].type_index]
+	animation_manager.wep_seq = RomReader.seqs[RomReader.file_records["WEP1.SEQ"].type_index]
+	
+	animation_manager.unit_sprites_manager.sprite_weapon.texture = ImageTexture.create_from_image(animation_manager.wep_spr.create_frame_grid(0, 0, primary_weapon.wep_frame_v_offset, 0))
+	
+	animation_manager.eff_spr = RomReader.sprs[RomReader.file_records["EFF.SPR"].type_index]
+	animation_manager.eff_shp = RomReader.shps[RomReader.file_records["EFF1.SHP"].type_index]
+	animation_manager.eff_seq = RomReader.seqs[RomReader.file_records["EFF1.SEQ"].type_index]
+	
+	animation_manager.unit_sprites_manager.sprite_effect.texture = ImageTexture.create_from_image(animation_manager.eff_spr.create_frame_grid(0, 0, 0, 0))
+	
+	animation_manager.item_spr = RomReader.sprs[RomReader.file_records["ITEM.BIN"].type_index]
+	animation_manager.item_shp = RomReader.shps[RomReader.file_records["ITEM.SHP"].type_index]
+	
+	animation_manager.other_spr = RomReader.sprs[RomReader.file_records["OTHER.SPR"].type_index]
+	animation_manager.other_shp = RomReader.shps[RomReader.file_records["OTHER.SHP"].type_index]
+	
+	#spritesheet_changed.emit(ImageTexture.create_from_image(spr.spritesheet)) # TODO hook up to sprite for debug purposes
+	spritesheet_changed.emit(animation_manager.unit_sprites_manager.sprite_weapon.texture) # TODO hook up to sprite for debug purposes
+	
+	animation_manager._on_animation_changed()
+
+
+func _on_character_body_3d_input_event(_camera: Node, _event: InputEvent, _event_position: Vector3, _normal: Vector3, _shape_idx: int) -> void:
 	if Input.is_action_just_pressed("secondary_action") and UnitControllerRT.unit.char_body.is_on_floor():
 		UnitControllerRT.unit.use_ability(char_body.position)
 		process_targeted()

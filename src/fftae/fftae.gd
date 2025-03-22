@@ -43,35 +43,35 @@ var seq: Seq:
 	get:
 		var file_name: String = ui_manager.seq_options.get_item_text(ui_manager.seq_options.selected)
 		
-		var seq: Seq = RomReader.seqs[RomReader.file_records[file_name].type_index]
+		var new_seq: Seq = RomReader.seqs[RomReader.file_records[file_name].type_index]
 		if not seq.is_initialized:
-			seq.set_data_from_seq_bytes(RomReader.get_file_data(seq.file_name))
+			new_seq.set_data_from_seq_bytes(RomReader.get_file_data(new_seq.file_name))
 		
-		return seq
+		return new_seq
 
 
 var shp: Shp:
 	get:
 		var file_name: String = ui_manager.shp_options.get_item_text(ui_manager.shp_options.selected)
 		
-		var shp: Shp = RomReader.shps[RomReader.file_records[file_name].type_index]
-		if not shp.is_initialized:
-			shp.set_data_from_shp_bytes(RomReader.get_file_data(shp.file_name))
+		var new_shp: Shp = RomReader.shps[RomReader.file_records[file_name].type_index]
+		if not new_shp.is_initialized:
+			new_shp.set_data_from_shp_bytes(RomReader.get_file_data(new_shp.file_name))
 		
-		return shp
+		return new_shp
 
 
 var spr: Spr:
 	get:
 		#var file_name: String = ui_manager.sprite_options.get_item_text(ui_manager.sprite_options.selected)
 		var sprite_index: int = ui_manager.sprite_options.selected
-		var spr: Spr = RomReader.sprs[sprite_index]
-		if not spr.is_initialized:
-			spr.set_data(RomReader.get_file_data(ui_manager.sprite_options.get_item_text(sprite_index)))
-			if spr.file_name != "WEP.SPR" and spr.file_name != "EFF.SPR":
-				spr.set_spritesheet_data(RomReader.spr_file_name_to_id[spr.file_name])
+		var new_spr: Spr = RomReader.sprs[sprite_index]
+		if not new_spr.is_initialized:
+			new_spr.set_data(RomReader.get_file_data(ui_manager.sprite_options.get_item_text(sprite_index)))
+			if new_spr.file_name != "WEP.SPR" and new_spr.file_name != "EFF.SPR":
+				new_spr.set_spritesheet_data(RomReader.spr_file_name_to_id[new_spr.file_name])
 		
-		return spr
+		return new_spr
 
 
 func _ready() -> void:
@@ -598,7 +598,7 @@ func _on_save_animation_gif_pressed() -> void:
 # ignores all opcodes and rotation
 func _on_save_animation_gif_dialog_file_selected2(path: String) -> void:
 	var fft_animation: FftAnimation = preview_manager.global_fft_animation
-	var gif_exporter = GIFExporter.new(fft_animation.shp.frame_size.x, fft_animation.shp.frame_size.y)
+	gif_exporter = GIFExporter.new(fft_animation.shp.frame_size.x, fft_animation.shp.frame_size.y)
 	
 	#push_warning(fft_animation.sequence.seq_parts.size())
 	for seq_part: SeqPart in fft_animation.sequence.seq_parts:

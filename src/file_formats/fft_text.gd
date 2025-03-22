@@ -250,10 +250,10 @@ static func text_to_string(bytes_text: PackedByteArray) -> PackedStringArray:
 			char_code = 0x3048
 		elif char_code == 70 or char_code == 0xd9bd: # colon
 			char_code = 0x3a
-		# 71 - 94 japanese # TODO
+		# 71 - 94 japanese # TODO japanese
 		elif char_code == 95 or char_code == 0xd11c or char_code == 0xd9b6: # period
 			char_code = 0x2e
-		# 96 - 138 japanese # TODO
+		# 96 - 138 japanese # TODO japanese
 		elif char_code == 139 or char_code == 0xd9bc: # middle dot
 			char_code = 0xb7
 		elif char_code == 140: # japanese
@@ -262,7 +262,7 @@ static func text_to_string(bytes_text: PackedByteArray) -> PackedStringArray:
 			char_code = 0x28
 		elif char_code == 142 or char_code == 0xd9bf: # close parentheses
 			char_code = 0x29
-		# 143 - 144 japanese # TODO
+		# 143 - 144 japanese # TODO japanese
 		elif char_code == 145 or char_code == 0xda77 or char_code == 0xd9c0: # double quote
 			char_code = 0x22
 		elif char_code == 147 or char_code == 0xda76 or char_code == 0xd9c1: # single quote, apostrophe

@@ -214,6 +214,7 @@ func cache_associated_files() -> void:
 	sprs[wep_spr_index] = wep_spr
 	
 	# get shp for item graphics
+	# TODO use data from battle.bin
 	var item_shp_name: String = "ITEM.SHP"
 	var item_shp_record: FileRecord = FileRecord.new()
 	item_shp_record.name = item_shp_name
@@ -224,7 +225,6 @@ func cache_associated_files() -> void:
 	shps.append(item_shp)
 	
 	# get item graphics
-	# TODO set type_index
 	var item_record: FileRecord = FileRecord.new()
 	item_record.sector_location = 6297 # ITEM.BIN is in EVENT not BATTLE, so needs a new record created
 	item_record.size = 33280

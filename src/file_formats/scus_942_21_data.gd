@@ -83,7 +83,7 @@ var item_sprite_ids: PackedInt32Array = []
 var item_min_levels: PackedInt32Array = []
 var item_slot_types: PackedInt32Array = []
 var item_types: PackedInt32Array = []
-var item_attributes # TODO
+var item_attributes # TODO item attributes
 var item_prices: PackedInt32Array = []
 var item_shop_availability: PackedInt32Array = []
 
@@ -199,7 +199,7 @@ func init_from_scus() -> void:
 	item_min_levels.resize(item_entries)
 	item_slot_types.resize(item_entries)
 	item_types.resize(item_entries)
-	# item_attributes # TODO
+	# item_attributes # TODO item attributes
 	item_prices.resize(item_entries)
 	item_shop_availability.resize(item_entries)
 	

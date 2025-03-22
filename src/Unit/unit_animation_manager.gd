@@ -368,6 +368,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			temp_fft_animation.primary_anim_opcode_part_id = primary_animation_part_id
 			
 			# push_warning(str(temp_anim))
+			# TODO wait for input signal
 			var timer: SceneTreeTimer = get_tree().create_timer(delay_frames / animation_speed)
 			while timer.time_left > 0:
 				if temp_fft_animation.primary_anim != global_fft_animation:
@@ -392,6 +393,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			temp_fft_animation.primary_anim_opcode_part_id = primary_animation_part_id
 			
 			# print_debug(str(temp_anim))
+			# TODO wait for weapon sheathe check signal
 			var timer: SceneTreeTimer = get_tree().create_timer(delay_frames / animation_speed)
 			while timer.time_left > 0:
 				if temp_fft_animation.primary_anim != global_fft_animation:

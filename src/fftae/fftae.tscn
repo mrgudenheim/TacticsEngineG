@@ -200,7 +200,6 @@ text = "Play?"
 custom_minimum_size = Vector2(24, 0)
 layout_mode = 2
 disabled = true
-button_pressed = true
 
 [node name="HSlider" type="HSlider" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SliderContainer"]
 layout_mode = 2

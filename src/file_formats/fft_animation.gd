@@ -8,7 +8,6 @@ var image: Image
 var flipped_h: bool = false # mirrors the animation. Set to true to create right-facing animations
 var flipped_v: bool = false # mirrors the animation
 var submerged_depth: int = 0
-var weapon_frame_offset_index: int = 0
 var other_type_index: int = 0
 var back_face_offset: int = 0
 
@@ -30,7 +29,6 @@ func get_duplicate() -> FftAnimation:
 	new_fft_animation.seq = seq
 	new_fft_animation.shp = shp
 	new_fft_animation.sequence = sequence
-	new_fft_animation.weapon_frame_offset_index = weapon_frame_offset_index
 	new_fft_animation.image = image
 	new_fft_animation.is_primary_anim = is_primary_anim
 	new_fft_animation.primary_anim_opcode_part_id = primary_anim_opcode_part_id

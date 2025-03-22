@@ -429,7 +429,7 @@ func populate_frame_list(frame_list_parent: VBoxContainer, shp_local: Shp) -> vo
 		
 		var preview_image_size: Vector2i = Vector2i(120, 120)
 		var preview_image: Image = shp_local.create_blank_frame(Color.BLACK, preview_image_size)
-		var assembled_frame: Image = shp_local.get_assembled_frame(frame_index, spr.spritesheet, ui_manager.animation_id_spinbox.value, preview_manager.other_type_options.selected, preview_manager.unit.animation_manager.weapon_v_offset, preview_manager.submerged_depth_options.selected, Vector2i(60, 60), 15)
+		var assembled_frame: Image = shp_local.get_assembled_frame(frame_index, spr.spritesheet, ui_manager.animation_id_spinbox.value, preview_manager.other_type_options.selected, preview_manager.unit.primary_weapon.wep_frame_v_offset, preview_manager.submerged_depth_options.selected, Vector2i(60, 60), 15)
 		assembled_frame.resize(preview_image_size.x, preview_image_size.y, Image.INTERPOLATE_NEAREST)
 		preview_image.blend_rect(assembled_frame, Rect2i(Vector2i.ZERO, preview_image_size), Vector2i.ZERO)
 		row_ui.preview_rect.texture = ImageTexture.create_from_image(preview_image)
@@ -443,7 +443,7 @@ func populate_frame_list(frame_list_parent: VBoxContainer, shp_local: Shp) -> vo
 
 
 func draw_assembled_frame(frame_index: int) -> void:
-	var assembled_image: Image = shp.get_assembled_frame(frame_index, spr.spritesheet, ui_manager.animation_id_spinbox.value, preview_manager.other_type_options.selected, preview_manager.weapon_v_offset, preview_manager.submerged_depth_options.selected)
+	var assembled_image: Image = shp.get_assembled_frame(frame_index, spr.spritesheet, ui_manager.animation_id_spinbox.value, preview_manager.other_type_options.selected, preview_manager.unit.primary_weapon.wep_frame_v_offset, preview_manager.submerged_depth_options.selected)
 	preview_manager.unit.animation_manager.unit_sprites_manager.sprite_primary.texture = ImageTexture.create_from_image(assembled_image)
 	var image_rotation: float = shp.get_frame(frame_index, preview_manager.submerged_depth_options.selected).y_rotation
 	(preview_manager.unit.animation_manager.unit_sprites_manager.sprite_primary.get_parent() as Node2D).rotation_degrees = image_rotation

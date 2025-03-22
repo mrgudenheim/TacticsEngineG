@@ -130,6 +130,25 @@ func _ready() -> void:
 func initialize_unit() -> void:
 	debug_menu.populate_options()
 	
+	animation_manager.wep_spr = RomReader.sprs[RomReader.file_records["WEP.SPR"].type_index]
+	animation_manager.wep_shp = RomReader.shps[RomReader.file_records["WEP1.SHP"].type_index]
+	animation_manager.wep_seq = RomReader.seqs[RomReader.file_records["WEP1.SEQ"].type_index]
+	
+	# TODO update the texture when new weapon is selected - needed due to different v_offsets
+	#animation_manager.unit_sprites_manager.sprite_weapon.texture = ImageTexture.create_from_image(animation_manager.wep_spr.create_frame_grid(0, 0, primary_weapon.wep_frame_v_offset, 0))
+	
+	animation_manager.eff_spr = RomReader.sprs[RomReader.file_records["EFF.SPR"].type_index]
+	animation_manager.eff_shp = RomReader.shps[RomReader.file_records["EFF1.SHP"].type_index]
+	animation_manager.eff_seq = RomReader.seqs[RomReader.file_records["EFF1.SEQ"].type_index]
+	
+	animation_manager.unit_sprites_manager.sprite_effect.texture = ImageTexture.create_from_image(animation_manager.eff_spr.create_frame_grid(0, 0, 0, 0))
+	
+	animation_manager.item_spr = RomReader.sprs[RomReader.file_records["ITEM.BIN"].type_index]
+	animation_manager.item_shp = RomReader.shps[RomReader.file_records["ITEM.SHP"].type_index]
+	
+	animation_manager.other_spr = RomReader.sprs[RomReader.file_records["OTHER.SPR"].type_index]
+	animation_manager.other_shp = RomReader.shps[RomReader.file_records["OTHER.SHP"].type_index]
+	
 	# 1 cure
 	# 0xc8 blood suck
 	# 0x9b stasis sword
@@ -356,6 +375,7 @@ func set_ability(new_ability_id: int) -> void:
 func set_primary_weapon(new_weapon_id: int) -> void:
 	primary_weapon = RomReader.items[new_weapon_id]
 	#animation_manager.weapon_id = new_weapon_id
+	animation_manager.unit_sprites_manager.sprite_weapon.texture = ImageTexture.create_from_image(animation_manager.wep_spr.create_frame_grid(0, 0, primary_weapon.wep_frame_v_offset, 0))
 	primary_weapon_assigned.emit(new_weapon_id)
 
 
@@ -398,24 +418,6 @@ func on_sprite_idx_selected(index: int) -> void:
 	animation_manager.global_spr = spr
 	animation_manager.global_shp = shp
 	animation_manager.global_seq = seq
-	
-	animation_manager.wep_spr = RomReader.sprs[RomReader.file_records["WEP.SPR"].type_index]
-	animation_manager.wep_shp = RomReader.shps[RomReader.file_records["WEP1.SHP"].type_index]
-	animation_manager.wep_seq = RomReader.seqs[RomReader.file_records["WEP1.SEQ"].type_index]
-	
-	animation_manager.unit_sprites_manager.sprite_weapon.texture = ImageTexture.create_from_image(animation_manager.wep_spr.create_frame_grid(0, 0, primary_weapon.wep_frame_v_offset, 0))
-	
-	animation_manager.eff_spr = RomReader.sprs[RomReader.file_records["EFF.SPR"].type_index]
-	animation_manager.eff_shp = RomReader.shps[RomReader.file_records["EFF1.SHP"].type_index]
-	animation_manager.eff_seq = RomReader.seqs[RomReader.file_records["EFF1.SEQ"].type_index]
-	
-	animation_manager.unit_sprites_manager.sprite_effect.texture = ImageTexture.create_from_image(animation_manager.eff_spr.create_frame_grid(0, 0, 0, 0))
-	
-	animation_manager.item_spr = RomReader.sprs[RomReader.file_records["ITEM.BIN"].type_index]
-	animation_manager.item_shp = RomReader.shps[RomReader.file_records["ITEM.SHP"].type_index]
-	
-	animation_manager.other_spr = RomReader.sprs[RomReader.file_records["OTHER.SPR"].type_index]
-	animation_manager.other_shp = RomReader.shps[RomReader.file_records["OTHER.SHP"].type_index]
 	
 	#spritesheet_changed.emit(ImageTexture.create_from_image(spr.spritesheet)) # TODO hook up to sprite for debug purposes
 	spritesheet_changed.emit(animation_manager.unit_sprites_manager.sprite_weapon.texture) # TODO hook up to sprite for debug purposes

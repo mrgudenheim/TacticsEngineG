@@ -28,12 +28,12 @@ var item_shp: Shp
 var other_spr: Spr
 var other_shp: Shp
 
-@export var weapon_id: int = 0:
-	get:
-		return weapon_id
-	set(value):
-		weapon_id = value
-		_on_weapon_options_item_selected(value)
+#@export var weapon_id: int = 0:
+	#get:
+		#return weapon_id
+	#set(value):
+		#weapon_id = value
+		#_on_weapon_options_item_selected(value)
 @export var item_index: int = 0
 @export var submerged_depth: int = 0
 @export var is_right_facing: bool = false
@@ -56,7 +56,7 @@ var opcode_frame_offset: int = 0
 
 
 @export var weapon_shp_num: int = 1 # TODO fix for type2
-var weapon_v_offset: int = 0 # v_offset to lookup for weapon frames
+#var weapon_v_offset: int = 0 # v_offset to lookup for weapon frames
 var effect_type: int = 1
 
 @export var global_animation_id: int = 0:
@@ -204,7 +204,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 	# handle LoadFrameWait
 	if not seq_part.isOpcode:
 		var new_frame_id: int = seq_part.parameters[0]
-		var frame_id_offset: int = get_animation_frame_offset(fft_animation.weapon_frame_offset_index, fft_animation.shp, fft_animation.back_face_offset)
+		var frame_id_offset: int = get_animation_frame_offset(unit_data.primary_weapon.item_type, fft_animation.shp, fft_animation.back_face_offset)
 		new_frame_id = new_frame_id + frame_id_offset + opcode_frame_offset
 		frame_id_label = str(new_frame_id)
 		
@@ -240,7 +240,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				new_animation.seq = wep_seq
 				new_animation.shp = wep_shp
 				#new_animation.weapon_frame_offset_index = RomReader.items[weapon_id].item_type
-				new_animation.weapon_frame_offset_index = unit_data.primary_weapon.item_type
+				#new_animation.weapon_frame_offset_index = unit_data.primary_weapon.item_type
 				new_animation.sequence = new_animation.seq.sequences[new_animation.seq.sequence_pointers[seq_part.parameters[1]]]
 				new_animation.image = wep_spr.spritesheet
 				new_animation.is_primary_anim = false
@@ -254,7 +254,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				new_animation.seq = eff_seq
 				new_animation.shp = eff_shp
 				#new_animation.weapon_frame_offset_index = RomReader.items[weapon_id].item_type
-				new_animation.weapon_frame_offset_index = unit_data.primary_weapon.item_type
+				#new_animation.weapon_frame_offset_index = unit_data.primary_weapon.item_type
 				new_animation.sequence = new_animation.seq.sequences[new_animation.seq.sequence_pointers[seq_part.parameters[1]]]
 				new_animation.image = eff_spr.spritesheet
 				new_animation.is_primary_anim = false
@@ -359,7 +359,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			frame_id_label = str(item_index)
 			
 			var assembled_image: Image = item_sheet_type.get_assembled_frame(
-					item_frame_id, item_image, global_animation_ptr_id, unit_data.debug_menu.other_type_options.selected, weapon_v_offset, submerged_depth)
+					item_frame_id, item_image, global_animation_ptr_id, unit_data.debug_menu.other_type_options.selected, unit_data.primary_weapon.wep_frame_v_offset, submerged_depth)
 			var target_sprite: Sprite3D = unit_sprites_manager.sprite_item
 			target_sprite.texture = ImageTexture.create_from_image(assembled_image)
 			var y_rotation: float = item_sheet_type.get_frame(item_frame_id, submerged_depth).y_rotation
@@ -523,7 +523,6 @@ func get_animation_from_globals() -> FftAnimation:
 	fft_animation.seq = global_seq
 	fft_animation.shp = global_shp
 	fft_animation.sequence = global_seq.sequences[global_animation_id]
-	fft_animation.weapon_frame_offset_index = RomReader.items[weapon_id].item_type
 	fft_animation.image = global_spr.spritesheet
 	fft_animation.flipped_h = is_right_facing
 	fft_animation.flipped_v = false
@@ -534,10 +533,10 @@ func get_animation_from_globals() -> FftAnimation:
 	return fft_animation
 
 
-func _on_weapon_options_item_selected(index: int) -> void:
-	#global_weapon_frame_offset_index = RomReader.items[index].item_type
-	weapon_v_offset = RomReader.items[index].wep_frame_v_offset
-	_on_animation_changed()
+#func _on_weapon_options_item_selected(index: int) -> void:
+	##global_weapon_frame_offset_index = RomReader.items[index].item_type
+	#weapon_v_offset = RomReader.items[index].wep_frame_v_offset
+	#_on_animation_changed()
 
 
 func _on_is_playing_check_box_toggled(toggled_on: bool) -> void:

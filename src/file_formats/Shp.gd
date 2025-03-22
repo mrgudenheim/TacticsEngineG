@@ -2,6 +2,7 @@ class_name Shp
 
 var is_initialized: bool = false
 
+# TODO replace with shp_subframe_sizes table from battle.bin
 const SUBFRAME_RECT_SIZES: PackedVector2Array = [
 	Vector2(  8,  8 ),
 	Vector2( 16,  8 ),

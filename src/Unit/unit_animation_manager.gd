@@ -184,11 +184,9 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 		new_frame_id = new_frame_id + frame_id_offset + opcode_frame_offset
 		frame_id_label = str(new_frame_id)
 		
-		if new_frame_id >= fft_animation.shp.frames.size(): # high frame offsets (such as shuriken) can only be used with certain animations
-			draw_target.frame = (draw_target.hframes * draw_target.vframes) - 1 # TODO fix this so a 255th frame can actually be made/set - set draw_target.visible = false?
-			#draw_target.visible = false
-			pass
-		else:
+		# clear the frame to prevent weird and inconsistent ghosting issues
+		draw_target.frame = (draw_target.hframes * draw_target.vframes) - 1 # TODO fix this so a 255th frame can actually be made/set - set draw_target.visible = false?
+		if new_frame_id < fft_animation.shp.frames.size(): # high frame offsets (such as shuriken) can only be used with certain animations
 			#draw_target.visible = true
 			var y_rotation: float = fft_animation.shp.get_frame(new_frame_id, fft_animation.submerged_depth).y_rotation
 			if fft_animation.flipped_h != fft_animation.flipped_v:

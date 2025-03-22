@@ -44,7 +44,7 @@ var seq: Seq:
 		var file_name: String = ui_manager.seq_options.get_item_text(ui_manager.seq_options.selected)
 		
 		var new_seq: Seq = RomReader.seqs[RomReader.file_records[file_name].type_index]
-		if not seq.is_initialized:
+		if not new_seq.is_initialized:
 			new_seq.set_data_from_seq_bytes(RomReader.get_file_data(new_seq.file_name))
 		
 		return new_seq

@@ -24,8 +24,7 @@ func _ready() -> void:
 	sprite_options.item_selected.connect(_on_sprite_option_selected)
 	anim_id_spin.value_changed.connect(_on_anim_id_spin_value_changed)
 	weapon_options.item_selected.connect(func(idx) -> void: 
-		unit.set_primary_weapon(idx)
-		animation_manager.weapon_id = idx)
+		unit.set_primary_weapon(idx))
 	item_options.item_selected.connect(func(idx) -> void: 
 		animation_manager.item_index = idx
 		animation_manager._on_animation_changed())

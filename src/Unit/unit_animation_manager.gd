@@ -193,7 +193,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			var y_rotation: float = fft_animation.shp.get_frame(new_frame_id, fft_animation.submerged_depth).y_rotation
 			if fft_animation.flipped_h != fft_animation.flipped_v:
 				y_rotation = -y_rotation
-			(draw_target.get_parent() as Node3D).rotation_degrees = Vector3(0, 0, -y_rotation)
+			draw_target.rotation_degrees = Vector3(0, 0, -y_rotation)
 			
 			draw_target.frame = new_frame_id
 			
@@ -325,7 +325,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			var target_sprite: Sprite3D = unit_sprites_manager.sprite_item
 			target_sprite.texture = ImageTexture.create_from_image(assembled_image)
 			var y_rotation: float = item_sheet_type.get_frame(item_frame_id, submerged_depth).y_rotation
-			(target_sprite.get_parent() as Node3D).rotation_degrees = Vector3(0, 0, y_rotation)
+			target_sprite.rotation_degrees = Vector3(0, 0, y_rotation)
 		elif seq_part.opcode_name == "Wait":
 			var loop_length: int = seq_part.parameters[0]
 			if loop_length > 0:

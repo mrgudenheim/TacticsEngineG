@@ -32,6 +32,5 @@ func get_duplicate() -> FftAnimation:
 	new_fft_animation.primary_anim_opcode_part_id = primary_anim_opcode_part_id
 	new_fft_animation.flipped_h = flipped_h
 	new_fft_animation.flipped_v = flipped_v
-	new_fft_animation.submerged_depth = submerged_depth
 	
 	return new_fft_animation

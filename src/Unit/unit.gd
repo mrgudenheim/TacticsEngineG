@@ -120,6 +120,7 @@ var idle_animation_id: int = 6
 var idle_walk_animation_id: int = 6
 var taking_damage_animation_id: int = 0x32
 var knocked_out_animation_id: int = 0x34
+var submerged_depth: int = 0
 
 func _ready() -> void:
 	if not RomReader.is_ready:
@@ -385,7 +386,7 @@ func set_sprite(new_sprite_file_idx: int) -> void:
 		sprite_id = RomReader.spr_file_name_to_id[spr.file_name]
 	debug_menu.sprite_options.select(new_sprite_file_idx)
 	on_sprite_idx_selected(new_sprite_file_idx)
-	update_spritesheet_grid_texture(spr)
+	update_spritesheet_grid_texture()
 	
 	debug_menu.anim_id_spin.value = idle_animation_id
 
@@ -400,11 +401,20 @@ func set_sprite_palette(new_palette_id: int) -> void:
 		return
 	
 	sprite_palette_id = new_palette_id
-	update_spritesheet_grid_texture(RomReader.sprs[sprite_file_idx])
+	update_spritesheet_grid_texture()
 
 
-func update_spritesheet_grid_texture(new_spr: Spr) -> void:
-	animation_manager.unit_sprites_manager.sprite_primary.texture = new_spr.create_frame_grid_texture(sprite_palette_id, 0, 0, 0, 0)
+func set_submerged_depth(new_depth: int) -> void:
+	if new_depth == submerged_depth:
+		return
+	
+	submerged_depth = new_depth
+	update_spritesheet_grid_texture()
+
+
+func update_spritesheet_grid_texture() -> void:
+	var new_spr: Spr = RomReader.sprs[sprite_file_idx]
+	animation_manager.unit_sprites_manager.sprite_primary.texture = new_spr.create_frame_grid_texture(sprite_palette_id, 0, 0, 0, submerged_depth)
 
 
 func on_sprite_idx_selected(index: int) -> void:
@@ -428,7 +438,7 @@ func on_sprite_idx_selected(index: int) -> void:
 	animation_manager.global_seq = seq
 	
 	#spritesheet_changed.emit(ImageTexture.create_from_image(spr.spritesheet)) # TODO hook up to sprite for debug purposes
-	spritesheet_changed.emit(animation_manager.unit_sprites_manager.sprite_weapon.texture) # TODO hook up to sprite for debug purposes
+	#spritesheet_changed.emit(animation_manager.unit_sprites_manager.sprite_weapon.texture) # TODO hook up to sprite for debug purposes
 	
 	animation_manager._on_animation_changed()
 

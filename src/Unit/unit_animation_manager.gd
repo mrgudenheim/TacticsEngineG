@@ -29,7 +29,6 @@ var other_spr: Spr
 var other_shp: Shp
 
 @export var item_index: int = 0
-@export var submerged_depth: int = 0
 @export var is_right_facing: bool = false
 #@export var is_playing_check: CheckBox
 @export var is_back_facing: bool = false
@@ -319,10 +318,10 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			frame_id_label = str(item_index)
 			
 			var assembled_image: Image = item_sheet_type.get_assembled_frame(
-					item_frame_id, item_image, global_animation_ptr_id, unit_data.debug_menu.other_type_options.selected, unit_data.primary_weapon.wep_frame_v_offset, submerged_depth)
+					item_frame_id, item_image, global_animation_ptr_id, unit_data.debug_menu.other_type_options.selected, unit_data.primary_weapon.wep_frame_v_offset, unit_data.submerged_depth)
 			var target_sprite: Sprite3D = unit_sprites_manager.sprite_item
 			target_sprite.texture = ImageTexture.create_from_image(assembled_image)
-			var y_rotation: float = item_sheet_type.get_frame(item_frame_id, submerged_depth).y_rotation
+			var y_rotation: float = item_sheet_type.get_frame(item_frame_id, unit_data.submerged_depth).y_rotation
 			target_sprite.rotation_degrees = Vector3(0, 0, y_rotation)
 		elif seq_part.opcode_name == "Wait":
 			var loop_length: int = seq_part.parameters[0]
@@ -478,7 +477,6 @@ func get_animation_from_globals() -> FftAnimation:
 	fft_animation.sequence = global_seq.sequences[global_animation_id]
 	fft_animation.flipped_h = is_right_facing
 	fft_animation.flipped_v = false
-	fft_animation.submerged_depth = submerged_depth
 	fft_animation.back_face_offset = 0
 	
 	global_fft_animation = fft_animation
@@ -514,8 +512,9 @@ func _on_palette_spin_box_value_changed(value: int) -> void:
 
 
 func _on_submerged_options_item_selected(index: int) -> void:
-	submerged_depth = index
-	_on_animation_changed()
+	unit_data.set_submerged_depth(index)
+	#unit_sprites_manager.sprite_primary.texture = unit_data.
+	#_on_animation_changed()
 
 
 func _on_face_right_check_toggled(toggled_on: bool) -> void:

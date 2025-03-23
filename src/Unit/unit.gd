@@ -83,6 +83,7 @@ var job_jp
 var charging_abilities_ids: PackedInt32Array = []
 var charging_abilities_remaining_ct: PackedInt32Array = [] # TODO this should be tracked per ability?
 var sprite_id: int = 0
+var sprite_file_idx = 0
 var portrait_palette_id: int = 0
 var unit_id: int = 0
 var special_job_skillset_id: int = 0
@@ -134,14 +135,11 @@ func initialize_unit() -> void:
 	animation_manager.wep_shp = RomReader.shps[RomReader.file_records["WEP1.SHP"].type_index]
 	animation_manager.wep_seq = RomReader.seqs[RomReader.file_records["WEP1.SEQ"].type_index]
 	
-	# TODO update the texture when new weapon is selected - needed due to different v_offsets
-	#animation_manager.unit_sprites_manager.sprite_weapon.texture = ImageTexture.create_from_image(animation_manager.wep_spr.create_frame_grid(0, 0, primary_weapon.wep_frame_v_offset, 0))
-	
 	animation_manager.eff_spr = RomReader.sprs[RomReader.file_records["EFF.SPR"].type_index]
 	animation_manager.eff_shp = RomReader.shps[RomReader.file_records["EFF1.SHP"].type_index]
 	animation_manager.eff_seq = RomReader.seqs[RomReader.file_records["EFF1.SEQ"].type_index]
 	
-	animation_manager.unit_sprites_manager.sprite_effect.texture = ImageTexture.create_from_image(animation_manager.eff_spr.create_frame_grid(0, 0, 0, 0))
+	animation_manager.unit_sprites_manager.sprite_effect.texture = animation_manager.eff_spr.create_frame_grid_texture(0, 0, 0, 0, 0)
 	
 	animation_manager.item_spr = RomReader.sprs[RomReader.file_records["ITEM.BIN"].type_index]
 	animation_manager.item_shp = RomReader.shps[RomReader.file_records["ITEM.SHP"].type_index]
@@ -375,28 +373,38 @@ func set_ability(new_ability_id: int) -> void:
 func set_primary_weapon(new_weapon_id: int) -> void:
 	primary_weapon = RomReader.items[new_weapon_id]
 	#animation_manager.weapon_id = new_weapon_id
-	animation_manager.unit_sprites_manager.sprite_weapon.texture = ImageTexture.create_from_image(animation_manager.wep_spr.create_frame_grid(0, 0, primary_weapon.wep_frame_v_offset, 0))
+	#var weapon_palette_id = RomReader.battle_bin_data.weapon_graphic_palettes_1[primary_weapon.id]
+	animation_manager.unit_sprites_manager.sprite_weapon.texture = animation_manager.wep_spr.create_frame_grid_texture(primary_weapon.wep_frame_palette, 0, 0, primary_weapon.wep_frame_v_offset, 0)
 	primary_weapon_assigned.emit(new_weapon_id)
 
 
-func set_sprite(new_sprite_idx: int) -> void:
-	var spr: Spr = RomReader.sprs[new_sprite_idx]
+func set_sprite(new_sprite_file_idx: int) -> void:
+	sprite_file_idx = new_sprite_file_idx
+	var spr: Spr = RomReader.sprs[new_sprite_file_idx]
 	if RomReader.spr_file_name_to_id.has(spr.file_name):
 		sprite_id = RomReader.spr_file_name_to_id[spr.file_name]
-	debug_menu.sprite_options.select(new_sprite_idx)
-	on_sprite_idx_selected(new_sprite_idx)
+	debug_menu.sprite_options.select(new_sprite_file_idx)
+	on_sprite_idx_selected(new_sprite_file_idx)
 	update_spritesheet_grid_texture(spr)
 	
 	debug_menu.anim_id_spin.value = idle_animation_id
 
 
 func set_sprite_file(sprite_file_name: String) -> void:
-	var new_sprite_idx: int = RomReader.file_records[sprite_file_name].type_index
-	set_sprite(new_sprite_idx)
+	var new_sprite_file_idx: int = RomReader.file_records[sprite_file_name].type_index
+	set_sprite(new_sprite_file_idx)
 
 
-func update_spritesheet_grid_texture(spr: Spr) -> void:
-	animation_manager.unit_sprites_manager.sprite_primary.texture = ImageTexture.create_from_image(spr.create_frame_grid())
+func set_sprite_palette(new_palette_id: int) -> void:
+	if new_palette_id == sprite_palette_id:
+		return
+	
+	sprite_palette_id = new_palette_id
+	update_spritesheet_grid_texture(RomReader.sprs[sprite_file_idx])
+
+
+func update_spritesheet_grid_texture(new_spr: Spr) -> void:
+	animation_manager.unit_sprites_manager.sprite_primary.texture = new_spr.create_frame_grid_texture(sprite_palette_id, 0, 0, 0, 0)
 
 
 func on_sprite_idx_selected(index: int) -> void:

@@ -322,3 +322,11 @@ func create_frame_grid(anim_idx: int = 0, other_idx: int = 0, wep_v_offset: int 
 		frame_grid.blit_rect(frame_image, Rect2i(0, 0, frame_image.get_size().x, frame_image.get_size().y), Vector2i(cell_x * cell_width, cell_y * cell_height))
 	
 	return frame_grid
+
+
+func create_frame_grid_texture(palette_idx = 0, anim_idx: int = 0, other_idx: int = 0, wep_v_offset: int = 0, submerged_depth: int = 0) -> ImageTexture:
+	set_pixel_colors(palette_idx)
+	spritesheet = get_rgba8_image()
+	
+	var new_texture = ImageTexture.create_from_image(create_frame_grid(anim_idx, other_idx, wep_v_offset, submerged_depth))
+	return new_texture

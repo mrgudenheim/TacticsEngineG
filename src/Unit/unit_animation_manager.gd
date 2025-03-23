@@ -509,11 +509,8 @@ func _on_animation_h_slider_value_changed(value: int) -> void:
 	process_seq_part(global_fft_animation, value, unit_sprites_manager.sprite_primary)
 
 
-func _on_palette_spin_box_value_changed(value: float) -> void:
-	global_spr.set_pixel_colors(value)
-	global_spr.spritesheet = global_spr.get_rgba8_image()
-	
-	_on_animation_changed()
+func _on_palette_spin_box_value_changed(value: int) -> void:
+	unit_data.set_sprite_palette(value)
 
 
 func _on_submerged_options_item_selected(index: int) -> void:

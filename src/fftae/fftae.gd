@@ -587,7 +587,7 @@ func _on_save_frame_grid_pressed() -> void:
 
 
 func _on_save_frame_grid_dialog_file_selected(path: String) -> void:
-	var frame_grid: Image = spr.create_frame_grid(preview_manager.unit.animation_manager.global_animation_id, preview_manager.other_type_options.selected, preview_manager.weapon_v_offset, preview_manager.submerged_depth_options.selected)
+	var frame_grid: Image = preview_manager.unit.animation_manager.unit_sprites_manager.sprite_primary.texture.get_image()
 	frame_grid.save_png(path)
 	
 	save_frame_grid_dialog.visible = false

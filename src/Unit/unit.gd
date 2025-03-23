@@ -375,7 +375,8 @@ func set_primary_weapon(new_weapon_id: int) -> void:
 	primary_weapon = RomReader.items[new_weapon_id]
 	#animation_manager.weapon_id = new_weapon_id
 	#var weapon_palette_id = RomReader.battle_bin_data.weapon_graphic_palettes_1[primary_weapon.id]
-	animation_manager.unit_sprites_manager.sprite_weapon.texture = animation_manager.wep_spr.create_frame_grid_texture(primary_weapon.wep_frame_palette, 0, 0, primary_weapon.wep_frame_v_offset, 0)
+	animation_manager.unit_sprites_manager.sprite_weapon.texture = animation_manager.wep_spr.create_frame_grid_texture(
+		primary_weapon.wep_frame_palette, 0, 0, primary_weapon.wep_frame_v_offset, 0, animation_manager.wep_shp.file_name)
 	primary_weapon_assigned.emit(new_weapon_id)
 
 
@@ -433,14 +434,27 @@ func on_sprite_idx_selected(index: int) -> void:
 	if not seq.is_initialized:
 		seq.set_data_from_seq_bytes(RomReader.get_file_data(seq.file_name))
 	
+	var animation_changed: bool = false
+	if shp.file_name == "TYPE2.SHP":
+		if animation_manager.wep_shp.file_name != "WEP2.SHP":
+			animation_manager.wep_shp = RomReader.shps[RomReader.file_records["WEP2.SHP"].type_index]
+			set_primary_weapon(primary_weapon.id) # get new texture based on wep2.shp
+			animation_changed = true
+		animation_manager.wep_seq = RomReader.seqs[RomReader.file_records["WEP2.SEQ"].type_index]
+	
+	if shp != animation_manager.global_shp or seq != animation_manager.global_seq:
+		animation_changed = true
+	
 	animation_manager.global_spr = spr
 	animation_manager.global_shp = shp
 	animation_manager.global_seq = seq
 	
+	
+	
 	#spritesheet_changed.emit(ImageTexture.create_from_image(spr.spritesheet)) # TODO hook up to sprite for debug purposes
 	#spritesheet_changed.emit(animation_manager.unit_sprites_manager.sprite_weapon.texture) # TODO hook up to sprite for debug purposes
-	
-	animation_manager._on_animation_changed()
+	if animation_changed:
+		animation_manager._on_animation_changed()
 
 
 func _on_character_body_3d_input_event(_camera: Node, _event: InputEvent, _event_position: Vector3, _normal: Vector3, _shape_idx: int) -> void:

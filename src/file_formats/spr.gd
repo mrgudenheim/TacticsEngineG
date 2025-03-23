@@ -250,7 +250,6 @@ func set_sp2_data(base_spr: Spr) -> void:
 
 
 func set_spritesheet_data(new_sprite_id: int) -> void:
-	# WEP and EFF partially handled directly in preview_manager unit_animation_manager opcode
 	# TODO handle WEP and EFF when direclty selected
 	if file_name == "OTHER.SPR":
 		shp_name = "OTHER.SHP"
@@ -307,8 +306,10 @@ func set_spritesheet_data(new_sprite_id: int) -> void:
 			seq_name = "KANZEN.SEQ"
 
 
-func create_frame_grid(anim_idx: int = 0, other_idx: int = 0, wep_v_offset: int = 0, submerged_depth: int = 0) -> Image:
-	var shp: Shp = RomReader.shps[RomReader.file_records[shp_name].type_index]
+func create_frame_grid(anim_idx: int = 0, other_idx: int = 0, wep_v_offset: int = 0, submerged_depth: int = 0, different_shp_name: String = "") -> Image:
+	if different_shp_name == "":
+		different_shp_name = shp_name
+	var shp: Shp = RomReader.shps[RomReader.file_records[different_shp_name].type_index]
 	var num_cells_wide: int = 16
 	var num_cells_tall: int = 16
 	if shp.frames.size() > 256:
@@ -329,9 +330,9 @@ func create_frame_grid(anim_idx: int = 0, other_idx: int = 0, wep_v_offset: int 
 	return frame_grid
 
 
-func create_frame_grid_texture(palette_idx = 0, anim_idx: int = 0, other_idx: int = 0, wep_v_offset: int = 0, submerged_depth: int = 0) -> ImageTexture:
+func create_frame_grid_texture(palette_idx = 0, anim_idx: int = 0, other_idx: int = 0, wep_v_offset: int = 0, submerged_depth: int = 0, different_shp_name: String = "") -> ImageTexture:
 	set_pixel_colors(palette_idx)
 	spritesheet = get_rgba8_image()
 	
-	var new_texture = ImageTexture.create_from_image(create_frame_grid(anim_idx, other_idx, wep_v_offset, submerged_depth))
+	var new_texture = ImageTexture.create_from_image(create_frame_grid(anim_idx, other_idx, wep_v_offset, submerged_depth, different_shp_name))
 	return new_texture

@@ -45,10 +45,6 @@ var opcode_frame_offset: int = 0
 @export var weapon_sheathe_check2_delay: int = 25
 @export var wait_for_input_delay: int = 0
 
-
-@export var weapon_shp_num: int = 1 # TODO fix for type2
-var effect_type: int = 1
-
 @export var global_animation_id: int = 0:
 	get:
 		return global_animation_id
@@ -204,9 +200,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 		if seq_part.opcode_name == "QueueSpriteAnim":
 			#push_warning("Performing " + anim_part_start) 
 			if seq_part.parameters[0] == 1: # play weapon animation
-				weapon_shp_num = 2 if global_shp.file_name.to_upper().contains("TYPE2") else 1
 				var new_animation := FftAnimation.new()
-				var wep_file_name: String = "WEP" + str(weapon_shp_num)
 				new_animation.seq = wep_seq
 				new_animation.shp = wep_shp
 				new_animation.sequence = new_animation.seq.sequences[new_animation.seq.sequence_pointers[seq_part.parameters[1]]]
@@ -217,7 +211,6 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				start_animation(new_animation, unit_sprites_manager.sprite_weapon, true, false, false)
 			elif seq_part.parameters[0] == 2: # play effect animation
 				var new_animation := FftAnimation.new()
-				var eff_file_name: String = "EFF" + str(effect_type)
 				new_animation.seq = eff_seq
 				new_animation.shp = eff_shp
 				new_animation.sequence = new_animation.seq.sequences[new_animation.seq.sequence_pointers[seq_part.parameters[1]]]

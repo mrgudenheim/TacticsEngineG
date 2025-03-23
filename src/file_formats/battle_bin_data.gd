@@ -109,12 +109,12 @@ func init_from_battle_bin() -> void:
 		weapon_frames_vertical_offsets[id] = data_bytes.decode_u8((id * entry_size) + 1) * 8
 	
 	# WEP and EFF subframe sizes
-	entry_size = 8
+	entry_size = 8 # two uint32
 	num_entries = 15
 	shp_subframe_sizes.resize(num_entries)
 	data_bytes = battle_bytes.slice(shp_subframe_sizes_start, shp_subframe_sizes_start + (num_entries * entry_size))
 	for id: int in num_entries:
-		shp_subframe_sizes[id] = Vector2(data_bytes.decode_u32(id * entry_size), data_bytes.decode_u32((id * entry_size) + 1)) * 8
+		shp_subframe_sizes[id] = Vector2(data_bytes.decode_u32(id * entry_size), data_bytes.decode_u32((id * entry_size) + 4)) * 8
 	
 	# being targeted frame ids
 	entry_size = 1

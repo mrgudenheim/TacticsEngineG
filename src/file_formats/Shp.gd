@@ -2,26 +2,6 @@ class_name Shp
 
 var is_initialized: bool = false
 
-# TODO replace with shp_subframe_sizes table from battle.bin
-const SUBFRAME_RECT_SIZES: PackedVector2Array = [
-	Vector2(  8,  8 ),
-	Vector2( 16,  8 ),
-	Vector2( 16, 16 ),
-	Vector2( 16, 24 ),
-	Vector2( 24,  8 ),
-	Vector2( 24, 16 ),
-	Vector2( 24, 24 ),
-	Vector2( 32,  8 ),
-	Vector2( 32, 16 ),
-	Vector2( 32, 24 ),
-	Vector2( 32, 32 ),
-	Vector2( 32, 40 ),
-	Vector2( 40, 16 ),
-	Vector2( 40, 32 ),
-	Vector2( 48, 48 ),
-	Vector2( 56, 56 ),
-]
-
 # https://ffhacktics.com/wiki/Sprite_Y_Rotation_Table
 const ROTATIONS_DEGREES: PackedFloat64Array = [
 	0,
@@ -280,7 +260,7 @@ func _get_subframe_data(bytes: PackedByteArray) -> SubFrameData:
 	subframe.load_location_x = (bytes23 & 0x001F) * PIXELS_PER_TILE # pixels
 	subframe.load_location_y = ((bytes23 & 0x03E0) >> 5) * PIXELS_PER_TILE # pixels
 	var rect_size_index: int = (bytes23 & 0x3C00) >> 10
-	subframe.rect_size = SUBFRAME_RECT_SIZES[rect_size_index] # pixels
+	subframe.rect_size = RomReader.battle_bin_data.shp_subframe_sizes[rect_size_index]
 	subframe.flip_x = (bytes23 & 0x4000) != 0
 	subframe.flip_y = (bytes23 & 0x8000) != 0
 	
@@ -355,7 +335,7 @@ func _write_sections23_bytes(bytes: PackedByteArray,  data_start_pointer: int, p
 			var subframe: SubFrameData = frame_data.subframes[subframe_index]
 			var b56: int = (subframe.load_location_x / PIXELS_PER_TILE)
 			var b56_2: int = (subframe.load_location_y / PIXELS_PER_TILE) << 5
-			var b56_3: int = SUBFRAME_RECT_SIZES.find(subframe.rect_size) << 10
+			var b56_3: int = RomReader.battle_bin_data.shp_subframe_sizes.find(subframe.rect_size) << 10
 			var b56_4: int = (subframe.flip_x as int) << 14
 			var b56_5: int = (subframe.flip_y as int) << 15
 			

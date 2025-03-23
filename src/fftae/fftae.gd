@@ -64,11 +64,13 @@ var shp: Shp:
 var spr: Spr:
 	get:
 		#var file_name: String = ui_manager.sprite_options.get_item_text(ui_manager.sprite_options.selected)
-		var sprite_index: int = ui_manager.sprite_options.selected
-		var new_spr: Spr = RomReader.sprs[sprite_index]
+		var sprite_file_index: int = ui_manager.sprite_options.selected
+		var new_spr: Spr = RomReader.sprs[sprite_file_index]
 		if not new_spr.is_initialized:
-			new_spr.set_data(RomReader.get_file_data(ui_manager.sprite_options.get_item_text(sprite_index)))
-			if new_spr.file_name != "WEP.SPR" and new_spr.file_name != "EFF.SPR":
+			new_spr.set_data(RomReader.get_file_data(ui_manager.sprite_options.get_item_text(sprite_file_index)))
+			if new_spr.file_name == "OTHER.SPR":
+				new_spr.set_spritesheet_data(0)
+			elif new_spr.file_name != "WEP.SPR" and new_spr.file_name != "EFF.SPR":
 				new_spr.set_spritesheet_data(RomReader.spr_file_name_to_id[new_spr.file_name])
 		
 		return new_spr

@@ -631,6 +631,7 @@ func _on_save_animation_gif_dialog_file_selected2(path: String) -> void:
 	save_frame_grid_dialog.visible = false
 
 
+# TODO allow recording complete ability animations, ie. including the starting and charging animations
 func _on_save_animation_gif_dialog_file_selected(path: String) -> void:
 	gif_exporter = GIFExporter.new(preview_manager.preview_rect.texture.get_width(), preview_manager.preview_rect.texture.get_height())
 	

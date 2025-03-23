@@ -256,18 +256,11 @@ func set_spritesheet_data(new_sprite_id: int) -> void:
 		seq_name = "OTHER.SEQ"
 		return
 	
-	# TODO move this data table to battle_bin_data
-	var battle_bin_bytes: PackedByteArray = RomReader.get_file_data("BATTLE.BIN")
-	
 	sprite_id = new_sprite_id
-	var spritesheet_data_length: int = 4
-	var spritesheet_data_start: int = 0x2d748 + (sprite_id * spritesheet_data_length)
-	
-	var spritesheet_data_bytes: PackedByteArray = battle_bin_bytes.slice(spritesheet_data_start, spritesheet_data_start + spritesheet_data_length)
-	shp_id = spritesheet_data_bytes[0]
-	seq_id = spritesheet_data_bytes[1]
-	flying_flag = spritesheet_data_bytes[2]
-	graphic_height = spritesheet_data_bytes[3]
+	shp_id = RomReader.battle_bin_data.spritesheet_shp_id[sprite_id]
+	seq_id = RomReader.battle_bin_data.spritesheet_seq_id[sprite_id]
+	flying_flag = RomReader.battle_bin_data.spritesheet_flying[sprite_id]
+	graphic_height = RomReader.battle_bin_data.spritesheet_graphic_height[sprite_id]
 	
 	match shp_id:
 		0:

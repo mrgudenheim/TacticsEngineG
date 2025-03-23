@@ -121,10 +121,24 @@ func init_from_battle_bin() -> void:
 	num_entries = 12
 	targeted_front_frame_id.resize(num_entries)
 	targeted_back_frame_id.resize(num_entries)
-	data_bytes = battle_bytes.slice(targeted_front_frame_id_start, targeted_front_frame_id_start + (num_entries * entry_size * 2))
+	data_bytes = battle_bytes.slice(targeted_front_frame_id_start, targeted_front_frame_id_start + (num_entries * entry_size * 2)) # *2 to get both front and back tables at once
 	for id: int in num_entries:
 		targeted_front_frame_id[id] = data_bytes.decode_u8(id * entry_size)
 		targeted_back_frame_id[id] = data_bytes.decode_u8((id * entry_size) + (targeted_back_frame_id_start - targeted_front_frame_id_start))
+	
+	# spritesheet shp, seq, flying, height data
+	entry_size = 4
+	num_entries = RomReader.NUM_SPRITESHEETS
+	spritesheet_shp_id.resize(num_entries) # Type 1, 2, cyoko, mon, other, ruka, arute, kanzen
+	spritesheet_seq_id.resize(num_entries) # Type 1, 2, cyoko, mon, other, ruka, arute, kanzen
+	spritesheet_flying.resize(num_entries) # bool
+	spritesheet_graphic_height.resize(num_entries) # pixels
+	data_bytes = battle_bytes.slice(spritesheet_data_start, spritesheet_data_start + (num_entries * entry_size))
+	for id: int in num_entries:
+		spritesheet_shp_id[id] = data_bytes.decode_u8(id * entry_size)
+		spritesheet_seq_id[id] = data_bytes.decode_u8((id * entry_size) + 1)
+		spritesheet_flying[id] = data_bytes.decode_u8((id * entry_size) + 2)
+		spritesheet_graphic_height[id] = data_bytes.decode_u8((id * entry_size) + 3)
 	
 	_load_battle_bin_sprite_data()
 	

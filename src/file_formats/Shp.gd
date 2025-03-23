@@ -3,6 +3,7 @@ class_name Shp
 var is_initialized: bool = false
 
 # https://ffhacktics.com/wiki/Sprite_Y_Rotation_Table
+# TODO use table from SCUS? 
 const ROTATIONS_DEGREES: PackedFloat64Array = [
 	0,
 	15.996,

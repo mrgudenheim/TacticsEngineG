@@ -32,7 +32,7 @@ vframes = 32
 [node name="EffSprite3D" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, 0, -0.714, 0)
 offset = Vector2(0, 20)
-modulate = Color(1, 1, 1, 0.498039)
+modulate = Color(1, 1, 1, 0.74902)
 pixel_size = 0.0357
 texture_filter = 0
 hframes = 16

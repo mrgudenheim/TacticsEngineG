@@ -639,12 +639,13 @@ func _on_save_animation_gif_dialog_file_selected(path: String) -> void:
 	is_recording_gif = true
 	preview_manager.is_playing_check.button_pressed = false
 	preview_manager.animation_slider.value = 0
+	push_warning("start recording gif")
 	preview_manager.is_playing_check.button_pressed = true
 	preview_manager.unit.animation_manager.animation_completed.connect(end_recording_gif)
 	preview_manager.unit.animation_manager.animation_loop_completed.connect(end_recording_gif)
 	preview_manager.unit.animation_manager.animation_frame_loaded.connect(add_gif_frame)
 	#preview_manager.unit.animation_manager.animation_completed.connect(func(): push_warning("animation_completed"))
-	push_warning("start recording gif")
+	
 	while is_recording_gif:
 		await get_tree().process_frame # wait for frame to render
 		#await get_tree().process_frame # wait for frame to render

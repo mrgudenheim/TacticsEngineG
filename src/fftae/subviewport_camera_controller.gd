@@ -27,7 +27,7 @@ func _ready() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	push_warning(event)
+	#push_warning(event)
 	
 	if event.is_action_pressed(&"pan"):
 		is_dragging = true

@@ -99,6 +99,8 @@ func load_csv(filepath: String) -> Array[PackedStringArray]:
 
 
 func start_animation(fft_animation: FftAnimation, draw_target: Sprite3D, is_playing: bool, isLooping: bool, force_loop: bool = false) -> void:
+	if fft_animation.is_primary_anim:
+		push_warning("Starting new animation")
 	if fft_animation.primary_anim != global_fft_animation:
 		return
 	

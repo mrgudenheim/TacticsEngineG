@@ -30,10 +30,10 @@ func reset_sprites(new_flip_h: bool = false) -> void:
 	#sprite_effect.visible = false
 	sprite_text.position.z = 0 * LAYERING_OFFSET
 	
-	sprite_primary.rotation_degrees.y = 0
-	sprite_weapon.rotation_degrees.y = 0
-	sprite_effect.rotation_degrees.y = 0
-	sprite_text.rotation_degrees.y = 0
+	sprite_primary.rotation_degrees.z = 0
+	sprite_weapon.rotation_degrees.z = 0
+	sprite_effect.rotation_degrees.z = 0
+	sprite_text.rotation_degrees.z = 0
 	
 	# reset flip_h
 	sprite_primary.flip_h = new_flip_h

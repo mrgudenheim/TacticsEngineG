@@ -321,5 +321,4 @@ func create_frame_grid(anim_idx: int = 0, other_idx: int = 0, wep_v_offset: int 
 		var frame_image: Image = shp.get_assembled_frame(frame_idx, spritesheet, anim_idx, other_idx, wep_v_offset, submerged_depth)
 		frame_grid.blit_rect(frame_image, Rect2i(0, 0, frame_image.get_size().x, frame_image.get_size().y), Vector2i(cell_x * cell_width, cell_y * cell_height))
 	
-	
 	return frame_grid

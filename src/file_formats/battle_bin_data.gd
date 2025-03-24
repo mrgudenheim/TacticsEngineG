@@ -22,10 +22,8 @@ var weapon_graphic_palettes_1: PackedInt32Array = [] # 0xF0 - WEP1 Palette, 0x0F
 var weapon_graphic_palettes_2: PackedInt32Array = [] # 0xF0 - WEP1 Palette, 0x0F - WEP2 Palette
 var weapon_frames_vertical_offsets: PackedInt32Array = [] # WEP.SHP vertical offsets
 
-var unit_subframe_sizes_start: int = 0x2d53c # 8 bytes each, two uint16 per entry, 32 entries
+var unit_subframe_sizes_start: int = 0x2d53c # 8 bytes each, two uint16 per entry, 32 entries # is this really for unit subframes sizes?
 var unit_subframe_sizes: PackedVector2Array = []
-var wep_eff_subframe_sizes_start: int = 0x2d6c8 # 8 bytes each, two uint16 per entry, 32 entries
-var wep_eff_subframe_sizes: PackedVector2Array = []
 var shp_subframe_sizes_start: int = 0x2d6c8 # 8 bytes each, two uint32 per entry, 15 entries
 var shp_subframe_sizes: PackedVector2Array = []
 
@@ -45,6 +43,10 @@ var ability_vfx_header_offsets: PackedInt32Array = []
 
 var ability_vfx_ids_start: int = 0x14f3f0 # 2 bytes each - uint16
 var ability_vfx_ids: PackedInt32Array = [] 
+
+var status_image_rects_start: int = 0x14cf68 - 0x67000 # 4 bytes each, 49 entries
+var status_image_rects: Array[Rect2i] = []
+
 
 
 func init_from_battle_bin() -> void:

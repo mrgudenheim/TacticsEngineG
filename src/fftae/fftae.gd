@@ -646,18 +646,18 @@ func _on_save_animation_gif_dialog_file_selected(path: String) -> void:
 	preview_manager.is_playing_check.button_pressed = true
 	preview_manager.unit.animation_manager.animation_completed.connect(end_recording_gif)
 	preview_manager.unit.animation_manager.animation_loop_completed.connect(end_recording_gif)
-	preview_manager.unit.animation_manager.animation_frame_loaded.connect(add_gif_frame)
+	#preview_manager.unit.animation_manager.animation_frame_loaded.connect(add_gif_frame)
 	#preview_manager.unit.animation_manager.animation_completed.connect(func(): push_warning("animation_completed"))
 	
 	while is_recording_gif:
 		await get_tree().process_frame # wait for frame to render
 		#await get_tree().process_frame # wait for frame to render
-		#var preview_image: Image = preview_manager.preview_rect.texture.get_image()
-		#
-		#var delay: float = 0.5 / preview_manager.unit.animation_manager.animation_speed # delay for an animation frame is always multiple of 2
-		#gif_exporter.add_frame(preview_image, delay, MedianCutQuantization)
-		#
-		#await get_tree().create_timer(delay).timeout
+		var preview_image: Image = preview_manager.preview_rect.texture.get_image()
+		
+		var delay: float = 2 / preview_manager.unit.animation_manager.animation_speed # delay for an animation frame is always multiple of 2
+		gif_exporter.add_frame(preview_image, delay, MedianCutQuantization)
+		
+		await get_tree().create_timer(delay).timeout
 	#
 	push_warning("end recording gif")
 	

@@ -214,7 +214,7 @@ func cache_associated_files() -> void:
 	sprs[wep_spr_index] = wep_spr
 	
 	# get shp for item graphics
-	# TODO use data from battle.bin
+	# TODO use data from battle.bin? https://ffhacktics.com/wiki/Get_Item_Graphic_Data
 	var item_shp_name: String = "ITEM.SHP"
 	var item_shp_record: FileRecord = FileRecord.new()
 	item_shp_record.name = item_shp_name

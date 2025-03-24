@@ -383,6 +383,11 @@ func set_primary_weapon(new_weapon_id: int) -> void:
 func set_sprite(new_sprite_file_idx: int) -> void:
 	sprite_file_idx = new_sprite_file_idx
 	var spr: Spr = RomReader.sprs[new_sprite_file_idx]
+	if spr.file_name == "WEP.SPR":
+		animation_manager.unit_sprites_manager.sprite_primary.vframes = 32
+	else:
+		animation_manager.unit_sprites_manager.sprite_primary.vframes = 16
+	
 	if RomReader.spr_file_name_to_id.has(spr.file_name):
 		sprite_id = RomReader.spr_file_name_to_id[spr.file_name]
 	debug_menu.sprite_options.select(new_sprite_file_idx)

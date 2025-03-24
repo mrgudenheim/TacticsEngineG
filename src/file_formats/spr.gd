@@ -250,7 +250,6 @@ func set_sp2_data(base_spr: Spr) -> void:
 
 
 func set_spritesheet_data(new_sprite_id: int) -> void:
-	# TODO handle WEP and EFF when direclty selected
 	if file_name == "OTHER.SPR":
 		shp_name = "OTHER.SHP"
 		seq_name = "OTHER.SEQ"

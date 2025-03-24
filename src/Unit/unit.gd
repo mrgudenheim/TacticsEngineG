@@ -457,7 +457,7 @@ func on_sprite_idx_selected(index: int) -> void:
 	animation_manager.global_seq = seq
 	
 	
-	
+	spritesheet_changed.emit(animation_manager.unit_sprites_manager.sprite_item.texture) # TODO hook up to sprite for debug purposes
 	#spritesheet_changed.emit(ImageTexture.create_from_image(spr.spritesheet)) # TODO hook up to sprite for debug purposes
 	#spritesheet_changed.emit(animation_manager.unit_sprites_manager.sprite_weapon.texture) # TODO hook up to sprite for debug purposes
 	if animation_changed:

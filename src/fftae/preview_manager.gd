@@ -66,8 +66,8 @@ func add_unit() -> void:
 	unit = new_unit
 	#preview_viewport.camera_control.sprite = unit.animation_manager.unit_sprites_manager.sprite_primary
 	
+	new_unit.spritesheet_changed.connect(func(new_texture: ImageTexture): preview_rect.texture = new_texture)
 	unit.animation_manager.processing_opcode.connect(update_preview_slider)
-	#unit.spritesheet_changed.connect(func(new_texture: ImageTexture): preview_rect.texture = new_texture)
 
 
 func enable_ui() -> void:

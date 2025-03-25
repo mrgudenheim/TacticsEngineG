@@ -182,7 +182,7 @@ camera = NodePath("../PreviewSubViewport/PreviewCamera3D")
 
 [node name="PreviewSubViewport" type="SubViewport" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer"]
 transparent_bg = true
-size = Vector2i(400, 400)
+size = Vector2i(200, 200)
 
 [node name="PreviewCamera3D" type="Camera3D" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer/PreviewSubViewport"]
 transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 2.5, 0, 2.5)
@@ -293,6 +293,7 @@ horizontal_alignment = 2
 
 [node name="SeqFileOptions" type="OptionButton" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
 layout_mode = 2
+fit_to_longest_item = false
 
 [node name="EmptyAnimationPointers" type="Label" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
 layout_mode = 2
@@ -321,6 +322,7 @@ horizontal_alignment = 2
 
 [node name="ShpFileOptions" type="OptionButton" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
 layout_mode = 2
+fit_to_longest_item = false
 
 [node name="EmptyFramePointers" type="Label" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
 visible = false
@@ -353,6 +355,7 @@ horizontal_alignment = 2
 
 [node name="SpriteOptions" type="OptionButton" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
 layout_mode = 2
+fit_to_longest_item = false
 
 [node name="PaletteLabel" type="Label" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
 layout_mode = 2
@@ -374,6 +377,7 @@ horizontal_alignment = 2
 [node name="WeaponOptions" type="OptionButton" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
 layout_mode = 2
 disabled = true
+fit_to_longest_item = false
 
 [node name="ItemLabel" type="Label" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
 layout_mode = 2
@@ -383,6 +387,7 @@ horizontal_alignment = 2
 [node name="ItemOptions" type="OptionButton" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
 layout_mode = 2
 disabled = true
+fit_to_longest_item = false
 
 [node name="OtherTypeLabel" type="Label" parent="HBoxContainer/SettingsPanel/MarginContainer/VBoxContainer/Settings"]
 layout_mode = 2
@@ -410,6 +415,7 @@ horizontal_alignment = 2
 layout_mode = 2
 disabled = true
 selected = 0
+fit_to_longest_item = false
 item_count = 3
 popup/item_0/text = "0"
 popup/item_0/id = 0

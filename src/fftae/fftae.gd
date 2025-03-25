@@ -187,7 +187,7 @@ func get_xml() -> String:
 	#for file_name: String in seqs.keys():
 		var seq_temp: Seq = RomReader.seqs[RomReader.file_records[seq_file.file_name].type_index]
 		var seq_bytes: PackedByteArray = seq_temp.get_seq_bytes()
-		if RomReader.get_file_data(seq_file.file_name) == seq_bytes:
+		if RomReader.get_file_data(seq_file.file_name) == seq_bytes or not seq_file.is_initialized:
 			continue
 		
 		var file: String = seq_temp.file_name

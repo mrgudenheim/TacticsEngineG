@@ -260,79 +260,6 @@ func clear_grid_container(grid: GridContainer, rows_to_keep: int) -> void:
 			break
 
 
-#func cache_associated_files() -> void:
-	#var associated_file_names: PackedStringArray = [
-		#"WEP1.SEQ",
-		#"WEP2.SEQ",
-		#"EFF1.SEQ",
-		#"WEP1.SHP",
-		#"WEP2.SHP",
-		#"EFF1.SHP",
-		#"WEP.SPR",
-		#]
-	#
-	#for file_name: String in associated_file_names:
-		#match file_name.get_extension():
-			#"SPR":
-				#var new_spr: Spr = Spr.new(file_name)
-				#new_spr.set_data(RomReader.get_file_data(file_name))
-				#sprs[file_name] = new_spr
-			#"SHP":
-				#var new_shp: Shp = Shp.new(file_name)
-				#new_shp.set_data_from_shp_bytes(RomReader.get_file_data(file_name))
-				#shps[file_name] = new_shp
-			#"SEQ":
-				#var new_seq: Seq = Seq.new(file_name)
-				#new_seq.set_data_from_seq_bytes(RomReader.get_file_data(file_name))
-				#seqs[file_name] = new_seq
-	#
-	## getting effect / weapon trail / glint
-	#var eff_spr_name: String = "EFF.SPR"
-	#var eff_spr: Spr = Spr.new(eff_spr_name)
-	#eff_spr.height = 144
-	#eff_spr.set_data(file_records["WEP.SPR"].get_file_data(rom).slice(0x8200, 0x10400))
-	#eff_spr.shp_name = "EFF1.SHP"
-	#eff_spr.seq_name = "EFF1.SEQ"
-	#sprs[eff_spr_name] = eff_spr
-	#ui_manager.sprite_options.add_item(eff_spr_name)
-	#
-	## TODO get trap effects - not useful for this tool at this time
-	#
-	## crop wep spr
-	#var wep_spr_start: int = 0
-	#var wep_spr_end: int = 256 * 256 # wep is 256 pixels tall
-	#var wep_spr: Spr = sprs["WEP.SPR"].get_sub_spr("WEP.SPR", wep_spr_start, wep_spr_end)
-	#wep_spr.shp_name = "WEP1.SHP"
-	#wep_spr.seq_name = "WEP1.SEQ"
-	#sprs["WEP.SPR"] = wep_spr
-	#
-	## get shp for item graphics
-	#var item_shp_name: String = "ITEM.SHP"
-	#var item_shp: Shp = Shp.new(item_shp_name)
-	#item_shp.set_name(item_shp_name)
-	#item_shp.set_frames_from_csv(item_frames_csv_filepath)
-	#shps[item_shp_name] = item_shp
-	#
-	## get item graphics
-	#var item_record: FileRecord = FileRecord.new()
-	#item_record.sector_location = 6297 # ITEM.BIN is in EVENT not BATTLE, so needs a new record created
-	#item_record.size = 33280
-	#item_record.name = "ITEM.BIN"
-	#file_records[item_record.name] = item_record
-	#
-	#var item_spr_data: PackedByteArray = file_records[item_record.name].get_file_data(rom)
-	#var item_spr: Spr = Spr.new(item_record.name)
-	#item_spr.height = 256
-	#item_spr.set_palette_data(item_spr_data.slice(0x8000, 0x8200))
-	#item_spr.color_indices = item_spr.set_color_indices(item_spr_data.slice(0, 0x8000))
-	#item_spr.set_pixel_colors()
-	#item_spr.spritesheet = item_spr.get_rgba8_image()
-	#sprs[item_record.name] = item_spr
-	#ui_manager.sprite_options.add_item(item_record.name)
-	#
-	#_load_battle_bin_sprite_data()
-
-
 func populate_animation_list(animations_list_parent: VBoxContainer, seq_local: Seq) -> void:
 	for child: Node in animations_list_parent.get_children():
 		animations_list_parent.remove_child(child)
@@ -342,7 +269,7 @@ func populate_animation_list(animations_list_parent: VBoxContainer, seq_local: S
 	
 	var counter: int = 0
 	
-	for index in seq_local.sequence_pointers.size():		
+	for index in seq_local.sequence_pointers.size():
 		var pointer: int = seq_local.sequence_pointers[index]
 		var sequence: Sequence = seq_local.sequences[pointer]
 		var description: String = sequence.seq_name

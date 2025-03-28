@@ -23,7 +23,6 @@ var eff_shp: Shp
 var eff_seq: Seq
 
 var item_spr: Spr
-var item_shp: Shp
 
 var other_spr: Spr
 var other_shp: Shp
@@ -256,8 +255,6 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			target_sprite_pivot.position = unit_sprites_manager.item_initial_pos + Vector3(-seq_part.parameters[0], -seq_part.parameters[1], 0.01) * MapViewer.SCALE # assume facing left, add 20 because it is y position from bottom of unit
 		elif seq_part.opcode_name == "LoadMFItem":
 			var item_frame_id: int = item_index # assumes loading item
-			var item_sheet_type: Shp = item_shp
-			#var item_image: Image = item_spr.spritesheet
 			
 			# TODO handle picking up crystal / chest
 			#if item_index >= 180:

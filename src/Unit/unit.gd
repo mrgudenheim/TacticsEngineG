@@ -143,7 +143,6 @@ func initialize_unit() -> void:
 	animation_manager.unit_sprites_manager.sprite_effect.texture = animation_manager.eff_spr.create_frame_grid_texture(0, 0, 0, 0, 0)
 	
 	animation_manager.item_spr = RomReader.sprs[RomReader.file_records["ITEM.BIN"].type_index]
-	animation_manager.item_shp = RomReader.shps[RomReader.file_records["ITEM.SHP"].type_index]
 	
 	animation_manager.unit_sprites_manager.sprite_item.texture = ImageTexture.create_from_image(RomReader.sprs[RomReader.file_records["ITEM.BIN"].type_index].spritesheet)
 	

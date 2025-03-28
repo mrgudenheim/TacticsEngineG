@@ -213,17 +213,6 @@ func cache_associated_files() -> void:
 	wep_spr.seq_name = "WEP1.SEQ"
 	sprs[wep_spr_index] = wep_spr
 	
-	# get shp for item graphics
-	# TODO use data from battle.bin? https://ffhacktics.com/wiki/Get_Item_Graphic_Data
-	var item_shp_name: String = "ITEM.SHP"
-	var item_shp_record: FileRecord = FileRecord.new()
-	item_shp_record.name = item_shp_name
-	item_shp_record.type_index = shps.size()
-	file_records[item_shp_name] = item_shp_record
-	var item_shp: Shp = Shp.new(item_shp_name)
-	item_shp.set_frames_from_csv(item_frames_csv_filepath)
-	shps.append(item_shp)
-	
 	# get item graphics
 	var item_record: FileRecord = FileRecord.new()
 	item_record.sector_location = 6297 # ITEM.BIN is in EVENT not BATTLE, so needs a new record created

@@ -157,8 +157,6 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 		if new_frame_id < fft_animation.shp.frames.size(): # high frame offsets (such as shuriken) can only be used with certain animations
 			#draw_target.visible = true
 			var y_rotation: float = fft_animation.shp.get_frame(new_frame_id, fft_animation.submerged_depth).y_rotation
-			if fft_animation.flipped_h != fft_animation.flipped_v:
-				y_rotation = -y_rotation
 			draw_target.rotation_degrees = Vector3(0, 0, -y_rotation)
 			
 			draw_target.frame = new_frame_id
@@ -177,7 +175,6 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				new_animation.sequence = new_animation.seq.sequences[new_animation.seq.sequence_pointers[seq_part.parameters[1]]]
 				new_animation.is_primary_anim = false
 				new_animation.primary_anim = fft_animation.primary_anim
-				new_animation.flipped_h = fft_animation.flipped_h
 				
 				start_animation(new_animation, unit_sprites_manager.sprite_weapon, true, false, false)
 			elif seq_part.parameters[0] == 2: # play effect animation
@@ -187,7 +184,6 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				new_animation.sequence = new_animation.seq.sequences[new_animation.seq.sequence_pointers[seq_part.parameters[1]]]
 				new_animation.is_primary_anim = false
 				new_animation.primary_anim = fft_animation.primary_anim
-				new_animation.flipped_h = fft_animation.flipped_h
 				
 				start_animation(new_animation, unit_sprites_manager.sprite_effect, true, false, false)
 			else:
@@ -238,7 +234,6 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 		elif seq_part.opcode_name == "FlipHorizontal": # does not do anything for wep or eff animations through QueueSpriteAnim
 			if draw_target == unit_sprites_manager.sprite_primary:
 				draw_target.flip_h = !draw_target.flip_h
-				fft_animation.flipped_h = not fft_animation.flipped_h
 		elif seq_part.opcode_name == "FlipVertical": # does not do anything for wep or eff animations through QueueSpriteAnim
 			if draw_target == unit_sprites_manager.sprite_primary:
 				draw_target.flip_v = !draw_target.flip_v
@@ -425,7 +420,7 @@ func _on_animation_changed() -> void:
 func reset_sprites() -> void:
 	# reset frame offset
 	opcode_frame_offset = 0
-	unit_sprites_manager.reset_sprites(is_right_facing)
+	unit_sprites_manager.reset_sprites()
 
 
 func get_animation_from_globals() -> FftAnimation:
@@ -433,7 +428,6 @@ func get_animation_from_globals() -> FftAnimation:
 	fft_animation.seq = global_seq
 	fft_animation.shp = global_shp
 	fft_animation.sequence = global_seq.sequences[global_animation_id]
-	fft_animation.flipped_h = is_right_facing
 	fft_animation.flipped_v = false
 	fft_animation.back_face_offset = 0
 	
@@ -475,12 +469,12 @@ func _on_submerged_options_item_selected(index: int) -> void:
 	#_on_animation_changed()
 
 
-func _on_face_right_check_toggled(toggled_on: bool) -> void:
-	#unit_sprites_manager.flip_h()
+func set_face_right(toggled_on: bool) -> void:
 	is_right_facing = toggled_on
-	
-	#unit_sprites_manager.scale.x = unit_sprites_manager.scale.x * -1
-	_on_animation_changed()
+	if toggled_on:
+		unit_sprites_manager.scale.x = -1
+	else:
+		unit_sprites_manager.scale.x = 1
 
 
 func set_animation_fps(value: float) -> void:

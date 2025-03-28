@@ -340,7 +340,7 @@ func update_animation_facing(camera_facing_vector: Vector3) -> void:
 	
 	if (animation_manager.is_right_facing != new_is_right_facing
 			or animation_manager.is_back_facing != is_back_facing):
-		animation_manager.is_right_facing = new_is_right_facing
+		animation_manager.set_face_right(new_is_right_facing)
 		
 		if animation_manager.is_back_facing != is_back_facing:
 			animation_manager.is_back_facing = is_back_facing
@@ -348,8 +348,6 @@ func update_animation_facing(camera_facing_vector: Vector3) -> void:
 				debug_menu.anim_id_spin.value += 1
 			else:
 				debug_menu.anim_id_spin.value -= 1
-		else:
-			animation_manager._on_animation_changed()
 
 
 func toggle_debug_menu() -> void:

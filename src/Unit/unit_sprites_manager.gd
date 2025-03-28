@@ -14,7 +14,7 @@ var item_initial_pos: Vector3 = Vector3(0, -0.714, 0)
 
 
 
-func reset_sprites(new_flip_h: bool = false) -> void:
+func reset_sprites() -> void:
 	# reset position
 	self.position = Vector3.ZERO
 	sprite_item.position = item_initial_pos
@@ -38,10 +38,10 @@ func reset_sprites(new_flip_h: bool = false) -> void:
 	sprite_text.rotation_degrees.z = 0
 	
 	# reset flip_h
-	sprite_primary.flip_h = new_flip_h
-	sprite_weapon.flip_h = new_flip_h
-	sprite_effect.flip_h = new_flip_h
-	sprite_text.flip_h = new_flip_h
+	sprite_primary.flip_h = false
+	sprite_weapon.flip_h = false
+	sprite_effect.flip_h = false
+	sprite_text.flip_h = false
 	
 	# reset flip_v
 	sprite_primary.flip_v = false

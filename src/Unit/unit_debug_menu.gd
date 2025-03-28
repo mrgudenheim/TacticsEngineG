@@ -25,11 +25,7 @@ func _ready() -> void:
 	anim_id_spin.value_changed.connect(_on_anim_id_spin_value_changed)
 	weapon_options.item_selected.connect(func(idx) -> void: 
 		unit.set_primary_weapon(idx))
-	item_options.item_selected.connect(func(idx) -> void: 
-		animation_manager.item_index = idx
-		animation_manager.item_spr.set_pixel_colors(RomReader.items[idx].item_palette_id)
-		animation_manager.unit_sprites_manager.sprite_item.texture = ImageTexture.create_from_image(animation_manager.item_spr.get_rgba8_image())
-		)
+	item_options.item_selected.connect(animation_manager.set_item)
 	
 	ability_id_spin.value_changed.connect(_on_ability_id_value_changed)
 	unit.ability_assigned.connect(func(id): ability_id_spin.value = id)
@@ -46,10 +42,6 @@ func populate_options() -> void:
 		weapon_options.add_item(str(weapon_index) + " - " + RomReader.items[weapon_index].name + " (" + RomReader.fft_text.equipment_types[RomReader.items[weapon_index].item_type] + ")")
 	
 	item_options.clear()
-	#for item_list_index: int in UnitAnimationManager.item_list.size():
-		#if UnitAnimationManager.item_list[item_list_index].size() < 2: # ignore blank lines
-			#break
-		#item_options.add_item(str(UnitAnimationManager.item_list[item_list_index][1]))
 	for item_index: int in RomReader.NUM_ITEMS:
 		var type_name: String = ""
 		if RomReader.items[item_index].item_type < RomReader.fft_text.equipment_types.size():

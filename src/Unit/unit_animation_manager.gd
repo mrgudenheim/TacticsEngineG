@@ -33,10 +33,9 @@ var other_shp: Shp
 #@export var is_playing_check: CheckBox
 @export var is_back_facing: bool = false
 
+# TODO get layer priority table from battle.bin, 0x80094548, 0c2d548 in battle.bin
 @export_file("*.txt") var layer_priority_table_filepath: String
 static var layer_priority_table: Array[PackedStringArray] = []
-@export_file("*.txt") var item_list_filepath: String
-static var item_list: Array[PackedStringArray] = []
 
 @export var animation_is_playing: bool = true
 @export var animation_speed: float = 59 # frames per sec
@@ -72,8 +71,6 @@ var opcode_frame_offset: int = 0
 func _ready() -> void:
 	if layer_priority_table.size() == 0:
 		layer_priority_table = load_csv(layer_priority_table_filepath)
-	if item_list.size() == 0:
-		item_list = load_csv(item_list_filepath)
 
 
 func load_csv(filepath: String) -> Array[PackedStringArray]:
@@ -521,3 +518,11 @@ func _on_face_right_check_toggled(toggled_on: bool) -> void:
 
 func set_animation_fps(value: float) -> void:
 	animation_speed = value
+
+
+func set_item(new_item_index: int) -> void:
+	item_index = new_item_index
+	item_spr.set_pixel_colors(RomReader.items[item_index].item_palette_id)
+	unit_sprites_manager.sprite_item.texture = ImageTexture.create_from_image(item_spr.get_rgba8_image())
+	if unit_sprites_manager.sprite_item.frame != 32:
+		unit_sprites_manager.sprite_item.frame = 32 + RomReader.items[new_item_index].item_graphic_id + (RomReader.items[new_item_index].item_graphic_id / 15) 

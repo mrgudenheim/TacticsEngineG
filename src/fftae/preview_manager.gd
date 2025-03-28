@@ -26,8 +26,6 @@ var weapon_sheathe_check2_delay: int = 10
 var wait_for_input_delay: int = 10
 
 
-
-
 #func _ready() -> void:
 	#RomReader.rom_loaded.connect(initialize)
 
@@ -42,10 +40,12 @@ func initialize() -> void:
 	weapon_options.select(unit.primary_weapon.id)
 	
 	item_options.clear()
-	for item_list_index: int in UnitAnimationManager.item_list.size():
-		if UnitAnimationManager.item_list[item_list_index].size() < 2: # ignore blank lines
-			break
-		item_options.add_item(str(UnitAnimationManager.item_list[item_list_index][1]))
+	for item_index: int in RomReader.NUM_ITEMS:
+		var type_name: String = ""
+		if RomReader.items[item_index].item_type < RomReader.fft_text.equipment_types.size():
+			type_name = " (" + RomReader.fft_text.equipment_types[RomReader.items[item_index].item_type] + ")"
+		item_options.add_item(str(item_index) + " - " + RomReader.items[item_index].name + type_name )
+	item_options.item_selected.connect(unit.animation_manager.set_item)
 	
 	is_playing_check.button_pressed = true
 	#unit.animation_manager.animation_frame_loaded.connect(update_preview_render)

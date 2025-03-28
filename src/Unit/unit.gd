@@ -145,7 +145,7 @@ func initialize_unit() -> void:
 	animation_manager.item_spr = RomReader.sprs[RomReader.file_records["ITEM.BIN"].type_index]
 	animation_manager.item_shp = RomReader.shps[RomReader.file_records["ITEM.SHP"].type_index]
 	
-	animation_manager.unit_sprites_manager.sprite_item.texture = ImageTexture.create_from_image(animation_manager.item_spr.spritesheet)
+	animation_manager.unit_sprites_manager.sprite_item.texture = ImageTexture.create_from_image(RomReader.sprs[RomReader.file_records["ITEM.BIN"].type_index].spritesheet)
 	
 	animation_manager.other_spr = RomReader.sprs[RomReader.file_records["OTHER.SPR"].type_index]
 	animation_manager.other_shp = RomReader.shps[RomReader.file_records["OTHER.SHP"].type_index]

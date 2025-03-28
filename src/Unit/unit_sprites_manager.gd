@@ -9,6 +9,7 @@ const LAYERING_OFFSET: float = 0.001
 @export var sprite_text: Sprite3D
 
 @export var sprite_item: Sprite3D
+var item_initial_pos: Vector3 = Vector3(0, -0.714, 0)
 @export var sprite_background: Sprite3D
 
 
@@ -16,9 +17,10 @@ const LAYERING_OFFSET: float = 0.001
 func reset_sprites(new_flip_h: bool = false) -> void:
 	# reset position
 	self.position = Vector3.ZERO
-	sprite_item.position = Vector3.ZERO
+	sprite_item.position = item_initial_pos
 	sprite_item.rotation = Vector3.ZERO
-	sprite_item.texture = ImageTexture.create_from_image(Image.create_empty(120, 120, false, Image.FORMAT_RGBA8)) # TODO don't create texture every time...
+	sprite_item.frame = 32
+	#sprite_item.texture = ImageTexture.create_from_image(Image.create_empty(120, 120, false, Image.FORMAT_RGBA8)) # TODO don't create texture every time...
 	
 	# reset layer priority
 	sprite_primary.position.z = -2 * LAYERING_OFFSET

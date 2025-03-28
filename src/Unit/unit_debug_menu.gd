@@ -44,10 +44,16 @@ func populate_options() -> void:
 		weapon_options.add_item(str(weapon_index) + " - " + RomReader.items[weapon_index].name + " (" + RomReader.fft_text.equipment_types[RomReader.items[weapon_index].item_type] + ")")
 	
 	item_options.clear()
-	for item_list_index: int in UnitAnimationManager.item_list.size():
-		if UnitAnimationManager.item_list[item_list_index].size() < 2: # ignore blank lines
-			break
-		item_options.add_item(str(UnitAnimationManager.item_list[item_list_index][1]))
+	#for item_list_index: int in UnitAnimationManager.item_list.size():
+		#if UnitAnimationManager.item_list[item_list_index].size() < 2: # ignore blank lines
+			#break
+		#item_options.add_item(str(UnitAnimationManager.item_list[item_list_index][1]))
+	for item_index: int in RomReader.NUM_ITEMS:
+		var type_name: String = ""
+		if RomReader.items[item_index].item_type < RomReader.fft_text.equipment_types.size():
+			type_name = " (" + RomReader.fft_text.equipment_types[RomReader.items[item_index].item_type] + ")"
+		item_options.add_item(str(item_index) + " - " + RomReader.items[item_index].name + type_name )
+	
 	
 	sprite_options.clear()
 	for spr: Spr in RomReader.sprs:

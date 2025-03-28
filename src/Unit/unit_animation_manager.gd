@@ -279,43 +279,44 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				fft_animation.flipped_v = not fft_animation.flipped_v
 		elif seq_part.opcode_name == "UnloadMFItem":
 			var target_sprite: Sprite3D = unit_sprites_manager.sprite_item
-			target_sprite.texture = ImageTexture.create_from_image(fft_animation.shp.create_blank_frame())
+			target_sprite.frame = 32 # set to blankwd
+			#target_sprite.texture = ImageTexture.create_from_image(fft_animation.shp.create_blank_frame())
 			# reset any rotation or movement
-			target_sprite.rotation_degrees = Vector3.ZERO
-			target_sprite.position = Vector3.ZERO
+			#target_sprite.rotation_degrees = Vector3.ZERO
+			target_sprite.position = unit_sprites_manager.item_initial_pos
 		elif seq_part.opcode_name == "MFItemPosFBDU":
 			var target_sprite_pivot := unit_sprites_manager.sprite_item
-			target_sprite_pivot.position = Vector3(-seq_part.parameters[0], -seq_part.parameters[1], 0.01) * MapViewer.SCALE # assume facing left, add 20 because it is y position from bottom of unit
+			target_sprite_pivot.position = unit_sprites_manager.item_initial_pos + Vector3(-seq_part.parameters[0], -seq_part.parameters[1], 0.01) * MapViewer.SCALE # assume facing left, add 20 because it is y position from bottom of unit
 		elif seq_part.opcode_name == "LoadMFItem":
 			var item_frame_id: int = item_index # assumes loading item
-			var item_sheet_type:Shp = item_shp
-			var item_image: Image = item_spr.spritesheet
+			var item_sheet_type: Shp = item_shp
+			#var item_image: Image = item_spr.spritesheet
 			
-			if item_index >= 180:
-				item_sheet_type = other_shp
-				item_image = other_spr.spritesheet
-				
-				if item_index <= 187: # load crystal
-					item_frame_id = item_index - 179
-					unit_data.debug_menu.other_type_options.select(2) # to update ui
-					#other_type_index = 2 # to set v_offset is correct
-				elif item_index == 188: # load chest 1
-					item_frame_id = 15
-					unit_data.debug_menu.other_type_options.select(0)
-					#other_type_index = 0
-				elif item_index == 189: # load chest 2
-					item_frame_id = 16
-					unit_data.debug_menu.other_type_options.select(0)
-					#other_type_index = 0
+			# TODO handle picking up crystal / chest
+			#if item_index >= 180:
+				#item_sheet_type = other_shp
+				#item_image = other_spr.spritesheet
+				#
+				#if item_index <= 187: # load crystal
+					#item_frame_id = item_index - 179
+					#unit_data.debug_menu.other_type_options.select(2) # to update ui
+					##other_type_index = 2 # to set v_offset is correct
+				#elif item_index == 188: # load chest 1
+					#item_frame_id = 15
+					#unit_data.debug_menu.other_type_options.select(0)
+					##other_type_index = 0
+				#elif item_index == 189: # load chest 2
+					#item_frame_id = 16
+					#unit_data.debug_menu.other_type_options.select(0)
+					##other_type_index = 0
 			
 			frame_id_label = str(item_index)
 			
-			var assembled_image: Image = item_sheet_type.get_assembled_frame(
-					item_frame_id, item_image, global_animation_ptr_id, unit_data.debug_menu.other_type_options.selected, unit_data.primary_weapon.wep_frame_v_offset, unit_data.submerged_depth)
+			#var assembled_image: Image = item_sheet_type.get_assembled_frame(
+					#item_frame_id, item_image, global_animation_ptr_id, unit_data.debug_menu.other_type_options.selected, unit_data.primary_weapon.wep_frame_v_offset, unit_data.submerged_depth)
 			var target_sprite: Sprite3D = unit_sprites_manager.sprite_item
-			target_sprite.texture = ImageTexture.create_from_image(assembled_image)
-			var y_rotation: float = item_sheet_type.get_frame(item_frame_id, unit_data.submerged_depth).y_rotation
-			target_sprite.rotation_degrees = Vector3(0, 0, y_rotation)
+			# item graphics start on 3rd row of ITEM.BIN, item graphic id does not count the blank 16th column, so need to add extra based on the row
+			target_sprite.frame = 32 + RomReader.items[item_frame_id].item_graphic_id + (RomReader.items[item_frame_id].item_graphic_id / 15) 
 		elif seq_part.opcode_name == "Wait":
 			var loop_length: int = seq_part.parameters[0]
 			if loop_length > 0:

@@ -45,7 +45,7 @@ billboard = 1
 alpha_cut = 1
 
 [node name="ItemSprite3D" type="Sprite3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.714, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.714, 0.001)
 pixel_size = 0.0357
 billboard = 1
 alpha_cut = 1

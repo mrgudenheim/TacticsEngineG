@@ -33,9 +33,6 @@ var other_shp: Shp
 #@export var is_playing_check: CheckBox
 @export var is_back_facing: bool = false
 
-# TODO get layer priority table from battle.bin, 0x80094548, 0c2d548 in battle.bin
-@export_file("*.txt") var layer_priority_table_filepath: String
-static var layer_priority_table: Array[PackedStringArray] = []
 
 @export var animation_is_playing: bool = true
 @export var animation_speed: float = 59 # frames per sec
@@ -66,28 +63,6 @@ var opcode_frame_offset: int = 0
 			global_animation_id = global_seq.sequence_pointers[value]
 			#ui_manager.animation_name_options.select(value)
 			#_on_animation_changed()
-
-
-func _ready() -> void:
-	if layer_priority_table.size() == 0:
-		layer_priority_table = load_csv(layer_priority_table_filepath)
-
-
-func load_csv(filepath: String) -> Array[PackedStringArray]:
-	var table: Array[PackedStringArray] = []
-	var file := FileAccess.open(filepath, FileAccess.READ)
-	var file_contents: String = file.get_as_text()
-	var lines: PackedStringArray = file_contents.split("\r\n")
-	if lines.size() == 1:
-		lines = file_contents.split("\n")
-	if lines.size() == 1:
-		lines = file_contents.split("\r")
-	#print(lines)
-
-	for line_index in range(1,lines.size()): # skip first row of headers
-		table.append(lines[line_index].split(","))
-
-	return table
 
 
 func start_animation(fft_animation: FftAnimation, draw_target: Sprite3D, is_playing: bool, isLooping: bool, force_loop: bool = false) -> void:
@@ -251,19 +226,14 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				push_warning("can't interpret " + seq_part.opcode_name)
 				
 			unit_sprites_manager.global_position += position_offset * MapViewer.SCALE
-		elif seq_part.opcode_name == "SetLayerPriority": # TODO fix for sprite3Ds, use sorting_offset property?
-			# push_warning(layer_priority_table)
-			var layer_priority: Array = layer_priority_table[seq_part.parameters[0]]
-			for i in range(0, layer_priority.size() - 1):
-				var layer_name: String = layer_priority[i + 1] # skip set_id
-				if layer_name == "unit":
-					unit_sprites_manager.sprite_primary.position.z = -i * UnitSpritesManager.LAYERING_OFFSET
-				elif layer_name == "weapon":
-					unit_sprites_manager.sprite_weapon.position.z = -i * UnitSpritesManager.LAYERING_OFFSET
-				elif layer_name == "effect":
-					unit_sprites_manager.sprite_effect.position.z = -i * UnitSpritesManager.LAYERING_OFFSET
-				elif layer_name == "text":
-					unit_sprites_manager.sprite_text.position.z = -i * UnitSpritesManager.LAYERING_OFFSET
+		elif seq_part.opcode_name == "SetLayerPriority":
+			var layer_priority_order: Vector4 = RomReader.battle_bin_data.animation_layer_priorities[seq_part.parameters[0]]
+			# push_warning(layer_priority_order)
+			
+			get_layer_sprite3d(layer_priority_order.w).position.z = 0 * UnitSpritesManager.LAYERING_OFFSET
+			get_layer_sprite3d(layer_priority_order.x).position.z = -1 * UnitSpritesManager.LAYERING_OFFSET
+			get_layer_sprite3d(layer_priority_order.y).position.z = -2 * UnitSpritesManager.LAYERING_OFFSET
+			get_layer_sprite3d(layer_priority_order.z).position.z = -3 * UnitSpritesManager.LAYERING_OFFSET
 		elif seq_part.opcode_name == "SetFrameOffset":
 			opcode_frame_offset = seq_part.parameters[0] # use global var since SetFrameOffset is only used in animations that do not call other animations
 		elif seq_part.opcode_name == "FlipHorizontal": # does not do anything for wep or eff animations through QueueSpriteAnim
@@ -526,3 +496,19 @@ func set_item(new_item_index: int) -> void:
 	unit_sprites_manager.sprite_item.texture = ImageTexture.create_from_image(item_spr.get_rgba8_image())
 	if unit_sprites_manager.sprite_item.frame != 32:
 		unit_sprites_manager.sprite_item.frame = 32 + RomReader.items[new_item_index].item_graphic_id + (RomReader.items[new_item_index].item_graphic_id / 15) 
+
+
+func get_layer_sprite3d(layer_id: int) -> Sprite3D:
+	match layer_id:
+		0:
+			return unit_sprites_manager.sprite_primary
+		1:
+			return unit_sprites_manager.sprite_weapon
+		2:
+			return unit_sprites_manager.sprite_effect
+		3:
+			return unit_sprites_manager.sprite_text
+		_:
+			push_warning("layer id not valid: " + str(layer_id))
+			return unit_sprites_manager.sprite_primary
+			

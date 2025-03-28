@@ -22,8 +22,9 @@ var weapon_graphic_palettes_1: PackedInt32Array = [] # 0xF0 - WEP1 Palette, 0x0F
 var weapon_graphic_palettes_2: PackedInt32Array = [] # 0xF0 - WEP1 Palette, 0x0F - WEP2 Palette
 var weapon_frames_vertical_offsets: PackedInt32Array = [] # WEP.SHP vertical offsets
 
-var unit_subframe_sizes_start: int = 0x2d53c # 8 bytes each, two uint16 per entry, 32 entries # is this really for unit subframes sizes?
-var unit_subframe_sizes: PackedVector2Array = []
+var animation_layer_priorities_start: int = 0x2d548 # 4 uint32 per entry, 0x1b entries? maybe only 0x17?
+var animation_layer_priorities: PackedVector4Array = []
+
 var shp_subframe_sizes_start: int = 0x2d6c8 # 8 bytes each, two uint32 per entry, 15 entries
 var shp_subframe_sizes: PackedVector2Array = []
 
@@ -136,11 +137,23 @@ func init_from_battle_bin() -> void:
 	spritesheet_flying.resize(num_entries) # bool
 	spritesheet_graphic_height.resize(num_entries) # pixels
 	data_bytes = battle_bytes.slice(spritesheet_data_start, spritesheet_data_start + (num_entries * entry_size))
-	for id: int in num_entries:
-		spritesheet_shp_id[id] = data_bytes.decode_u8(id * entry_size)
-		spritesheet_seq_id[id] = data_bytes.decode_u8((id * entry_size) + 1)
-		spritesheet_flying[id] = data_bytes.decode_u8((id * entry_size) + 2)
-		spritesheet_graphic_height[id] = data_bytes.decode_u8((id * entry_size) + 3)
+	for idx: int in num_entries:
+		spritesheet_shp_id[idx] = data_bytes.decode_u8(idx * entry_size)
+		spritesheet_seq_id[idx] = data_bytes.decode_u8((idx * entry_size) + 1)
+		spritesheet_flying[idx] = data_bytes.decode_u8((idx * entry_size) + 2)
+		spritesheet_graphic_height[idx] = data_bytes.decode_u8((idx * entry_size) + 3)
+	
+	
+	# animation layer prioity table
+	entry_size = 16
+	num_entries = 0x1b
+	animation_layer_priorities.resize(num_entries)
+	data_bytes = battle_bytes.slice(animation_layer_priorities_start, animation_layer_priorities_start + (num_entries * entry_size))
+	for idx: int in num_entries:
+		animation_layer_priorities[idx].w = data_bytes.decode_u32(idx * entry_size)
+		animation_layer_priorities[idx].x = data_bytes.decode_u32((idx * entry_size) + 4)
+		animation_layer_priorities[idx].y = data_bytes.decode_u32((idx * entry_size) + 8)
+		animation_layer_priorities[idx].z = data_bytes.decode_u32((idx * entry_size) + 12)
 	
 	_load_battle_bin_sprite_data()
 	

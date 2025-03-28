@@ -64,7 +64,6 @@ transform = Transform3D(1, 0, 0, 0, 0.894934, 0.446198, 0, -0.446198, 0.894934, 
 script = ExtResource("3_l3ow2")
 unit_data = NodePath("../..")
 unit_sprites_manager = NodePath("UnitSpritesManager")
-layer_priority_table_filepath = "res://src/fftae/layer_priority_table.txt"
 weapon_sheathe_check2_delay = 0
 
 [node name="UnitSpritesManager" parent="CharacterBody3D/UnitAnimationManager" instance=ExtResource("4_h8uk5")]

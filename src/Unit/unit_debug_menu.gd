@@ -27,7 +27,9 @@ func _ready() -> void:
 		unit.set_primary_weapon(idx))
 	item_options.item_selected.connect(func(idx) -> void: 
 		animation_manager.item_index = idx
-		animation_manager._on_animation_changed())
+		animation_manager.item_spr.set_pixel_colors(RomReader.items[idx].item_palette_id)
+		animation_manager.unit_sprites_manager.sprite_item.texture = ImageTexture.create_from_image(animation_manager.item_spr.get_rgba8_image())
+		)
 	
 	ability_id_spin.value_changed.connect(_on_ability_id_value_changed)
 	unit.ability_assigned.connect(func(id): ability_id_spin.value = id)

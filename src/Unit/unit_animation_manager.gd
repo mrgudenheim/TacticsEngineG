@@ -3,7 +3,7 @@ extends Node3D
 
 signal animation_completed
 signal animation_loop_completed
-signal animation_frame_loaded
+signal animation_frame_loaded(delay: float)
 signal processing_opcode(index: int)
 
 #@export var ui_manager: UiManager
@@ -65,8 +65,8 @@ var opcode_frame_offset: int = 0
 
 
 func start_animation(fft_animation: FftAnimation, draw_target: Sprite3D, is_playing: bool, isLooping: bool, force_loop: bool = false) -> void:
-	if fft_animation.is_primary_anim:
-		push_warning("Starting new animation")
+	#if fft_animation.is_primary_anim:
+		#push_warning("Starting new animation")
 	if fft_animation.primary_anim != global_fft_animation:
 		return
 	
@@ -152,8 +152,8 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 		new_frame_id = new_frame_id + frame_id_offset + opcode_frame_offset
 		frame_id_label = str(new_frame_id)
 		
-		# clear the frame to prevent weird and inconsistent ghosting issues
-		draw_target.frame = (draw_target.hframes * draw_target.vframes) - 1 # TODO fix this so a 255th frame can actually be made/set - set draw_target.visible = false?
+		## clear the frame to prevent weird and inconsistent ghosting issues
+		#draw_target.frame = (draw_target.hframes * draw_target.vframes) - 1 # TODO fix this so a 255th frame can actually be made/set - set draw_target.visible = false?
 		if new_frame_id < fft_animation.shp.frames.size(): # high frame offsets (such as shuriken) can only be used with certain animations
 			#draw_target.visible = true
 			var y_rotation: float = fft_animation.shp.get_frame(new_frame_id, fft_animation.submerged_depth).y_rotation
@@ -161,8 +161,9 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			
 			draw_target.frame = new_frame_id
 			
-			if fft_animation.is_primary_anim:
-				animation_frame_loaded.emit()
+			animation_frame_loaded.emit(seq_part.parameters[0] / animation_speed)
+			#if fft_animation.is_primary_anim:
+				#animation_frame_loaded.emit()
 	# Handle opcodes
 	elif seq_part.isOpcode:
 		#push_warning(anim_part_start)

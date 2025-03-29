@@ -268,7 +268,8 @@ func populate_animation_list(animations_list_parent: VBoxContainer, seq_local: S
 	
 	ui_manager.current_animation_slots = seq_local.sequence_pointers.size()
 	
-	var counter: int = 0
+	var timeout: bool = false
+	get_tree().create_timer(0.017).timeout.connect(func(): timeout = true)
 	
 	for index in seq_local.sequence_pointers.size():
 		var pointer: int = seq_local.sequence_pointers[index]
@@ -301,10 +302,10 @@ func populate_animation_list(animations_list_parent: VBoxContainer, seq_local: S
 				)
 		
 		# let frame finish rendering to improve responsiveness
-		counter += 1
-		if counter >= 10:
+		if timeout:
 			await get_tree().process_frame
-			counter = 0
+			timeout = false
+			get_tree().create_timer(0.017).timeout.connect(func(): timeout = true)
 
 
 func populate_opcode_list(opcode_grid_parent: GridContainer, seq_id: int) -> void:

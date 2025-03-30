@@ -551,7 +551,10 @@ func start_recoding_gif() -> void:
 	preview_manager.unit.animation_manager.animation_completed.connect(end_recording_gif)
 	preview_manager.unit.animation_manager.animation_loop_completed.connect(end_recording_gif)
 	preview_manager.unit.animation_manager.animation_frame_loaded.connect(add_gif_frame)
-	preview_manager.is_playing_check.button_pressed = true # sends out signal that starts the animation
+	if preview_manager.is_playing_check.button_pressed:
+		preview_manager.is_playing_check.toggled.emit(true)
+	else:
+		preview_manager.is_playing_check.button_pressed = true # sends out signal that starts the animation
 	
 	#preview_manager.unit.animation_manager.animation_completed.connect(func(): push_warning("animation_completed"))
 

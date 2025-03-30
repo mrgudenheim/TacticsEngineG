@@ -568,7 +568,6 @@ func _on_save_animation_gif_dialog_file_selected(path: String) -> void:
 	gif_delays.clear()
 	gif_frame_nums.clear()
 	
-	#var animation_is_playing: bool = true
 	is_recording_gif = true
 	#preview_manager.is_playing_check.button_pressed = false
 	#preview_manager.animation_slider.value = 0
@@ -584,13 +583,7 @@ func _on_save_animation_gif_dialog_file_selected(path: String) -> void:
 	
 	while is_recording_gif:
 		await get_tree().process_frame # wait for frame to render
-		#var preview_image: Image = preview_manager.preview_rect.texture.get_image()
-		#
-		#var delay: float = 2 / preview_manager.unit.animation_manager.animation_speed # delay for an animation frame is always multiple of 2
-		#gif_exporter.add_frame(preview_image, delay, MedianCutQuantization)
-		#
-		#await get_tree().create_timer(delay).timeout
-	#
+	
 	push_warning("end recording gif")
 	
 	preview_manager.unit.animation_manager.animation_speed = 59

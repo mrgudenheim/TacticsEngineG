@@ -333,14 +333,13 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				temp_fft_animation.primary_anim = fft_animation.primary_anim
 				temp_fft_animation.primary_anim_opcode_part_id = primary_animation_part_id
 				temp_fft_animation.time = fft_animation.time
+				temp_fft_animation.frame_count = fft_animation.frame_count
 				
 				for iteration in num_loops:
 					if temp_fft_animation.primary_anim != global_fft_animation:
 						break
 					await start_animation(temp_fft_animation, draw_target, true, false, true)
-					# TODO sync with primary_anim.frame_timings?
-					#fft_animation.time = temp_fft_animation.time
-		
+				fft_animation.frame_count = temp_fft_animation.frame_count
 		elif seq_part.opcode_name == "WaitForInput":
 			var delay_frames: int = wait_for_input_delay
 			var loop_length: int = seq_part.parameters[0]
@@ -352,19 +351,18 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			temp_fft_animation.is_primary_anim = false
 			temp_fft_animation.primary_anim = fft_animation.primary_anim
 			temp_fft_animation.primary_anim_opcode_part_id = primary_animation_part_id
-			#temp_fft_animation.time = fft_animation.time
+			temp_fft_animation.time = fft_animation.time
+			temp_fft_animation.frame_count = fft_animation.frame_count
 			
 			# push_warning(str(temp_anim))
 			# TODO wait for input signal
-			#var timer: SceneTreeTimer = get_tree().create_timer(delay_frames / animation_speed)
 			var delay_time: float = fft_animation.time + (delay_frames / animation_speed)
 			while fft_animation.time < delay_time:
 				if temp_fft_animation.primary_anim != global_fft_animation:
 					break
 				# push_warning(str(timer.time_left) + " " + str(temp_anim))
 				await start_animation(temp_fft_animation, draw_target, true, false, true)
-				# TODO sync with primary_anim.frame_timings?
-				#fft_animation.time = temp_fft_animation.time
+			fft_animation.frame_count = temp_fft_animation.frame_count
 		elif seq_part.opcode_name.begins_with("WeaponSheatheCheck"):
 			var delay_frames: int = weapon_sheathe_check1_delay
 			if seq_part.opcode_name == "WeaponSheatheCheck2":
@@ -381,7 +379,8 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			temp_fft_animation.is_primary_anim = false
 			temp_fft_animation.primary_anim = fft_animation.primary_anim
 			temp_fft_animation.primary_anim_opcode_part_id = primary_animation_part_id
-			#temp_fft_animation.time = fft_animation.time
+			temp_fft_animation.time = fft_animation.time
+			temp_fft_animation.frame_count = fft_animation.frame_count
 			
 			# print_debug(str(temp_anim))
 			# TODO wait for weapon sheathe check signal
@@ -391,8 +390,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				if temp_fft_animation.primary_anim != global_fft_animation:
 					break
 				await start_animation(temp_fft_animation, draw_target, true, false, true)
-				# TODO sync with primary_anim.frame_timings?
-				#fft_animation.time = temp_fft_animation.time
+			fft_animation.frame_count = temp_fft_animation.frame_count
 		elif seq_part.opcode_name == "WaitForDistort":
 			pass
 		elif seq_part.opcode_name == "QueueDistortAnim":

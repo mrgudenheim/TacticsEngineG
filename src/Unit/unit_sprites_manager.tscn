@@ -12,6 +12,7 @@ sprite_item = NodePath("ItemSprite3D")
 sprite_background = NodePath("BackgroundSprite3D")
 
 [node name="UnitSprite3D" type="Sprite3D" parent="."]
+physics_interpolation_mode = 2
 transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, 0, -0.714, 0)
 offset = Vector2(0, 20)
 pixel_size = 0.0357

@@ -20,6 +20,8 @@ static var global_fft_animation: FftAnimation = FftAnimation.new()
 @export var is_recording_gif: bool = false
 var gif_exporter: GIFExporter
 var gif_record_this_frame: bool = false
+var gif_frames: Array[Image] = []
+var gif_delays: PackedFloat32Array = []
 
 @export var animation_list_container: VBoxContainer
 @export var animation_list_row_tscn: PackedScene
@@ -562,25 +564,22 @@ func _on_save_animation_gif_dialog_file_selected2(path: String) -> void:
 
 # TODO allow recording complete ability animations, ie. including the starting and charging animations
 func _on_save_animation_gif_dialog_file_selected(path: String) -> void:
-	gif_exporter = GIFExporter.new(preview_manager.preview_rect.texture.get_width(), preview_manager.preview_rect.texture.get_height())
-	
-	preview_manager.unit.animation_manager.start_animation(
-		preview_manager.unit.animation_manager.global_fft_animation, 
-		preview_manager.unit.animation_manager.unit_sprites_manager.sprite_primary, true, false)
 	#var animation_is_playing: bool = true
 	is_recording_gif = true
-	preview_manager.is_playing_check.button_pressed = false
-	preview_manager.animation_slider.value = 0
+	#preview_manager.is_playing_check.button_pressed = false
+	#preview_manager.animation_slider.value = 0
+	#preview_manager.unit.animation_manager.animation_speed = 5
 	push_warning("start recording gif")
-	preview_manager.is_playing_check.button_pressed = true
+	preview_manager.unit.animation_manager.is_framerate_dependent = true
 	preview_manager.unit.animation_manager.animation_completed.connect(end_recording_gif)
 	preview_manager.unit.animation_manager.animation_loop_completed.connect(end_recording_gif)
 	preview_manager.unit.animation_manager.animation_frame_loaded.connect(add_gif_frame)
+	preview_manager.is_playing_check.button_pressed = true # sends out signal that starts the animation
+	
 	#preview_manager.unit.animation_manager.animation_completed.connect(func(): push_warning("animation_completed"))
 	
 	while is_recording_gif:
 		await get_tree().process_frame # wait for frame to render
-		#await get_tree().process_frame # wait for frame to render
 		#var preview_image: Image = preview_manager.preview_rect.texture.get_image()
 		#
 		#var delay: float = 2 / preview_manager.unit.animation_manager.animation_speed # delay for an animation frame is always multiple of 2
@@ -590,6 +589,8 @@ func _on_save_animation_gif_dialog_file_selected(path: String) -> void:
 	#
 	push_warning("end recording gif")
 	
+	preview_manager.unit.animation_manager.animation_speed = 59
+	
 	var file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
 	# save data stream into file
 	file.store_buffer(gif_exporter.export_file_data())
@@ -598,25 +599,33 @@ func _on_save_animation_gif_dialog_file_selected(path: String) -> void:
 	save_frame_grid_dialog.visible = false
 
 
-func add_gif_frame(delay: float) -> void:
+# TODO fix first frame of gif recording getting wrong frame
+# TODO fix starting recoding when animation is already playing
+func add_gif_frame(delay_sec: float) -> void:
 	gif_record_this_frame = true
-	await get_tree().process_frame # wait for frame to render
-	if not gif_record_this_frame:
+	await get_tree().process_frame # wait for render texture to update
+	if not gif_record_this_frame: # if multiple animations have have a new frame, only render once, with the shortest delay
+		gif_delays[-1] = minf(gif_delays[-1], delay_sec)
 		return
-	#await get_tree().process_frame # wait for frame to render
-	#await get_tree().process_frame # wait for frame to render
-	#var preview_image: Image = preview_manager.preview_rect.texture.get_image()
-	var preview_image: Image = preview_manager.preview_viewport2.get_texture().get_image()
-	var seq_part_id: int = preview_manager.animation_slider.value
 	
-	#var delay: float = preview_manager.unit.animation_manager.global_fft_animation.sequence.seq_parts[seq_part_id].parameters[1] / preview_manager.unit.animation_manager.animation_speed
-	#var delay: float = preview_manager.unit.animation_manager.global_fft_animation.sequence.seq_parts[seq_part_id].parameters[1] / 59.0
-	gif_exporter.add_frame(preview_image, delay, MedianCutQuantization)
+	var preview_image: Image = preview_manager.preview_viewport2.get_texture().get_image()
+	gif_frames.append(preview_image)
+	gif_delays.append(delay_sec)
+	
 	gif_record_this_frame = false
 
 
 func end_recording_gif() -> void:
-	preview_manager.unit.animation_manager.animation_frame_loaded.disconnect(add_gif_frame)
+	await get_tree().process_frame # wait for last frame to be added
+	gif_exporter = GIFExporter.new(preview_manager.preview_rect.texture.get_width(), preview_manager.preview_rect.texture.get_height())
+	
+	for idx: int in gif_frames.size():
+		gif_exporter.add_frame(gif_frames[idx], gif_delays[idx], MedianCutQuantization)
+	gif_frames.clear()
+	gif_delays.clear()
+	
+	if preview_manager.unit.animation_manager.animation_frame_loaded.is_connected(add_gif_frame):
+		preview_manager.unit.animation_manager.animation_frame_loaded.disconnect(add_gif_frame)
 	preview_manager.unit.animation_manager.animation_completed.disconnect(end_recording_gif)
 	preview_manager.unit.animation_manager.animation_loop_completed.disconnect(end_recording_gif)
 	is_recording_gif = false

@@ -9,6 +9,9 @@ signal processing_opcode(index: int)
 #@export var ui_manager: UiManager
 @export var unit_data: UnitData
 @export var unit_sprites_manager: UnitSpritesManager
+#var animation_timer: float = 0
+var is_framerate_dependent: bool = false
+var animations: Dictionary[int, FftAnimation] = {}
 var global_fft_animation: FftAnimation
 var global_spr: Spr
 var global_shp: Shp
@@ -64,9 +67,18 @@ var opcode_frame_offset: int = 0
 			#_on_animation_changed()
 
 
+func _process(delta: float) -> void:	
+	for animation: FftAnimation in animations.values():
+		animation.increment_time(delta)
+
+
 func start_animation(fft_animation: FftAnimation, draw_target: Sprite3D, is_playing: bool, isLooping: bool, force_loop: bool = false) -> void:
 	#if fft_animation.is_primary_anim:
 		#push_warning("Starting new animation")
+	fft_animation.id = animations.size()
+	fft_animation.draw_target = draw_target
+	fft_animation.target_name = draw_target.name
+	animations[fft_animation.id] = fft_animation
 	if fft_animation.primary_anim != global_fft_animation:
 		return
 	
@@ -124,17 +136,34 @@ func play_animation(fft_animation: FftAnimation, draw_target: Sprite3D, isLoopin
 		if not seq_part.isOpcode:
 			var delay_frames: int = seq_part.parameters[1]  # param 1 is delay
 			if delay_frames == 0 and fft_animation.is_primary_anim:
+				animation_frame_loaded.emit(2 / animation_speed)
+				animations.erase(fft_animation.id)
 				animation_completed.emit()
 				return
 			
 			var delay_sec: float = delay_frames / animation_speed
-			await get_tree().create_timer(delay_sec).timeout
+			#var delay_value: float = (floor(fft_animation.timer * animation_speed) / animation_speed) + delay_sec
+			var next_frame: int = fft_animation.frame_count + delay_frames
+			var delay_value: float = next_frame / animation_speed # framerate independent, may skip frames
+			if is_framerate_dependent:
+				delay_value = fft_animation.get_time() + delay_sec
+			
+			if fft_animation.primary_anim.frame_timings.has(next_frame):
+				fft_animation.primary_anim.frame_timings[next_frame] = maxf(delay_value, fft_animation.primary_anim.frame_timings[next_frame])
+			else:
+				fft_animation.primary_anim.frame_timings[next_frame] = delay_value
+			
+			while fft_animation.get_time() < fft_animation.primary_anim.frame_timings[next_frame]:
+				await get_tree().process_frame
+				
+			fft_animation.frame_count += delay_frames
+			#await get_tree().create_timer(delay_sec).timeout
 
 
 func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target: Sprite3D) -> int:
 	# print_debug(str(animation) + " " + str(animation_part_id + 3))
 	var next_seq_part_id: int = seq_part_id + 1
-	var seq_part:SeqPart = fft_animation.sequence.seq_parts[seq_part_id]
+	var seq_part: SeqPart = fft_animation.sequence.seq_parts[seq_part_id]
 	
 	var frame_id_label: String = ""
 	if seq_part.isOpcode:
@@ -161,7 +190,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			
 			draw_target.frame = new_frame_id
 			
-			animation_frame_loaded.emit(seq_part.parameters[0] / animation_speed)
+			animation_frame_loaded.emit(seq_part.parameters[1] / animation_speed)
 			#if fft_animation.is_primary_anim:
 				#animation_frame_loaded.emit()
 	# Handle opcodes
@@ -176,8 +205,10 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				new_animation.sequence = new_animation.seq.sequences[new_animation.seq.sequence_pointers[seq_part.parameters[1]]]
 				new_animation.is_primary_anim = false
 				new_animation.primary_anim = fft_animation.primary_anim
+				#new_animation.time = fft_animation.time
+				new_animation.frame_count = fft_animation.frame_count
 				
-				start_animation(new_animation, unit_sprites_manager.sprite_weapon, true, false, false)
+				start_animation(new_animation, unit_sprites_manager.sprite_weapon, true, false, true)
 			elif seq_part.parameters[0] == 2: # play effect animation
 				var new_animation := FftAnimation.new()
 				new_animation.seq = eff_seq
@@ -185,8 +216,10 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				new_animation.sequence = new_animation.seq.sequences[new_animation.seq.sequence_pointers[seq_part.parameters[1]]]
 				new_animation.is_primary_anim = false
 				new_animation.primary_anim = fft_animation.primary_anim
+				#new_animation.time = fft_animation.time
+				new_animation.frame_count = fft_animation.frame_count
 				
-				start_animation(new_animation, unit_sprites_manager.sprite_effect, true, false, false)
+				start_animation(new_animation, unit_sprites_manager.sprite_effect, true, false, true)
 			else:
 				push_warning("Error: QueueSpriteAnim: " + seq_part.to_string() + "\n" + fft_animation.sequence.to_string())
 		elif seq_part.opcode_name.begins_with("Move"):
@@ -242,9 +275,6 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 		elif seq_part.opcode_name == "UnloadMFItem":
 			var target_sprite: Sprite3D = unit_sprites_manager.sprite_item
 			target_sprite.frame = 32 # set to blankwd
-			#target_sprite.texture = ImageTexture.create_from_image(fft_animation.shp.create_blank_frame())
-			# reset any rotation or movement
-			#target_sprite.rotation_degrees = Vector3.ZERO
 			target_sprite.position = unit_sprites_manager.item_initial_pos
 		elif seq_part.opcode_name == "MFItemPosFBDU":
 			var target_sprite_pivot := unit_sprites_manager.sprite_item
@@ -302,11 +332,14 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				temp_fft_animation.is_primary_anim = false
 				temp_fft_animation.primary_anim = fft_animation.primary_anim
 				temp_fft_animation.primary_anim_opcode_part_id = primary_animation_part_id
+				temp_fft_animation.time = fft_animation.time
 				
 				for iteration in num_loops:
 					if temp_fft_animation.primary_anim != global_fft_animation:
 						break
 					await start_animation(temp_fft_animation, draw_target, true, false, true)
+					# TODO sync with primary_anim.frame_timings?
+					#fft_animation.time = temp_fft_animation.time
 		
 		elif seq_part.opcode_name == "WaitForInput":
 			var delay_frames: int = wait_for_input_delay
@@ -319,15 +352,19 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			temp_fft_animation.is_primary_anim = false
 			temp_fft_animation.primary_anim = fft_animation.primary_anim
 			temp_fft_animation.primary_anim_opcode_part_id = primary_animation_part_id
+			#temp_fft_animation.time = fft_animation.time
 			
 			# push_warning(str(temp_anim))
 			# TODO wait for input signal
-			var timer: SceneTreeTimer = get_tree().create_timer(delay_frames / animation_speed)
-			while timer.time_left > 0:
+			#var timer: SceneTreeTimer = get_tree().create_timer(delay_frames / animation_speed)
+			var delay_time: float = fft_animation.time + (delay_frames / animation_speed)
+			while fft_animation.time < delay_time:
 				if temp_fft_animation.primary_anim != global_fft_animation:
 					break
 				# push_warning(str(timer.time_left) + " " + str(temp_anim))
 				await start_animation(temp_fft_animation, draw_target, true, false, true)
+				# TODO sync with primary_anim.frame_timings?
+				#fft_animation.time = temp_fft_animation.time
 		elif seq_part.opcode_name.begins_with("WeaponSheatheCheck"):
 			var delay_frames: int = weapon_sheathe_check1_delay
 			if seq_part.opcode_name == "WeaponSheatheCheck2":
@@ -344,14 +381,18 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			temp_fft_animation.is_primary_anim = false
 			temp_fft_animation.primary_anim = fft_animation.primary_anim
 			temp_fft_animation.primary_anim_opcode_part_id = primary_animation_part_id
+			#temp_fft_animation.time = fft_animation.time
 			
 			# print_debug(str(temp_anim))
 			# TODO wait for weapon sheathe check signal
-			var timer: SceneTreeTimer = get_tree().create_timer(delay_frames / animation_speed)
-			while timer.time_left > 0:
+			#var timer: SceneTreeTimer = get_tree().create_timer(delay_frames / animation_speed)
+			var delay_time: float = fft_animation.time + (delay_frames / animation_speed)
+			while fft_animation.time < delay_time:
 				if temp_fft_animation.primary_anim != global_fft_animation:
 					break
 				await start_animation(temp_fft_animation, draw_target, true, false, true)
+				# TODO sync with primary_anim.frame_timings?
+				#fft_animation.time = temp_fft_animation.time
 		elif seq_part.opcode_name == "WaitForDistort":
 			pass
 		elif seq_part.opcode_name == "QueueDistortAnim":
@@ -360,17 +401,28 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 		elif seq_part.opcode_name == "IncrementLoop":
 			animation_loop_completed.emit()
 			if fft_animation.is_primary_anim:
+				animations.clear()
 				reset_sprites()
+				fft_animation.time = 0
+				fft_animation.frame_timings.clear()
+			fft_animation.frame_count = 0
 			start_animation(fft_animation, draw_target, animation_is_playing, false)
 		elif seq_part.opcode_name == "EndAnimation":
 			#reset_sprites() # TODO reset position and rotation of draw_target (and pivot)
 			draw_target.frame = (draw_target.hframes * draw_target.vframes) - 1 # TODO fix this so a 255th frame can actually be made
 			#draw_target.visible = false
+			animations.erase(fft_animation.id)
 			if fft_animation.is_primary_anim:
+				animations.clear()
 				reset_sprites()
+				fft_animation.time = 0
+				fft_animation.frame_timings.clear()
+				fft_animation.frame_count = 0
 				animation_completed.emit()
 		elif seq_part.opcode_name == "PauseAnimation":
 			if fft_animation.is_primary_anim:
+				animations.clear()
+				fft_animation.frame_timings.clear()
 				animation_completed.emit()
 		# Opcodes from animation rewraite ASM by Talcall
 		elif seq_part.opcode_name == "SetBackFacedOffset":
@@ -413,6 +465,7 @@ func get_sub_animation(length: int, sub_animation_end_part_id: int, parent_anima
 
 func _on_animation_changed() -> void:
 	reset_sprites()
+	animations.clear()
 	var new_fft_animation: FftAnimation = get_animation_from_globals()
 	var num_parts: int = new_fft_animation.sequence.seq_parts.size()
 	start_animation(new_fft_animation, unit_sprites_manager.sprite_primary, animation_is_playing, false)
@@ -426,6 +479,7 @@ func reset_sprites() -> void:
 
 func get_animation_from_globals() -> FftAnimation:
 	var fft_animation: FftAnimation = FftAnimation.new()
+	fft_animation.draw_target = unit_sprites_manager.sprite_primary
 	fft_animation.seq = global_seq
 	fft_animation.shp = global_shp
 	fft_animation.sequence = global_seq.sequences[global_animation_id]
@@ -444,9 +498,8 @@ func _on_is_playing_check_box_toggled(toggled_on: bool) -> void:
 	elif !toggled_on and animation_completed.is_connected(_on_animation_changed):
 		animation_completed.disconnect(_on_animation_changed)
 	
-	if global_seq.sequences.size() == 0:
-		return
-	_on_animation_changed()
+	if global_seq.sequences.size() != 0:
+		_on_animation_changed()
 
 
 func _on_animation_id_spin_box_value_changed(value: int) -> void:

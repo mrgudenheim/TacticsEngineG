@@ -542,10 +542,6 @@ func start_recoding_gif() -> void:
 	gif_frame_nums.clear()
 	
 	is_recording_gif = true
-	# TODO fix start recoding when animation is already playing
-	#preview_manager.is_playing_check.button_pressed = false
-	#preview_manager.animation_slider.value = 0
-	#preview_manager.unit.animation_manager.animation_speed = 5
 	push_warning("start recording gif")
 	preview_manager.unit.animation_manager.is_framerate_dependent = true
 	preview_manager.unit.animation_manager.animation_completed.connect(end_recording_gif)

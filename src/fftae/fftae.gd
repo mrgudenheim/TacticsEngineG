@@ -528,47 +528,21 @@ func _on_save_animation_gif_pressed() -> void:
 	save_gif_dialog.visible = true
 
 
-# ignores all opcodes and rotation
-func _on_save_animation_gif_dialog_file_selected2(path: String) -> void:
-	var fft_animation: FftAnimation = preview_manager.global_fft_animation
-	gif_exporter = GIFExporter.new(fft_animation.shp.frame_size.x, fft_animation.shp.frame_size.y)
-	
-	#push_warning(fft_animation.sequence.seq_parts.size())
-	for seq_part: SeqPart in fft_animation.sequence.seq_parts:
-		if seq_part.isOpcode:
-			continue
-		
-		var new_frame_id: int = seq_part.parameters[0]
-		var frame_id_offset: int = preview_manager.get_animation_frame_offset(fft_animation.weapon_frame_offset_index, fft_animation.shp, fft_animation.back_face_offset)
-		new_frame_id = new_frame_id + frame_id_offset # + opcode_frame_offset
-		var frame_id_label: String = str(new_frame_id)
-	
-		var assembled_image: Image
-		if new_frame_id >= fft_animation.shp.frames.size(): # high frame offsets (such as shuriken) can only be used with certain animations
-			assembled_image = fft_animation.shp.create_blank_frame()
-		else:
-			assembled_image = fft_animation.shp.get_assembled_frame(new_frame_id, fft_animation.image, ui_manager.animation_id_spinbox.value, preview_manager.other_type_options.selected, preview_manager.weapon_v_offset, preview_manager.submerged_depth_options.selected)
-
-		var delay: float = seq_part.parameters[1] / 59.0
-		
-		gif_exporter.add_frame(assembled_image, delay, MedianCutQuantization)
-		#var frame_image: Image = shp.get_assembled_frame(frame_idx, spritesheet, anim_idx, other_idx, wep_v_offset, submerged_depth)
-	
-	var file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
-	# save data stream into file
-	file.store_buffer(gif_exporter.export_file_data())
-	file.close()
-	
-	save_frame_grid_dialog.visible = false
+func on_save_gif_toggled(toggled_on: bool) -> void:
+	if not toggled_on:
+		save_gif_dialog.visible = true
+	else:
+		start_recoding_gif()
 
 
 # TODO allow recording complete ability animations, ie. including the starting and charging animations
-func _on_save_animation_gif_dialog_file_selected(path: String) -> void:
+func start_recoding_gif() -> void:
 	gif_frames.clear()
 	gif_delays.clear()
 	gif_frame_nums.clear()
 	
 	is_recording_gif = true
+	# TODO fix start recoding when animation is already playing
 	#preview_manager.is_playing_check.button_pressed = false
 	#preview_manager.animation_slider.value = 0
 	#preview_manager.unit.animation_manager.animation_speed = 5
@@ -580,24 +554,8 @@ func _on_save_animation_gif_dialog_file_selected(path: String) -> void:
 	preview_manager.is_playing_check.button_pressed = true # sends out signal that starts the animation
 	
 	#preview_manager.unit.animation_manager.animation_completed.connect(func(): push_warning("animation_completed"))
-	
-	while is_recording_gif:
-		await get_tree().process_frame # wait for frame to render
-	
-	push_warning("end recording gif")
-	
-	preview_manager.unit.animation_manager.animation_speed = 59
-	
-	var file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
-	# save data stream into file
-	file.store_buffer(gif_exporter.export_file_data())
-	file.close()
-	
-	save_frame_grid_dialog.visible = false
 
 
-# TODO fix first frame of gif recording getting wrong frame
-# TODO fix starting recoding when animation is already playing
 func add_gif_frame(delay_sec: float, frame_num: int) -> void:
 	await get_tree().process_frame # wait for render texture to update
 	if gif_frame_nums.has(frame_num): # if multiple animations have have a new frame, only save one image, with the shortest delay
@@ -614,8 +572,11 @@ func add_gif_frame(delay_sec: float, frame_num: int) -> void:
 
 
 func end_recording_gif() -> void:
+	push_warning("end recording gif")
 	await get_tree().process_frame # wait for last frame to be added
 	gif_exporter = GIFExporter.new(preview_manager.preview_rect.texture.get_width(), preview_manager.preview_rect.texture.get_height())
+	
+	preview_manager.unit.animation_manager.animation_speed = 59
 	
 	for idx: int in gif_frames.size():
 		gif_exporter.add_frame(gif_frames[idx], gif_delays[idx], MedianCutQuantization)
@@ -628,3 +589,13 @@ func end_recording_gif() -> void:
 	preview_manager.unit.animation_manager.animation_completed.disconnect(end_recording_gif)
 	preview_manager.unit.animation_manager.animation_loop_completed.disconnect(end_recording_gif)
 	is_recording_gif = false
+	save_gif_button.button_pressed = false
+
+
+func _on_save_gif_dialog_file_selected(path: String) -> void:
+	var file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
+	# save data stream into file
+	file.store_buffer(gif_exporter.export_file_data())
+	file.close()
+	
+	save_frame_grid_dialog.visible = false

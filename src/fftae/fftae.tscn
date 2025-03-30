@@ -217,6 +217,7 @@ editable = false
 [node name="SaveGif" type="Button" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 disabled = true
+toggle_mode = true
 text = "Save Animation GIF"
 
 [node name="SaveGifDialog" type="FileDialog" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SaveGif"]
@@ -720,8 +721,8 @@ horizontal_alignment = 1
 [connection signal="file_selected" from="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/LoadSEQ/LoadFileDialog" to="." method="_on_load_file_dialog_file_selected"]
 [connection signal="toggled" from="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SliderContainer/PlayCheckBox" to="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer" method="_on_is_playing_check_box_toggled"]
 [connection signal="value_changed" from="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SliderContainer/HSlider" to="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer" method="_on_animation_h_slider_value_changed"]
-[connection signal="pressed" from="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SaveGif" to="." method="_on_save_animation_gif_pressed"]
-[connection signal="file_selected" from="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SaveGif/SaveGifDialog" to="." method="_on_save_animation_gif_dialog_file_selected"]
+[connection signal="toggled" from="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SaveGif" to="." method="on_save_gif_toggled"]
+[connection signal="file_selected" from="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SaveGif/SaveGifDialog" to="." method="_on_save_gif_dialog_file_selected"]
 [connection signal="pressed" from="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SaveFrameGrid" to="." method="_on_save_frame_grid_pressed"]
 [connection signal="file_selected" from="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SaveFrameGrid/SaveFrameGridDialog" to="." method="_on_save_frame_grid_dialog_file_selected"]
 [connection signal="pressed" from="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/SaveAsXml" to="." method="_on_save_as_xml_pressed"]

@@ -25,7 +25,7 @@ var weapon_frames_vertical_offsets: PackedInt32Array = [] # WEP.SHP vertical off
 var animation_layer_priorities_start: int = 0x2d548 # 4 uint32 per entry, 0x1b entries? maybe only 0x17?
 var animation_layer_priorities: PackedVector4Array = []
 
-var shp_subframe_sizes_start: int = 0x2d6c8 # 8 bytes each, two uint32 per entry, 15 entries
+var shp_subframe_sizes_start: int = 0x2d6c8 # 8 bytes each, two uint32 per entry, 16 entries
 var shp_subframe_sizes: PackedVector2Array = []
 
 var spritesheet_data_start: int = 0x2d748 # 4 bytes each
@@ -113,7 +113,7 @@ func init_from_battle_bin() -> void:
 	
 	# WEP and EFF subframe sizes
 	entry_size = 8 # two uint32
-	num_entries = 15
+	num_entries = 16
 	shp_subframe_sizes.resize(num_entries)
 	data_bytes = battle_bytes.slice(shp_subframe_sizes_start, shp_subframe_sizes_start + (num_entries * entry_size))
 	for id: int in num_entries:

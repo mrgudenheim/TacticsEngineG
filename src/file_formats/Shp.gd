@@ -261,7 +261,7 @@ func _get_subframe_data(bytes: PackedByteArray) -> SubFrameData:
 	subframe.load_location_x = (bytes23 & 0x001F) * PIXELS_PER_TILE # pixels
 	subframe.load_location_y = ((bytes23 & 0x03E0) >> 5) * PIXELS_PER_TILE # pixels
 	var rect_size_index: int = (bytes23 & 0x3C00) >> 10
-	subframe.rect_size = RomReader.battle_bin_data.shp_subframe_sizes[rect_size_index] # TODO out of bounds for MON?
+	subframe.rect_size = RomReader.battle_bin_data.shp_subframe_sizes[rect_size_index]
 	subframe.flip_x = (bytes23 & 0x4000) != 0
 	subframe.flip_y = (bytes23 & 0x8000) != 0
 	

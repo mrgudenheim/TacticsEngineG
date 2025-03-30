@@ -564,6 +564,10 @@ func _on_save_animation_gif_dialog_file_selected2(path: String) -> void:
 
 # TODO allow recording complete ability animations, ie. including the starting and charging animations
 func _on_save_animation_gif_dialog_file_selected(path: String) -> void:
+	gif_frames.clear()
+	gif_delays.clear()
+	gif_frame_nums.clear()
+	
 	#var animation_is_playing: bool = true
 	is_recording_gif = true
 	#preview_manager.is_playing_check.button_pressed = false
@@ -607,13 +611,13 @@ func add_gif_frame(delay_sec: float, frame_num: int) -> void:
 		gif_delays[-1] = minf(gif_delays[-1], delay_sec)
 		return
 	
+	gif_frame_nums.append(frame_num)
+	gif_delays.append(delay_sec)
 	if frame_num == 0:
 		await get_tree().process_frame # wait extra for starting frame - why?
 	
 	var preview_image: Image = preview_manager.preview_viewport2.get_texture().get_image()
 	gif_frames.append(preview_image)
-	gif_delays.append(delay_sec)
-	gif_frame_nums.append(frame_num)
 
 
 func end_recording_gif() -> void:

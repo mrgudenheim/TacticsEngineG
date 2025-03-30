@@ -3,7 +3,7 @@ extends Node3D
 
 signal animation_completed
 signal animation_loop_completed
-signal animation_frame_loaded(delay: float)
+signal animation_frame_loaded(delay: float, frame_num: int)
 signal processing_opcode(index: int)
 
 #@export var ui_manager: UiManager
@@ -136,7 +136,7 @@ func play_animation(fft_animation: FftAnimation, draw_target: Sprite3D, isLoopin
 		if not seq_part.isOpcode:
 			var delay_frames: int = seq_part.parameters[1]  # param 1 is delay
 			if delay_frames == 0 and fft_animation.is_primary_anim:
-				animation_frame_loaded.emit(2 / animation_speed)
+				animation_frame_loaded.emit(2 / animation_speed, fft_animation.frame_count)
 				animations.erase(fft_animation.id)
 				animation_completed.emit()
 				return
@@ -190,7 +190,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			
 			draw_target.frame = new_frame_id
 			
-			animation_frame_loaded.emit(seq_part.parameters[1] / animation_speed)
+			animation_frame_loaded.emit(seq_part.parameters[1] / animation_speed, fft_animation.frame_count)
 			#if fft_animation.is_primary_anim:
 				#animation_frame_loaded.emit()
 	# Handle opcodes

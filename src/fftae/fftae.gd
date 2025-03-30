@@ -19,9 +19,9 @@ static var global_fft_animation: FftAnimation = FftAnimation.new()
 @export var save_gif_dialog: FileDialog
 @export var is_recording_gif: bool = false
 var gif_exporter: GIFExporter
-var gif_record_this_frame: bool = false
 var gif_frames: Array[Image] = []
 var gif_delays: PackedFloat32Array = []
+var gif_frame_nums: PackedInt32Array = []
 
 @export var animation_list_container: VBoxContainer
 @export var animation_list_row_tscn: PackedScene
@@ -601,18 +601,19 @@ func _on_save_animation_gif_dialog_file_selected(path: String) -> void:
 
 # TODO fix first frame of gif recording getting wrong frame
 # TODO fix starting recoding when animation is already playing
-func add_gif_frame(delay_sec: float) -> void:
-	gif_record_this_frame = true
+func add_gif_frame(delay_sec: float, frame_num: int) -> void:
 	await get_tree().process_frame # wait for render texture to update
-	if not gif_record_this_frame: # if multiple animations have have a new frame, only render once, with the shortest delay
+	if gif_frame_nums.has(frame_num): # if multiple animations have have a new frame, only save one image, with the shortest delay
 		gif_delays[-1] = minf(gif_delays[-1], delay_sec)
 		return
+	
+	if frame_num == 0:
+		await get_tree().process_frame # wait extra for starting frame - why?
 	
 	var preview_image: Image = preview_manager.preview_viewport2.get_texture().get_image()
 	gif_frames.append(preview_image)
 	gif_delays.append(delay_sec)
-	
-	gif_record_this_frame = false
+	gif_frame_nums.append(frame_num)
 
 
 func end_recording_gif() -> void:
@@ -623,6 +624,7 @@ func end_recording_gif() -> void:
 		gif_exporter.add_frame(gif_frames[idx], gif_delays[idx], MedianCutQuantization)
 	gif_frames.clear()
 	gif_delays.clear()
+	gif_frame_nums.clear()
 	
 	if preview_manager.unit.animation_manager.animation_frame_loaded.is_connected(add_gif_frame):
 		preview_manager.unit.animation_manager.animation_frame_loaded.disconnect(add_gif_frame)

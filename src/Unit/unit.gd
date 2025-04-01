@@ -241,7 +241,10 @@ func use_ability(pos: Vector3) -> void:
 		#animation_manager.unit_debug_menu.anim_id_spin.value = 0x3e * 2 # TODO look up based on equiped weapon and target relative height
 		debug_menu.anim_id_spin.value = (RomReader.battle_bin_data.weapon_animation_ids[primary_weapon.item_type].y * 2) + int(is_back_facing) # TODO lookup based on target relative height
 	else:
-		debug_menu.anim_id_spin.value = ability_data.animation_executing_id + int(is_back_facing)
+		var ability_animation_executing_id = ability_data.animation_executing_id
+		if ["RUKA.SEQ", "ARUTE.SEQ", "KANZEN.SEQ"].has(RomReader.sprs[sprite_file_idx].seq_name):
+			ability_animation_executing_id = 0x2c * 2 # https://ffhacktics.com/wiki/Set_attack_animation_flags_and_facing_3
+		debug_menu.anim_id_spin.value = ability_animation_executing_id + int(is_back_facing)
 		
 	var new_vfx_location: Node3D = Node3D.new()
 	new_vfx_location.position = pos

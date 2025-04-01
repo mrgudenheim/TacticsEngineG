@@ -142,8 +142,9 @@ func set_data_from_seq_bytes(bytes: PackedByteArray) -> void:
 	BB = bytes.decode_u16(2)
 	
 	# get pointers
+	sequence_pointers.clear()
 	for seq_index in (section2_length / 4):
-		var seq_pointer:int = bytes.decode_u32(section1_length + (seq_index * 4))
+		var seq_pointer: int = bytes.decode_u32(section1_length + (seq_index * 4))
 		if seq_index > 0 and seq_pointer == 0xFFFFFFFF:
 			break # skip to section 3 if no more pointers in section 2
 		sequence_pointers.append(seq_pointer)
@@ -212,21 +213,21 @@ func set_sequence_names() -> void:
 				sequences[pointer].seq_name = seq_names[name_alias][pointer_index] # set name of the sequence
 
 
-func get_sequence_data(bytes:PackedByteArray) -> Sequence:
+func get_sequence_data(bytes: PackedByteArray) -> Sequence:
 	var seq:Sequence = Sequence.new()
-	var seq_part_pointer:int = 0
+	var seq_part_pointer: int = 0
 	while seq_part_pointer < bytes.size():
 		var seq_part:SeqPart = SeqPart.new()
 		var num_params:int = 2
 		if bytes.decode_u8(seq_part_pointer) == 0xFF:
-			var opcode:String = "%x%x" % [bytes.decode_u8(seq_part_pointer), bytes.decode_u8(seq_part_pointer + 1)]
+			var opcode: String = "%x%x" % [bytes.decode_u8(seq_part_pointer), bytes.decode_u8(seq_part_pointer + 1)]
 			#push_warning(opcode)
 			seq_part.opcode = opcode
 			seq_part.opcode_name = opcode_names[opcode]
 			num_params = opcode_parameters[opcode]
 			
 		for param:int in num_params:
-			var offset:int = seq_part_pointer + param
+			var offset: int = seq_part_pointer + param
 			if seq_part.isOpcode:
 				offset += 2
 			# signed parameters
@@ -255,7 +256,7 @@ func get_sequence_data(bytes:PackedByteArray) -> Sequence:
 
 func get_seq_bytes() -> PackedByteArray:
 	#update_seq_pointers()
-	var bytes:PackedByteArray = []
+	var bytes: PackedByteArray = []
 	bytes.resize(section1_length + section2_length + section3_length)
 	bytes.fill(0)
 	
@@ -267,9 +268,9 @@ func get_seq_bytes() -> PackedByteArray:
 	for seq_pointer_index in sequence_pointers.size():
 		bytes.encode_u32(section1_length + (4 * seq_pointer_index), get_pointer_address(sequence_pointers[seq_pointer_index]))
 	
-	var sequence_pointers_length:int = sequence_pointers.size() * 4
-	var section2_empty_length:int = section2_length - sequence_pointers_length
-	for empty_index:int in section2_empty_length:
+	var sequence_pointers_length: int = sequence_pointers.size() * 4
+	var section2_empty_length: int = section2_length - sequence_pointers_length
+	for empty_index: int in section2_empty_length:
 		bytes.encode_u8(section1_length + sequence_pointers_length + empty_index, 0xFF)
 	
 	# section 3

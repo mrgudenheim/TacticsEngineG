@@ -2,37 +2,8 @@ class_name ScusData
 
 # https://ffhacktics.com/wiki/SCUS_942.21_Data_Tables#MURATA_Main_Program_Data
 
-# Job Data # 800610b8 in RAM
-class JobData:
-	var skillset_id: int = 0
-	#var innate_abilities: PackedInt32Array = []
-	# equippable items
-	# hp growth
-	# hp multiplier
-	# mp growth
-	# mp multiplier
-	# speed growth
-	# speed multiplier
-	# pa growth
-	# pa multiplier
-	# ma growth
-	# ma multiplier
-	# move
-	# jump
-	# c-evade
-	# innate statuses
-	# status immunities
-	# starting statuses
-	# absorbed elements
-	# nullified elements
-	# halved elements
-	# element weaknesses
-	# portrait?
-	# palette?
-	# sprite?
-	
-
 class SkillsetData:
+	var skillset_name: String = ""
 	var action_ability_ids: PackedInt32Array = []
 	var rsm_ability_ids: PackedInt32Array = []
 
@@ -97,8 +68,11 @@ func init_from_scus() -> void:
 	var job_bytes: PackedByteArray = scus_bytes.slice(jobs_start, jobs_start + (num_entries * entry_size))
 	jobs_data.resize(num_entries)
 	for job_id: int in num_entries:
-		var job_data: JobData = JobData.new()
-		job_data.skillset_id = job_bytes.decode_u8(job_id * entry_size)
+		var job_entry_bytes: PackedByteArray = job_bytes.slice(job_id * entry_size, (job_id * entry_size) + entry_size)
+		var job_data: JobData = JobData.new(job_id, job_entry_bytes)
+		#job_data.job_name = RomReader.fft_text.job_names[job_id]
+		#job_data.skillset_id = job_bytes.decode_u8(job_id * entry_size)
+		#job_data.monster_type = job_bytes.decode_u8((job_id * entry_size) + 0x2f)
 		jobs_data[job_id] = job_data
 	
 	
@@ -109,6 +83,7 @@ func init_from_scus() -> void:
 	var unit_skillsets_bytes: PackedByteArray = scus_bytes.slice(skillsets_start, skillsets_start + (num_entries * entry_size))
 	for skillset_id: int in num_entries:
 		var skillset_data: SkillsetData = SkillsetData.new()
+		skillset_data.skillset_name = RomReader.fft_text.skillset_names[skillset_id]
 		skillset_data.action_ability_ids.resize(16)
 		skillset_data.rsm_ability_ids.resize(6)
 		for skill_slot: int in 16: # action abilities

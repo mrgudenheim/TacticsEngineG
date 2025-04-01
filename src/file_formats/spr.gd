@@ -4,6 +4,7 @@ var is_initialized: bool = false
 
 const PORTRAIT_HEIGHT: int = 32 # pixels
 
+var name: String = ""
 var spritesheet: Image
 var has_compressed: bool = true
 var is_sp2: bool = false

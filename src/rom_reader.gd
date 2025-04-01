@@ -112,7 +112,39 @@ func process_rom() -> void:
 				#var frame_data: VisualEffectData.VfxFrame = ability.vfx_data.frame_sets[frameset_idx].frame_set[frame_idx]
 				#if ((frame_data.vram_bytes[1] & 0x02) >> 1) == 0:
 					#push_warning([ability_id, ability.name, ability.vfx_data.vfx_id, frameset_idx, frame_idx])
+	
+	# get animation names based on ability execution and job / monster type
+	# TODO fix monsters that use sp2 files
+	var seq: Seq = seqs[file_records["MON.SEQ"].type_index]
+	seq.set_data_from_seq_bytes(get_file_data("MON.SEQ"))
+	for job: JobData in scus_data.jobs_data:
+		var spr: Spr = sprs[get_spr_file_idx(job.sprite_id)]
+		spr.set_data()
+		spr.set_spritesheet_data(job.sprite_id)
+		if spr.seq_name != "MON.SEQ":
+			continue
 		
+		for ability_id: int in scus_data.skillsets_data[job.skillset_id].action_ability_ids:
+			var ability: AbilityData = abilities[ability_id]
+			if ability_id == 0: # skip empty abilities
+				continue
+			
+			var animation_id: int = ability.animation_executing_id
+			if animation_id == 0: # skip attack animation
+				continue
+			
+			var sequence_id: int = seq.sequence_pointers[animation_id]
+			var animation_name: String = seq.sequences[sequence_id].seq_name
+			if animation_name != "":
+				continue
+			
+			var job_type_name: String = job.job_name
+			if job.job_id >= 0x5e and job.job_id <= 0x8d: # generic monsters
+				job_type_name = fft_text.job_names[0x5e + ((job.monster_type - 1) * 3)]
+			var new_animation_name: String = ability.name + " (" + job_type_name + ")"
+			seq.sequences[sequence_id].seq_name = new_animation_name + " Front"
+			seq.sequences[seq.sequence_pointers[animation_id + 1]].seq_name = new_animation_name + " Back"
+			push_warning(str(sequence_id) + ": " + new_animation_name)
 	
 	is_ready = true
 	rom_loaded.emit()
@@ -251,6 +283,10 @@ func get_file_data(file_name: String) -> PackedByteArray:
 	file_data.append_array(last_sector_data)
 	
 	return file_data
+
+
+func get_spr_file_idx(sprite_id: int) -> int:
+	return sprs.find_custom(func(spr: Spr): return spr.sprite_id == sprite_id)
 
 
 func init_abilities() -> void:

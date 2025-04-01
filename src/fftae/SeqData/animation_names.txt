@@ -659,8 +659,8 @@ Monster/mon,190,Buffer?
 Monster/mon,191,Buffer?
 Monster/mon,192,Buffer?
 Monster/mon,193,Buffer?
-Monster/mon,194,Bomb Explode? Front
-Monster/mon,195,Bomb Explode? Back
+Monster/mon,194,
+Monster/mon,195,
 Monster/mon,196,
 Monster/mon,197,
 Monster/mon,198,
@@ -695,14 +695,14 @@ Monster/mon,226,
 Monster/mon,227,
 Monster/mon,228,
 Monster/mon,229,
-Monster/mon,230,Iron Giant Drill Front
-Monster/mon,231,Iron Giant Drill Back
-Monster/mon,232,Iron Giant Cannon Front
-Monster/mon,233,Iron Giant Cannon Back
-Monster/mon,234,Iron Giant Fist Front
-Monster/mon,235,Iron Giant Fist Back
-Monster/mon,236,Iron Giant Hammer Front
-Monster/mon,237,Iron Giant Hammer Back
+Monster/mon,230,
+Monster/mon,231,
+Monster/mon,232,
+Monster/mon,233,
+Monster/mon,234,
+Monster/mon,235,
+Monster/mon,236,
+Monster/mon,237,
 other,0,Blank
 other,1,Face Down
 other,2,Face DownLeft

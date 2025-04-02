@@ -390,7 +390,7 @@ func set_sprite(new_sprite_file_idx: int) -> void:
 	if spr.file_name == "WEP.SPR":
 		animation_manager.unit_sprites_manager.sprite_primary.vframes = 32
 	else:
-		animation_manager.unit_sprites_manager.sprite_primary.vframes = 16
+		animation_manager.unit_sprites_manager.sprite_primary.vframes = 16 + (16 * spr.sp2s.size())
 	
 	if RomReader.spr_file_name_to_id.has(spr.file_name):
 		sprite_id = RomReader.spr_file_name_to_id[spr.file_name]

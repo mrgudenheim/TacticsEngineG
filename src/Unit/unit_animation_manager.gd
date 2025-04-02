@@ -434,11 +434,16 @@ func get_animation_frame_offset(local_frame_offset_index: int, shp: Shp, back_fa
 	if ((shp.file_name.contains("WEP") or shp.file_name.contains("EFF"))
 			and shp.zero_frames.size() > 0):
 		return shp.zero_frames[local_frame_offset_index]
+	elif global_seq.file_name == "MON.SEQ":
+		if Shp.constant_sp2_v_offsets.has(global_animation_ptr_id):
+			return Shp.constant_sp2_v_offsets[global_animation_ptr_id] # TODO fix handling STEEL GIANT sp2 handling
+		elif global_animation_ptr_id >= Shp.SP2_START_ANIMATION_ID:
+			return 256
 	else:
 		if is_back_facing: # TODO how to handle combination of weapon and back facing?
 			return back_faced_offset
-		else:
-			return 0
+	
+	return 0
 
 
 func get_sub_animation(length: int, sub_animation_end_part_id: int, parent_animation: Sequence) -> Sequence:

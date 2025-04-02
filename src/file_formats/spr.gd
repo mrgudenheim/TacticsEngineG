@@ -56,7 +56,10 @@ func get_sub_spr(new_name: String, start_pixel: int, end_pixel: int) -> Spr:
 	return sub_spr
 
 
-func set_data(spr_file: PackedByteArray = RomReader.get_file_data(file_name)) -> void:
+func set_data(spr_file: PackedByteArray = RomReader.get_file_data(file_name), overwrite: bool = false) -> void:
+	if is_initialized and not overwrite:
+		return
+	
 	var num_palette_bytes: int = num_colors * 2
 	var palette_bytes: PackedByteArray = spr_file.slice(0, num_palette_bytes)
 	var num_bytes_top: int = (width * 256) /2
@@ -299,13 +302,13 @@ func set_spritesheet_data(new_sprite_id: int) -> void:
 			seq_name = "KANZEN.SEQ"
 
 
-func create_frame_grid(anim_idx: int = 0, other_idx: int = 0, wep_v_offset: int = 0, submerged_depth: int = 0, different_shp_name: String = "") -> Image:
+func create_frame_grid(anim_ptr_idx: int = 0, other_idx: int = 0, wep_v_offset: int = 0, submerged_depth: int = 0, different_shp_name: String = "") -> Image:
 	if different_shp_name == "":
 		different_shp_name = shp_name
 	var shp: Shp = RomReader.shps[RomReader.file_records[different_shp_name].type_index]
 	var num_cells_wide: int = 16
-	var num_cells_tall: int = 16
-	if shp.frames.size() > 256:
+	var num_cells_tall: int = 16 + (16 * sp2s.size())
+	if shp.frames.size() > 256: # WEP has more frames (related to the frame offsets per item type)
 		num_cells_tall = 32
 	
 	var cell_width: int = shp.frame_size.x
@@ -313,19 +316,22 @@ func create_frame_grid(anim_idx: int = 0, other_idx: int = 0, wep_v_offset: int 
 	
 	var frame_grid: Image = Image.create_empty(cell_width * num_cells_wide, cell_height * num_cells_tall, false, Image.FORMAT_RGBA8)
 	
-	for frame_idx: int in shp.frames.size():
-		var cell_x: int = frame_idx % num_cells_wide
-		var cell_y: int = frame_idx / num_cells_wide
-		
-		var frame_image: Image = shp.get_assembled_frame(frame_idx, spritesheet, anim_idx, other_idx, wep_v_offset, submerged_depth)
-		frame_grid.blit_rect(frame_image, Rect2i(0, 0, frame_image.get_size().x, frame_image.get_size().y), Vector2i(cell_x * cell_width, cell_y * cell_height))
+	for sp2_id: int in sp2s.size() + 1:
+		anim_ptr_idx = Shp.SP2_START_ANIMATION_ID * sp2_id
+		# TODO handle hardcoded offsets for STEEL GIANT
+		for frame_idx: int in shp.frames.size():
+			var cell_x: int = frame_idx % num_cells_wide
+			var cell_y: int = (frame_idx / num_cells_wide) + (16 * sp2_id)
+			
+			var frame_image: Image = shp.get_assembled_frame(frame_idx, spritesheet, anim_ptr_idx, other_idx, wep_v_offset, submerged_depth)
+			frame_grid.blit_rect(frame_image, Rect2i(0, 0, frame_image.get_size().x, frame_image.get_size().y), Vector2i(cell_x * cell_width, cell_y * cell_height))
 	
 	return frame_grid
 
 
-func create_frame_grid_texture(palette_idx = 0, anim_idx: int = 0, other_idx: int = 0, wep_v_offset: int = 0, submerged_depth: int = 0, different_shp_name: String = "") -> ImageTexture:
+func create_frame_grid_texture(palette_idx = 0, anim_ptr_idx: int = 0, other_idx: int = 0, wep_v_offset: int = 0, submerged_depth: int = 0, different_shp_name: String = "") -> ImageTexture:
 	set_pixel_colors(palette_idx)
 	spritesheet = get_rgba8_image()
 	
-	var new_texture = ImageTexture.create_from_image(create_frame_grid(anim_idx, other_idx, wep_v_offset, submerged_depth, different_shp_name))
+	var new_texture = ImageTexture.create_from_image(create_frame_grid(anim_ptr_idx, other_idx, wep_v_offset, submerged_depth, different_shp_name))
 	return new_texture

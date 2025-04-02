@@ -134,16 +134,19 @@ func process_rom() -> void:
 				continue
 			
 			var sequence_id: int = seq.sequence_pointers[animation_id]
-			var animation_name: String = seq.sequences[sequence_id].seq_name
-			if animation_name != "":
+			if seq.sequences[sequence_id].seq_name.contains(ability.name): # skip if ability name is already listed
 				continue
+			if seq.sequences[sequence_id].seq_name != "":
+				seq.sequences[sequence_id].seq_name += "\n"
+				seq.sequences[seq.sequence_pointers[animation_id + 1]].seq_name += "\n"
 			
 			var job_type_name: String = job.job_name
 			if job.job_id >= 0x5e and job.job_id <= 0x8d: # generic monsters
 				job_type_name = fft_text.job_names[0x5e + ((job.monster_type - 1) * 3)]
 			var new_animation_name: String = ability.name + " (" + job_type_name + ")"
-			seq.sequences[sequence_id].seq_name = new_animation_name + " Front"
-			seq.sequences[seq.sequence_pointers[animation_id + 1]].seq_name = new_animation_name + " Back"
+			
+			seq.sequences[sequence_id].seq_name += new_animation_name + " Front"
+			seq.sequences[seq.sequence_pointers[animation_id + 1]].seq_name += new_animation_name + " Back"
 			push_warning(str(sequence_id) + ": " + new_animation_name)
 	
 	is_ready = true

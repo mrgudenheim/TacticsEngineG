@@ -392,17 +392,18 @@ func write_wiki_table() -> void:
 	var output_array: PackedStringArray = []
 	output_array.append(output)
 	
-	for seq_index: int in sequences.size():
+	for seq_ptr_index: int in sequence_pointers.size():
+		var seq_idx: int = sequence_pointers[seq_ptr_index]
 		var seq_strings: PackedStringArray = []
-		var seq_description: String = sequences[seq_index].seq_name
+		var seq_description: String = sequences[seq_idx].seq_name
 		if seq_description == "":
 			seq_description = "?"
 		
 		seq_strings.append("| " + name_alias) # File
 		#seq_strings.append(str(seq_index)) # ID (Dec)
-		seq_strings.append("0x%02x" % seq_index) # ID (Hex)
+		seq_strings.append("0x%02x" % seq_ptr_index) # ID (Hex)
 		seq_strings.append(seq_description.replace("\n", "<br>")) # Description
-		seq_strings.append(sequences[seq_index].to_string_hex("<br>")) # Opcodes
+		seq_strings.append(sequences[seq_idx].to_string_hex("<br>")) # Opcodes
 		output_array.append(" || ".join(seq_strings))
 	
 	var final_output: String = "\n|-\n".join(output_array)

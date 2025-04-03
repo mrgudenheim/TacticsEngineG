@@ -114,7 +114,6 @@ func process_rom() -> void:
 					#push_warning([ability_id, ability.name, ability.vfx_data.vfx_id, frameset_idx, frame_idx])
 	
 	# get animation names based on ability execution and job / monster type
-	# TODO fix monsters that use sp2 files
 	var seq: Seq = seqs[file_records["MON.SEQ"].type_index]
 	seq.set_data_from_seq_bytes(get_file_data("MON.SEQ"))
 	for job: JobData in scus_data.jobs_data:

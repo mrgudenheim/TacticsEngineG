@@ -85,6 +85,16 @@ const constant_sp2_v_offsets: Dictionary[int, int] = { # spritesheet with sp2s a
 	230: SP2_V_OFFSET + (SP2_V_OFFSET2 * 4),
 	231: SP2_V_OFFSET + (SP2_V_OFFSET2 * 4),
 	}
+const constant_sp2_files: Dictionary[int, int] = { # spritesheet with sp2s appended in order of file name
+	234: 1,
+	235: 1,
+	236: 2,
+	237: 2,
+	232: 3,
+	233: 3,
+	230: 4,
+	231: 4,
+	}
 
 
 var file_name: String = "default_file_name"

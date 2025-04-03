@@ -188,7 +188,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			var y_rotation: float = fft_animation.shp.get_frame(new_frame_id, fft_animation.submerged_depth).y_rotation
 			draw_target.rotation_degrees = Vector3(0, 0, -y_rotation)
 			
-			draw_target.frame = new_frame_id
+			draw_target.frame = new_frame_id + get_sp2_frame_offset(global_animation_ptr_id)
 			
 			animation_frame_loaded.emit(seq_part.parameters[1] / animation_speed, fft_animation.frame_count)
 			#if fft_animation.is_primary_anim:
@@ -434,17 +434,21 @@ func get_animation_frame_offset(local_frame_offset_index: int, shp: Shp, back_fa
 	if ((shp.file_name.contains("WEP") or shp.file_name.contains("EFF"))
 			and shp.zero_frames.size() > 0):
 		return shp.zero_frames[local_frame_offset_index]
-	elif global_seq.file_name == "MON.SEQ":
-		if Shp.constant_sp2_v_offsets.has(global_animation_ptr_id):
-			return Shp.constant_sp2_v_offsets[global_animation_ptr_id] # TODO fix handling STEEL GIANT sp2 handling
-		elif global_animation_ptr_id >= Shp.SP2_START_ANIMATION_ID:
-			return 256
 	else:
 		if is_back_facing: # TODO how to handle combination of weapon and back facing?
 			return back_faced_offset
 	
 	return 0
 
+
+func get_sp2_frame_offset(animation_ptr_id: int) -> int:
+	if global_seq.file_name == "MON.SEQ":
+		if Shp.constant_sp2_files.has(animation_ptr_id):
+			return Shp.constant_sp2_files[animation_ptr_id] * 256 # handle STEEL GIANT sp2 handling
+		elif animation_ptr_id >= Shp.SP2_START_ANIMATION_ID:
+			return 256
+	
+	return 0
 
 func get_sub_animation(length: int, sub_animation_end_part_id: int, parent_animation: Sequence) -> Sequence:
 	var sub_anim_length: int = 0

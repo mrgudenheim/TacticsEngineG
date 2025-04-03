@@ -68,6 +68,7 @@ func add_unit() -> void:
 	
 	new_unit.spritesheet_changed.connect(func(new_texture: ImageTexture): preview_rect.texture = new_texture)
 	unit.animation_manager.processing_opcode.connect(update_preview_slider)
+	ui_manager.pointer_index_spinbox.value_changed.connect(func(ptr_idx: int): unit.animation_manager.global_animation_ptr_id = ptr_idx)
 
 
 func enable_ui() -> void:

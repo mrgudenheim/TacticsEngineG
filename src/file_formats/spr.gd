@@ -317,8 +317,13 @@ func create_frame_grid(anim_ptr_idx: int = 0, other_idx: int = 0, wep_v_offset: 
 	var frame_grid: Image = Image.create_empty(cell_width * num_cells_wide, cell_height * num_cells_tall, false, Image.FORMAT_RGBA8)
 	
 	for sp2_id: int in sp2s.size() + 1:
-		anim_ptr_idx = Shp.SP2_START_ANIMATION_ID * sp2_id
-		# TODO handle hardcoded offsets for STEEL GIANT
+		if file_name == "TETSU.SPR": # handle hardcoded offsets for STEEL GIANT
+			for ptr_idx: int in Shp.constant_sp2_files.keys():
+				if Shp.constant_sp2_files[ptr_idx] == sp2_id:
+					anim_ptr_idx = ptr_idx
+		else:
+			anim_ptr_idx = Shp.SP2_START_ANIMATION_ID * sp2_id
+		
 		for frame_idx: int in shp.frames.size():
 			var cell_x: int = frame_idx % num_cells_wide
 			var cell_y: int = (frame_idx / num_cells_wide) + (16 * sp2_id)

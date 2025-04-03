@@ -651,6 +651,7 @@ select_all_on_focus = true
 layout_mode = 2
 size_flags_horizontal = 3
 disabled = true
+fit_to_longest_item = false
 
 [node name="Functions" type="HBoxContainer" parent="HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer"]
 layout_mode = 2

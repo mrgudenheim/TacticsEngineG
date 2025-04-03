@@ -226,7 +226,7 @@ func set_sequence_names() -> void:
 				continue
 			
 			var animation_id: int = ability.animation_executing_id
-			if animation_id == 0: # skip attack animation
+			if animation_id == 0 or not sequence_pointers.has(animation_id): # skip attack animation and if seq does not have enough pointers
 				continue
 			
 			var sequence_id: int = sequence_pointers[animation_id]

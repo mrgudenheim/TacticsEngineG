@@ -212,6 +212,7 @@ func set_sequence_names() -> void:
 			if sequences[pointer].seq_name.is_empty() and seq_names[name_alias].size() > pointer_index: # if this is the first pointer to point to the sequence
 				sequences[pointer].seq_name = seq_names[name_alias][pointer_index] # set name of the sequence
 	
+	# get animation names based on ability execution and job / monster type
 	for job: JobData in RomReader.scus_data.jobs_data:
 		var spr: Spr = RomReader.sprs[RomReader.get_spr_file_idx(job.sprite_id)]
 		#spr.set_data()

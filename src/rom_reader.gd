@@ -113,44 +113,6 @@ func process_rom() -> void:
 				#if ((frame_data.vram_bytes[1] & 0x02) >> 1) == 0:
 					#push_warning([ability_id, ability.name, ability.vfx_data.vfx_id, frameset_idx, frame_idx])
 	
-	# get animation names based on ability execution and job / monster type
-	var seq: Seq = seqs[file_records["MON.SEQ"].type_index]
-	seq.set_data_from_seq_bytes(get_file_data("MON.SEQ"))
-	for job: JobData in scus_data.jobs_data:
-		var spr: Spr = sprs[get_spr_file_idx(job.sprite_id)]
-		spr.set_data()
-		spr.set_spritesheet_data(job.sprite_id)
-		if spr.seq_name != "MON.SEQ":
-			continue
-		
-		for ability_id: int in scus_data.skillsets_data[job.skillset_id].action_ability_ids:
-			var ability: AbilityData = abilities[ability_id]
-			if ability_id == 0: # skip empty abilities
-				continue
-			
-			var animation_id: int = ability.animation_executing_id
-			if animation_id == 0: # skip attack animation
-				continue
-			
-			var sequence_id: int = seq.sequence_pointers[animation_id]
-			if seq.sequences[sequence_id].seq_name.contains(ability.name): # skip if ability name is already listed
-				continue
-			if seq.sequences[sequence_id].seq_name != "":
-				seq.sequences[sequence_id].seq_name += "\n"
-				seq.sequences[seq.sequence_pointers[animation_id + 1]].seq_name += "\n"
-			
-			var job_type_name: String = job.job_name
-			if job.job_id >= 0x5e and job.job_id <= 0x8d: # generic monsters
-				job_type_name = fft_text.job_names[0x5e + ((job.monster_type - 1) * 3)]
-			
-			if not seq.sequences[sequence_id].seq_name.contains(job_type_name):
-				seq.sequences[sequence_id].seq_name += job_type_name + " Front\n"
-				seq.sequences[seq.sequence_pointers[animation_id + 1]].seq_name += job_type_name + " Back\n"
-			
-			seq.sequences[sequence_id].seq_name += ability.name
-			seq.sequences[seq.sequence_pointers[animation_id + 1]].seq_name += ability.name
-			push_warning(str(sequence_id) + ": " + ability.name + " (" + job_type_name + ")")
-	
 	is_ready = true
 	rom_loaded.emit()
 

@@ -138,6 +138,9 @@ func set_name(new_file_name: String) -> void:
 
 
 func set_data_from_seq_bytes(bytes: PackedByteArray) -> void:
+	if is_initialized:
+		return
+	
 	AA = bytes.decode_u16(0)
 	BB = bytes.decode_u16(2)
 	
@@ -220,35 +223,35 @@ func set_sequence_names() -> void:
 		if spr.seq_name != file_name:
 			continue
 		
+		var job_type_name: String = job.job_name
+		if job.job_id >= 0x5e and job.job_id <= 0x8d: # generic monsters
+			job_type_name = RomReader.fft_text.job_names[0x5e + ((job.monster_type - 1) * 3)]
+		
 		for ability_id: int in RomReader.scus_data.skillsets_data[job.skillset_id].action_ability_ids:
 			var ability: AbilityData = RomReader.abilities[ability_id]
 			if ability_id == 0: # skip empty abilities
 				continue
 			
-			var animation_id: int = ability.animation_executing_id
-			if animation_id == 0 or not sequence_pointers.has(animation_id): # skip attack animation and if seq does not have enough pointers
+			var animation_ptr_id: int = ability.animation_executing_id
+			if animation_ptr_id == 0 or animation_ptr_id >= sequence_pointers.size(): # skip attack animation and if seq does not have enough pointers
 				continue
 			
-			var sequence_id: int = sequence_pointers[animation_id]
+			var sequence_id: int = sequence_pointers[animation_ptr_id]
 			if sequences[sequence_id].seq_name.contains(ability.name): # skip if ability name is already listed
 				continue
 			if sequences[sequence_id].seq_name != "":
 				sequences[sequence_id].seq_name += "\n"
-				sequences[sequence_pointers[animation_id + 1]].seq_name += "\n"
+				sequences[sequence_pointers[animation_ptr_id + 1]].seq_name += "\n"
 			else: # indicate front or back
 				sequences[sequence_id].seq_name += "(Front)\n"
-				sequences[sequence_pointers[animation_id + 1]].seq_name += "(Back)\n"
-			
-			var job_type_name: String = job.job_name
-			if job.job_id >= 0x5e and job.job_id <= 0x8d: # generic monsters
-				job_type_name = RomReader.fft_text.job_names[0x5e + ((job.monster_type - 1) * 3)]
+				sequences[sequence_pointers[animation_ptr_id + 1]].seq_name += "(Back)\n"
 			
 			if not sequences[sequence_id].seq_name.contains(job_type_name):
 				sequences[sequence_id].seq_name += "-" + job_type_name + "-\n"
-				sequences[sequence_pointers[animation_id + 1]].seq_name += "-" + job_type_name + "-\n"
+				sequences[sequence_pointers[animation_ptr_id + 1]].seq_name += "-" + job_type_name + "-\n"
 			
 			sequences[sequence_id].seq_name += ability.name
-			sequences[sequence_pointers[animation_id + 1]].seq_name += ability.name
+			sequences[sequence_pointers[animation_ptr_id + 1]].seq_name += ability.name
 
 
 func get_sequence_data(bytes: PackedByteArray) -> Sequence:
@@ -398,15 +401,15 @@ func write_wiki_table() -> void:
 		seq_strings.append("| " + name_alias) # File
 		#seq_strings.append(str(seq_index)) # ID (Dec)
 		seq_strings.append("0x%02x" % seq_index) # ID (Hex)
-		seq_strings.append(seq_description) # Description
+		seq_strings.append(seq_description.replace("\n", "<br>")) # Description
 		seq_strings.append(sequences[seq_index].to_string_hex("<br>")) # Opcodes
 		output_array.append(" || ".join(seq_strings))
 	
 	var final_output: String = "\n|-\n".join(output_array)
 	final_output += "\n|}"
 	
-	DirAccess.make_dir_recursive_absolute("user://FFTorama")
-	var save_file := FileAccess.open("user://FFTorama/wiki_table_" + file_name + ".txt", FileAccess.WRITE)
+	DirAccess.make_dir_recursive_absolute("user://wiki_tables")
+	var save_file := FileAccess.open("user://wiki_tables/wiki_table_" + file_name + ".txt", FileAccess.WRITE)
 	save_file.store_string(final_output)
 
 

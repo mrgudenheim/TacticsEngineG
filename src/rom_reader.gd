@@ -6,7 +6,7 @@ signal rom_loaded
 var is_ready: bool = false
 
 var rom: PackedByteArray = []
-var file_records: Dictionary[String, FileRecord] = {} # {String, FileRecord}
+var file_records: Dictionary[String, FileRecord] = {} # {file_name, FileRecord}
 var lba_to_file_name: Dictionary[int, String] = {} # {int, String}
 
 const DIRECTORY_DATA_SECTORS_ROOT: PackedInt32Array = [22]
@@ -112,6 +112,10 @@ func process_rom() -> void:
 				#var frame_data: VisualEffectData.VfxFrame = ability.vfx_data.frame_sets[frameset_idx].frame_set[frame_idx]
 				#if ((frame_data.vram_bytes[1] & 0x02) >> 1) == 0:
 					#push_warning([ability_id, ability.name, ability.vfx_data.vfx_id, frameset_idx, frame_idx])
+	
+	#for seq: Seq in seqs:
+		#seq.set_data_from_seq_bytes(get_file_data(seq.file_name))
+		#seq.write_wiki_table()
 	
 	is_ready = true
 	rom_loaded.emit()

@@ -433,11 +433,11 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 func get_animation_frame_offset(local_frame_offset_index: int, shp: Shp, back_faced_offset: int) -> int:
 	if ((shp.file_name.contains("WEP") or shp.file_name.contains("EFF"))
 			and shp.zero_frames.size() > 0):
-		# fix zero frames for shuriken and ball
+		# fix zero frames for shuriken and ball TODO is throwing animation correct?
 		if local_frame_offset_index == ItemData.ItemType.SHURIKEN:
-			local_frame_offset_index = ItemData.ItemType.HELMET
-		elif local_frame_offset_index == ItemData.ItemType.BALL:
 			local_frame_offset_index = ItemData.ItemType.HAT
+		elif local_frame_offset_index == ItemData.ItemType.BALL:
+			local_frame_offset_index = ItemData.ItemType.HELMET
 		
 		if local_frame_offset_index < shp.zero_frames.size():
 			return shp.zero_frames[local_frame_offset_index]

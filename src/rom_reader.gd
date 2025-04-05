@@ -39,8 +39,6 @@ var vfx: Array[VisualEffectData] = []
 var abilities: Array[AbilityData] = []
 var items: Array[ItemData] = []
 
-@export_file("*.txt") var item_frames_csv_filepath: String = "res://src/fftae/frame_data_item.txt"
-
 # BATTLE.BIN tables
 var battle_bin_data: BattleBinData = BattleBinData.new()
 
@@ -123,6 +121,9 @@ func process_rom() -> void:
 
 func process_file_records(sectors: PackedInt32Array, folder_name: String = "") -> void:
 	for sector: int in sectors:
+		if folder_name == "CHARMAP": # skip over non-vanilla folder
+			continue
+		
 		var offset_start: int = 0
 		if sector == sectors[0]:
 			offset_start = OFFSET_RECORD_DATA_START

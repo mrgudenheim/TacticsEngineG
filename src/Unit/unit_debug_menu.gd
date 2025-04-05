@@ -39,7 +39,10 @@ func _process(delta: float) -> void:
 func populate_options() -> void:
 	weapon_options.clear()
 	for weapon_index: int in RomReader.NUM_WEAPONS:
-		weapon_options.add_item(str(weapon_index) + " - " + RomReader.items[weapon_index].name + " (" + RomReader.fft_text.equipment_types[RomReader.items[weapon_index].item_type] + ")")
+		var equipment_type_name: String = ""
+		if RomReader.items[weapon_index].item_type < RomReader.fft_text.equipment_types.size():
+			equipment_type_name = " (" + RomReader.fft_text.equipment_types[RomReader.items[weapon_index].item_type] + ")"
+		weapon_options.add_item(str(weapon_index) + " - " + RomReader.items[weapon_index].name + equipment_type_name)
 	
 	item_options.clear()
 	for item_index: int in RomReader.NUM_ITEMS:

@@ -23,6 +23,11 @@ func _init(record_bytes: PackedByteArray = []) -> void:
 		return
 	
 	record_length = record_bytes.decode_u8(OFFSET_RECORD_LENGTH)
+	
+	if OFFSET_NAME > record_bytes.size():
+		name = "No Name"
+		return
+	
 	sector_location = record_bytes.decode_u32(OFFSET_SECTOR_LOCATION)
 	size = record_bytes.decode_u32(OFFSET_SIZE)
 	flags = record_bytes.decode_u8(OFFSET_FLAGS)

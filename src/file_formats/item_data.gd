@@ -57,8 +57,8 @@ enum ItemType {
 	ARMLET,
 	CLOAK,
 	PERFUME,
-	THROWING,
-	BOMB,
+	SHURIKEN,
+	BALL,
 	ITEM,
 	}
 

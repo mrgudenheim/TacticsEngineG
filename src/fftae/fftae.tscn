@@ -44,7 +44,6 @@ animation_list_row_tscn = ExtResource("3_n0tn6")
 opcode_list_container = NodePath("HBoxContainer/AnimationEditor/MarginContainer/VBoxContainer/ScrollContainer/Opcodes")
 frame_list_container = NodePath("HBoxContainer/TabContainer/Frames/VBoxContainer/FrameListScroll/FrameList")
 frame_list_row_tscn = ExtResource("4_omu1g")
-item_frames_csv_filepath = "res://src/fftae/frame_data_item.txt"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 1

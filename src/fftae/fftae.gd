@@ -29,8 +29,6 @@ var gif_frame_nums: PackedInt32Array = []
 @export var frame_list_container: VBoxContainer
 @export var frame_list_row_tscn: PackedScene
 
-@export_file("*.txt") var item_frames_csv_filepath: String
-
 # https://en.wikipedia.org/wiki/CD-ROM#CD-ROM_XA_extension
 const bytes_per_sector: int = 2352
 const bytes_per_sector_header: int = 24

@@ -433,7 +433,14 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 func get_animation_frame_offset(local_frame_offset_index: int, shp: Shp, back_faced_offset: int) -> int:
 	if ((shp.file_name.contains("WEP") or shp.file_name.contains("EFF"))
 			and shp.zero_frames.size() > 0):
-		return shp.zero_frames[local_frame_offset_index]
+		# fix zero frames for shuriken and ball
+		if local_frame_offset_index == ItemData.ItemType.SHURIKEN:
+			local_frame_offset_index = ItemData.ItemType.HELMET
+		elif local_frame_offset_index == ItemData.ItemType.BALL:
+			local_frame_offset_index = ItemData.ItemType.HAT
+		
+		if local_frame_offset_index < shp.zero_frames.size():
+			return shp.zero_frames[local_frame_offset_index]
 	else:
 		if is_back_facing: # TODO how to handle combination of weapon and back facing?
 			return back_faced_offset

@@ -538,7 +538,7 @@ func get_terrain(terrain_bytes: PackedByteArray) -> Array[TerrainTile]:
 				tile.depth = tile_data.decode_u8(3) >> 5 # left 3 bits are bepth
 				tile.slope_height = tile_data.decode_u8(3) & 0b1_1111 # right 5 bits are difference between the height at the top and the height at the bottom
 				tile.slope_type_id = tile_data.decode_u8(4)
-				
+				tile.thickness = tile_data.decode_u8(5) & 0b1_1111 # right 5 bits are thickness height below the bottom of slope
 				tile.no_stand_select = tile_data.decode_u8(6) >> 7 # leftmost bit, Can Walk/Cursor through this tile but not stand on it or select it. 
 				tile.shading = (tile_data.decode_u8(6) & 0b0000_1100) >> 2 # 2 bits, Terrain Tile Shading. 0 = Normal, 1 = Dark, 2 = Darker, 3 = Darkest
 				tile.no_walk = (tile_data.decode_u8(6) & 0b0000_0010) >> 1 # Can't walk on this tile 

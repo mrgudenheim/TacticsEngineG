@@ -121,8 +121,6 @@ func process_rom() -> void:
 
 func process_file_records(sectors: PackedInt32Array, folder_name: String = "") -> void:
 	for sector: int in sectors:
-		if folder_name == "CHARMAP": # skip over non-vanilla folder
-			continue
 		
 		var offset_start: int = 0
 		if sector == sectors[0]:
@@ -141,7 +139,7 @@ func process_file_records(sectors: PackedInt32Array, folder_name: String = "") -
 			lba_to_file_name[record.sector_location] = record.name
 			
 			var file_extension: String = record.name.get_extension()
-			if file_extension == "": # folder
+			if record.flags & 0b10 == 0b10: # folder
 				#push_warning("Getting files from folder: " + record.name)
 				var data_length_sectors: int = ceil(float(record.size) / DATA_BYTES_PER_SECTOR)
 				var directory_sectors: PackedInt32Array = range(record.sector_location, record.sector_location + data_length_sectors)

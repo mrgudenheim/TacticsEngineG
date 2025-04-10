@@ -168,6 +168,7 @@ func init_text_from_file(file_name: String) -> void:
 
 # https://ffhacktics.com/wiki/Font
 # https://ffhacktics.com/wiki/Text_Format
+# https://unicode.emnudge.dev/
 static func text_to_string(bytes_text: PackedByteArray) -> PackedStringArray:
 	var text : PackedStringArray = []
 	
@@ -236,8 +237,8 @@ static func text_to_string(bytes_text: PackedByteArray) -> PackedStringArray:
 			char_code += (0x41 - 10)
 		elif char_code < 62: # next 26 are lower case alphabet
 			char_code += (0x61 - 36)
-		elif (char_code - 0xd0) >= 36 and (char_code - 0xd0) < 62: # alternate code starting with D0 for 26 lower case alphabet
-			char_code += -0xd0 + (0x41 - 10)
+		elif (char_code - 0xd000) >= 36 and (char_code - 0xd000) < 62: # alternate code starting with D0 for 26 lower case alphabet, based on TacText charmap
+			char_code += -0xd000 + (0x61 - 36)
 		elif char_code == 62 or char_code == 0xd11a: # exclamation mark
 			char_code = 0x21
 		elif char_code == 63: # japanese

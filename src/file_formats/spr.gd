@@ -201,7 +201,7 @@ func decompress(compressed_bytes: PackedByteArray) -> PackedByteArray:
 			var num_zeroes: int = next_half
 			
 			if next_half == 0:
-				# handle explanded sprite format that has extra 0s at end of file
+				# handle expanded sprite format from ShiShi that has extra 0s at end of file
 				if half_byte_index + 2 >= half_byte_data.size():
 					break
 				elif half_byte_data[half_byte_index + 2] == 0:

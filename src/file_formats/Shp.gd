@@ -311,7 +311,7 @@ func write_shp() -> void:
 		bytes = _write_sections23_bytes(bytes, swim_pointer, frame_pointers_submerged, frames_submerged, frames_submerged_length)
 	
 	DirAccess.make_dir_recursive_absolute("user://FFTorama")
-	var save_file := FileAccess.open("user://FFTorama/"+file_name+".shp", FileAccess.WRITE)
+	var save_file := FileAccess.open("user://FFTorama/" + file_name + ".shp", FileAccess.WRITE)
 	save_file.store_buffer(bytes)
 
 

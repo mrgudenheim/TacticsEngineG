@@ -236,8 +236,30 @@ func set_sp2s() -> void:
 	if sp2_name_base == "TETSU":
 		sp2_name_base = "IRON"
 	
+	# handle ROMs with sprs expanded by ShiShi
+	var sp2_name: String = sp2_name_base + ".SP2"
+	if RomReader.file_records.has(sp2_name):
+		var sp2_spr: Spr = Spr.new(sp2_name)
+		sp2_spr.set_sp2_data(self)
+		sp2s[sp2_name] = sp2_spr
+		
+		# append sp2 image data to base spr
+		color_indices.append_array(sp2_spr.color_indices)
+	
+	# handle vanilla sp2s
 	for file_num: int in range(2,6):
-		var sp2_name: String = sp2_name_base + str(file_num) + ".SP2"
+		sp2_name = sp2_name_base + str(file_num) + ".SP2"
+		if RomReader.file_records.has(sp2_name):
+			var sp2_spr: Spr = Spr.new(sp2_name)
+			sp2_spr.set_sp2_data(self)
+			sp2s[sp2_name] = sp2_spr
+			
+			# append sp2 image data to base spr
+			color_indices.append_array(sp2_spr.color_indices)
+	
+	# handle TETSU case in ROMs with sprs expanded by ShiShi
+	for file_num: int in range(2,6):
+		sp2_name = sp2_name_base + "_" + str(file_num) + ".SP2"
 		if RomReader.file_records.has(sp2_name):
 			var sp2_spr: Spr = Spr.new(sp2_name)
 			sp2_spr.set_sp2_data(self)
@@ -322,10 +344,19 @@ func create_frame_grid(anim_ptr_idx: int = 0, other_idx: int = 0, wep_v_offset: 
 	var frame_grid: Image = Image.create_empty(cell_width * num_cells_wide, cell_height * num_cells_tall, false, Image.FORMAT_RGBA8)
 	
 	for sp2_id: int in sp2s.size() + 1:
-		if file_name == "TETSU.SPR": # handle hardcoded offsets for STEEL GIANT
+		if sp2s.size() == 4: # handle hardcoded offsets for STEEL GIANT (aka TETSU.SPR)
 			for ptr_idx: int in Shp.constant_sp2_files.keys():
 				if Shp.constant_sp2_files[ptr_idx] == sp2_id:
 					anim_ptr_idx = ptr_idx
+			if file_name != "TETSU.SPR": # handle sp2s renamed/reordered by ShiShi
+				if [230, 231].has(anim_ptr_idx): # Destroy (electric fist)
+					anim_ptr_idx += 4
+				elif [232, 233].has(anim_ptr_idx): # Compress (hammer)
+					anim_ptr_idx += 4
+				elif [234, 235].has(anim_ptr_idx): # Dispose (canon)
+					anim_ptr_idx += -2
+				elif [236, 237].has(anim_ptr_idx): # Crush (drill)
+					anim_ptr_idx += -6
 		else:
 			anim_ptr_idx = Shp.SP2_START_ANIMATION_ID * sp2_id
 		

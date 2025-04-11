@@ -257,7 +257,33 @@ static func text_to_string(bytes_text: PackedByteArray) -> PackedStringArray:
 			char_code = 0x3048
 		elif char_code == 70 or char_code == 0xd9bd: # colon
 			char_code = 0x3a
-		# 71 - 94 japanese # TODO japanese
+		# 71 - 94 japanese? # TODO japanese
+		# Handle TacText special cases?
+		elif char_code == 0x56:
+			text_element += "ni"
+			continue
+		elif char_code == 0x57:
+			text_element += "ht"
+			continue
+		elif char_code == 0x58:
+			text_element += "an"
+			continue
+		elif char_code == 0x59:
+			text_element += "on"
+			continue
+		elif char_code == 0x5c:
+			text_element += "th"
+			continue
+		elif char_code == 0x5d:
+			text_element += "ea"
+			continue
+		elif char_code == 0x5e:
+			text_element += "er"
+			continue
+		elif char_code == 0x60:
+			text_element += "or"
+			continue
+		# end handling TacText cases
 		elif char_code == 95 or char_code == 0xd11c or char_code == 0xd9b6: # period
 			char_code = 0x2e
 		# 96 - 138 japanese # TODO japanese

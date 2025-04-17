@@ -35,11 +35,14 @@ func _init(new_file_name: String) -> void:
 		has_compressed = false
 	elif (file_name.contains("WEP") 
 		or file_name.contains("EFF")
-		or file_name.contains("0")
-		or file_name.contains("CYOMON")
-		or file_name.contains("DAMI")
-		or file_name.contains("FURAIA")
-		or file_name.contains("ITEM")
+		or ["10M", "10W", 
+			"20M", "20W", 
+			"40M", "40W", 
+			"60M", "60W", 
+			"CYOMON1", "CYOMON2", "CYOMON3", "CYOMON4", 
+			"DAMI", 
+			"FURAIA", 
+			"ITEM"].has(file_name.get_basename())
 		):
 			has_compressed = false
 	num_pixels = width * height
@@ -201,11 +204,12 @@ func decompress(compressed_bytes: PackedByteArray) -> PackedByteArray:
 			var num_zeroes: int = next_half
 			
 			if next_half == 0:
+				# TODO fix decompression of sprites expanded from ShiShi
 				# handle expanded sprite format from ShiShi that has extra 0s at end of file
 				if half_byte_index + 2 >= half_byte_data.size():
 					break
-				elif half_byte_data[half_byte_index + 2] == 0:
-					break
+				#elif half_byte_data[half_byte_index + 2] == 0:
+					#break
 				num_zeroes = half_byte_data[half_byte_index + 2]
 				decompressed_full_byte_index += num_zeroes
 				half_byte_index += 3

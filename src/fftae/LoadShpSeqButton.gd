@@ -11,16 +11,16 @@ func parse_file(filepath:String) -> void:
 		parse_seq(filepath);
 
 
-func parse_shp(filepath:String) -> void:	
-	var new_shp:Shp = Shp.new()
+func parse_shp(filepath: String) -> void:
+	var new_shp: Shp = Shp.new(filepath.get_basename())
 	new_shp.set_data_from_shp_file(filepath)
 	new_shp.write_cfg()
 	#new_shp.write_shp()
 	new_shp.write_csvs()
 
 
-func parse_seq(filepath:String) -> void:
-	var new_seq:Seq = Seq.new()
+func parse_seq(filepath: String) -> void:
+	var new_seq: Seq = Seq.new(filepath.get_basename())
 	new_seq.set_data_from_seq_file(filepath)
 	new_seq.write_cfg()
 	#new_seq.write_wiki_table()

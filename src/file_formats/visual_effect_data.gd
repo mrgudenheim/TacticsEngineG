@@ -11,6 +11,7 @@ var header_start: int = 0
 var section_offsets: PackedInt32Array = []
 
 var frame_sets: Array[VfxFrameSet] = []
+var animations: Array[VfxAnimation] = []
 
 class VfxFrameSet:
 	var frame_set: Array[VfxFrame] = []
@@ -38,6 +39,12 @@ class VfxFrame:
 	var quad_uvs_pixels: PackedVector2Array = []
 	var quad_uvs: PackedVector2Array = []
 
+class VfxAnimation:
+	var animation_frames: Array[VfxAnimationFrame]
+
+class VfxAnimationFrame:
+	var frameset: VfxFrameSet
+	var duration: int = 2
 
 var vfx_spr: Spr
 var texture: Texture2D
@@ -179,6 +186,15 @@ func init_from_file() -> void:
 			frame_set.frame_set[frame_id] = new_frame
 		
 		frame_sets[frame_set_id] = frame_set
+	
+	
+	### animation data
+	section_num = VfxSections.ANIMATION
+	section_start = section_offsets[section_num]
+	data_bytes = vfx_bytes.slice(section_start, section_offsets[section_num + 1])
+	
+	
+	
 	
 	#### image and palette data
 	section_num = VfxSections.PALETTE_IMAGE

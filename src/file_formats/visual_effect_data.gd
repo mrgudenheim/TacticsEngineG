@@ -41,10 +41,12 @@ class VfxFrame:
 
 class VfxAnimation:
 	var animation_frames: Array[VfxAnimationFrame]
+	var screen_offset: Vector2i
 
 class VfxAnimationFrame:
-	var frameset: VfxFrameSet
-	var duration: int = 2
+	var frameset_id: int
+	var duration: int
+	var byte_02: int
 
 var vfx_spr: Spr
 var texture: Texture2D
@@ -193,7 +195,32 @@ func init_from_file() -> void:
 	section_start = section_offsets[section_num]
 	data_bytes = vfx_bytes.slice(section_start, section_offsets[section_num + 1])
 	
-	
+	var num_animations: int = data_bytes.decode_u32(0)
+	animations.resize(num_animations)
+	for anim_id: int in num_animations:
+		var anim_start_offset: int = data_bytes.decode_u16(4 + (anim_id * 2)) + 4
+		var anim_end: int = data_bytes.size()
+		if anim_id < num_animations - 1:
+			anim_end = data_bytes.decode_u16(4 + ((anim_id + 1) * 2)) + 4
+		
+		var anim_bytes: PackedByteArray = data_bytes.slice(anim_start_offset, anim_end)
+		var animation: VfxAnimation = VfxAnimation.new()
+		
+		var screen_offset_x: int = anim_bytes.decode_s16(1)
+		var screen_offset_y: int = anim_bytes.decode_s16(3)
+		animation.screen_offset = Vector2i(screen_offset_x, screen_offset_y)
+		
+		# TODO do something when it references beyond the last frame? Figure out byte_02
+		var byte_index: int = 5
+		while byte_index + 3 < anim_bytes.size():
+			var anim_frame_data: VfxAnimationFrame = VfxAnimationFrame.new()
+			anim_frame_data.frameset_id = anim_bytes.decode_u8(byte_index)
+			anim_frame_data.duration = anim_bytes.decode_u8(byte_index + 1)
+			anim_frame_data.byte_02 = anim_bytes.decode_u8(byte_index + 2)
+			animation.animation_frames.append(anim_frame_data)
+			byte_index += 3
+		
+		animations[anim_id] = animation
 	
 	
 	#### image and palette data

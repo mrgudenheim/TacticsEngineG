@@ -48,6 +48,20 @@ class VfxAnimationFrame:
 	var duration: int
 	var byte_02: int
 
+class VfxEmitter:
+	var anim_index: int
+	var motion_type_flag: int
+	var animation_target_flag: int
+	var color_masking_motion_flags: int
+	var byte_07: int
+
+var script_bytes: PackedByteArray = []
+var emitter_control_bytes: PackedByteArray = []
+var emitters: Array[VfxEmitter] = []
+var timer_data_header_bytes: PackedByteArray = []
+var timer_data_bytes: PackedByteArray = []
+
+
 var vfx_spr: Spr
 var texture: Texture2D
 var image_color_depth: int = 0 # 8bpp or 4bpp
@@ -66,6 +80,7 @@ enum VfxSections {
 	ANIMATION = 1,
 	VFX_SCRIPT = 2,
 	EMITTER_MOTION_CONTROL = 3,
+	DIRECTIONS = 4,
 	TIMER_DATA_CAMERA_HEADER = 6,
 	TIMER_DATA_CAMERA = 7,
 	SOUND_EFFECTS = 8,
@@ -221,6 +236,55 @@ func init_from_file() -> void:
 			byte_index += 3
 		
 		animations[anim_id] = animation
+	
+	
+	### script data
+	section_num = VfxSections.VFX_SCRIPT
+	section_start = section_offsets[section_num]
+	script_bytes = vfx_bytes.slice(section_start, section_offsets[section_num + 1])
+	
+	# TODO extract relevant data from effect script; 
+	
+	### TODO emitter control data
+	section_num = VfxSections.EMITTER_MOTION_CONTROL
+	section_start = section_offsets[section_num]
+	emitter_control_bytes = vfx_bytes.slice(section_start, section_offsets[section_num + 1])
+	
+	var num_emitters: int = emitter_control_bytes.decode_u16(2)
+	emitters.resize(num_emitters)
+	
+	for emitter_id: int in num_emitters:
+		var emitter_data_start: int = 0x14 + (196 * emitter_id)
+		var emitter_data_bytes: PackedByteArray = emitter_control_bytes.slice(emitter_data_start, emitter_data_start + 196)
+		var emitter: VfxEmitter = VfxEmitter.new()
+		
+		emitter.anim_index = emitter_data_bytes.decode_u8(1)
+		emitter.motion_type_flag = emitter_data_bytes.decode_u8(2)
+		emitter.animation_target_flag = emitter_data_bytes.decode_u8(3)
+		emitter.color_masking_motion_flags = emitter_data_bytes.decode_u8(6)
+		emitter.byte_07 = emitter_data_bytes.decode_u8(7)
+		
+		emitters[emitter_id] = emitter
+	
+	# TODO extract relevant data from emitter data
+	
+	### TODO timer header data
+	section_num = VfxSections.TIMER_DATA_CAMERA_HEADER
+	section_start = section_offsets[section_num]
+	timer_data_header_bytes = vfx_bytes.slice(section_start, section_offsets[section_num + 1])
+	
+	
+	
+	### TODO timer data
+	section_num = VfxSections.TIMER_DATA_CAMERA
+	section_start = section_offsets[section_num]
+	timer_data_bytes = vfx_bytes.slice(section_start, section_offsets[section_num + 1])
+	
+	var effect_start_time: int = timer_data_bytes.decode_u16(4)
+	var target_switching_delay: int = timer_data_bytes.decode_u16(6)
+	var effect_max_duration_per_target: int = timer_data_bytes.decode_u16(10)
+	
+	# TODO 5 timing sections, 0x80 long each
 	
 	
 	#### image and palette data

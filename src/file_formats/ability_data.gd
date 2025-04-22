@@ -50,6 +50,7 @@ var effect_text: String = "ability effect"
 var vfx_data: VisualEffectData # BATTLE.BIN offset="14F3F0" - table of Effect IDs used by Ability ID
 var vfx_id: int = 0
 
+var animation_speed: float = 59 # frames per second
 
 func _init(new_id: int = 0) -> void:
 	id = new_id
@@ -97,33 +98,60 @@ func display_vfx(location: Node3D) -> void:
 	for child: Node in children:
 		child.queue_free()
 	
-	var frame_meshes: Array[ArrayMesh] = []
-	var framesets_num = vfx_data.frame_sets.size()
-	#for frameset_idx: int in range(0, framesets_num):
+	#var frame_meshes: Array[ArrayMesh] = []
+	#for frameset_idx: int in range(0, num_framesets):
 		#frame_meshes.append(vfx_data.get_frame_mesh(frameset_idx))
 	
-	#for frame_mesh_idx: int in frame_meshes.size():
-	for frameset_idx: int in range(0, framesets_num):
-		for frame_idx: int in vfx_data.frame_sets[frameset_idx].frame_set.size():
-			var mesh_instance: MeshInstance3D = MeshInstance3D.new()
-			#mesh_instance.mesh = frame_meshes[frame_mesh_idx]
-			mesh_instance.mesh = vfx_data.get_frame_mesh(frameset_idx, frame_idx)
-			location.add_child(mesh_instance)
-			
-			mesh_instance.position.y += 5
-			var target_pos: Vector3 = Vector3.ZERO
-			
-			# https://docs.godotengine.org/en/stable/classes/class_tween.html
-			var tween: Tween = location.create_tween()
-			tween.tween_property(mesh_instance, "position", target_pos, 0.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	# TODO show vfx animations
+	
+	for anim_idx: int in vfx_data.animations.size():
+		var vfx_animation := vfx_data.animations[anim_idx]
 		
-		await location.get_tree().create_timer(0.4).timeout
+		for anim_frame_idx: int in vfx_animation.animation_frames.size():
+			var vfx_anim_frame := vfx_animation.animation_frames[anim_frame_idx]
+			
+			if vfx_anim_frame.frameset_id >= vfx_data.frame_sets.size(): # TODO vfx animation figure out code 0x83
+				push_warning(name + " frameset_id: " + str(vfx_anim_frame.frameset_id))
+				continue
+			
+			for frame_idx: int in vfx_data.frame_sets[vfx_anim_frame.frameset_id].frame_set.size():
+				var mesh_instance: MeshInstance3D = MeshInstance3D.new()
+				#mesh_instance.mesh = frame_meshes[frame_mesh_idx]
+				mesh_instance.mesh = vfx_data.get_frame_mesh(vfx_anim_frame.frameset_id, frame_idx)
+				location.add_child(mesh_instance)
+			
+			if vfx_anim_frame.duration == 0: # TODO handle vfx animation with duration 00 corretly
+				await location.get_tree().create_timer(10 / animation_speed).timeout
+			else:
+				await location.get_tree().create_timer(vfx_anim_frame.duration / animation_speed).timeout
+			
+			children = location.get_children()
+			for child: Node in children:
+				child.queue_free()
 	
-	await location.get_tree().create_timer(0.4).timeout
 	
-	children = location.get_children()
-	for child: Node in children:
-		child.queue_free()
+	# show each frameset
+	#for frameset_idx: int in vfx_data.frame_sets.size():
+		#for frame_idx: int in vfx_data.frame_sets[frameset_idx].frame_set.size():
+			#var mesh_instance: MeshInstance3D = MeshInstance3D.new()
+			##mesh_instance.mesh = frame_meshes[frame_mesh_idx]
+			#mesh_instance.mesh = vfx_data.get_frame_mesh(frameset_idx, frame_idx)
+			#location.add_child(mesh_instance)
+			#
+			#mesh_instance.position.y += 5
+			#var target_pos: Vector3 = Vector3.ZERO
+			#
+			## https://docs.godotengine.org/en/stable/classes/class_tween.html
+			#var tween: Tween = location.create_tween()
+			#tween.tween_property(mesh_instance, "position", target_pos, 0.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		#
+		#await location.get_tree().create_timer(0.4).timeout
+	#
+	#await location.get_tree().create_timer(0.4).timeout
+	#
+	#children = location.get_children()
+	#for child: Node in children:
+		#child.queue_free()
 	location.queue_free()
 
 func display_stasis_sword_vfx(location: Node3D) -> void:

@@ -152,9 +152,9 @@ func init_from_file() -> void:
 			new_frame.palette_id = new_frame.vram_bytes[0] & 0x0f
 			new_frame.semi_transparency_mode = (new_frame.vram_bytes[0] & 0x60) >> 5
 			new_frame.image_color_depth = 4 + ((new_frame.vram_bytes[0] & 0x80) >> 5)
-			new_frame.semi_transparency_on = (new_frame.vram_bytes[1] & 0x02) >> 1 == 1
-			new_frame.frame_width_signed = (new_frame.vram_bytes[1] & 0x10) >> 4 == 1
-			new_frame.frame_height_signed = (new_frame.vram_bytes[1] & 0x20) >> 4 == 1
+			new_frame.semi_transparency_on = (new_frame.vram_bytes[1] & 0x02) == 0x02
+			new_frame.frame_width_signed = (new_frame.vram_bytes[1] & 0x10) == 0x10
+			new_frame.frame_height_signed = (new_frame.vram_bytes[1] & 0x20) == 0x20
 			
 			var top_left_u: int = frame_bytes.decode_u8(4)
 			var top_left_v: int = frame_bytes.decode_u8(5)

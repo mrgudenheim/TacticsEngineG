@@ -53,7 +53,11 @@ class VfxEmitter:
 	var motion_type_flag: int
 	var animation_target_flag: int
 	var color_masking_motion_flags: int
+	var byte_04: int
+	var byte_05: int
 	var byte_07: int
+	var start_position: Vector3i
+	var end_position: Vector3i
 
 var script_bytes: PackedByteArray = []
 var emitter_control_bytes: PackedByteArray = []
@@ -231,7 +235,7 @@ func init_from_file() -> void:
 			var anim_frame_data: VfxAnimationFrame = VfxAnimationFrame.new()
 			anim_frame_data.frameset_id = anim_bytes.decode_u8(byte_index)
 			anim_frame_data.duration = anim_bytes.decode_u8(byte_index + 1)
-			anim_frame_data.byte_02 = anim_bytes.decode_u8(byte_index + 2)
+			anim_frame_data.byte_02 = anim_bytes.decode_u8(byte_index + 2) 
 			animation.animation_frames.append(anim_frame_data)
 			byte_index += 3
 		
@@ -261,8 +265,13 @@ func init_from_file() -> void:
 		emitter.anim_index = emitter_data_bytes.decode_u8(1)
 		emitter.motion_type_flag = emitter_data_bytes.decode_u8(2)
 		emitter.animation_target_flag = emitter_data_bytes.decode_u8(3)
+		emitter.byte_04 = emitter_data_bytes.decode_u8(4)
+		emitter.byte_05 = emitter_data_bytes.decode_u8(5)
 		emitter.color_masking_motion_flags = emitter_data_bytes.decode_u8(6)
 		emitter.byte_07 = emitter_data_bytes.decode_u8(7)
+		
+		emitter.start_position = Vector3i(emitter_data_bytes.decode_s16(0x14), emitter_data_bytes.decode_s16(0x16), emitter_data_bytes.decode_s16(0x18))
+		emitter.end_position = Vector3i(emitter_data_bytes.decode_s16(0x1a), emitter_data_bytes.decode_s16(0x1c), emitter_data_bytes.decode_s16(0x1e))
 		
 		emitters[emitter_id] = emitter
 	

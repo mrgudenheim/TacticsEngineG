@@ -90,9 +90,9 @@ func _init(new_id: int = 0) -> void:
 
 
 func display_vfx(location: Node3D) -> void:
-	if vfx_id == 163: # TODO handle vfx other than stasis sword
-		display_stasis_sword_vfx(location)
-		return
+	#if vfx_id == 163: # TODO handle vfx other than stasis sword
+		#display_stasis_sword_vfx(location)
+		#return
 	
 	var children: Array[Node] = location.get_children()
 	for child: Node in children:
@@ -102,10 +102,22 @@ func display_vfx(location: Node3D) -> void:
 	#for frameset_idx: int in range(0, num_framesets):
 		#frame_meshes.append(vfx_data.get_frame_mesh(frameset_idx))
 	
-	# TODO show vfx animations
+	# TODO show vfx animations on emitters, get correct position of vfx
 	
-	for anim_idx: int in vfx_data.animations.size():
-		var vfx_animation := vfx_data.animations[anim_idx]
+	for emitter_idx: int in vfx_data.emitters.size():
+		var emitter := vfx_data.emitters[emitter_idx]
+		
+		var emitter_location: Node3D = Node3D.new()
+		emitter_location.position = emitter.start_position * MapData.SCALE
+		location.add_child(emitter_location)
+	
+	#for anim_idx: int in vfx_data.animations.size():
+		#var vfx_animation := vfx_data.animations[anim_idx]
+		
+		var vfx_animation := vfx_data.animations[emitter.anim_index]
+		var anim_location: Node3D = Node3D.new()
+		anim_location.position = Vector3(vfx_animation.screen_offset.x, -vfx_animation.screen_offset.y, 0) * MapData.SCALE
+		emitter_location.add_child(anim_location)
 		
 		for anim_frame_idx: int in vfx_animation.animation_frames.size():
 			var vfx_anim_frame := vfx_animation.animation_frames[anim_frame_idx]
@@ -114,20 +126,25 @@ func display_vfx(location: Node3D) -> void:
 				push_warning(name + " frameset_id: " + str(vfx_anim_frame.frameset_id))
 				continue
 			
+			# get composite frame
 			for frame_idx: int in vfx_data.frame_sets[vfx_anim_frame.frameset_id].frame_set.size():
-				var mesh_instance: MeshInstance3D = MeshInstance3D.new()
+				var vfx_frame_mesh: MeshInstance3D = MeshInstance3D.new()
 				#mesh_instance.mesh = frame_meshes[frame_mesh_idx]
-				mesh_instance.mesh = vfx_data.get_frame_mesh(vfx_anim_frame.frameset_id, frame_idx)
-				location.add_child(mesh_instance)
+				vfx_frame_mesh.mesh = vfx_data.get_frame_mesh(vfx_anim_frame.frameset_id, frame_idx)
+				#vfx_frame_mesh.scale.y = -1
+				anim_location.add_child(vfx_frame_mesh)
 			
 			if vfx_anim_frame.duration == 0: # TODO handle vfx animation with duration 00 corretly
-				await location.get_tree().create_timer(10 / animation_speed).timeout
+				await anim_location.get_tree().create_timer(10 / animation_speed).timeout
 			else:
-				await location.get_tree().create_timer(vfx_anim_frame.duration / animation_speed).timeout
+				await anim_location.get_tree().create_timer(vfx_anim_frame.duration / animation_speed).timeout
 			
-			children = location.get_children()
+			# clear composite frame
+			children = anim_location.get_children()
 			for child: Node in children:
 				child.queue_free()
+		
+		emitter_location.queue_free()
 	
 	
 	# show each frameset

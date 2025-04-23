@@ -249,7 +249,7 @@ func use_ability(pos: Vector3) -> void:
 		
 	var new_vfx_location: Node3D = Node3D.new()
 	new_vfx_location.position = pos
-	new_vfx_location.position.y += 3.2 # TODO set position dependent on ability vfx data
+	#new_vfx_location.position.y += 2 # TODO set position dependent on ability vfx data
 	new_vfx_location.name = "VfxLocation"
 	get_parent().add_child(new_vfx_location)
 	ability_data.display_vfx(new_vfx_location)

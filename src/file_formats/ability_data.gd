@@ -116,13 +116,16 @@ func display_vfx(location: Node3D) -> void:
 		
 		var vfx_animation := vfx_data.animations[emitter.anim_index]
 		var anim_location: Node3D = Node3D.new()
-		anim_location.position = Vector3(vfx_animation.screen_offset.x, -vfx_animation.screen_offset.y, 0) * MapData.SCALE
+		anim_location.position = Vector3(vfx_animation.screen_offset.x, -vfx_animation.screen_offset.y, 0) * MapData.SCALE # TODO handle initial anim_location position as screen_space movement instead of world space
 		emitter_location.add_child(anim_location)
 		
 		for anim_frame_idx: int in vfx_animation.animation_frames.size():
 			var vfx_anim_frame := vfx_animation.animation_frames[anim_frame_idx]
 			
-			if vfx_anim_frame.frameset_id >= vfx_data.frame_sets.size(): # TODO vfx animation figure out code 0x83
+			if vfx_anim_frame.frameset_id == 0x83: # move anim_location, TODO handle anim_location 0x83 movement as screen_space movement instead of world space
+				anim_location.position += Vector3(vfx_anim_frame.duration, -vfx_anim_frame.byte_02, 0) * MapData.SCALE # byte01 is actually the X movement in function 0x83, not the duration
+				continue
+			elif vfx_anim_frame.frameset_id >= vfx_data.frame_sets.size(): 
 				push_warning(name + " frameset_id: " + str(vfx_anim_frame.frameset_id))
 				continue
 			
@@ -137,6 +140,8 @@ func display_vfx(location: Node3D) -> void:
 			if vfx_anim_frame.duration == 0: # TODO handle vfx animation with duration 00 corretly
 				await anim_location.get_tree().create_timer(10 / animation_speed).timeout
 			else:
+				if vfx_anim_frame.duration < 0:
+					vfx_anim_frame.duration += 256 # convert signed byte to unsigned 
 				await anim_location.get_tree().create_timer(vfx_anim_frame.duration / animation_speed).timeout
 			
 			# clear composite frame

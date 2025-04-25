@@ -234,7 +234,7 @@ func init_from_file() -> void:
 		while byte_index + 3 < anim_bytes.size():
 			var anim_frame_data: VfxAnimationFrame = VfxAnimationFrame.new()
 			anim_frame_data.frameset_id = anim_bytes.decode_u8(byte_index)
-			anim_frame_data.duration = anim_bytes.decode_u8(byte_index + 1)
+			anim_frame_data.duration = anim_bytes.decode_s8(byte_index + 1) # TODO Signed for 0x83 movement, but should it be unsigned for frame duration?
 			anim_frame_data.byte_02 = anim_bytes.decode_u8(byte_index + 2) 
 			animation.animation_frames.append(anim_frame_data)
 			byte_index += 3

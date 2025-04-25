@@ -270,8 +270,8 @@ func init_from_file() -> void:
 		emitter.color_masking_motion_flags = emitter_data_bytes.decode_u8(6)
 		emitter.byte_07 = emitter_data_bytes.decode_u8(7)
 		
-		emitter.start_position = Vector3i(emitter_data_bytes.decode_s16(0x14), emitter_data_bytes.decode_s16(0x16), emitter_data_bytes.decode_s16(0x18))
-		emitter.end_position = Vector3i(emitter_data_bytes.decode_s16(0x1a), emitter_data_bytes.decode_s16(0x1c), emitter_data_bytes.decode_s16(0x1e))
+		emitter.start_position = Vector3i(emitter_data_bytes.decode_s16(0x14), -emitter_data_bytes.decode_s16(0x16), emitter_data_bytes.decode_s16(0x18))
+		emitter.end_position = Vector3i(emitter_data_bytes.decode_s16(0x1a), -emitter_data_bytes.decode_s16(0x1c), emitter_data_bytes.decode_s16(0x1e))
 		
 		emitters[emitter_id] = emitter
 	

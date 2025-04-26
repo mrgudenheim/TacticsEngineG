@@ -58,6 +58,8 @@ class VfxEmitter:
 	var byte_07: int
 	var start_position: Vector3i
 	var end_position: Vector3i
+	
+	var start_time: int = 0
 
 var script_bytes: PackedByteArray = []
 var emitter_control_bytes: PackedByteArray = []
@@ -229,7 +231,7 @@ func init_from_file() -> void:
 		var screen_offset_y: int = anim_bytes.decode_s16(3)
 		animation.screen_offset = Vector2i(screen_offset_x, screen_offset_y)
 		
-		# TODO do something when it references beyond the last frame? Figure out byte_02
+		# TODO Figure out byte_02, does special function 0x82 ever show up in the middle of an animation?
 		var byte_index: int = 5
 		while byte_index + 3 < anim_bytes.size():
 			var anim_frame_data: VfxAnimationFrame = VfxAnimationFrame.new()
@@ -247,7 +249,7 @@ func init_from_file() -> void:
 	section_start = section_offsets[section_num]
 	script_bytes = vfx_bytes.slice(section_start, section_offsets[section_num + 1])
 	
-	# TODO extract relevant data from effect script; 
+	# TODO extract relevant data from effect script;
 	
 	### TODO emitter control data
 	section_num = VfxSections.EMITTER_MOTION_CONTROL
@@ -293,8 +295,22 @@ func init_from_file() -> void:
 	var target_switching_delay: int = timer_data_bytes.decode_u16(6)
 	var effect_max_duration_per_target: int = timer_data_bytes.decode_u16(10)
 	
-	# TODO 5 timing sections, 0x80 long each
-	
+	# TODO 5 emitter timing sections, 0x80 long each
+	for emitter_timing_section_id: int in 5:
+		var emitter_timing_data_start: int = 0x0c + (emitter_timing_section_id * 0x80)
+		var times: PackedInt32Array = []
+		times.resize(0x10) # TODO is 0x10 the max?
+		var emitter_ids: PackedInt32Array = []
+		emitter_ids.resize(times.size())
+		for time_index: int in times.size():
+			var time: int = timer_data_bytes.decode_u16(emitter_timing_data_start + (time_index * 2))
+			times[time_index] = time
+			var emitter_id: int = timer_data_bytes.decode_u8(emitter_timing_data_start + 0x32 + time_index)
+			emitter_ids[time_index] = emitter_id
+			if emitter_id != 0:
+				if emitters[emitter_id - 1].start_time == 0: # TODO can an emitter be started multiple times?
+					emitters[emitter_id - 1].start_time = time
+			
 	
 	#### image and palette data
 	section_num = VfxSections.PALETTE_IMAGE

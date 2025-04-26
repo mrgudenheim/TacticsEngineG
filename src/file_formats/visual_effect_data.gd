@@ -307,7 +307,9 @@ func init_from_file() -> void:
 			times[time_index] = time
 			var emitter_id: int = timer_data_bytes.decode_u8(emitter_timing_data_start + 0x32 + time_index)
 			emitter_ids[time_index] = emitter_id
-			if emitter_id != 0:
+			if emitter_id - 1 >= emitters.size():
+				push_warning(file_name + ": time_index " + str(time_index) + "; emitter " + str(emitter_id - 1) + "/" + str(emitters.size()))
+			elif emitter_id > 0:
 				if emitters[emitter_id - 1].start_time == 0: # TODO can an emitter be started multiple times?
 					emitters[emitter_id - 1].start_time = time
 			

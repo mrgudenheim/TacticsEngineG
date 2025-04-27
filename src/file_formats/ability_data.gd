@@ -111,7 +111,8 @@ func display_vfx(location: Node3D) -> void:
 		emitter_location.position = emitter.start_position * MapData.SCALE
 		location.add_child(emitter_location)
 		
-		emitter_location.get_tree().create_timer(emitter.start_time / animation_speed).timeout.connect(func(): display_vfx_animation(emitter, emitter_location))
+		# TODO fix emitter timing; why do they need x3 to be reasonable?
+		emitter_location.get_tree().create_timer(emitter.start_time * 3.0 / animation_speed).timeout.connect(func(): display_vfx_animation(emitter, emitter_location))
 	
 	#for anim_idx: int in vfx_data.animations.size():
 		#var vfx_animation := vfx_data.animations[anim_idx]

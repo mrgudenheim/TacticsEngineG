@@ -310,8 +310,8 @@ func init_from_file() -> void:
 			if emitter_id - 1 >= emitters.size():
 				push_warning(file_name + ": time_index " + str(time_index) + "; emitter " + str(emitter_id - 1) + "/" + str(emitters.size()))
 			elif emitter_id > 0:
-				if emitters[emitter_id - 1].start_time == 0: # TODO can an emitter be started multiple times?
-					emitters[emitter_id - 1].start_time = time
+				if emitters[emitter_id - 1].start_time == 0 and time < 0x200: # TODO can an emitter be started multiple times? Ex. Cure E001 2nd timing section
+					emitters[emitter_id - 1].start_time = time # TODO figure out special 'times' of 0x0258 or 0x0259
 			
 	
 	#### image and palette data

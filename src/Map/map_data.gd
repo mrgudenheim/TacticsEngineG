@@ -48,7 +48,8 @@ var map_length: int = 0 # length in tiles
 var terrain_tiles: Array[TerrainTile] = []
 
 # TODO handle animated textures
-
+var texture_anim_instructions_bytes: Array[PackedByteArray] = []
+var texture_animations_palette_frames: Array[PackedColorArray] = []
 
 func _init(map_file_name: String) -> void:
 	file_name = map_file_name
@@ -70,13 +71,15 @@ func init_map_data(gns_bytes: PackedByteArray) -> void:
 
 func create_map(mesh_bytes: PackedByteArray, texture_bytes: PackedByteArray = []) -> void:
 	var other_bytes: PackedByteArray = mesh_bytes
-	if file_name == "MAP053.GNS":
+	if file_name == "MAP053.GNS": # handle special case
 		other_bytes = RomReader.get_file_data(other_data_record.file_name)
 		
 	var primary_mesh_data_start: int = mesh_bytes.decode_u32(0x40)
 	var texture_palettes_data_start: int = other_bytes.decode_u32(0x44)
 	var lighting_data_start: int = other_bytes.decode_u32(0x64)
 	var terrain_data_start: int = other_bytes.decode_u32(0x68)
+	var texture_animation_instructions_data_start: int = other_bytes.decode_u32(0x6c)
+	var palette_animation_frames_data_start: int = other_bytes.decode_u32(0x70)
 	#var primary_mesh_data_end: int = texture_palettes_data_start if texture_palettes_data_start > 0 else 2147483647
 	
 	#var primary_mesh_data: PackedByteArray = mesh_bytes.slice(primary_mesh_data_start, primary_mesh_data_end)
@@ -119,6 +122,65 @@ func create_map(mesh_bytes: PackedByteArray, texture_bytes: PackedByteArray = []
 	mesh_material.vertex_color_use_as_albedo = true
 	mesh_material.set_texture(BaseMaterial3D.TEXTURE_ALBEDO, albedo_texture)
 	mesh.surface_set_material(0, mesh_material)
+	
+	
+	# https://ffhacktics.com/wiki/Maps/Mesh#Texture_animation_instructions
+	# animated texture data
+	if texture_animation_instructions_data_start != 0:
+		texture_anim_instructions_bytes.resize(32)
+		for texture_anim_id: int in 32:
+			var texture_anim_bytes_start: int = texture_animation_instructions_data_start + (texture_anim_id * 20)
+			var texture_anim_instruction_bytes: PackedByteArray = other_bytes.slice(texture_anim_bytes_start, texture_anim_bytes_start + 20)
+			texture_anim_instructions_bytes[texture_anim_id] = texture_anim_instruction_bytes
+			
+			var animation_type: int = -1 # error
+			
+			var canvas_y: int = texture_anim_instruction_bytes.decode_u8(2)
+			var canvas_width: int = texture_anim_instruction_bytes.decode_u8(4) * 4
+			var canvas_height: int = texture_anim_instruction_bytes.decode_u8(6)
+			var frame1_y: int = texture_anim_instruction_bytes.decode_u8(10)
+			# UV animation: 0x01 repeat loop forward, 0x02 loop ping pong forward <-> backward, 0x05 script command, 0x15 script command
+			# palette animation: 0x03 repeat loop forward, 0x04 loop ping pong forward <-> backward, 0x00 script command, 0x13 script command
+			var anim_technique: int = texture_anim_instruction_bytes.decode_u8(14) 
+			var num_frames: int = texture_anim_instruction_bytes.decode_u8(15)
+			var frame_duration: int = texture_anim_instruction_bytes.decode_u8(17) # 1/30ths of a second (ie. 2 frames)
+			
+			if texture_anim_instruction_bytes.decode_u8(1) == 0x03 and texture_anim_instruction_bytes.decode_u8(9) == 0x03:
+				animation_type = 0 # UV animation
+				var texture_page: int = texture_anim_instruction_bytes.decode_u8(0) * 4 / 256
+				var canvas_x: int = texture_anim_instruction_bytes.decode_u8(0) * 4 % 256
+				var frame1_x: int = texture_anim_instruction_bytes.decode_u8(8) * 4 % 256
+			elif (texture_anim_instruction_bytes.decode_u8(2) == 0x00 
+					and texture_anim_instruction_bytes.decode_u8(3) == 0xe0
+					and texture_anim_instruction_bytes.decode_u8(4) == 0x01):
+				animation_type = 1 # palette animation
+				var palette_id_to_animate: int = texture_anim_instruction_bytes.decode_u8(0) >> 4
+				var animation_starting_index: int = texture_anim_instruction_bytes.decode_u8(8)
+				
+	
+	if palette_animation_frames_data_start != 0:
+		texture_animations_palette_frames.resize(16)
+		for palette_frame_id: int in 16:
+			var palette_frame_bytes_start: int = palette_animation_frames_data_start + (palette_frame_id * 32)
+			var palette_frame_bytes: PackedByteArray = other_bytes.slice(palette_frame_bytes_start, palette_frame_bytes_start + 32)
+			var palette_frame: PackedColorArray
+			palette_frame.resize(16)
+			for color_id: int in 16:
+				#var color: Color = Color.BLACK
+				var color_bits: int = palette_frame_bytes.decode_u16(color_id * 2)
+				#color.a8 = (color_bits & 0b1000_0000_0000_0000) >> 15 # first bit is alpha (if bit is zero, color is transparent)
+				#color.b8 = (color_bits & 0b0111_1100_0000_0000) >> 10 # then 5 bits each: blue, green, red
+				#color.g8 = (color_bits & 0b0000_0011_1110_0000) >> 5
+				#color.r8 = color_bits & 0b0000_0000_0001_1111
+				#
+				## convert 5 bit channels to 8 bit
+				##color.a8 = 255 * color.a8 # first bit is alpha (if bit is one, color is opaque)
+				#color.a8 = 255 # TODO use alpha correctly?
+				#color.b8 = roundi(255 * (color.b8 / float(31))) # then 5 bits each: blue, green, red
+				#color.g8 = roundi(255 * (color.g8 / float(31)))
+				#color.r8 = roundi(255 * (color.r8 / float(31)))
+				palette_frame[color_id] = color5_to_color8(color_bits)
+			texture_animations_palette_frames[palette_frame_id] = palette_frame
 
 
 func clear_map_data() -> void:
@@ -372,30 +434,55 @@ func get_texture_palettes(texture_palettes_bytes: PackedByteArray) -> PackedColo
 	new_texture_palettes.resize(num_colors)
 	
 	for i: int in num_colors:
-		var color: Color = Color.BLACK
+		#var color: Color = Color.BLACK
 		var color_bits: int = texture_palettes_bytes.decode_u16(i * 2)
-		color.a8 = (color_bits & 0b1000_0000_0000_0000) >> 15 # first bit is alpha (if bit is zero, color is transparent)
-		color.b8 = (color_bits & 0b0111_1100_0000_0000) >> 10 # then 5 bits each: blue, green, red
-		color.g8 = (color_bits & 0b0000_0011_1110_0000) >> 5
-		color.r8 = color_bits & 0b0000_0000_0001_1111
-		
-		# convert 5 bit channels to 8 bit
-		color.a8 = 255 * color.a8 # first bit is alpha (if bit is one, color is opaque)
-		#color.a8 = 255 # TODO use alpha correctly
-		color.b8 = roundi(255 * (color.b8 / float(31))) # then 5 bits each: blue, green, red
-		color.g8 = roundi(255 * (color.g8 / float(31)))
-		color.r8 = roundi(255 * (color.r8 / float(31)))
-		
-		# if R == G == B == A == 0, then the color is transparent. 
-		if (color == Color(0, 0, 0, 0)):
-			color.a8 = 0
-		#if (i % 16) == 0:
+		#color.a8 = (color_bits & 0b1000_0000_0000_0000) >> 15 # first bit is alpha (if bit is zero, color is transparent)
+		#color.b8 = (color_bits & 0b0111_1100_0000_0000) >> 10 # then 5 bits each: blue, green, red
+		#color.g8 = (color_bits & 0b0000_0011_1110_0000) >> 5
+		#color.r8 = color_bits & 0b0000_0000_0001_1111
+		#
+		## convert 5 bit channels to 8 bit
+		#color.a8 = 255 * color.a8 # first bit is alpha (if bit is one, color is opaque)
+		##color.a8 = 255 # TODO use alpha correctly
+		#color.b8 = roundi(255 * (color.b8 / float(31))) # then 5 bits each: blue, green, red
+		#color.g8 = roundi(255 * (color.g8 / float(31)))
+		#color.r8 = roundi(255 * (color.r8 / float(31)))
+		#
+		## if R == G == B == A == 0, then the color is transparent. 
+		#if (color == Color(0, 0, 0, 0)):
 			#color.a8 = 0
-		else:
-			color.a8 = 255
-		new_texture_palettes[i] = color
+		##if (i % 16) == 0:
+			##color.a8 = 0
+		#else:
+			#color.a8 = 255
+		new_texture_palettes[i] = color5_to_color8(color_bits)
 	
 	return new_texture_palettes
+
+
+func color5_to_color8(color_bits: int) -> Color:
+	var color: Color = Color.BLACK
+	color.a8 = (color_bits & 0b1000_0000_0000_0000) >> 15 # first bit is alpha (if bit is zero, color is transparent)
+	color.b8 = (color_bits & 0b0111_1100_0000_0000) >> 10 # then 5 bits each: blue, green, red
+	color.g8 = (color_bits & 0b0000_0011_1110_0000) >> 5
+	color.r8 = color_bits & 0b0000_0000_0001_1111
+	
+	# convert 5 bit channels to 8 bit
+	color.a8 = 255 * color.a8 # first bit is alpha (if bit is one, color is opaque)
+	#color.a8 = 255 # TODO use alpha correctly
+	color.b8 = roundi(255 * (color.b8 / float(31))) # then 5 bits each: blue, green, red
+	color.g8 = roundi(255 * (color.g8 / float(31)))
+	color.r8 = roundi(255 * (color.r8 / float(31)))
+	
+	# if R == G == B == A == 0, then the color is transparent. 
+	if (color == Color(0, 0, 0, 0)):
+		color.a8 = 0
+	#if (i % 16) == 0:
+		#color.a8 = 0
+	else:
+		color.a8 = 255
+	
+	return color
 
 
 func get_texture_color_indices(texture_bytes: PackedByteArray) -> PackedInt32Array:

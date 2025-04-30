@@ -657,7 +657,7 @@ func animate_palette(texture_anim: TextureAnimationData, map: Map) -> void:
 	while frame_id < texture_anim.num_frames:
 		swap_palette(texture_anim.palette_id_to_animate, texture_animations_palette_frames[frame_id + texture_anim.animation_starting_index], map)
 		#map.mesh.mesh = mesh
-		await Engine.get_main_loop().create_timer(texture_anim.frame_duration / float(3)).timeout
+		await Engine.get_main_loop().create_timer(texture_anim.frame_duration / float(30)).timeout
 		if texture_anim.anim_technique == 0x3: # loop forward
 			frame_id += dir
 			frame_id = frame_id % texture_anim.num_frames

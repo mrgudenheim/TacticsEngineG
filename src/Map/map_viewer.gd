@@ -185,6 +185,8 @@ func get_map(new_map_data: MapData, position: Vector3, scale: Vector3) -> Map:
 	else:
 		new_map_instance.collision_shape.shape = get_scaled_collision_shape(new_map_data.mesh, scale)
 	
+	new_map_instance.play_animations(new_map_data)
+	
 	return new_map_instance
 
 

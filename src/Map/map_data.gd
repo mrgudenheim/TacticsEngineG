@@ -50,6 +50,25 @@ var terrain_tiles: Array[TerrainTile] = []
 # TODO handle animated textures
 var texture_anim_instructions_bytes: Array[PackedByteArray] = []
 var texture_animations_palette_frames: Array[PackedColorArray] = []
+var texture_animations: Array[TextureAnimationData] = []
+
+class TextureAnimationData:
+	var texture_anim_instruction_bytes: PackedByteArray = []
+	var animation_type: int = -1 # error
+	var canvas_y: int 
+	var canvas_width: int 
+	var canvas_height: int 
+	var frame1_y: int 
+	# UV animation: 0x01 repeat loop forward, 0x02 loop ping pong forward <-> backward, 0x05 script command, 0x15 script command
+	# palette animation: 0x03 repeat loop forward, 0x04 loop ping pong forward <-> backward, 0x00 script command, 0x13 script command
+	var anim_technique: int 
+	var num_frames: int 
+	var frame_duration: int # 1/30ths of a second (ie. 2 frames)
+	var texture_page: int 
+	var canvas_x: int 
+	var frame1_x: int 
+	var palette_id_to_animate: int 
+	var animation_starting_index: int 
 
 func _init(map_file_name: String) -> void:
 	file_name = map_file_name
@@ -127,36 +146,39 @@ func create_map(mesh_bytes: PackedByteArray, texture_bytes: PackedByteArray = []
 	# https://ffhacktics.com/wiki/Maps/Mesh#Texture_animation_instructions
 	# animated texture data
 	if texture_animation_instructions_data_start != 0:
+		texture_animations.resize(32)
 		texture_anim_instructions_bytes.resize(32)
 		for texture_anim_id: int in 32:
+			var texture_animation: TextureAnimationData = TextureAnimationData.new()
 			var texture_anim_bytes_start: int = texture_animation_instructions_data_start + (texture_anim_id * 20)
 			var texture_anim_instruction_bytes: PackedByteArray = other_bytes.slice(texture_anim_bytes_start, texture_anim_bytes_start + 20)
 			texture_anim_instructions_bytes[texture_anim_id] = texture_anim_instruction_bytes
 			
-			var animation_type: int = -1 # error
+			texture_animation.texture_anim_instruction_bytes = texture_anim_instruction_bytes
 			
-			var canvas_y: int = texture_anim_instruction_bytes.decode_u8(2)
-			var canvas_width: int = texture_anim_instruction_bytes.decode_u8(4) * 4
-			var canvas_height: int = texture_anim_instruction_bytes.decode_u8(6)
-			var frame1_y: int = texture_anim_instruction_bytes.decode_u8(10)
+			texture_animation.canvas_y = texture_anim_instruction_bytes.decode_u8(2)
+			texture_animation.canvas_width = texture_anim_instruction_bytes.decode_u8(4) * 4
+			texture_animation.canvas_height = texture_anim_instruction_bytes.decode_u8(6)
+			texture_animation.frame1_y = texture_anim_instruction_bytes.decode_u8(10)
 			# UV animation: 0x01 repeat loop forward, 0x02 loop ping pong forward <-> backward, 0x05 script command, 0x15 script command
 			# palette animation: 0x03 repeat loop forward, 0x04 loop ping pong forward <-> backward, 0x00 script command, 0x13 script command
-			var anim_technique: int = texture_anim_instruction_bytes.decode_u8(14) 
-			var num_frames: int = texture_anim_instruction_bytes.decode_u8(15)
-			var frame_duration: int = texture_anim_instruction_bytes.decode_u8(17) # 1/30ths of a second (ie. 2 frames)
+			texture_animation.anim_technique = texture_anim_instruction_bytes.decode_u8(14) 
+			texture_animation.num_frames = texture_anim_instruction_bytes.decode_u8(15)
+			texture_animation.frame_duration = texture_anim_instruction_bytes.decode_u8(17) # 1/30ths of a second (ie. 2 frames)
 			
 			if texture_anim_instruction_bytes.decode_u8(1) == 0x03 and texture_anim_instruction_bytes.decode_u8(9) == 0x03:
-				animation_type = 0 # UV animation
-				var texture_page: int = texture_anim_instruction_bytes.decode_u8(0) * 4 / 256
-				var canvas_x: int = texture_anim_instruction_bytes.decode_u8(0) * 4 % 256
-				var frame1_x: int = texture_anim_instruction_bytes.decode_u8(8) * 4 % 256
-			elif (texture_anim_instruction_bytes.decode_u8(2) == 0x00 
-					and texture_anim_instruction_bytes.decode_u8(3) == 0xe0
-					and texture_anim_instruction_bytes.decode_u8(4) == 0x01):
-				animation_type = 1 # palette animation
-				var palette_id_to_animate: int = texture_anim_instruction_bytes.decode_u8(0) >> 4
-				var animation_starting_index: int = texture_anim_instruction_bytes.decode_u8(8)
+				texture_animation.animation_type = 0 # UV animation
+				texture_animation.texture_page = texture_anim_instruction_bytes.decode_u8(0) * 4 / 256
+				texture_animation.canvas_x = texture_anim_instruction_bytes.decode_u8(0) * 4 % 256
+				texture_animation.frame1_x = texture_anim_instruction_bytes.decode_u8(8) * 4 % 256
+			elif (texture_anim_instruction_bytes.decode_u8(1) == 0x00 
+					and texture_anim_instruction_bytes.decode_u8(2) == 0xe0
+					and texture_anim_instruction_bytes.decode_u8(3) == 0x01):
+				texture_animation.animation_type = 1 # palette animation
+				texture_animation.palette_id_to_animate = texture_anim_instruction_bytes.decode_u8(0) >> 4
+				texture_animation.animation_starting_index = texture_anim_instruction_bytes.decode_u8(8)
 				
+			texture_animations[texture_anim_id] = texture_animation
 	
 	if palette_animation_frames_data_start != 0:
 		texture_animations_palette_frames.resize(16)
@@ -513,9 +535,10 @@ func get_texture_pixel_colors(palette_id: int = 0) -> PackedColorArray:
 	return new_pixel_colors
 
 
-func get_texture_rgba8_image(palette_id: int = 0) -> Image:
+func get_texture_rgba8_image(palette_id: int = 0, pixel_colors: PackedColorArray = []) -> Image:
 	var image: Image = Image.create_empty(TEXTURE_SIZE.x, TEXTURE_SIZE.y, false, Image.FORMAT_RGBA8)
-	var pixel_colors: PackedColorArray = get_texture_pixel_colors(palette_id)
+	if pixel_colors.is_empty():
+		pixel_colors = get_texture_pixel_colors(palette_id)
 	
 	for x in TEXTURE_SIZE.x:
 		for y in TEXTURE_SIZE.y:
@@ -602,6 +625,54 @@ func get_texture_all(texture_bytes: PackedByteArray) -> Texture2D:
 	return ImageTexture.create_from_image(image)
 
 
+### new_palette should have 16 colors
+func get_texture_pixel_colors_new_palette(new_palette: PackedColorArray) -> PackedColorArray:
+	var new_pixel_colors: PackedColorArray = []
+	var new_size: int = TEXTURE_SIZE.x * TEXTURE_SIZE.y
+	new_pixel_colors.resize(new_size)
+	new_pixel_colors.fill(Color.BLACK)
+	for i: int in new_size:
+		new_pixel_colors[i] = new_palette[texture_color_indices[i]]
+	
+	return new_pixel_colors
+
+
+func swap_palette(palette_id: int, new_palette: PackedColorArray, map: Map) -> void:
+	var new_pixel_colors: PackedColorArray = get_texture_pixel_colors_new_palette(new_palette)
+	var new_color_image: Image = get_texture_rgba8_image(0, new_pixel_colors)
+	
+	var new_texture_image: Image = albedo_texture.get_image()
+	new_texture_image.blit_rect(new_color_image, Rect2i(Vector2i.ZERO, new_color_image.get_size()), Vector2i(palette_id * TEXTURE_SIZE.x, 0))
+	var new_texture: ImageTexture = ImageTexture.create_from_image(new_texture_image)
+	
+	var new_mesh_material: Material = mesh.surface_get_material(0)
+	new_mesh_material.set_texture(BaseMaterial3D.TEXTURE_ALBEDO, new_texture)
+	#mesh.surface_set_material(0, new_mesh_material)
+	map.mesh.mesh.surface_set_material(0, new_mesh_material)
+
+
+func animate_palette(texture_anim: TextureAnimationData, map: Map) -> void:
+	var frame_id: int = 0
+	var dir: int = 1
+	while frame_id < texture_anim.num_frames:
+		swap_palette(texture_anim.palette_id_to_animate, texture_animations_palette_frames[frame_id + texture_anim.animation_starting_index], map)
+		#map.mesh.mesh = mesh
+		await Engine.get_main_loop().create_timer(texture_anim.frame_duration / float(3)).timeout
+		if texture_anim.anim_technique == 0x3: # loop forward
+			frame_id += dir
+			frame_id = frame_id % texture_anim.num_frames
+		elif texture_anim.anim_technique == 0x4: # loop back and forth
+			if frame_id == texture_anim.num_frames - 1:
+				dir = -1
+			elif frame_id == 0:
+				dir = 1
+			frame_id += dir
+
+
+func animate_uv(texture_anim: TextureAnimationData) -> void:
+	pass # TODO map uv animations
+
+
 # https://ffhacktics.com/wiki/Maps/Mesh#Terrain
 func get_terrain(terrain_bytes: PackedByteArray) -> Array[TerrainTile]:
 	map_width = terrain_bytes.decode_u8(0)
@@ -651,7 +722,7 @@ func set_gradient_colors(gradient_color_bytes: PackedByteArray) -> void:
 	background_gradient_bottom = Color8(bot_red, bot_green, bot_blue)
 
 
-func get_associated_files(gns_bytes: PackedByteArray) -> Array[MapFileRecord]:	
+func get_associated_files(gns_bytes: PackedByteArray) -> Array[MapFileRecord]:
 	var gns_record_length: int = 20
 	var new_map_records: Array[MapFileRecord] = []
 	

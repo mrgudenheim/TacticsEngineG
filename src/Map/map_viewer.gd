@@ -118,6 +118,10 @@ func on_map_selected(index: int) -> void:
 	background_gradient.texture.gradient.colors[1] = map_data.background_gradient_top
 	
 	texture_viewer.texture = map_data.albedo_texture
+	for anim_id: int in map_data.texture_animations.size(): # TODO remove test code
+		var texture_anim := map_data.texture_animations[anim_id]
+		if [0x03, 0x04].has(texture_anim.anim_technique): # if palette animation
+			animate_preview_texture(texture_anim, map_data)
 	
 	clear_maps()
 	clear_units()
@@ -185,7 +189,7 @@ func get_map(new_map_data: MapData, position: Vector3, scale: Vector3) -> Map:
 	else:
 		new_map_instance.collision_shape.shape = get_scaled_collision_shape(new_map_data.mesh, scale)
 	
-	new_map_instance.play_animations(new_map_data)
+	#new_map_instance.play_animations(new_map_data) # TODO animate textures
 	
 	return new_map_instance
 
@@ -260,3 +264,30 @@ func increment_counter(unit: UnitData) -> void:
 	var icon_rect: TextureRect = TextureRect.new()
 	icon_rect.texture = ImageTexture.create_from_image(knocked_out_icon)
 	icon_counter.add_child(icon_rect)
+
+
+# TODO remove test code
+func animate_preview_texture(texture_anim, map_data) -> void:
+	var frame_id: int = 0
+	var dir: int = 1
+	while frame_id < texture_anim.num_frames:
+		var new_palette: PackedColorArray = map_data.texture_animations_palette_frames[frame_id + texture_anim.animation_starting_index]
+		var new_pixel_colors: PackedColorArray = map_data.get_texture_pixel_colors_new_palette(new_palette)
+		var new_color_image: Image = map_data.get_texture_rgba8_image(0, new_pixel_colors)
+		
+		var new_texture_image: Image = texture_viewer.texture.get_image()
+		new_texture_image.blit_rect(new_color_image, Rect2i(Vector2i.ZERO, new_color_image.get_size()), Vector2i(texture_anim.palette_id_to_animate * map_data.TEXTURE_SIZE.x, 0))
+		var new_texture: ImageTexture = ImageTexture.create_from_image(new_texture_image)
+		
+		texture_viewer.texture = new_texture
+		
+		await Engine.get_main_loop().create_timer(texture_anim.frame_duration / float(30)).timeout
+		if texture_anim.anim_technique == 0x3: # loop forward
+			frame_id += dir
+			frame_id = frame_id % texture_anim.num_frames
+		elif texture_anim.anim_technique == 0x4: # loop back and forth
+			if frame_id == texture_anim.num_frames - 1:
+				dir = -1
+			elif frame_id == 0:
+				dir = 1
+			frame_id += dir

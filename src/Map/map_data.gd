@@ -16,6 +16,7 @@ var map_file_records: Array[MapFileRecord] = []
 var mesh: ArrayMesh
 var mesh_material: StandardMaterial3D
 var albedo_texture: Texture2D
+var albedo_texture_indexed: Texture2D
 var st: SurfaceTool = SurfaceTool.new()
 const TEXTURE_SIZE: Vector2i = Vector2i(256, 1024)
 
@@ -142,6 +143,7 @@ func create_map(mesh_bytes: PackedByteArray, texture_bytes: PackedByteArray = []
 	mesh_material.set_texture(BaseMaterial3D.TEXTURE_ALBEDO, albedo_texture)
 	mesh.surface_set_material(0, mesh_material)
 	
+	albedo_texture_indexed = get_texture_indexed_all(texture_bytes)
 	
 	# https://ffhacktics.com/wiki/Maps/Mesh#Texture_animation_instructions
 	# animated texture data
@@ -565,6 +567,22 @@ func get_texture(texture_bytes: PackedByteArray, palette_id = 0) -> Texture2D:
 	return ImageTexture.create_from_image(get_texture_rgba8_image(palette_id))
 
 
+func get_texture_indexed_all(texture_bytes: PackedByteArray) -> ImageTexture:
+	var num_palettes: int = 16
+	var colors_per_palette: int = 16
+	var image_width: int = TEXTURE_SIZE.x * num_palettes
+	var image_indexed: Image = Image.create_empty(image_width, TEXTURE_SIZE.y, false, Image.FORMAT_RGBA8)
+	texture_color_indices = get_texture_color_indices(texture_bytes)
+	
+	for x: int in TEXTURE_SIZE.x:
+		for y: int in TEXTURE_SIZE.y:
+			for palette_id: int in num_palettes:
+				var new_color: Color = Color.from_rgba8(texture_color_indices[(TEXTURE_SIZE.x * y) + x] + (palette_id * colors_per_palette), 0, 0, 1)
+				image_indexed.set_pixel(x + (palette_id * TEXTURE_SIZE.x), y, new_color)
+	
+	return ImageTexture.create_from_image(image_indexed)
+
+
 func get_texture_color_indices_all(color_indices: PackedInt32Array) -> PackedInt32Array:
 	var new_color_indicies: PackedInt32Array = []
 	var num_palettes: int = 16
@@ -651,11 +669,19 @@ func swap_palette(palette_id: int, new_palette: PackedColorArray, map: Map) -> v
 	map.mesh.mesh.surface_set_material(0, new_mesh_material)
 
 
-func animate_palette(texture_anim: TextureAnimationData, map: Map) -> void:
+func animate_palette(texture_anim: TextureAnimationData, map: Map) -> void: # TODO get animation working
 	var frame_id: int = 0
 	var dir: int = 1
+	var colors_per_palette: int = 16
 	while frame_id < texture_anim.num_frames:
-		swap_palette(texture_anim.palette_id_to_animate, texture_animations_palette_frames[frame_id + texture_anim.animation_starting_index], map)
+		#swap_palette(texture_anim.palette_id_to_animate, texture_animations_palette_frames[frame_id + texture_anim.animation_starting_index], map)
+		var new_anim_palette_id: int = frame_id + texture_anim.animation_starting_index
+		var new_palette: PackedColorArray = texture_animations_palette_frames[new_anim_palette_id]
+		var new_texture_palette: PackedColorArray = texture_palettes.duplicate()
+		for color_id in colors_per_palette:
+			new_texture_palette[color_id + (texture_anim.palette_id_to_animate * colors_per_palette)] = new_palette[color_id]
+		(map.mesh.material_override as ShaderMaterial).set_shader_parameter("palettes_colors", new_texture_palette)
+		
 		#map.mesh.mesh = mesh
 		await Engine.get_main_loop().create_timer(texture_anim.frame_duration / float(30)).timeout
 		if texture_anim.anim_technique == 0x3: # loop forward
@@ -667,6 +693,13 @@ func animate_palette(texture_anim: TextureAnimationData, map: Map) -> void:
 			elif frame_id == 0:
 				dir = 1
 			frame_id += dir
+	
+	#var new_palette: PackedColorArray = texture_animations_palette_frames
+	#var new_texture_palette: PackedColorArray = local_map_data.texture_palettes.duplicate()
+	#for color_id in colors_per_palette:
+		#new_texture_palette[color_id + (local_map_data.texture_animations[anim_id].palette_id_to_animate * colors_per_palette)]
+	
+	
 
 
 func animate_uv(texture_anim: TextureAnimationData) -> void:

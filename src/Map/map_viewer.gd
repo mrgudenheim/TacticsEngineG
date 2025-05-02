@@ -17,6 +17,7 @@ static var main_camera: Camera3D
 
 @export var maps: Node3D
 @export var map_tscn: PackedScene
+@export var map_shader: Shader
 
 @export var units: Node3D
 @export var unit_tscn: PackedScene
@@ -118,10 +119,10 @@ func on_map_selected(index: int) -> void:
 	background_gradient.texture.gradient.colors[1] = map_data.background_gradient_top
 	
 	texture_viewer.texture = map_data.albedo_texture
-	for anim_id: int in map_data.texture_animations.size(): # TODO remove test code
-		var texture_anim := map_data.texture_animations[anim_id]
-		if [0x03, 0x04].has(texture_anim.anim_technique): # if palette animation
-			animate_preview_texture(texture_anim, map_data)
+	#for anim_id: int in map_data.texture_animations.size(): # TODO remove test code
+		#var texture_anim := map_data.texture_animations[anim_id]
+		#if [0x03, 0x04].has(texture_anim.anim_technique): # if palette animation
+			#animate_preview_texture(texture_anim, map_data)
 	
 	clear_maps()
 	clear_units()
@@ -183,13 +184,20 @@ func get_map(new_map_data: MapData, position: Vector3, scale: Vector3) -> Map:
 	new_map_instance.position = position
 	new_map_instance.rotation_degrees = Vector3(0, 180, 180)
 	
+	var new_mesh_material: ShaderMaterial = ShaderMaterial.new()
+	new_mesh_material.shader = map_shader
+	new_mesh_material.set_shader_parameter("albedo_texture_color_indicies", new_map_data.albedo_texture_indexed)
+	#new_mesh_material.set_shader_parameter("albedo_texture_color_indicies", new_map_data.albedo_texture)
+	new_mesh_material.set_shader_parameter("palettes_colors", new_map_data.texture_palettes)
+	new_map_instance.mesh.material_override = new_mesh_material
+	
 	var shape_mesh: ConcavePolygonShape3D = new_map_data.mesh.create_trimesh_shape()
 	if scale == Vector3.ONE:
 		new_map_instance.collision_shape.shape = new_map_data.mesh.create_trimesh_shape()
 	else:
 		new_map_instance.collision_shape.shape = get_scaled_collision_shape(new_map_data.mesh, scale)
 	
-	#new_map_instance.play_animations(new_map_data) # TODO animate textures
+	new_map_instance.play_animations(new_map_data) # TODO animate textures
 	
 	return new_map_instance
 

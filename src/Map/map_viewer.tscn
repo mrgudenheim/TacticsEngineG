@@ -1,7 +1,8 @@
-[gd_scene load_steps=22 format=3 uid="uid://card26cltbba1"]
+[gd_scene load_steps=23 format=3 uid="uid://card26cltbba1"]
 
 [ext_resource type="Script" uid="uid://cd31vmh881wm5" path="res://src/Map/map_viewer.gd" id="1_ojbyw"]
 [ext_resource type="PackedScene" uid="uid://26tg32417lfm" path="res://src/load_rom.tscn" id="2_4wnqg"]
+[ext_resource type="Shader" uid="uid://cq4x76xn7qnvi" path="res://src/Map/color_indexed_texture.gdshader" id="3_48rxl"]
 [ext_resource type="Script" uid="uid://dkngme7toaf3g" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="3_a072s"]
 [ext_resource type="Script" uid="uid://bg3no6nu8phv0" path="res://src/camera_control.gd" id="3_dpuna"]
 [ext_resource type="Script" uid="uid://05d30de5cm5w" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="4_8ik4g"]
@@ -67,6 +68,7 @@ menu_reminder = NodePath("DebugOptions/MarginContainer/VBoxContainer2/MenuRemind
 map_size_label = NodePath("DebugOptions/MarginContainer/VBoxContainer2/VBoxContainer/MapSize")
 maps = NodePath("Maps")
 map_tscn = ExtResource("8_0n3mn")
+map_shader = ExtResource("3_48rxl")
 units = NodePath("Units")
 unit_tscn = ExtResource("8_pysrt")
 controller = NodePath("CharacterController")

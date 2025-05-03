@@ -101,6 +101,7 @@ func on_rom_loaded() -> void:
 	
 	var default_map_index: int = 56 # Orbonne
 	default_map_index = 22 # Gariland
+	default_map_index = 83 # zirekile falls
 	map_dropdown.select(default_map_index)
 	map_dropdown.item_selected.emit(default_map_index)
 

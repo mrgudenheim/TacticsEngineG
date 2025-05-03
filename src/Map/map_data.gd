@@ -49,6 +49,7 @@ var map_length: int = 0 # length in tiles
 var terrain_tiles: Array[TerrainTile] = []
 
 # TODO handle animated textures
+var has_texture_animations: bool = false
 var texture_anim_instructions_bytes: Array[PackedByteArray] = []
 var texture_animations_palette_frames: Array[PackedColorArray] = []
 var texture_animations: Array[TextureAnimationData] = []
@@ -148,6 +149,7 @@ func create_map(mesh_bytes: PackedByteArray, texture_bytes: PackedByteArray = []
 	# https://ffhacktics.com/wiki/Maps/Mesh#Texture_animation_instructions
 	# animated texture data
 	if texture_animation_instructions_data_start != 0:
+		has_texture_animations = true
 		texture_animations.resize(32)
 		texture_anim_instructions_bytes.resize(32)
 		for texture_anim_id: int in 32:
@@ -691,7 +693,7 @@ func animate_palette(texture_anim: TextureAnimationData, map: Map) -> void: # TO
 func animate_uv(texture_anim: TextureAnimationData, map: Map, anim_idx: int) -> void:
 	var frame_id: int = 0
 	var dir: int = 1
-	var anim_fps: float = 45.0 # TODO why does 59 look too fast?
+	var anim_fps: float = 45 # TODO why does 59 look too fast?
 	
 	var map_shader_material: ShaderMaterial = map.mesh.material_override as ShaderMaterial
 	while frame_id < texture_anim.num_frames:

@@ -7,6 +7,9 @@ var map_data: MapData
 
 
 func play_animations(local_map_data: MapData) -> void:
+	if not local_map_data.has_texture_animations:
+		return
+	
 	# set up shader parameters for uv_animations
 	var canvas_positions: PackedVector2Array = []
 	var canvas_sizes: PackedVector2Array = []
@@ -19,13 +22,15 @@ func play_animations(local_map_data: MapData) -> void:
 	frame_positions.resize(num_texture_animations)
 	frame_idxs.resize(num_texture_animations)
 	
+	var num_palettes: float = 16.0
 	for anim_id: int in num_texture_animations: # TODO convert these values from pixels to UV space (0.0 - 1.0)
-		canvas_positions[anim_id] = Vector2(local_map_data.texture_animations[anim_id].canvas_x / MapData.TEXTURE_SIZE.x, 
-				local_map_data.texture_animations[anim_id].canvas_y / MapData.TEXTURE_SIZE.y)
-		canvas_sizes[anim_id] = Vector2(local_map_data.texture_animations[anim_id].canvas_width / MapData.TEXTURE_SIZE.x, 
-				local_map_data.texture_animations[anim_id].canvas_height / MapData.TEXTURE_SIZE.y)
-		frame_positions[anim_id] = Vector2(local_map_data.texture_animations[anim_id].frame1_x / MapData.TEXTURE_SIZE.x, 
-				local_map_data.texture_animations[anim_id].frame1_y / MapData.TEXTURE_SIZE.y)
+		if [0x01, 0x02, 0x05, 0x15].has(local_map_data.texture_animations[anim_id].anim_technique):
+			canvas_positions[anim_id] = Vector2(local_map_data.texture_animations[anim_id].canvas_x / float(MapData.TEXTURE_SIZE.x * num_palettes), 
+					(local_map_data.texture_animations[anim_id].canvas_y + (256 * local_map_data.texture_animations[anim_id].texture_page)) / float(MapData.TEXTURE_SIZE.y))
+			canvas_sizes[anim_id] = Vector2(local_map_data.texture_animations[anim_id].canvas_width / float(MapData.TEXTURE_SIZE.x * num_palettes),
+					local_map_data.texture_animations[anim_id].canvas_height / float(MapData.TEXTURE_SIZE.y))
+			frame_positions[anim_id] = Vector2(local_map_data.texture_animations[anim_id].frame1_x / float(MapData.TEXTURE_SIZE.x * num_palettes), 
+					(local_map_data.texture_animations[anim_id].frame1_y + (256 * local_map_data.texture_animations[anim_id].texture_page)) / float(MapData.TEXTURE_SIZE.y))
 	
 	var map_shader_material: ShaderMaterial = mesh.material_override as ShaderMaterial
 	map_shader_material.set_shader_parameter("canvas_pos", canvas_positions)

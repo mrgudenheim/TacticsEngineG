@@ -659,11 +659,10 @@ func swap_palette(palette_id: int, new_palette: PackedColorArray, map: Map) -> v
 	map.mesh.mesh.surface_set_material(0, new_mesh_material)
 
 
-func animate_palette(texture_anim: TextureAnimationData, map: Map) -> void: # TODO get animation working
+func animate_palette(texture_anim: TextureAnimationData, map: Map, anim_fps: float) -> void: # TODO get animation working
 	var frame_id: int = 0
 	var dir: int = 1
 	var colors_per_palette: int = 16
-	var anim_fps: float = 45.0 # TODO why does 59 look too fast?
 	
 	var map_shader_material: ShaderMaterial = map.mesh.material_override as ShaderMaterial
 	while frame_id < texture_anim.num_frames:
@@ -689,11 +688,10 @@ func animate_palette(texture_anim: TextureAnimationData, map: Map) -> void: # TO
 				dir = 1
 			frame_id += dir
 
-# TODO get uv_animations to work
-func animate_uv(texture_anim: TextureAnimationData, map: Map, anim_idx: int) -> void:
+
+func animate_uv(texture_anim: TextureAnimationData, map: Map, anim_idx: int, anim_fps: float) -> void:
 	var frame_id: int = 0
 	var dir: int = 1
-	var anim_fps: float = 45 # TODO why does 59 look too fast?
 	
 	var map_shader_material: ShaderMaterial = map.mesh.material_override as ShaderMaterial
 	while frame_id < texture_anim.num_frames:

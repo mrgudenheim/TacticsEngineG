@@ -39,9 +39,10 @@ func play_animations(local_map_data: MapData) -> void:
 	map_shader_material.set_shader_parameter("frame_idx", frame_idxs)
 	
 	# start animations
+	var anim_fps: float = 45.0 # TODO why does 59 look too fast?
 	for anim_id: int in num_texture_animations:
 		if [0x03, 0x04].has(local_map_data.texture_animations[anim_id].anim_technique): # if palette animation
-			local_map_data.animate_palette(local_map_data.texture_animations[anim_id], self)
+			local_map_data.animate_palette(local_map_data.texture_animations[anim_id], self, anim_fps)
 		elif [0x01, 0x02].has(local_map_data.texture_animations[anim_id].anim_technique): # if uv animation
-			local_map_data.animate_uv(local_map_data.texture_animations[anim_id], self, anim_id)
+			local_map_data.animate_uv(local_map_data.texture_animations[anim_id], self, anim_id, anim_fps)
 		

@@ -57,6 +57,8 @@ spring_length = 15.0
 [node name="DropShadowSprite3D" type="Sprite3D" parent="CharacterBody3D/ShadowSpringArm3D"]
 transform = Transform3D(0.707107, -0.707107, 0, 0.707107, 0.707107, 0, 0, 0, 1, 0, 0, 0)
 pixel_size = 0.0357
+texture_filter = 0
+render_priority = 1
 texture = SubResource("GradientTexture2D_6vwfi")
 
 [node name="UnitAnimationManager" type="Node3D" parent="CharacterBody3D" node_paths=PackedStringArray("unit_data", "unit_sprites_manager")]

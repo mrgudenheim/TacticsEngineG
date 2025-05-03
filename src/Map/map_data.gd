@@ -673,17 +673,21 @@ func animate_palette(texture_anim: TextureAnimationData, map: Map) -> void: # TO
 	var frame_id: int = 0
 	var dir: int = 1
 	var colors_per_palette: int = 16
+	var anim_fps: float = 45.0 # TODO why does 59 look too fast?
 	while frame_id < texture_anim.num_frames:
-		#swap_palette(texture_anim.palette_id_to_animate, texture_animations_palette_frames[frame_id + texture_anim.animation_starting_index], map)
+		if not is_instance_valid(map):
+			break
+		
 		var new_anim_palette_id: int = frame_id + texture_anim.animation_starting_index
 		var new_palette: PackedColorArray = texture_animations_palette_frames[new_anim_palette_id]
-		var new_texture_palette: PackedColorArray = texture_palettes.duplicate()
+		var map_shader_material: ShaderMaterial = map.mesh.material_override as ShaderMaterial
+		var new_texture_palette: PackedColorArray = map_shader_material.get_shader_parameter("palettes_colors")
 		for color_id in colors_per_palette:
 			new_texture_palette[color_id + (texture_anim.palette_id_to_animate * colors_per_palette)] = new_palette[color_id]
-		(map.mesh.material_override as ShaderMaterial).set_shader_parameter("palettes_colors", new_texture_palette)
+		map_shader_material.set_shader_parameter("palettes_colors", new_texture_palette)
 		
 		#map.mesh.mesh = mesh
-		await Engine.get_main_loop().create_timer(texture_anim.frame_duration / float(30)).timeout
+		await Engine.get_main_loop().create_timer(texture_anim.frame_duration / anim_fps).timeout
 		if texture_anim.anim_technique == 0x3: # loop forward
 			frame_id += dir
 			frame_id = frame_id % texture_anim.num_frames

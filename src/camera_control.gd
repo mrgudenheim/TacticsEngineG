@@ -6,6 +6,7 @@ extends Node3D
 @export var camera_pivot: Node3D
 
 signal zoom_changed
+signal rotated(new_rotation: Vector3)
 
 const PAN_SPEED: float = 0.1
 const ROTATE_SPEED: float = 5

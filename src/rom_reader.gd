@@ -161,8 +161,9 @@ func process_file_records(sectors: PackedInt32Array, folder_name: String = "") -
 				maps.append(MapData.new(record.name))
 			
 			byte_index += record_length
-			if directory_data.decode_u8(byte_index) == 0: # end of data, rest of sector will be padded with zeros
-				break
+			if byte_index < DATA_BYTES_PER_SECTOR:
+				if directory_data.decode_u8(byte_index) == 0: # end of data, rest of sector will be padded with zeros
+					break
 
 
 func cache_associated_files() -> void:

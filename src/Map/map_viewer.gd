@@ -151,6 +151,8 @@ func on_map_selected(index: int) -> void:
 	#new_unit.char_body.global_position = Vector3(5.5, 15, -5.5)
 	#new_unit.set_sprite_file("AGURI.SPR") # Agrias
 	new_unit.is_player_controlled = true
+	#new_unit.char_body.connect(controller.camera_rotated, set_rotation_degrees)
+	controller.camera_rotated.connect(new_unit.char_body.set_rotation_degrees)
 	
 	controller.unit = new_unit
 	controller.velocity_set.connect(controller.unit.update_unit_facing)
@@ -167,6 +169,8 @@ func on_map_selected(index: int) -> void:
 	new_unit2.char_body.global_position = random_position
 	#new_unit2.char_body.global_position = Vector3(3.5, 15, -5.5)
 	new_unit2.set_sprite_file("ARU.SPR") # Algus
+	#new_unit2.char_body.connect(, set_rotation_degrees)
+	controller.camera_rotated.connect(new_unit2.char_body.set_rotation_degrees)
 	
 	new_unit2.knocked_out.connect(load_random_map)
 	new_unit2.knocked_out.connect(increment_counter)

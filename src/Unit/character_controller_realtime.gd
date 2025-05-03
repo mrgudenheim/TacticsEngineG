@@ -3,6 +3,7 @@ extends Node3D
 
 signal velocity_set(direction: Vector3)
 signal camera_facing_changed()
+signal camera_rotated(new_rotation: Vector3)
 
 const SPEED: float = 5.0
 
@@ -121,7 +122,8 @@ func rotate_camera(dir: int) -> void:
 
 func rotate_phantom_camera(new_rotation_degress: Vector3) -> void:
 	phantom_camera.set_third_person_rotation_degrees(new_rotation_degress)
-	unit.char_body.rotation_degrees = Vector3(0, new_rotation_degress.y, 0)
+	#unit.char_body.rotation_degrees = Vector3(0, new_rotation_degress.y, 0)
+	camera_rotated.emit(Vector3(0, new_rotation_degress.y, 0))
 	
 	var camera_angle: float = MapViewer.main_camera.rotation_degrees.y
 	#var target_angle = fposmod(new_rotation_degress.y, 360)

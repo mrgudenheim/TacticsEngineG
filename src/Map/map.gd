@@ -23,7 +23,7 @@ func play_animations(local_map_data: MapData) -> void:
 	frame_idxs.resize(num_texture_animations)
 	
 	var num_palettes: float = 16.0
-	for anim_id: int in num_texture_animations: # TODO convert these values from pixels to UV space (0.0 - 1.0)
+	for anim_id: int in num_texture_animations:
 		if [0x01, 0x02, 0x05, 0x15].has(local_map_data.texture_animations[anim_id].anim_technique):
 			canvas_positions[anim_id] = Vector2(local_map_data.texture_animations[anim_id].canvas_x / float(MapData.TEXTURE_SIZE.x * num_palettes), 
 					(local_map_data.texture_animations[anim_id].canvas_y + (256 * local_map_data.texture_animations[anim_id].texture_page)) / float(MapData.TEXTURE_SIZE.y))

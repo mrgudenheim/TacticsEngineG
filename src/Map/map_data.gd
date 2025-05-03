@@ -48,7 +48,7 @@ var map_width: int = 0 # width in tiles
 var map_length: int = 0 # length in tiles
 var terrain_tiles: Array[TerrainTile] = []
 
-# TODO handle animated textures
+# texture animations
 var has_texture_animations: bool = false
 var texture_anim_instructions_bytes: Array[PackedByteArray] = []
 var texture_animations_palette_frames: Array[PackedColorArray] = []
@@ -450,25 +450,6 @@ func get_texture_palettes(texture_palettes_bytes: PackedByteArray) -> PackedColo
 	for i: int in num_colors:
 		#var color: Color = Color.BLACK
 		var color_bits: int = texture_palettes_bytes.decode_u16(i * 2)
-		#color.a8 = (color_bits & 0b1000_0000_0000_0000) >> 15 # first bit is alpha (if bit is zero, color is transparent)
-		#color.b8 = (color_bits & 0b0111_1100_0000_0000) >> 10 # then 5 bits each: blue, green, red
-		#color.g8 = (color_bits & 0b0000_0011_1110_0000) >> 5
-		#color.r8 = color_bits & 0b0000_0000_0001_1111
-		#
-		## convert 5 bit channels to 8 bit
-		#color.a8 = 255 * color.a8 # first bit is alpha (if bit is one, color is opaque)
-		##color.a8 = 255 # TODO use alpha correctly
-		#color.b8 = roundi(255 * (color.b8 / float(31))) # then 5 bits each: blue, green, red
-		#color.g8 = roundi(255 * (color.g8 / float(31)))
-		#color.r8 = roundi(255 * (color.r8 / float(31)))
-		#
-		## if R == G == B == A == 0, then the color is transparent. 
-		#if (color == Color(0, 0, 0, 0)):
-			#color.a8 = 0
-		##if (i % 16) == 0:
-			##color.a8 = 0
-		#else:
-			#color.a8 = 255
 		new_texture_palettes[i] = color5_to_color8(color_bits)
 	
 	return new_texture_palettes
@@ -483,7 +464,7 @@ func color5_to_color8(color_bits: int) -> Color:
 	
 	# convert 5 bit channels to 8 bit
 	color.a8 = 255 * color.a8 # first bit is alpha (if bit is one, color is opaque)
-	#color.a8 = 255 # TODO use alpha correctly
+	#color.a8 = 255 # TODO use alpha correctly?
 	color.b8 = roundi(255 * (color.b8 / float(31))) # then 5 bits each: blue, green, red
 	color.g8 = roundi(255 * (color.g8 / float(31)))
 	color.r8 = roundi(255 * (color.r8 / float(31)))
@@ -659,7 +640,7 @@ func swap_palette(palette_id: int, new_palette: PackedColorArray, map: Map) -> v
 	map.mesh.mesh.surface_set_material(0, new_mesh_material)
 
 
-func animate_palette(texture_anim: TextureAnimationData, map: Map, anim_fps: float) -> void: # TODO get animation working
+func animate_palette(texture_anim: TextureAnimationData, map: Map, anim_fps: float) -> void:
 	var frame_id: int = 0
 	var dir: int = 1
 	var colors_per_palette: int = 16

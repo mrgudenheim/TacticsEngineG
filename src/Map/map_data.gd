@@ -190,19 +190,7 @@ func create_map(mesh_bytes: PackedByteArray, texture_bytes: PackedByteArray = []
 			var palette_frame: PackedColorArray
 			palette_frame.resize(16)
 			for color_id: int in 16:
-				#var color: Color = Color.BLACK
 				var color_bits: int = palette_frame_bytes.decode_u16(color_id * 2)
-				#color.a8 = (color_bits & 0b1000_0000_0000_0000) >> 15 # first bit is alpha (if bit is zero, color is transparent)
-				#color.b8 = (color_bits & 0b0111_1100_0000_0000) >> 10 # then 5 bits each: blue, green, red
-				#color.g8 = (color_bits & 0b0000_0011_1110_0000) >> 5
-				#color.r8 = color_bits & 0b0000_0000_0001_1111
-				#
-				## convert 5 bit channels to 8 bit
-				##color.a8 = 255 * color.a8 # first bit is alpha (if bit is one, color is opaque)
-				#color.a8 = 255 # TODO use alpha correctly?
-				#color.b8 = roundi(255 * (color.b8 / float(31))) # then 5 bits each: blue, green, red
-				#color.g8 = roundi(255 * (color.g8 / float(31)))
-				#color.r8 = roundi(255 * (color.r8 / float(31)))
 				palette_frame[color_id] = color5_to_color8(color_bits)
 			texture_animations_palette_frames[palette_frame_id] = palette_frame
 
@@ -674,13 +662,14 @@ func animate_palette(texture_anim: TextureAnimationData, map: Map) -> void: # TO
 	var dir: int = 1
 	var colors_per_palette: int = 16
 	var anim_fps: float = 45.0 # TODO why does 59 look too fast?
+	
+	var map_shader_material: ShaderMaterial = map.mesh.material_override as ShaderMaterial
 	while frame_id < texture_anim.num_frames:
 		if not is_instance_valid(map):
 			break
 		
 		var new_anim_palette_id: int = frame_id + texture_anim.animation_starting_index
 		var new_palette: PackedColorArray = texture_animations_palette_frames[new_anim_palette_id]
-		var map_shader_material: ShaderMaterial = map.mesh.material_override as ShaderMaterial
 		var new_texture_palette: PackedColorArray = map_shader_material.get_shader_parameter("palettes_colors")
 		for color_id in colors_per_palette:
 			new_texture_palette[color_id + (texture_anim.palette_id_to_animate * colors_per_palette)] = new_palette[color_id]
@@ -697,17 +686,32 @@ func animate_palette(texture_anim: TextureAnimationData, map: Map) -> void: # TO
 			elif frame_id == 0:
 				dir = 1
 			frame_id += dir
-	
-	#var new_palette: PackedColorArray = texture_animations_palette_frames
-	#var new_texture_palette: PackedColorArray = local_map_data.texture_palettes.duplicate()
-	#for color_id in colors_per_palette:
-		#new_texture_palette[color_id + (local_map_data.texture_animations[anim_id].palette_id_to_animate * colors_per_palette)]
-	
-	
 
-
-func animate_uv(texture_anim: TextureAnimationData) -> void:
-	pass # TODO map uv animations
+# TODO get uv_animations to work
+func animate_uv(texture_anim: TextureAnimationData, map: Map, anim_idx: int) -> void:
+	var frame_id: int = 0
+	var dir: int = 1
+	var anim_fps: float = 45.0 # TODO why does 59 look too fast?
+	
+	var map_shader_material: ShaderMaterial = map.mesh.material_override as ShaderMaterial
+	while frame_id < texture_anim.num_frames:
+		if not is_instance_valid(map):
+			break
+		
+		var frame_idxs: PackedFloat32Array = map_shader_material.get_shader_parameter("frame_idx")
+		frame_idxs[anim_idx] = float(frame_id)
+		map_shader_material.set_shader_parameter("frame_idx", frame_idxs)
+		
+		await Engine.get_main_loop().create_timer(texture_anim.frame_duration / anim_fps).timeout
+		if texture_anim.anim_technique == 0x1: # loop forward
+			frame_id += dir
+			frame_id = frame_id % texture_anim.num_frames
+		elif texture_anim.anim_technique == 0x2: # loop back and forth
+			if frame_id == texture_anim.num_frames - 1:
+				dir = -1
+			elif frame_id == 0:
+				dir = 1
+			frame_id += dir
 
 
 # https://ffhacktics.com/wiki/Maps/Mesh#Terrain

@@ -7,30 +7,36 @@ var map_data: MapData
 
 
 func play_animations(local_map_data: MapData) -> void:
-	var colors_per_palette: int = 16
+	# set up shader parameters for uv_animations
+	var canvas_positions: PackedVector2Array = []
+	var canvas_sizes: PackedVector2Array = []
+	var frame_positions: PackedVector2Array = []
+	var frame_idxs: PackedFloat32Array = []
 	
-	for anim_id: int in local_map_data.texture_animations.size():
+	var num_texture_animations: int = local_map_data.texture_animations.size()
+	canvas_positions.resize(num_texture_animations)
+	canvas_sizes.resize(num_texture_animations)
+	frame_positions.resize(num_texture_animations)
+	frame_idxs.resize(num_texture_animations)
+	
+	for anim_id: int in num_texture_animations: # TODO convert these values from pixels to UV space (0.0 - 1.0)
+		canvas_positions[anim_id] = Vector2(local_map_data.texture_animations[anim_id].canvas_x / MapData.TEXTURE_SIZE.x, 
+				local_map_data.texture_animations[anim_id].canvas_y / MapData.TEXTURE_SIZE.y)
+		canvas_sizes[anim_id] = Vector2(local_map_data.texture_animations[anim_id].canvas_width / MapData.TEXTURE_SIZE.x, 
+				local_map_data.texture_animations[anim_id].canvas_height / MapData.TEXTURE_SIZE.y)
+		frame_positions[anim_id] = Vector2(local_map_data.texture_animations[anim_id].frame1_x / MapData.TEXTURE_SIZE.x, 
+				local_map_data.texture_animations[anim_id].frame1_y / MapData.TEXTURE_SIZE.y)
+	
+	var map_shader_material: ShaderMaterial = mesh.material_override as ShaderMaterial
+	map_shader_material.set_shader_parameter("canvas_pos", canvas_positions)
+	map_shader_material.set_shader_parameter("canvas_size", canvas_sizes)
+	map_shader_material.set_shader_parameter("frame_pos", frame_positions)
+	map_shader_material.set_shader_parameter("frame_idx", frame_idxs)
+	
+	# start animations
+	for anim_id: int in num_texture_animations:
 		if [0x03, 0x04].has(local_map_data.texture_animations[anim_id].anim_technique): # if palette animation
 			local_map_data.animate_palette(local_map_data.texture_animations[anim_id], self)
-			#var frame_id: int = 0
-			#var dir: int = 1
-			#while frame_id < texture_anim.num_frames:
-				#swap_palette(texture_anim.palette_id_to_animate, texture_animations_palette_frames[frame_id + texture_anim.animation_starting_index], map)
-				##map.mesh.mesh = mesh
-				#await Engine.get_main_loop().create_timer(texture_anim.frame_duration / float(30)).timeout
-				#if texture_anim.anim_technique == 0x3: # loop forward
-					#frame_id += dir
-					#frame_id = frame_id % texture_anim.num_frames
-				#elif texture_anim.anim_technique == 0x4: # loop back and forth
-					#if frame_id == texture_anim.num_frames - 1:
-						#dir = -1
-					#elif frame_id == 0:
-						#dir = 1
-					#frame_id += dir
-			
-			#var new_palette: PackedColorArray = local_map_data.texture_animations_palette_frames
-			#var new_texture_palette: PackedColorArray = local_map_data.texture_palettes.duplicate()
-			#for color_id in colors_per_palette:
-				#new_texture_palette[color_id + (local_map_data.texture_animations[anim_id].palette_id_to_animate * colors_per_palette)]
-			#
-			#(mesh.material_override as ShaderMaterial).set_shader_parameter("palettes_colors", new_texture_palette)
+		elif [0x01, 0x02].has(local_map_data.texture_animations[anim_id].anim_technique): # if uv animation
+			local_map_data.animate_uv(local_map_data.texture_animations[anim_id], self, anim_id)
+		

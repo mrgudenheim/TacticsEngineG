@@ -154,7 +154,7 @@ func initialize_unit() -> void:
 	# 0x9b stasis sword
 	set_ability(0x9b)
 	set_primary_weapon(1)
-	set_sprite(98) # RAMUZA.SPR
+	set_sprite(98) # RAMUZA.SPR # TODO use sprite_id?
 	#set_sprite_file("RAMUZA.SPR")
 	
 	update_unit_facing(FacingVectors[Facings.SOUTH])

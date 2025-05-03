@@ -180,6 +180,7 @@ func on_map_selected(index: int) -> void:
 
 func get_map(new_map_data: MapData, position: Vector3, scale: Vector3) -> Map:
 	var new_map_instance: Map = map_tscn.instantiate()
+	new_map_instance.map_data = new_map_data
 	new_map_instance.mesh.mesh = new_map_data.mesh
 	new_map_instance.mesh.scale = scale
 	new_map_instance.position = position

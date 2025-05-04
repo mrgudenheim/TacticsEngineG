@@ -32,8 +32,8 @@ func _ready() -> void:
 	unit.primary_weapon_assigned.connect(func(id): weapon_options.select(id))
 
 func _process(delta: float) -> void:
-	if is_instance_valid(MapViewer.main_camera):
-		position = MapViewer.main_camera.unproject_position(unit_char_body.position) + Vector2(50, -50)
+	if is_instance_valid(BattleManager.main_camera):
+		position = BattleManager.main_camera.unproject_position(unit_char_body.position) + Vector2(50, -50)
 
 
 func populate_options() -> void:

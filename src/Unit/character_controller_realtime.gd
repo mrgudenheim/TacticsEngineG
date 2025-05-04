@@ -45,7 +45,7 @@ func _physics_process(delta: float) -> void:
 	if not unit.can_move:
 		return
 	
-	if MapViewer.main_camera.get_viewport().is_input_handled() == true:
+	if BattleManager.main_camera.get_viewport().is_input_handled() == true:
 		return
 	
 	# Get the input direction and handle the movement/deceleration.
@@ -67,7 +67,7 @@ func _physics_process(delta: float) -> void:
 		# https://docs.godotengine.org/en/stable/tutorials/physics/ray-casting.html
 		# get 3d click location based on raycast
 		var space_state := get_world_3d().direct_space_state
-		var cam: Camera3D = MapViewer.main_camera
+		var cam: Camera3D = BattleManager.main_camera
 		var mousepos: Vector2 = get_viewport().get_mouse_position()
 
 		var origin: Vector3 = cam.project_ray_origin(mousepos)
@@ -113,7 +113,7 @@ func rotate_camera(dir: int) -> void:
 	
 	new_rotation = Vector3(-26.54, new_y, new_z)
 	var tween: Tween = create_tween()
-	tween.tween_method(rotate_phantom_camera, MapViewer.main_camera.rotation_degrees, new_rotation, ROTATE_INTERVAL / ROTATE_SPEED)
+	tween.tween_method(rotate_phantom_camera, BattleManager.main_camera.rotation_degrees, new_rotation, ROTATE_INTERVAL / ROTATE_SPEED)
 	await tween.finished
 	
 	push_warning(str(camera_facing))
@@ -125,7 +125,7 @@ func rotate_phantom_camera(new_rotation_degress: Vector3) -> void:
 	#unit.char_body.rotation_degrees = Vector3(0, new_rotation_degress.y, 0)
 	camera_rotated.emit(Vector3(0, new_rotation_degress.y, 0))
 	
-	var camera_angle: float = MapViewer.main_camera.rotation_degrees.y
+	var camera_angle: float = BattleManager.main_camera.rotation_degrees.y
 	#var target_angle = fposmod(new_rotation_degress.y, 360)
 	var camera_angle_pos = fposmod(camera_angle, 360)
 		

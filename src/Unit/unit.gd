@@ -162,7 +162,7 @@ func initialize_unit() -> void:
 
 func _physics_process(delta: float) -> void:	
 	# FFTae (and all non-battles) don't use physics, so this can be turned off
-	if not is_instance_valid(MapViewer.main_camera):
+	if not is_instance_valid(BattleManager.main_camera):
 		set_physics_process(false)
 		return
 	

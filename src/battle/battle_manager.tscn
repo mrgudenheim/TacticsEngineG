@@ -1,22 +1,22 @@
 [gd_scene load_steps=23 format=3 uid="uid://card26cltbba1"]
 
-[ext_resource type="Script" uid="uid://cd31vmh881wm5" path="res://src/Map/map_viewer.gd" id="1_ojbyw"]
-[ext_resource type="PackedScene" uid="uid://26tg32417lfm" path="res://src/load_rom.tscn" id="2_4wnqg"]
-[ext_resource type="Shader" uid="uid://cq4x76xn7qnvi" path="res://src/Map/map_shader.gdshader" id="3_48rxl"]
-[ext_resource type="Script" uid="uid://dkngme7toaf3g" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="3_a072s"]
-[ext_resource type="Script" uid="uid://bg3no6nu8phv0" path="res://src/camera_control.gd" id="3_dpuna"]
-[ext_resource type="Script" uid="uid://05d30de5cm5w" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="4_8ik4g"]
-[ext_resource type="Script" uid="uid://c50vdp0vsl2rm" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="6_yx7fd"]
-[ext_resource type="PackedScene" uid="uid://buljw4afjva1d" path="res://src/Map/map.tscn" id="8_0n3mn"]
-[ext_resource type="Script" uid="uid://cl143w048iago" path="res://src/Unit/character_controller_realtime.gd" id="8_ncvx1"]
-[ext_resource type="PackedScene" uid="uid://dkudrb304m7t1" path="res://src/Unit/unit.tscn" id="8_pysrt"]
+[ext_resource type="Script" uid="uid://cd31vmh881wm5" path="res://src/battle/battle_manager.gd" id="1_hnd0w"]
+[ext_resource type="PackedScene" uid="uid://buljw4afjva1d" path="res://src/Map/map.tscn" id="2_1os5c"]
+[ext_resource type="Shader" uid="uid://cq4x76xn7qnvi" path="res://src/Map/map_shader.gdshader" id="3_d26o3"]
+[ext_resource type="PackedScene" uid="uid://dkudrb304m7t1" path="res://src/Unit/unit.tscn" id="4_wfrm2"]
+[ext_resource type="Script" uid="uid://dkngme7toaf3g" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="5_f2r6p"]
+[ext_resource type="Script" uid="uid://05d30de5cm5w" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="6_kb1q2"]
+[ext_resource type="Script" uid="uid://c50vdp0vsl2rm" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="7_l2dig"]
+[ext_resource type="Script" uid="uid://bg3no6nu8phv0" path="res://src/camera_control.gd" id="8_bp08t"]
+[ext_resource type="PackedScene" uid="uid://26tg32417lfm" path="res://src/load_rom.tscn" id="9_pbg35"]
+[ext_resource type="Script" uid="uid://cl143w048iago" path="res://src/Unit/character_controller_realtime.gd" id="10_d5yoq"]
 
 [sub_resource type="Environment" id="Environment_njvnp"]
 background_mode = 3
 background_canvas_max_layer = -3
 
 [sub_resource type="Resource" id="Resource_bid86"]
-script = ExtResource("4_8ik4g")
+script = ExtResource("6_kb1q2")
 duration = 1.0
 transition = 0
 ease = 2
@@ -55,8 +55,8 @@ material = SubResource("StandardMaterial3D_p2e2h")
 [sub_resource type="BoxMesh" id="BoxMesh_cqdh8"]
 material = SubResource("StandardMaterial3D_tjj5r")
 
-[node name="MapViewer" type="Node3D" node_paths=PackedStringArray("phantom_camera", "load_rom_button", "texture_viewer", "background_gradient", "menu_list", "map_dropdown", "orthographic_check", "menu_reminder", "map_size_label", "maps", "units", "controller", "icon_counter")]
-script = ExtResource("1_ojbyw")
+[node name="BattleManager" type="Node3D" node_paths=PackedStringArray("phantom_camera", "load_rom_button", "texture_viewer", "background_gradient", "menu_list", "map_dropdown", "orthographic_check", "menu_reminder", "map_size_label", "maps", "units", "controller", "icon_counter")]
+script = ExtResource("1_hnd0w")
 phantom_camera = NodePath("PhantomCamera3D")
 load_rom_button = NodePath("DebugOptions/MarginContainer/VBoxContainer2/LoadRom")
 texture_viewer = NodePath("SpriteViewer")
@@ -67,10 +67,10 @@ orthographic_check = NodePath("DebugOptions/MarginContainer/VBoxContainer2/VBoxC
 menu_reminder = NodePath("DebugOptions/MarginContainer/VBoxContainer2/MenuReminder")
 map_size_label = NodePath("DebugOptions/MarginContainer/VBoxContainer2/VBoxContainer/MapSize")
 maps = NodePath("Maps")
-map_tscn = ExtResource("8_0n3mn")
-map_shader = ExtResource("3_48rxl")
+map_tscn = ExtResource("2_1os5c")
+map_shader = ExtResource("3_d26o3")
 units = NodePath("Units")
-unit_tscn = ExtResource("8_pysrt")
+unit_tscn = ExtResource("4_wfrm2")
 controller = NodePath("CharacterController")
 icon_counter = NodePath("IconGridContainer")
 
@@ -79,7 +79,7 @@ environment = SubResource("Environment_njvnp")
 
 [node name="PhantomCamera3D" type="Node3D" parent="." node_paths=PackedStringArray("follow_target")]
 transform = Transform3D(0.707107, -0.31551, 0.632763, 1.49012e-08, 0.894934, 0.446163, -0.707107, -0.31551, 0.632763, 126.553, 89.2326, 126.553)
-script = ExtResource("3_a072s")
+script = ExtResource("5_f2r6p")
 follow_mode = 6
 follow_target = NodePath("../Maps")
 tween_resource = SubResource("Resource_bid86")
@@ -97,14 +97,14 @@ size = 12.0
 [node name="PhantomCameraHost" type="Node" parent="Camera3D"]
 process_priority = 300
 process_physics_priority = 300
-script = ExtResource("6_yx7fd")
+script = ExtResource("7_l2dig")
 
 [node name="CameraPivot" type="Node3D" parent="."]
 
 [node name="CameraController" type="Node3D" parent="." node_paths=PackedStringArray("sprite", "camera", "camera_pivot")]
 transform = Transform3D(1, 0, 0, 0, 0.999999, 0, 0, 0, 1, 0, 0, 0)
 visible = false
-script = ExtResource("3_dpuna")
+script = ExtResource("8_bp08t")
 sprite = NodePath("../SpriteViewer")
 camera = NodePath("../Camera3D")
 camera_pivot = NodePath("CameraPivot")
@@ -131,7 +131,7 @@ theme_override_constants/margin_bottom = 5
 [node name="VBoxContainer2" type="VBoxContainer" parent="DebugOptions/MarginContainer"]
 layout_mode = 2
 
-[node name="LoadRom" parent="DebugOptions/MarginContainer/VBoxContainer2" instance=ExtResource("2_4wnqg")]
+[node name="LoadRom" parent="DebugOptions/MarginContainer/VBoxContainer2" instance=ExtResource("9_pbg35")]
 layout_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="DebugOptions/MarginContainer/VBoxContainer2"]
@@ -166,7 +166,7 @@ grow_vertical = 2
 texture = SubResource("GradientTexture2D_1dnhu")
 
 [node name="CharacterController" type="Node3D" parent="." node_paths=PackedStringArray("phantom_camera")]
-script = ExtResource("8_ncvx1")
+script = ExtResource("10_d5yoq")
 phantom_camera = NodePath("../PhantomCamera3D")
 
 [node name="SpriteViewer" type="Sprite3D" parent="."]

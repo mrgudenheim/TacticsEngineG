@@ -266,18 +266,19 @@ func initialize_map_tiles() -> void:
 	for map_chunk: Map in map_chunks:
 		for tile: TerrainTile in map_chunk.map_data.terrain_tiles:
 			var total_location: Vector2i = tile.location
-			total_location = total_location * Vector2i(map_chunk.mesh.scale.x, map_chunk.mesh.scale.z)
-			var mirror_shift: Vector2i = Vector2i(map_chunk.mesh.scale.x, map_chunk.mesh.scale.z) # ex. (0,0) should be (-1, -1) when mirrored across x and y
-			if map_chunk.mesh.scale.x == 1:
+			var map_scale: Vector2i = Vector2i(map_chunk.mesh.scale.x, map_chunk.mesh.scale.z)
+			total_location = total_location * map_scale
+			var mirror_shift: Vector2i = map_scale # ex. (0,0) should be (-1, -1) when mirrored across x and y
+			if map_scale.x == 1:
 				mirror_shift.x = 0
-			if map_chunk.mesh.scale.y == 1:
+			if map_scale.y == 1:
 				mirror_shift.y = 0
 			total_location = total_location + mirror_shift
 			total_location = total_location + Vector2i(map_chunk.position.x, map_chunk.position.z)
 			if not total_map_tiles.has(total_location):
 				total_map_tiles[total_location] = []
 			var total_tile: TerrainTile = tile.duplicate()
-			total_tile.location = total_location
+			total_tile.location = total_location			
 			total_map_tiles[total_location].append(total_tile)
 
 

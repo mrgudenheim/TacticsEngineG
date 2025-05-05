@@ -142,39 +142,43 @@ func on_map_selected(index: int) -> void:
 	push_warning(middle_position)
 	
 	# add player unit
-	var new_unit: UnitData = unit_tscn.instantiate()
-	units.add_child(new_unit)
-	new_unit.initialize_unit()
-	new_unit.char_body.global_position = middle_position + Vector3(-0.5, 5, 0)
-	new_unit.char_body.global_position = random_position
-	#new_unit.char_body.global_position = Vector3(5.5, 15, -5.5)
-	#new_unit.set_sprite_file("AGURI.SPR") # Agrias
+	var new_unit: UnitData = spawn_unit(random_position, 0x01)
 	new_unit.is_player_controlled = true
-	#new_unit.char_body.connect(controller.camera_rotated, set_rotation_degrees)
-	controller.camera_rotated.connect(new_unit.char_body.set_rotation_degrees)
 	
+	# sest up character controller
 	controller.unit = new_unit
 	controller.velocity_set.connect(controller.unit.update_unit_facing)
-	#controller.camera_facing_changed.connect(controller.unit.update_animation_facing) # handled in controller with a call_group command
 	phantom_camera.follow_target = new_unit.char_body
-	controller.rotate_camera(1)
+	controller.rotate_camera(1) # HACK workaround for bug where controls are off until camera is rotated
 	#controller.rotate_phantom_camera(Vector3(-26.54, 45, 0))
 	
 	# add non-player unit
-	var new_unit2: UnitData = unit_tscn.instantiate()
-	units.add_child(new_unit2)
-	new_unit2.initialize_unit()
 	random_position = Vector3(randi_range(map_width_range.x, map_width_range.y) + 0.5, randi_range(10, 15), -randi_range(map_length_range.x, map_length_range.y) - 0.5)
-	new_unit2.char_body.global_position = random_position
-	#new_unit2.char_body.global_position = Vector3(3.5, 15, -5.5)
-	new_unit2.set_sprite_file("ARU.SPR") # Algus
-	#new_unit2.char_body.connect(, set_rotation_degrees)
-	controller.camera_rotated.connect(new_unit2.char_body.set_rotation_degrees)
+	var new_unit2: UnitData = spawn_unit(random_position, 0x07)
 	
+	# set up what to do when target unit is knocked out
 	new_unit2.knocked_out.connect(load_random_map)
 	new_unit2.knocked_out.connect(increment_counter)
 	
+	random_position = Vector3(randi_range(map_width_range.x, map_width_range.y) + 0.5, randi_range(10, 15), -randi_range(map_length_range.x, map_length_range.y) - 0.5)
+	var new_unit3: UnitData = spawn_unit(random_position, 0x4a)
+	
+	
+	
 	hide_debug_ui()
+
+
+func spawn_unit(position: Vector3, job_id: int) -> UnitData:
+	var new_unit: UnitData = unit_tscn.instantiate()
+	units.add_child(new_unit)
+	new_unit.initialize_unit()
+	new_unit.char_body.global_position = position
+	new_unit.job_id = job_id
+	new_unit.job_data = RomReader.scus_data.jobs_data[job_id]
+	new_unit.set_sprite_by_id(new_unit.job_data.sprite_id)
+	controller.camera_rotated.connect(new_unit.char_body.set_rotation_degrees) # have sprite update as camera rotates
+	
+	return new_unit
 
 
 func get_map(new_map_data: MapData, position: Vector3, scale: Vector3) -> Map:

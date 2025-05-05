@@ -31,6 +31,7 @@ const NUM_WEAPONS = 122
 
 var sprs: Array[Spr] = []
 var spr_file_name_to_id: Dictionary[String, int] = {}
+var spr_id_file_idxs: PackedInt32Array = [] # 0x60 starts generic jobs
 
 var shps: Array[Shp] = []
 var seqs: Array[Seq] = []
@@ -81,6 +82,8 @@ func process_rom() -> void:
 	clear_data()
 	
 	var start_time: int = Time.get_ticks_msec()
+	
+	RomReader.spr_id_file_idxs.resize(NUM_SPRITESHEETS)
 	
 	# http://wiki.osdev.org/ISO_9660#Directories
 	process_file_records(DIRECTORY_DATA_SECTORS_ROOT)

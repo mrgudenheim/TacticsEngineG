@@ -12,6 +12,7 @@ signal knocked_out(unit: UnitData)
 signal spritesheet_changed(new_spritesheet: ImageTexture)
 
 var is_player_controlled: bool = false
+var is_active: bool = false
 
 @export var char_body: CharacterBody3D
 @export var animation_manager: UnitAnimationManager
@@ -23,6 +24,7 @@ var is_player_controlled: bool = false
 var character_id: int = 0
 var unit_index_formation: int = 0
 var job_id: int = 0
+var job_data: JobData
 var sprite_palette_id: int = 0
 var team_id: int = 0
 var player_control: bool = true
@@ -154,13 +156,13 @@ func initialize_unit() -> void:
 	# 0x9b stasis sword
 	set_ability(0x9b)
 	set_primary_weapon(1)
-	set_sprite(98) # RAMUZA.SPR # TODO use sprite_id?
-	#set_sprite_file("RAMUZA.SPR")
+	set_sprite_by_file_idx(98) # RAMUZA.SPR # TODO use sprite_id?
+	#set_sprite_by_file_name("RAMUZA.SPR")
 	
 	update_unit_facing(FacingVectors[Facings.SOUTH])
 
 
-func _physics_process(delta: float) -> void:	
+func _physics_process(delta: float) -> void:
 	# FFTae (and all non-battles) don't use physics, so this can be turned off
 	if not is_instance_valid(BattleManager.main_camera):
 		set_physics_process(false)
@@ -385,7 +387,7 @@ func set_primary_weapon(new_weapon_id: int) -> void:
 	primary_weapon_assigned.emit(new_weapon_id)
 
 
-func set_sprite(new_sprite_file_idx: int) -> void:
+func set_sprite_by_file_idx(new_sprite_file_idx: int) -> void:
 	sprite_file_idx = new_sprite_file_idx
 	var spr: Spr = RomReader.sprs[new_sprite_file_idx]
 	if spr.file_name == "WEP.SPR":
@@ -402,9 +404,14 @@ func set_sprite(new_sprite_file_idx: int) -> void:
 	debug_menu.anim_id_spin.value = idle_animation_id
 
 
-func set_sprite_file(sprite_file_name: String) -> void:
+func set_sprite_by_file_name(sprite_file_name: String) -> void:
 	var new_sprite_file_idx: int = RomReader.file_records[sprite_file_name].type_index
-	set_sprite(new_sprite_file_idx)
+	set_sprite_by_file_idx(new_sprite_file_idx)
+
+
+func set_sprite_by_id(new_sprite_id: int) -> void:
+	var sprite_file_idx = RomReader.spr_id_file_idxs[new_sprite_id]
+	set_sprite_by_file_idx(sprite_file_idx)
 
 
 func set_sprite_palette(new_palette_id: int) -> void:

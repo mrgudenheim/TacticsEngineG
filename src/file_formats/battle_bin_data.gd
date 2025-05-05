@@ -174,3 +174,4 @@ func _load_battle_bin_sprite_data() -> void:
 		if spritesheet_lba != 0:
 			spritesheet_file_name = RomReader.lba_to_file_name[spritesheet_lba]
 		RomReader.spr_file_name_to_id[spritesheet_file_name] = sprite_id
+		RomReader.spr_id_file_idxs[sprite_id] = RomReader.file_records[spritesheet_file_name].type_index

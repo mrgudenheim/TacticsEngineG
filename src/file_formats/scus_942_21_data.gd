@@ -9,7 +9,7 @@ class SkillsetData:
 
 
 var jobs_start: int = 0x518b8 # 0x30 byte long entries
-var jobs_data: Array[JobData] = []
+var jobs_data: Array[JobData] = [] # special jobs 0x01 - 0x49, generics are 0x4a - 0x5d, generic monsters 0x5e - 0x8d, special monsters 0x8e+
 
 var skillsets_start: int = 0x55294 # 0x55311 start of 05 Basic Skill, 0x19 bytes long
 var skillsets_data: Array[SkillsetData] = []

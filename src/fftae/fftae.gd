@@ -502,7 +502,7 @@ func _on_sprite_options_item_selected(index: int) -> void:
 	#UiManager.option_button_select_text(ui_manager.shp_options, spr.shp_name)
 	#ui_manager.shp_options.item_selected.emit(ui_manager.shp_options.selected)
 	
-	preview_manager.unit.set_sprite(index)
+	preview_manager.unit.set_sprite_by_file_idx(index)
 	preview_manager.unit.animation_manager._on_animation_changed()
 
 

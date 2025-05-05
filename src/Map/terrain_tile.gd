@@ -15,3 +15,27 @@ var no_walk: int = 0 # Can't walk on this tile
 var no_cursor: int = 0 # Can't move cursor to this tile 
 
 var default_camera_position_id: int = 0 # Controls which angles the camera will auto-rotate to when a unit enters this tile. 
+
+var height_avg: float = (height + slope_height) / 2.0
+
+func duplicate() -> TerrainTile:
+	var new_terrain_tile: TerrainTile = TerrainTile.new()
+	
+	new_terrain_tile.layer = layer
+	new_terrain_tile.location = location
+	new_terrain_tile.surface_type_id = surface_type_id
+	new_terrain_tile.height = height 
+	new_terrain_tile.depth = depth
+	new_terrain_tile.slope_height = slope_height 
+	new_terrain_tile.slope_type_id = slope_type_id
+	new_terrain_tile.thickness = thickness 
+	new_terrain_tile.no_stand_select = no_stand_select 
+	new_terrain_tile.shading = shading 
+	new_terrain_tile.no_walk = no_walk 
+	new_terrain_tile.no_cursor = no_cursor 
+
+	new_terrain_tile.default_camera_position_id = 0 # Controls which angles the camera will auto-rotate to when a unit enters this tile. 
+
+	new_terrain_tile.height_avg = height + (slope_height / 2.0)
+	
+	return new_terrain_tile

@@ -15,6 +15,7 @@ static var main_camera: Camera3D
 @export var map_size_label: Label
 
 @export var maps: Node3D
+var total_map_tiles: Dictionary[Vector2i, Array] = {} # Array[TerrainTile]
 @export var map_tscn: PackedScene
 @export var map_shader: Shader
 
@@ -124,6 +125,8 @@ func on_map_selected(index: int) -> void:
 	clear_units()
 	
 	maps.add_child(instantiate_map(index, not walled_maps.has(index)))
+	initialize_map_tiles()
+	
 	var map_width_range: Vector2i = Vector2i(0, map_data.map_width)
 	var map_length_range: Vector2i = Vector2i(0, map_data.map_length)
 	if not walled_maps.has(index):
@@ -250,8 +253,36 @@ func instantiate_map(map_idx: int, mirror: bool) -> Node3D:
 	
 	return map_holder
 
+# TODO why are locations double counted in total_map_tiles? Zirekile Falls should have 990 tile locations when mirrored, but only has 957
+func initialize_map_tiles() -> void:
+	#var num_maps: int = maps.get_child_count()
+	var map_chunks: Array[Map] = []
+	#maps_children.resize(num_maps)
+	
+	for map_holder: Node3D in maps.get_children():
+		for map_chunk: Map in map_holder.get_children() as Array[Map]:
+			map_chunks.append(map_chunk)
+	
+	for map_chunk: Map in map_chunks:
+		for tile: TerrainTile in map_chunk.map_data.terrain_tiles:
+			var total_location: Vector2i = tile.location
+			total_location = total_location * Vector2i(map_chunk.mesh.scale.x, map_chunk.mesh.scale.z)
+			var mirror_shift: Vector2i = Vector2i(map_chunk.mesh.scale.x, map_chunk.mesh.scale.z) # ex. (0,0) should be (-1, -1) when mirrored across x and y
+			if map_chunk.mesh.scale.x == 1:
+				mirror_shift.x = 0
+			if map_chunk.mesh.scale.y == 1:
+				mirror_shift.y = 0
+			total_location = total_location + mirror_shift
+			total_location = total_location + Vector2i(map_chunk.position.x, map_chunk.position.z)
+			if not total_map_tiles.has(total_location):
+				total_map_tiles[total_location] = []
+			var total_tile: TerrainTile = tile.duplicate()
+			total_tile.location = total_location
+			total_map_tiles[total_location].append(total_tile)
+
 
 func clear_maps() -> void:
+	total_map_tiles.clear()
 	for child: Node in maps.get_children():
 		child.queue_free()
 

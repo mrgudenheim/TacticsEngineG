@@ -44,8 +44,8 @@ var texture_color_indices: PackedInt32Array = []
 var background_gradient_top: Color = Color.DIM_GRAY
 var background_gradient_bottom: Color = Color.BLACK
 
-var map_width: int = 0 # width in tiles
-var map_length: int = 0 # length in tiles
+var map_width: int = 0 # width (x) in tiles
+var map_length: int = 0 # length (y) in tiles
 var terrain_tiles: Array[TerrainTile] = []
 
 # texture animations

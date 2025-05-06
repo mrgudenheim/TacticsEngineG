@@ -145,6 +145,8 @@ func on_map_selected(index: int) -> void:
 	push_warning(middle_position)
 	
 	# add player unit
+	var random_tile: TerrainTile = get_random_stand_terrain_tile()
+	random_position =  Vector3(random_tile.location.x + 0.5, randi_range(10, 15), random_tile.location.y + 0.5)
 	var new_unit: UnitData = spawn_unit(random_position, 0x01)
 	new_unit.is_player_controlled = true
 	
@@ -156,16 +158,17 @@ func on_map_selected(index: int) -> void:
 	#controller.rotate_phantom_camera(Vector3(-26.54, 45, 0))
 	
 	# add non-player unit
-	random_position = Vector3(randi_range(map_width_range.x, map_width_range.y) + 0.5, randi_range(10, 15), -randi_range(map_length_range.x, map_length_range.y) - 0.5)
+	random_tile = get_random_stand_terrain_tile()
+	random_position =  Vector3(random_tile.location.x + 0.5, randi_range(10, 15), random_tile.location.y + 0.5)
 	var new_unit2: UnitData = spawn_unit(random_position, 0x07)
 	
 	# set up what to do when target unit is knocked out
 	new_unit2.knocked_out.connect(load_random_map)
 	new_unit2.knocked_out.connect(increment_counter)
 	
-	random_position = Vector3(randi_range(map_width_range.x, map_width_range.y) + 0.5, randi_range(10, 15), -randi_range(map_length_range.x, map_length_range.y) - 0.5)
+	random_tile = get_random_stand_terrain_tile()
+	random_position =  Vector3(random_tile.location.x + 0.5, randi_range(10, 15), random_tile.location.y + 0.5)
 	var new_unit3: UnitData = spawn_unit(random_position, 0x4a)
-	
 	
 	
 	hide_debug_ui()
@@ -239,25 +242,24 @@ func instantiate_map(map_idx: int, mirror: bool) -> Node3D:
 	if not map_data.is_initialized:
 		map_data.init_map()
 	
-	map_holder.add_child(get_map(map_data, Vector3.ZERO, Vector3.ONE))
+	map_holder.add_child(get_map(map_data, Vector3.ZERO, Vector3(1, 1, -1)))
 	
 	if mirror:
-		map_holder.add_child(get_map(map_data, Vector3.ZERO, Vector3(1, 1, -1)))
-		map_holder.add_child(get_map(map_data, Vector3.FORWARD * map_data.map_length * 2, Vector3(1, 1, -1)))
-		map_holder.add_child(get_map(map_data, Vector3.ZERO, Vector3(-1, 1, 1)))
-		map_holder.add_child(get_map(map_data, Vector3.RIGHT * map_data.map_width * 2, Vector3(-1, 1, 1)))
+		map_holder.add_child(get_map(map_data, Vector3.ZERO, Vector3(1, 1, 1)))
+		map_holder.add_child(get_map(map_data, Vector3.FORWARD * map_data.map_length * -2, Vector3(1, 1, 1)))
 		map_holder.add_child(get_map(map_data, Vector3.ZERO, Vector3(-1, 1, -1)))
-		map_holder.add_child(get_map(map_data, Vector3.FORWARD * map_data.map_length * 2, Vector3(-1, 1, -1)))
 		map_holder.add_child(get_map(map_data, Vector3.RIGHT * map_data.map_width * 2, Vector3(-1, 1, -1)))
-		map_holder.add_child(get_map(map_data, (Vector3.RIGHT * map_data.map_width * 2) + (Vector3.FORWARD * map_data.map_length * 2), Vector3(-1, 1, -1)))
+		map_holder.add_child(get_map(map_data, Vector3.ZERO, Vector3(-1, 1, 1)))
+		map_holder.add_child(get_map(map_data, Vector3.FORWARD * map_data.map_length * -2, Vector3(-1, 1, 1)))
+		map_holder.add_child(get_map(map_data, Vector3.RIGHT * map_data.map_width * 2, Vector3(-1, 1, 1)))
+		map_holder.add_child(get_map(map_data, (Vector3.RIGHT * map_data.map_width * 2) + (Vector3.FORWARD * map_data.map_length * -2), Vector3(-1, 1, 1)))
 	
 	return map_holder
 
-# TODO why are locations double counted in total_map_tiles? Zirekile Falls should have 990 tile locations when mirrored, but only has 957
+
 func initialize_map_tiles() -> void:
-	#var num_maps: int = maps.get_child_count()
+	total_map_tiles.clear()
 	var map_chunks: Array[Map] = []
-	#maps_children.resize(num_maps)
 	
 	for map_holder: Node3D in maps.get_children():
 		for map_chunk: Map in map_holder.get_children() as Array[Map]:
@@ -265,8 +267,11 @@ func initialize_map_tiles() -> void:
 	
 	for map_chunk: Map in map_chunks:
 		for tile: TerrainTile in map_chunk.map_data.terrain_tiles:
+			if tile.no_cursor == 1:
+				continue
+			
 			var total_location: Vector2i = tile.location
-			var map_scale: Vector2i = Vector2i(map_chunk.mesh.scale.x, map_chunk.mesh.scale.z)
+			var map_scale: Vector2i = Vector2i(map_chunk.mesh.scale.x, -map_chunk.mesh.scale.z)
 			total_location = total_location * map_scale
 			var mirror_shift: Vector2i = map_scale # ex. (0,0) should be (-1, -1) when mirrored across x and y
 			if map_scale.x == 1:
@@ -278,14 +283,36 @@ func initialize_map_tiles() -> void:
 			if not total_map_tiles.has(total_location):
 				total_map_tiles[total_location] = []
 			var total_tile: TerrainTile = tile.duplicate()
-			total_tile.location = total_location			
+			total_tile.location = total_location
 			total_map_tiles[total_location].append(total_tile)
+
+
+func get_random_terrain_tile() -> TerrainTile:
+	if total_map_tiles.size() == 0:
+		push_warning("No map tiles")
+	
+	var random_key: Vector2i = total_map_tiles.keys().pick_random()
+	var tiles: Array = total_map_tiles[random_key]
+	var tile: TerrainTile = tiles.pick_random()
+	
+	return tile
+
+
+func get_random_stand_terrain_tile() -> TerrainTile:
+	var tile: TerrainTile
+	for tile_idx: int in total_map_tiles.size():
+		tile = get_random_terrain_tile()
+		if tile.no_stand_select == 0 and tile.no_walk == 0:
+			break
+	
+	return tile
 
 
 func clear_maps() -> void:
 	total_map_tiles.clear()
 	for child: Node in maps.get_children():
 		child.queue_free()
+		maps.remove_child(child)
 
 
 func clear_units() -> void:

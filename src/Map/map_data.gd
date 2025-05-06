@@ -4,6 +4,7 @@ class_name MapData
 const TILE_SIDE_LENGTH: int = 28
 const UNITS_PER_HEIGHT: int = 12
 const SCALE: float = 1.0 / TILE_SIDE_LENGTH
+const HEIGHT_SCALE: float = UNITS_PER_HEIGHT / (TILE_SIDE_LENGTH * 1.0)
 
 var is_initialized: bool = false
 
@@ -260,7 +261,7 @@ func _create_mesh() -> void:
 		quad_colors.fill(Color.WHITE)
 		
 		for vert_index: int in [0, 1, 2]:
-			st.set_normal(quad_normals[vert_index] * SCALE)
+			st.set_normal(quad_normals[vert_index] * SCALE) # TODO why is there error on MAP105 "terminate"
 			st.set_uv(quad_uvs[vert_index])
 			st.set_color(Color.WHITE)
 			st.add_vertex(quad_vertices[vert_index] * SCALE)

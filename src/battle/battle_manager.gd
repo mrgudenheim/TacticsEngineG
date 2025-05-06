@@ -1,10 +1,14 @@
 class_name BattleManager
 extends Node3D
 
+# debug vars
+@export var texture_viewer: Sprite3D # for debugging
+@export var reference_quad: MeshInstance3D # for debugging
+
 static var main_camera: Camera3D
 @export var phantom_camera: PhantomCamera3D
 @export var load_rom_button: LoadRomButton
-@export var texture_viewer: Sprite3D # for debugging
+
 #@export var camera_controller: CameraController
 @export var background_gradient: TextureRect
 
@@ -208,6 +212,7 @@ func get_map(new_map_data: MapData, position: Vector3, scale: Vector3) -> Map:
 		new_map_instance.collision_shape.shape = get_scaled_collision_shape(new_map_data.mesh, scale)
 	
 	new_map_instance.play_animations(new_map_data)
+	new_map_instance.input_event.connect(on_map_tile_hover)
 	
 	return new_map_instance
 
@@ -335,3 +340,31 @@ func increment_counter(unit: UnitData) -> void:
 	var icon_rect: TextureRect = TextureRect.new()
 	icon_rect.texture = ImageTexture.create_from_image(knocked_out_icon)
 	icon_counter.add_child(icon_rect)
+
+
+func on_map_tile_hover(camera: Camera3D, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
+	#push_warning(event_position)
+	var tile_location: Vector2i = Vector2i(floor(event_position.x), floor(event_position.z))
+	var tile: TerrainTile
+	if total_map_tiles.has(tile_location):
+		for new_tile: TerrainTile in total_map_tiles[tile_location]:
+			var current_vert_error: float = 999.9
+			var new_vert_error: float = 999.9
+			if tile == null:
+				tile = new_tile
+				current_vert_error = abs((new_tile.height_avg * MapData.HEIGHT_SCALE) - event_position.z)
+			else:
+				new_vert_error = abs((new_tile.height_avg * MapData.HEIGHT_SCALE) - event_position.z)
+				if new_vert_error < current_vert_error:
+					current_vert_error = new_vert_error
+					tile = new_tile
+	
+	if tile == null:
+		return
+	
+	var tile_position: Vector3 = Vector3(tile.location.x, tile.height_avg, tile.location.y)
+	var tile_world_position: Vector3 = tile_position * Vector3(1, MapData.HEIGHT_SCALE, 1)
+	reference_quad.position = tile_world_position + Vector3(0.5, 0.05, 0.5)
+	
+	push_warning()
+	

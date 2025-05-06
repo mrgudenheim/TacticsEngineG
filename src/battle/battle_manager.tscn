@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://card26cltbba1"]
+[gd_scene load_steps=25 format=3 uid="uid://card26cltbba1"]
 
 [ext_resource type="Script" uid="uid://cd31vmh881wm5" path="res://src/battle/battle_manager.gd" id="1_hnd0w"]
 [ext_resource type="PackedScene" uid="uid://buljw4afjva1d" path="res://src/Map/map.tscn" id="2_1os5c"]
@@ -35,7 +35,24 @@ fill_from = Vector2(0.5, 1)
 fill_to = Vector2(0.5, 0)
 metadata/_snap_enabled = true
 
+[sub_resource type="Gradient" id="Gradient_hnd0w"]
+offsets = PackedFloat32Array(0.5, 1)
+colors = PackedColorArray(0, 0.116667, 1, 0, 0, 0.116667, 1, 0.784314)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_1os5c"]
+gradient = SubResource("Gradient_hnd0w")
+width = 24
+height = 24
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.85, 0)
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_05x7e"]
+render_priority = 1
+transparency = 4
+shading_mode = 0
+albedo_texture = SubResource("GradientTexture2D_1os5c")
+texture_filter = 0
 
 [sub_resource type="QuadMesh" id="QuadMesh_foefj"]
 material = SubResource("StandardMaterial3D_05x7e")
@@ -55,11 +72,12 @@ material = SubResource("StandardMaterial3D_p2e2h")
 [sub_resource type="BoxMesh" id="BoxMesh_cqdh8"]
 material = SubResource("StandardMaterial3D_tjj5r")
 
-[node name="BattleManager" type="Node3D" node_paths=PackedStringArray("phantom_camera", "load_rom_button", "texture_viewer", "background_gradient", "menu_list", "map_dropdown", "orthographic_check", "menu_reminder", "map_size_label", "maps", "units", "controller", "icon_counter")]
+[node name="BattleManager" type="Node3D" node_paths=PackedStringArray("texture_viewer", "reference_quad", "phantom_camera", "load_rom_button", "background_gradient", "menu_list", "map_dropdown", "orthographic_check", "menu_reminder", "map_size_label", "maps", "units", "controller", "icon_counter")]
 script = ExtResource("1_hnd0w")
+texture_viewer = NodePath("SpriteViewer")
+reference_quad = NodePath("ReferenceQuad")
 phantom_camera = NodePath("PhantomCamera3D")
 load_rom_button = NodePath("DebugOptions/MarginContainer/VBoxContainer2/LoadRom")
-texture_viewer = NodePath("SpriteViewer")
 background_gradient = NodePath("BackgroundCanvasLayer/TextureRect")
 menu_list = NodePath("DebugOptions/MarginContainer/VBoxContainer2/VBoxContainer")
 map_dropdown = NodePath("DebugOptions/MarginContainer/VBoxContainer2/VBoxContainer/MapDropdown")
@@ -180,8 +198,7 @@ texture_filter = 0
 transform = Transform3D(1, 0, 0, 0, 0.553391, -0.832921, 0, 0.832921, 0.553391, 0, 3.51982, 2.72607)
 
 [node name="ReferenceQuad" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 12, -48, 12)
-visible = false
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 21.5, 2, 19.5)
 mesh = SubResource("QuadMesh_foefj")
 
 [node name="CPUParticles3D" type="CPUParticles3D" parent="."]

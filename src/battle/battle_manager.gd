@@ -348,13 +348,12 @@ func on_map_tile_hover(camera: Camera3D, event: InputEvent, event_position: Vect
 	var tile: TerrainTile
 	if total_map_tiles.has(tile_location):
 		for new_tile: TerrainTile in total_map_tiles[tile_location]:
-			var current_vert_error: float = 999.9
 			var new_vert_error: float = 999.9
 			if tile == null:
 				tile = new_tile
-				current_vert_error = abs((new_tile.height_mid * MapData.HEIGHT_SCALE) - event_position.z)
+				current_vert_error = abs(((new_tile.height_mid + tile.depth) * MapData.HEIGHT_SCALE) - event_position.z)
 			else:
-				new_vert_error = abs((new_tile.height_mid * MapData.HEIGHT_SCALE) - event_position.z)
+				new_vert_error = abs(((new_tile.height_mid + tile.depth) * MapData.HEIGHT_SCALE) - event_position.z)
 				if new_vert_error < current_vert_error:
 					current_vert_error = new_vert_error
 					tile = new_tile
@@ -362,7 +361,7 @@ func on_map_tile_hover(camera: Camera3D, event: InputEvent, event_position: Vect
 	if tile == null:
 		return
 	
-	var tile_position: Vector3 = Vector3(tile.location.x, tile.height_mid, tile.location.y)
+	var tile_position: Vector3 = Vector3(tile.location.x, tile.height_mid + tile.depth, tile.location.y)
 	var tile_world_position: Vector3 = tile_position * Vector3(1, MapData.HEIGHT_SCALE, 1)
 	reference_quad.position = tile_world_position + Vector3(0.5, 0.05, 0.5)
 	

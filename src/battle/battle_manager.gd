@@ -347,6 +347,7 @@ func on_map_tile_hover(camera: Camera3D, event: InputEvent, event_position: Vect
 	var tile_location: Vector2i = Vector2i(floor(event_position.x), floor(event_position.z))
 	var tile: TerrainTile
 	if total_map_tiles.has(tile_location):
+		var current_vert_error: float = 999.9
 		for new_tile: TerrainTile in total_map_tiles[tile_location]:
 			var new_vert_error: float = 999.9
 			if tile == null:

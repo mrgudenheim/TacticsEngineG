@@ -348,28 +348,23 @@ func increment_counter(unit: UnitData) -> void:
 
 func on_map_tile_hover(camera: Camera3D, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
 	#push_warning(event_position)
-	var tile_location: Vector2i = Vector2i(floor(event_position.x), floor(event_position.z))
-	var tile: TerrainTile
-	if total_map_tiles.has(tile_location):
-		var current_vert_error: float = 999.9
-		for new_tile: TerrainTile in total_map_tiles[tile_location]:
-			if tile == null:
-				tile = new_tile
-				current_vert_error = abs(((new_tile.height_mid + new_tile.depth) * MapData.HEIGHT_SCALE) - event_position.y)
-			else:
-				var new_vert_error: float = abs(((new_tile.height_mid + new_tile.depth) * MapData.HEIGHT_SCALE) - event_position.y)
-				if new_vert_error < current_vert_error:
-					current_vert_error = new_vert_error
-					tile = new_tile
+	var tile: TerrainTile = get_tile(event_position)
 	
-	if tile == null or tile == current_tile_hover:
+	# handle clicking tile
+	if event.is_action_pressed("primary_action"):
+		var path: Array[TerrainTile] = controller.unit.get_map_path(controller.unit.tile_position, tile, controller.unit.map_paths)
+		await controller.unit.travel_path(path)
+		clear_path()
+		controller.unit.map_paths = controller.unit.get_map_paths(total_map_tiles)
 		return
 	
+	# don't update path if hovered tile has not changed or is not valid for moving
+	if tile == null or tile == current_tile_hover:
+		return
 	current_tile_hover = tile
 	
-	# show pathe
-	for child: Node3D in path_container.get_children():
-		child.queue_free()
+	# show path
+	clear_path()
 	
 	#controller.unit.map_paths = controller.unit.get_map_paths(total_map_tiles) # DONT for every tile hover, do once and cache
 	var path: Array[TerrainTile] = controller.unit.get_map_path(controller.unit.tile_position, tile, controller.unit.map_paths)
@@ -382,4 +377,26 @@ func on_map_tile_hover(camera: Camera3D, event: InputEvent, event_position: Vect
 	reference_quad.position = tile.get_world_position() + Vector3(0, 0.05, 0)
 	
 	#push_warning()
+
+
+func get_tile(input_position: Vector3) -> TerrainTile:
+	var tile_location: Vector2i = Vector2i(floor(input_position.x), floor(input_position.z))
+	var tile: TerrainTile
+	if total_map_tiles.has(tile_location):
+		var current_vert_error: float = 999.9
+		for new_tile: TerrainTile in total_map_tiles[tile_location]:
+			if tile == null:
+				tile = new_tile
+				current_vert_error = abs(((new_tile.height_mid + new_tile.depth) * MapData.HEIGHT_SCALE) - input_position.y)
+			else:
+				var new_vert_error: float = abs(((new_tile.height_mid + new_tile.depth) * MapData.HEIGHT_SCALE) - input_position.y)
+				if new_vert_error < current_vert_error:
+					current_vert_error = new_vert_error
+					tile = new_tile
 	
+	return tile
+
+
+func clear_path() -> void:
+	for child: Node3D in path_container.get_children():
+		child.queue_free()

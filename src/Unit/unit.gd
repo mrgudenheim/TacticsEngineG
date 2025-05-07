@@ -10,6 +10,8 @@ signal primary_weapon_assigned(idx: int)
 signal image_changed(new_image: ImageTexture)
 signal knocked_out(unit: UnitData)
 signal spritesheet_changed(new_spritesheet: ImageTexture)
+signal reached_tile()
+signal completed_move()
 
 var is_player_controlled: bool = false
 var is_active: bool = false
@@ -72,7 +74,7 @@ var speed_current: int = 5
 var move_base: int = 5
 var move_current: int = 5
 var jump_base: int = 5
-var jump_current: int = 5
+var jump_current: int = 2
 
 var innate_statuses: Array = []
 var immune_status_types: Array = []
@@ -122,6 +124,7 @@ var ability_data: AbilityData
 
 var idle_animation_id: int = 6
 var idle_walk_animation_id: int = 6
+var walk_to_animation_id: int = 0x18
 var taking_damage_animation_id: int = 0x32
 var knocked_out_animation_id: int = 0x34
 var submerged_depth: int = 0
@@ -536,11 +539,35 @@ func get_map_path_neighbors(current_tile: TerrainTile, map_tiles: Dictionary[Vec
 				else:
 					neighbors.append(tile)
 	
-	# TODO check other cases - leaping, teleport, map warps, fly, etc.
+	# TODO check other cases - leaping, teleport, map warps, fly, float, etc.
 	# TODO get costs
 	# TODO get animations - walking, jumping, etc.
 	
 	return neighbors
+
+
+func walk_to_tile(to_tile: TerrainTile) -> void:
+	var walk_time: float = 0.3
+	
+	var new_facing_direction = to_tile.location - tile_position.location
+	update_unit_facing(Vector3(new_facing_direction.x, 0, new_facing_direction.y))
+	animation_manager.global_animation_ptr_id = walk_to_animation_id
+	
+	## https://docs.godotengine.org/en/stable/classes/class_tween.html
+	var tween: Tween = self.create_tween()
+	#tween.tween_property(self, "position", to_tile.get_world_position(), 0.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tween.tween_property(char_body, "position", to_tile.get_world_position(), walk_time)
+	await tween.finished # TODO disconnect data from animations
+	tile_position = to_tile
+	reached_tile.emit()
+
+
+func travel_path(path: Array[TerrainTile]) -> void:
+	for tile: TerrainTile in path:
+		await walk_to_tile(tile)
+	
+	animation_manager.global_animation_ptr_id = idle_animation_id
+	completed_move.emit()
 
 
 func _on_character_body_3d_input_event(_camera: Node, _event: InputEvent, _event_position: Vector3, _normal: Vector3, _shape_idx: int) -> void:

@@ -74,7 +74,7 @@ var speed_current: int = 5
 var move_base: int = 5
 var move_current: int = 5
 var jump_base: int = 5
-var jump_current: int = 2
+var jump_current: int = 3
 
 var innate_statuses: Array = []
 var immune_status_types: Array = []
@@ -118,6 +118,7 @@ const FacingVectors: Dictionary[Facings, Vector3] = {
 	}
 
 var is_in_air: bool = false
+var is_moving: bool = false
 
 var ability_id: int = 0
 var ability_data: AbilityData
@@ -563,10 +564,12 @@ func walk_to_tile(to_tile: TerrainTile) -> void:
 
 
 func travel_path(path: Array[TerrainTile]) -> void:
+	is_moving = true
 	for tile: TerrainTile in path:
 		await walk_to_tile(tile)
 	
 	animation_manager.global_animation_ptr_id = idle_animation_id
+	is_moving = false
 	completed_move.emit()
 
 

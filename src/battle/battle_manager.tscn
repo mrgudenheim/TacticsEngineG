@@ -72,10 +72,11 @@ material = SubResource("StandardMaterial3D_p2e2h")
 [sub_resource type="BoxMesh" id="BoxMesh_cqdh8"]
 material = SubResource("StandardMaterial3D_tjj5r")
 
-[node name="BattleManager" type="Node3D" node_paths=PackedStringArray("texture_viewer", "reference_quad", "phantom_camera", "load_rom_button", "background_gradient", "menu_list", "map_dropdown", "orthographic_check", "menu_reminder", "map_size_label", "maps", "units", "controller", "icon_counter")]
+[node name="BattleManager" type="Node3D" node_paths=PackedStringArray("texture_viewer", "reference_quad", "path_container", "phantom_camera", "load_rom_button", "background_gradient", "menu_list", "map_dropdown", "orthographic_check", "menu_reminder", "map_size_label", "maps", "units", "controller", "icon_counter")]
 script = ExtResource("1_hnd0w")
 texture_viewer = NodePath("SpriteViewer")
 reference_quad = NodePath("ReferenceQuad")
+path_container = NodePath("PathContainer")
 phantom_camera = NodePath("PhantomCamera3D")
 load_rom_button = NodePath("DebugOptions/MarginContainer/VBoxContainer2/LoadRom")
 background_gradient = NodePath("BackgroundCanvasLayer/TextureRect")
@@ -200,6 +201,8 @@ transform = Transform3D(1, 0, 0, 0, 0.553391, -0.832921, 0, 0.832921, 0.553391, 
 [node name="ReferenceQuad" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 21.5, 2, 19.5)
 mesh = SubResource("QuadMesh_foefj")
+
+[node name="PathContainer" type="Node3D" parent="."]
 
 [node name="CPUParticles3D" type="CPUParticles3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 5, 0, -5)

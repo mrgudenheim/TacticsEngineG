@@ -93,6 +93,8 @@ var special_job_skillset_id: int = 0
 var can_move: bool = true
 
 var map_position: Vector2i
+var tile_position: TerrainTile
+var map_paths: Dictionary[TerrainTile, TerrainTile]
 var facing: Facings = Facings.NORTH
 var is_back_facing: bool = false
 var facing_vector: Vector3 = Vector3.FORWARD:
@@ -410,8 +412,8 @@ func set_sprite_by_file_name(sprite_file_name: String) -> void:
 
 
 func set_sprite_by_id(new_sprite_id: int) -> void:
-	var sprite_file_idx = RomReader.spr_id_file_idxs[new_sprite_id]
-	set_sprite_by_file_idx(sprite_file_idx)
+	var new_sprite_file_idx = RomReader.spr_id_file_idxs[new_sprite_id]
+	set_sprite_by_file_idx(new_sprite_file_idx)
 
 
 func set_sprite_palette(new_palette_id: int) -> void:
@@ -472,6 +474,73 @@ func on_sprite_idx_selected(index: int) -> void:
 	#spritesheet_changed.emit(animation_manager.unit_sprites_manager.sprite_weapon.texture) # TODO hook up to sprite for debug purposes
 	if animation_changed:
 		animation_manager._on_animation_changed()
+
+
+## map_tiles is Dictionary[Vector2i, Array[TerrainTile]], returns path to every tile
+func get_map_paths(map_tiles: Dictionary[Vector2i, Array]) -> Dictionary[TerrainTile, TerrainTile]:
+	var start_tile: TerrainTile = tile_position
+	#var start_tile: TerrainTile = map_tiles[map_position][0]
+	#if map_tiles[map_position].size() > 1:
+		#for potential_tile in map_tiles[map_position]:
+			#
+	var frontier: Array[TerrainTile] = []
+	frontier.append(start_tile)
+	var came_from: Dictionary[TerrainTile, TerrainTile] = {} # path A->B is stored as came_from[B] == A
+	came_from[start_tile] = null
+	
+	var current: TerrainTile
+	while not frontier.is_empty():
+		current = frontier.pop_front()
+		
+		# break early
+		#if current == goal:
+			#break  
+		
+		for next: TerrainTile in get_map_path_neighbors(current, map_tiles):
+			if next not in came_from:
+				frontier.append(next)
+				came_from[next] = current
+	
+	return came_from
+
+
+func get_map_path(start_tile: TerrainTile, target_tile: TerrainTile, came_from: Dictionary[TerrainTile, TerrainTile]) -> Array[TerrainTile]:
+	if not came_from.has(target_tile):
+		push_warning("No path from " + str(start_tile.location) + " to target: " + str(target_tile.location))
+		return []
+	
+	var current: TerrainTile = target_tile
+	var path: Array[TerrainTile] = []
+	while current != start_tile: 
+		path.append(current)
+		current = came_from[current]
+	path.append(start_tile) # optional
+	path.reverse() # optional
+	
+	return path
+
+
+func get_map_path_neighbors(current_tile: TerrainTile, map_tiles: Dictionary[Vector2i, Array]) -> Array[TerrainTile]:
+	var neighbors: Array[TerrainTile]
+	const adjacent_offsets: Array[Vector2i] = [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]
+	
+	# check adjacent tiles
+	for offset: Vector2i in adjacent_offsets:
+		var potential_xy: Vector2i = current_tile.location + offset
+		if map_tiles.has(potential_xy):
+			for tile: TerrainTile in map_tiles[potential_xy]:
+				if tile.no_walk == 1:
+					continue
+				elif abs(tile.height_mid - current_tile.height_mid) > jump_current:
+					continue
+				else:
+					neighbors.append(tile)
+	
+	# TODO check other cases - leaping, teleport, map warps, fly, etc.
+	# TODO get costs
+	# TODO get animations - walking, jumping, etc.
+	
+	return neighbors
 
 
 func _on_character_body_3d_input_event(_camera: Node, _event: InputEvent, _event_position: Vector3, _normal: Vector3, _shape_idx: int) -> void:

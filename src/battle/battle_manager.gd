@@ -4,6 +4,7 @@ extends Node3D
 # debug vars
 @export var texture_viewer: Sprite3D # for debugging
 @export var reference_quad: MeshInstance3D # for debugging
+@export var path_container: Node3D
 
 static var main_camera: Camera3D
 @export var phantom_camera: PhantomCamera3D
@@ -22,6 +23,7 @@ static var main_camera: Camera3D
 var total_map_tiles: Dictionary[Vector2i, Array] = {} # Array[TerrainTile]
 @export var map_tscn: PackedScene
 @export var map_shader: Shader
+var current_tile_hover: TerrainTile
 
 @export var units: Node3D
 @export var unit_tscn: PackedScene
@@ -152,6 +154,8 @@ func on_map_selected(index: int) -> void:
 	var random_tile: TerrainTile = get_random_stand_terrain_tile()
 	random_position =  Vector3(random_tile.location.x + 0.5, randi_range(10, 15), random_tile.location.y + 0.5)
 	var new_unit: UnitData = spawn_unit(random_position, 0x01)
+	new_unit.tile_position = random_tile
+	new_unit.map_paths = new_unit.get_map_paths(total_map_tiles)
 	new_unit.is_player_controlled = true
 	
 	# sest up character controller
@@ -358,12 +362,24 @@ func on_map_tile_hover(camera: Camera3D, event: InputEvent, event_position: Vect
 					current_vert_error = new_vert_error
 					tile = new_tile
 	
-	if tile == null:
+	if tile == null or tile == current_tile_hover:
 		return
 	
-	var tile_position: Vector3 = Vector3(tile.location.x, tile.height_mid + tile.depth, tile.location.y)
-	var tile_world_position: Vector3 = tile_position * Vector3(1, MapData.HEIGHT_SCALE, 1)
-	reference_quad.position = tile_world_position + Vector3(0.5, 0.05, 0.5)
+	current_tile_hover = tile
 	
-	push_warning()
+	# show pathe
+	for child: Node3D in path_container.get_children():
+		child.queue_free()
+	
+	#controller.unit.map_paths = controller.unit.get_map_paths(total_map_tiles) # DONT for every tile hover, do once and cache
+	var path: Array[TerrainTile] = controller.unit.get_map_path(controller.unit.tile_position, tile, controller.unit.map_paths)
+	for path_tile: TerrainTile in path:
+		var new_tile_selector: MeshInstance3D = reference_quad.duplicate()
+		path_container.add_child(new_tile_selector)
+		new_tile_selector.global_position = path_tile.get_world_position() + Vector3(0, 0.05, 0)
+	
+	var new_unit = controller.unit
+	reference_quad.position = tile.get_world_position() + Vector3(0, 0.05, 0)
+	
+	#push_warning()
 	

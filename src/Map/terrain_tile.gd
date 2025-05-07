@@ -39,3 +39,11 @@ func duplicate() -> TerrainTile:
 	new_terrain_tile.height_mid = height + (slope_height / 2.0)
 	
 	return new_terrain_tile
+
+
+func get_world_position() -> Vector3:
+	var tile_position: Vector3 = Vector3(location.x, height_mid + depth, location.y)
+	var tile_world_position: Vector3 = tile_position * Vector3(1, MapData.HEIGHT_SCALE, 1)
+	tile_world_position += Vector3(0.5, 0, 0.5)
+	
+	return tile_world_position

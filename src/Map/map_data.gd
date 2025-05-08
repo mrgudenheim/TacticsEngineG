@@ -715,7 +715,7 @@ func get_terrain(terrain_bytes: PackedByteArray) -> Array[TerrainTile]:
 				tile.layer = layer
 				tile.location = Vector2i(x, z)
 				tile.surface_type_id = tile_data.decode_u8(0) & 0b0011_1111 # right 6 bits are the surface type
-				tile.height = tile_data.decode_u8(2) # For sloped tiles, the height of the bottom of the slope
+				tile.height_bottom = tile_data.decode_u8(2) # For sloped tiles, the height of the bottom of the slope
 				tile.depth = tile_data.decode_u8(3) >> 5 # left 3 bits are bepth
 				tile.slope_height = tile_data.decode_u8(3) & 0b1_1111 # right 5 bits are difference between the height at the top and the height at the bottom
 				tile.slope_type_id = tile_data.decode_u8(4)

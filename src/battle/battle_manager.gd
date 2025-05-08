@@ -139,7 +139,7 @@ func on_map_selected(index: int) -> void:
 		map_width_range = Vector2i(-map_data.map_width + 1, map_data.map_width * 2 - 2)
 		map_length_range = Vector2i(-map_data.map_length + 1, map_data.map_length * 2 - 2)
 	
-	var middle_height: float = (map_data.terrain_tiles[map_data.terrain_tiles.size() / 2].height * SCALED_UNITS_PER_HEIGHT) + 2
+	var middle_height: float = (map_data.terrain_tiles[map_data.terrain_tiles.size() / 2].height_bottom * SCALED_UNITS_PER_HEIGHT) + 2
 	var middle_position: Vector3 = Vector3(map_data.map_width / 2.0, middle_height, -map_data.map_length / 2.0)
 	var random_position: Vector3 = Vector3(randi_range(map_width_range.x, map_width_range.y) + 0.5, randi_range(10, 15), -randi_range(map_length_range.x, map_length_range.y) - 0.5)
 	#camera_controller.position = middle_position
@@ -253,6 +253,7 @@ func instantiate_map(map_idx: int, mirror: bool) -> Node3D:
 	
 	map_holder.add_child(get_map(map_data, Vector3.ZERO, Vector3(1, 1, -1)))
 	
+	mirror = false
 	if mirror:
 		map_holder.add_child(get_map(map_data, Vector3.ZERO, Vector3(1, 1, 1)))
 		map_holder.add_child(get_map(map_data, Vector3.FORWARD * map_data.map_length * -2, Vector3(1, 1, 1)))
@@ -361,6 +362,7 @@ func on_map_tile_hover(camera: Camera3D, event: InputEvent, event_position: Vect
 		controller.unit.map_paths = controller.unit.get_map_paths(total_map_tiles)
 		return
 	
+	# handle hovering over tile
 	# don't update path if hovered tile has not changed or is not valid for moving
 	if tile == null or tile == current_tile_hover:
 		return
@@ -372,12 +374,10 @@ func on_map_tile_hover(camera: Camera3D, event: InputEvent, event_position: Vect
 	#controller.unit.map_paths = controller.unit.get_map_paths(total_map_tiles) # DONT for every tile hover, do once and cache
 	var path: Array[TerrainTile] = controller.unit.get_map_path(controller.unit.tile_position, tile, controller.unit.map_paths)
 	for path_tile: TerrainTile in path:
-		var new_tile_selector: MeshInstance3D = reference_quad.duplicate()
+		var new_tile_selector: MeshInstance3D = path_tile.get_tile_mesh()
+		new_tile_selector.material_override = reference_quad.mesh.surface_get_material(0) # use pre-existing material # TODO store material as resource instead of on debug node
 		path_container.add_child(new_tile_selector)
-		new_tile_selector.global_position = path_tile.get_world_position() + Vector3(0, 0.05, 0)
-	
-	var new_unit = controller.unit
-	reference_quad.position = tile.get_world_position() + Vector3(0, 0.05, 0)
+		new_tile_selector.global_position = path_tile.get_world_position(true) + Vector3(0, 0.05, 0)
 	
 	#push_warning()
 

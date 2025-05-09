@@ -33,7 +33,8 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	if is_instance_valid(BattleManager.main_camera):
-		position = BattleManager.main_camera.unproject_position(unit_char_body.position) + Vector2(50, -50)
+		var camera_right: Vector3 = BattleManager.main_camera.basis * Vector3.RIGHT
+		position = BattleManager.main_camera.unproject_position(unit_char_body.position + (Vector3.UP * 1.0) + (camera_right * 0.35))
 
 
 func populate_options() -> void:

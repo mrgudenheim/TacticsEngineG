@@ -153,11 +153,11 @@ func on_map_selected(index: int) -> void:
 	
 	# add player unit
 	var random_tile: TerrainTile = get_random_stand_terrain_tile()
-	random_position =  Vector3(random_tile.location.x + 0.5, randi_range(10, 15), random_tile.location.y + 0.5)
-	var new_unit: UnitData = spawn_unit(random_position, 0x01)
-	new_unit.tile_position = random_tile
-	new_unit.map_paths = new_unit.get_map_paths(total_map_tiles)
+	var new_unit: UnitData = spawn_unit(random_tile, 0x01)
 	new_unit.is_player_controlled = true
+	new_unit.highlight_move_area(tile_highlights[Color.BLUE])
+	new_unit.completed_move.connect(func(): controller.unit.map_paths = controller.unit.get_map_paths(total_map_tiles))
+	new_unit.completed_move.connect(func(): new_unit.highlight_move_area(tile_highlights[Color.BLUE]))
 	
 	# sest up character controller
 	controller.unit = new_unit
@@ -168,30 +168,32 @@ func on_map_selected(index: int) -> void:
 	
 	# add non-player unit
 	random_tile = get_random_stand_terrain_tile()
-	random_position =  Vector3(random_tile.location.x + 0.5, randi_range(10, 15), random_tile.location.y + 0.5)
-	var new_unit2: UnitData = spawn_unit(random_position, 0x07)
+	var new_unit2: UnitData = spawn_unit(random_tile, 0x07)
 	
 	# set up what to do when target unit is knocked out
 	new_unit2.knocked_out.connect(load_random_map)
 	new_unit2.knocked_out.connect(increment_counter)
 	
 	random_tile = get_random_stand_terrain_tile()
-	random_position =  Vector3(random_tile.location.x + 0.5, randi_range(10, 15), random_tile.location.y + 0.5)
-	var new_unit3: UnitData = spawn_unit(random_position, 0x4a)
+	var rand_job: int = randi_range(0x01, 0x8e)
+	var new_unit3: UnitData = spawn_unit(random_tile, rand_job)
 	
 	
 	hide_debug_ui()
 
 
-func spawn_unit(position: Vector3, job_id: int) -> UnitData:
+func spawn_unit(tile_position: TerrainTile, job_id: int) -> UnitData:
 	var new_unit: UnitData = unit_tscn.instantiate()
 	units.add_child(new_unit)
 	new_unit.initialize_unit()
-	new_unit.char_body.global_position = position
+	new_unit.tile_position = tile_position
+	new_unit.char_body.global_position = Vector3(tile_position.location.x + 0.5, randi_range(10, 15), tile_position.location.y + 0.5)
 	new_unit.job_id = job_id
 	new_unit.job_data = RomReader.scus_data.jobs_data[job_id]
 	new_unit.set_sprite_by_id(new_unit.job_data.sprite_id)
 	controller.camera_rotated.connect(new_unit.char_body.set_rotation_degrees) # have sprite update as camera rotates
+	
+	new_unit.map_paths = new_unit.get_map_paths(total_map_tiles)
 	
 	return new_unit
 
@@ -357,11 +359,14 @@ func on_map_tile_hover(camera: Camera3D, event: InputEvent, event_position: Vect
 	
 	# handle clicking tile
 	if event.is_action_pressed("primary_action"):
-		var path: Array[TerrainTile] = controller.unit.get_map_path(controller.unit.tile_position, tile, controller.unit.map_paths)
-		await controller.unit.travel_path(path)
-		clear_path()
-		controller.unit.map_paths = controller.unit.get_map_paths(total_map_tiles)
-		return
+		if controller.unit.path_costs.has(tile):
+			if controller.unit.path_costs[tile] <= controller.unit.move_current:
+				var path: Array[TerrainTile] = controller.unit.get_map_path(controller.unit.tile_position, tile, controller.unit.map_paths)
+				controller.unit.clear_tile_highlights(controller.unit.tile_highlights)
+				await controller.unit.travel_path(path)
+				clear_path()
+				#controller.unit.map_paths = controller.unit.get_map_paths(total_map_tiles)
+				return
 	
 	# handle hovering over tile
 	# don't update path if hovered tile has not changed or is not valid for moving
@@ -376,7 +381,9 @@ func on_map_tile_hover(camera: Camera3D, event: InputEvent, event_position: Vect
 	var path: Array[TerrainTile] = controller.unit.get_map_path(controller.unit.tile_position, tile, controller.unit.map_paths)
 	for path_tile: TerrainTile in path:
 		var new_tile_selector: MeshInstance3D = path_tile.get_tile_mesh()
-		new_tile_selector.material_override = tile_highlights[Color.BLUE] # use pre-existing material, Color.BLACK for gray
+		new_tile_selector.material_override = tile_highlights[Color.BLUE] # use pre-existing materials
+		if controller.unit.path_costs[path_tile] > controller.unit.move_current:
+			new_tile_selector.material_override = tile_highlights[Color.WHITE] # use pre-existing materials
 		path_container.add_child(new_tile_selector)
 		new_tile_selector.global_position = path_tile.get_world_position(true) + Vector3(0, 0.05, 0)
 	

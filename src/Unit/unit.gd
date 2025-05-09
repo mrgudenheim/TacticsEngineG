@@ -97,6 +97,8 @@ var can_move: bool = true
 var map_position: Vector2i
 var tile_position: TerrainTile
 var map_paths: Dictionary[TerrainTile, TerrainTile]
+var path_costs: Dictionary[TerrainTile, float]
+@export var tile_highlights: Node3D
 var facing: Facings = Facings.NORTH
 var is_back_facing: bool = false
 var facing_vector: Vector3 = Vector3.FORWARD:
@@ -481,7 +483,7 @@ func on_sprite_idx_selected(index: int) -> void:
 
 
 ## map_tiles is Dictionary[Vector2i, Array[TerrainTile]], returns path to every tile
-func get_map_paths(map_tiles: Dictionary[Vector2i, Array]) -> Dictionary[TerrainTile, TerrainTile]:
+func get_map_paths(map_tiles: Dictionary[Vector2i, Array], max_cost: int = 9999) -> Dictionary[TerrainTile, TerrainTile]:
 	var start_tile: TerrainTile = tile_position
 	#var start_tile: TerrainTile = map_tiles[map_position][0]
 	#if map_tiles[map_position].size() > 1:
@@ -504,6 +506,9 @@ func get_map_paths(map_tiles: Dictionary[Vector2i, Array]) -> Dictionary[Terrain
 		
 		for next: TerrainTile in get_map_path_neighbors(current, map_tiles):
 			var new_cost: float = cost_so_far[current] + get_move_cost(current, next)
+			if new_cost > max_cost:
+				continue # break early
+			
 			if next not in cost_so_far or new_cost < cost_so_far[next]:
 				# TODO use a priority_queue
 				if next not in cost_so_far:
@@ -529,6 +534,7 @@ func get_map_paths(map_tiles: Dictionary[Vector2i, Array]) -> Dictionary[Terrain
 				
 				came_from[next] = current
 	
+	path_costs = cost_so_far
 	return came_from
 
 
@@ -584,8 +590,9 @@ func walk_to_tile(to_tile: TerrainTile) -> void:
 	var walk_time: float = 0.3
 	
 	var new_facing_direction = to_tile.location - tile_position.location
-	update_unit_facing(Vector3(new_facing_direction.x, 0, new_facing_direction.y))
 	animation_manager.global_animation_ptr_id = walk_to_animation_id
+	update_unit_facing(Vector3(new_facing_direction.x, 0, new_facing_direction.y))
+	
 	
 	## https://docs.godotengine.org/en/stable/classes/class_tween.html
 	var tween: Tween = self.create_tween()
@@ -610,6 +617,39 @@ func travel_path(path: Array[TerrainTile]) -> void:
 	animation_manager.global_animation_ptr_id = idle_animation_id
 	is_moving = false
 	completed_move.emit()
+
+
+func get_move_targets() -> Array[TerrainTile]:
+	var move_targets: Array[TerrainTile] = []
+	for tile: TerrainTile in path_costs.keys():
+		if path_costs[tile] > move_current:
+			continue # don't highlight tiles beyond move range
+		move_targets.append(tile)
+	
+	return move_targets
+
+
+func highlight_tiles(tiles: Array[TerrainTile], highlight_material: Material) -> void:
+	for tile: TerrainTile in tiles:
+		var new_tile_selector: MeshInstance3D = tile.get_tile_mesh()
+		new_tile_selector.material_override = highlight_material # use pre-existing materials
+		tile_highlights.add_child(new_tile_selector)
+		new_tile_selector.global_position = tile.get_world_position(true) + Vector3(0, 0.05, 0)
+
+
+func highlight_move_area(highlight_material: Material) -> void:
+	for tile: TerrainTile in path_costs.keys():
+		var new_tile_selector: MeshInstance3D = tile.get_tile_mesh()
+		new_tile_selector.material_override = highlight_material # use pre-existing materials
+		if path_costs[tile] > move_current:
+			continue # don't highlight tiles beyond move range
+		tile_highlights.add_child(new_tile_selector)
+		new_tile_selector.global_position = tile.get_world_position(true) + Vector3(0, 0.05, 0)
+
+
+func clear_tile_highlights(highlight_container: Node3D) -> void:
+	for child in highlight_container.get_children():
+		child.queue_free()
 
 
 func _on_character_body_3d_input_event(_camera: Node, _event: InputEvent, _event_position: Vector3, _normal: Vector3, _shape_idx: int) -> void:

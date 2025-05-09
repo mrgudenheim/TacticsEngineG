@@ -29,11 +29,12 @@ fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(1, 0.5)
 metadata/_snap_enabled = true
 
-[node name="Unit" type="Node3D" node_paths=PackedStringArray("char_body", "animation_manager", "debug_menu")]
+[node name="Unit" type="Node3D" node_paths=PackedStringArray("char_body", "animation_manager", "debug_menu", "tile_highlights")]
 script = ExtResource("1_lcmw7")
 char_body = NodePath("CharacterBody3D")
 animation_manager = NodePath("CharacterBody3D/UnitAnimationManager")
 debug_menu = NodePath("CharacterBody3D/UnitDebugMenu")
+tile_highlights = NodePath("TileHighlights")
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="."]
 transform = Transform3D(0.707107, 0, 0.707107, 0, 0.999999, 0, -0.707107, 0, 0.707107, 0, 0, 0)
@@ -177,6 +178,8 @@ select_all_on_focus = true
 layout_mode = 2
 size_flags_horizontal = 3
 editable = false
+
+[node name="TileHighlights" type="Node3D" parent="."]
 
 [connection signal="input_event" from="CharacterBody3D" to="." method="_on_character_body_3d_input_event"]
 [connection signal="value_changed" from="CharacterBody3D/UnitDebugMenu/PanelContainer/MarginContainer/VBoxContainer/GridContainer/AnimationFpsSpinBox" to="CharacterBody3D/UnitAnimationManager" method="set_animation_fps"]

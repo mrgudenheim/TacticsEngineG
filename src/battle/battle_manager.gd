@@ -24,6 +24,7 @@ var total_map_tiles: Dictionary[Vector2i, Array] = {} # Array[TerrainTile]
 @export var map_tscn: PackedScene
 @export var map_shader: Shader
 var current_tile_hover: TerrainTile
+@export var tile_highlights: Dictionary[Color, Material] = {}
 
 @export var units: Node3D
 @export var unit_tscn: PackedScene
@@ -375,7 +376,7 @@ func on_map_tile_hover(camera: Camera3D, event: InputEvent, event_position: Vect
 	var path: Array[TerrainTile] = controller.unit.get_map_path(controller.unit.tile_position, tile, controller.unit.map_paths)
 	for path_tile: TerrainTile in path:
 		var new_tile_selector: MeshInstance3D = path_tile.get_tile_mesh()
-		new_tile_selector.material_override = reference_quad.mesh.surface_get_material(0) # use pre-existing material # TODO store material as resource instead of on debug node
+		new_tile_selector.material_override = tile_highlights[Color.BLUE] # use pre-existing material, Color.BLACK for gray
 		path_container.add_child(new_tile_selector)
 		new_tile_selector.global_position = path_tile.get_world_position(true) + Vector3(0, 0.05, 0)
 	

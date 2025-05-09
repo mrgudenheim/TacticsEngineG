@@ -487,10 +487,12 @@ func get_map_paths(map_tiles: Dictionary[Vector2i, Array]) -> Dictionary[Terrain
 	#if map_tiles[map_position].size() > 1:
 		#for potential_tile in map_tiles[map_position]:
 			#
-	var frontier: Array[TerrainTile] = []
+	var frontier: Array[TerrainTile] = [] # TODO use priority_queue for dijkstra's
 	frontier.append(start_tile)
 	var came_from: Dictionary[TerrainTile, TerrainTile] = {} # path A->B is stored as came_from[B] == A
+	var cost_so_far: Dictionary[TerrainTile, float] = {}
 	came_from[start_tile] = null
+	cost_so_far[start_tile] = 0
 	
 	var current: TerrainTile
 	while not frontier.is_empty():
@@ -501,8 +503,35 @@ func get_map_paths(map_tiles: Dictionary[Vector2i, Array]) -> Dictionary[Terrain
 			#break  
 		
 		for next: TerrainTile in get_map_path_neighbors(current, map_tiles):
-			if next not in came_from:
-				frontier.append(next)
+			var new_cost: float = cost_so_far[current] + get_move_cost(current, next)
+			#if next not in came_from:
+			if next not in cost_so_far or new_cost < cost_so_far[next]:
+				#cost_so_far[next] = new_cost
+				#var priority: float = new_cost
+				#frontier.append(next)
+				
+				# TODO use a priority_queue
+				if next not in cost_so_far:
+					cost_so_far[next] = new_cost
+					for idx: int in frontier.size(): # TODO use frontier.bsearch_custom(new_cost, func(a, b): return cost_so_far[b] < a)?
+						if new_cost < cost_so_far[frontier[idx]]: # assumes frontier is sorted by ascending cost_so_far
+							frontier.insert(idx, next)
+							break
+					frontier.append(next) # add at end if highest cost
+				elif new_cost < cost_so_far[next]:
+					var current_priority = frontier.bsearch(next)
+					cost_so_far[next] = new_cost
+					if current_priority == 0:
+						pass # don't need to change priority
+					elif cost_so_far[frontier[current_priority - 1]] < new_cost:
+						pass # don't need to change priority
+					else: # move position in queue
+						frontier.remove_at(current_priority)
+						for idx: int in frontier.size(): # TODO use frontier.bsearch_custom(new_cost, func(a, b): return cost_so_far[b] < a)?
+							if new_cost < cost_so_far[frontier[idx]]: # assumes frontier is sorted by ascending cost_so_far
+								frontier.insert(idx, next)
+								break
+				
 				came_from[next] = current
 	
 	return came_from
@@ -547,6 +576,15 @@ func get_map_path_neighbors(current_tile: TerrainTile, map_tiles: Dictionary[Vec
 	return neighbors
 
 
+func get_move_cost(from_tile: TerrainTile, to_tile: TerrainTile) -> float:
+	var cost: float = 0
+	cost = from_tile.location.distance_to(to_tile.location)
+	
+	# TODO check depth
+	
+	return cost
+
+
 func walk_to_tile(to_tile: TerrainTile) -> void:
 	var walk_time: float = 0.3
 	
@@ -561,6 +599,12 @@ func walk_to_tile(to_tile: TerrainTile) -> void:
 	await tween.finished # TODO disconnect data from animations
 	tile_position = to_tile
 	reached_tile.emit()
+
+
+#func sort_ascending(a_idx: int, b_idx: int):
+	#if a.cost < b.cost:
+		#return true
+	#return false
 
 
 func travel_path(path: Array[TerrainTile]) -> void:

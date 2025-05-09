@@ -184,14 +184,20 @@ func display_vfx(location: Node3D) -> void:
 func display_vfx_animation(emitter_data, emitter_node: Node3D) -> void:
 	var vfx_animation := vfx_data.animations[emitter_data.anim_index]
 	var anim_location: Node3D = Node3D.new()
-	anim_location.position = Vector3(vfx_animation.screen_offset.x, -vfx_animation.screen_offset.y, 0) * MapData.SCALE # TODO handle initial anim_location position as screen_space movement instead of world space
+	# handle initial anim_location position as screen_space movement instead of world space
+	var camera_right: Vector3 = BattleManager.main_camera.basis * Vector3.RIGHT
+	var screen_space_x: Vector3 = (vfx_animation.screen_offset.x * camera_right)
+	var screen_space_y: Vector3 = Vector3(0, -vfx_animation.screen_offset.y, 0)
+	anim_location.position = (screen_space_x + screen_space_y) * MapData.SCALE 
 	emitter_node.add_child(anim_location)
 	
 	for anim_frame_idx: int in vfx_animation.animation_frames.size():
 		var vfx_anim_frame := vfx_animation.animation_frames[anim_frame_idx]
 		
-		if vfx_anim_frame.frameset_id == 0x83: # move anim_location, TODO handle anim_location 0x83 movement as screen_space movement instead of world space
-			anim_location.position += Vector3(vfx_anim_frame.duration, -vfx_anim_frame.byte_02, 0) * MapData.SCALE # byte01 is actually the X movement in function 0x83, not the duration
+		if vfx_anim_frame.frameset_id == 0x83: # move anim_location, handle anim_location 0x83 movement as screen_space movement instead of world space
+			var screen_space_offset_x: Vector3 = (vfx_anim_frame.duration * camera_right)
+			var screen_space_offset_y: Vector3 = Vector3(0, -vfx_anim_frame.byte_02, 0)
+			anim_location.position += (screen_space_offset_x + screen_space_offset_y) * MapData.SCALE # byte01 is actually the X movement in function 0x83, not the duration
 			continue
 		elif vfx_anim_frame.frameset_id >= vfx_data.frame_sets.size(): 
 			push_warning(name + " frameset_id: " + str(vfx_anim_frame.frameset_id))

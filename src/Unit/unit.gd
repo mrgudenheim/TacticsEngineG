@@ -504,12 +504,7 @@ func get_map_paths(map_tiles: Dictionary[Vector2i, Array]) -> Dictionary[Terrain
 		
 		for next: TerrainTile in get_map_path_neighbors(current, map_tiles):
 			var new_cost: float = cost_so_far[current] + get_move_cost(current, next)
-			#if next not in came_from:
 			if next not in cost_so_far or new_cost < cost_so_far[next]:
-				#cost_so_far[next] = new_cost
-				#var priority: float = new_cost
-				#frontier.append(next)
-				
 				# TODO use a priority_queue
 				if next not in cost_so_far:
 					cost_so_far[next] = new_cost

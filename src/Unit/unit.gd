@@ -357,8 +357,8 @@ func set_base_animation_ptr_id(ptr_id: int) -> void:
 
 func update_unit_facing(dir: Vector3) -> void:
 	var angle_deg: float = rad_to_deg(atan2(dir.z, dir.x))
-	angle_deg = fposmod(angle_deg + 45, 359.99)
-	var new_facing: Facings = Facings.NORTH
+	angle_deg = fposmod(angle_deg, 359.99) + 45
+	var new_facing: Facings = facing
 	if angle_deg < 90:
 		new_facing = Facings.EAST
 	elif angle_deg < 180:
@@ -596,7 +596,7 @@ func get_map_path(start_tile: TerrainTile, target_tile: TerrainTile, came_from: 
 	while current != start_tile: 
 		path.append(current)
 		current = came_from[current]
-	path.append(start_tile) # optional
+	#path.append(start_tile) # optional
 	path.reverse() # optional
 	
 	return path
@@ -672,16 +672,18 @@ func process_physics_move(target_position: Vector3) -> void:
 		#direction.y = 0
 		var velocity_2d: Vector2 = direction * speed
 		distance_left = current_xy.distance_to(target_xy)
-		velocity_2d.limit_length(distance_left)
+		velocity_2d = velocity_2d.limit_length(distance_left / get_physics_process_delta_time())
 		char_body.velocity.x = velocity_2d.x
 		char_body.velocity.z = velocity_2d.y
 		if (char_body.is_on_wall() # TODO implement jumping and leaping correctly
 				and target_position.y + 0.25 > char_body.global_position.y
 				and char_body.velocity.y <= 0.1): # TODO fix comparing target position to charbody, char_body's position is offset from the ground
 			char_body.velocity.y = sqrt((target_position.y + 0.25) - char_body.global_position.y) * 4.5
-		await get_tree().process_frame
+		await get_tree().physics_frame
 	
-	char_body.velocity = Vector3.ZERO
+	#char_body.velocity = Vector3.ZERO
+	char_body.velocity.x = 0
+	char_body.velocity.z = 0
 	
 	#var velocity: Vector3 = new_position - char_body.position
 	#char_body.position = new_position
@@ -700,7 +702,7 @@ func process_physics_move(target_position: Vector3) -> void:
 func travel_path(path: Array[TerrainTile]) -> void:
 	is_moving = true
 	for tile: TerrainTile in path:
-		await walk_to_tile(tile)
+		await walk_to_tile(tile) # TODO handle movement types other than walking
 	
 	#animation_manager.global_animation_ptr_id = idle_animation_id
 	current_animation_id_fwd = idle_animation_id

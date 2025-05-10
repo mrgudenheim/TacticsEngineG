@@ -180,8 +180,9 @@ func _physics_process(delta: float) -> void:
 	if not char_body.is_on_floor():
 		char_body.velocity += char_body.get_gravity() * delta
 	
-	if not is_player_controlled:
-		char_body.move_and_slide()
+	if char_body.velocity * Vector3(1, 0, 1) != Vector3.ZERO:
+		update_unit_facing(char_body.velocity.normalized())
+	char_body.move_and_slide()
 
 
 func _process(_delta: float) -> void:
@@ -588,7 +589,7 @@ func get_move_cost(from_tile: TerrainTile, to_tile: TerrainTile) -> float:
 
 
 func walk_to_tile(to_tile: TerrainTile) -> void:
-	var walk_time: float = 0.3
+	#var walk_time: float = 0.3
 	
 	var new_facing_direction = to_tile.location - tile_position.location
 	animation_manager.global_animation_ptr_id = walk_to_animation_id
@@ -608,7 +609,7 @@ func walk_to_tile(to_tile: TerrainTile) -> void:
 
 
 func process_physics_move(target_position: Vector3) -> void:
-	var speed: float = 1.0
+	var speed: float = 3.0
 	var current_xy: Vector2 = Vector2(char_body.global_position.x, char_body.global_position.z)
 	var target_xy: Vector2 = Vector2(target_position.x, target_position.z)
 	var distance_left: float = current_xy.distance_to(target_xy)

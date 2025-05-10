@@ -1,7 +1,6 @@
 class_name UnitControllerRT
 extends Node3D
 
-signal velocity_set(direction: Vector3)
 signal camera_facing_changed()
 signal camera_rotated(new_rotation: Vector3)
 
@@ -59,13 +58,10 @@ func _physics_process(delta: float) -> void:
 		#unit.char_body.velocity.x = move_toward(unit.char_body.velocity.x, 0, SPEED)
 		#unit.char_body.velocity.z = move_toward(unit.char_body.velocity.z, 0, SPEED)
 	
-	if unit.char_body.velocity * Vector3(1, 0, 1) != Vector3.ZERO:
-		velocity_set.emit(direction)
-	unit.char_body.move_and_slide()
-	
 	if Input.is_action_just_pressed("secondary_action") and unit.char_body.is_on_floor():
 		# https://docs.godotengine.org/en/stable/tutorials/physics/ray-casting.html
 		# get 3d click location based on raycast
+		# TODO instead of manual raycast use CollisionObject3D.input_event signal on the map (similar to map_tile_hover): map_instance.input_event.connect(on_map_mesh_event)
 		var space_state := get_world_3d().direct_space_state
 		var cam: Camera3D = BattleManager.main_camera
 		var mousepos: Vector2 = get_viewport().get_mouse_position()

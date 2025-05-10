@@ -161,7 +161,7 @@ func on_map_selected(index: int) -> void:
 	
 	# sest up character controller
 	controller.unit = new_unit
-	controller.velocity_set.connect(controller.unit.update_unit_facing)
+	#controller.velocity_set.connect(controller.unit.update_unit_facing)
 	phantom_camera.follow_target = new_unit.char_body
 	controller.rotate_camera(1) # HACK workaround for bug where controls are off until camera is rotated
 	#controller.rotate_phantom_camera(Vector3(-26.54, 45, 0))
@@ -258,7 +258,7 @@ func instantiate_map(map_idx: int, mirror_chunks: bool) -> Node3D:
 	
 	map_holder.add_child(get_map(map_data, Vector3.ZERO, Vector3(1, 1, 1)))
 	
-	#mirror_chunks = false
+	mirror_chunks = false
 	if mirror_chunks:
 		map_holder.add_child(get_map(map_data, Vector3.ZERO, Vector3(1, 1, -1)))
 		map_holder.add_child(get_map(map_data, Vector3.FORWARD * map_data.map_length * -2, Vector3(1, 1, -1)))

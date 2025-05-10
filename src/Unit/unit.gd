@@ -126,7 +126,7 @@ var ability_id: int = 0
 var ability_data: AbilityData
 
 var idle_animation_id: int = 6 # set based on status (critical, knocked out, etc.)
-var current_base_animation_id: int = 6 # set based on current action
+var current_animation_id_fwd: int = 6 # set based on current action
 # constants?
 var idle_walk_animation_id: int = 6
 var walk_to_animation_id: int = 0x18
@@ -201,7 +201,7 @@ func _process(_delta: float) -> void:
 		#var mid_jump_animation: int = 62 # front facing mid jump animation
 		#if animation_manager.is_back_facing:
 			#mid_jump_animation += 1
-		current_base_animation_id = mid_jump_animation
+		current_animation_id_fwd = mid_jump_animation
 		#debug_menu.anim_id_spin.value = mid_jump_animation
 	elif char_body.velocity.y == 0 and is_in_air == true:
 		is_in_air = false
@@ -209,10 +209,10 @@ func _process(_delta: float) -> void:
 		#var idle_animation: int = 6 # front facing idle walk animation
 		#if animation_manager.is_back_facing:
 			#idle_animation += 1
-		current_base_animation_id = idle_animation_id
+		current_animation_id_fwd = idle_animation_id
 		#debug_menu.anim_id_spin.value = idle_animation
 	
-	animation_manager.set_base_animation_ptr_id(current_base_animation_id)
+	set_base_animation_ptr_id(current_animation_id_fwd)
 
 
 func use_attack() -> void:
@@ -231,7 +231,9 @@ func use_attack() -> void:
 		#animation_manager.unit_debug_menu.anim_id_spin.value = 0x3e * 2 # TODO look up based on equiped weapon and target relative height
 	
 	# execute atttack
-	debug_menu.anim_id_spin.value = (RomReader.battle_bin_data.weapon_animation_ids[primary_weapon.item_type].y * 2) + int(is_back_facing) # TODO lookup based on target relative height
+	#debug_menu.anim_id_spin.value = (RomReader.battle_bin_data.weapon_animation_ids[primary_weapon.item_type].y * 2) + int(is_back_facing) # TODO lookup based on target relative height
+	current_animation_id_fwd = (RomReader.battle_bin_data.weapon_animation_ids[primary_weapon.item_type].y * 2) # TODO lookup based on target relative height
+	set_base_animation_ptr_id(current_animation_id_fwd)
 	
 	# TODO implement proper timeout for abilities that execute using an infinite loop animation
 	# this implementation can overwrite can_move when in the middle of another ability
@@ -241,7 +243,9 @@ func use_attack() -> void:
 
 	#ability_completed.emit()
 	animation_manager.reset_sprites()
-	debug_menu.anim_id_spin.value = idle_animation_id  + int(is_back_facing)
+	#debug_menu.anim_id_spin.value = idle_animation_id  + int(is_back_facing)
+	current_animation_id_fwd = idle_animation_id
+	set_base_animation_ptr_id(current_animation_id_fwd)
 	can_move = true
 
 
@@ -250,23 +254,31 @@ func use_ability(pos: Vector3) -> void:
 	push_warning("using: " + ability_data.name)
 	#push_warning("Animations: " + str(PackedInt32Array([ability_data.animation_start_id, ability_data.animation_charging_id, ability_data.animation_executing_id])))
 	if ability_data.animation_start_id != 0:
-		debug_menu.anim_id_spin.value = ability_data.animation_start_id + int(is_back_facing)
+		#debug_menu.anim_id_spin.value = ability_data.animation_start_id + int(is_back_facing)
+		current_animation_id_fwd = ability_data.animation_start_id
+		set_base_animation_ptr_id(current_animation_id_fwd)
 		await animation_manager.animation_completed
 	
 	if ability_data.animation_charging_id != 0:
-		debug_menu.anim_id_spin.value = ability_data.animation_charging_id + int(is_back_facing)
+		#debug_menu.anim_id_spin.value = ability_data.animation_charging_id + int(is_back_facing)
+		current_animation_id_fwd = ability_data.animation_charging_id
+		set_base_animation_ptr_id(current_animation_id_fwd)
 		await get_tree().create_timer(0.1 + (ability_data.ticks_charge_time * 0.1)).timeout
 	
 	#if ability_data.animation_executing_id != 0:
 	if ability_data.animation_executing_id == 0:
 		#animation_executing_id = 0x3e * 2 # TODO look up based on equiped weapon and target relative height
 		#animation_manager.unit_debug_menu.anim_id_spin.value = 0x3e * 2 # TODO look up based on equiped weapon and target relative height
-		debug_menu.anim_id_spin.value = (RomReader.battle_bin_data.weapon_animation_ids[primary_weapon.item_type].y * 2) + int(is_back_facing) # TODO lookup based on target relative height
+		#debug_menu.anim_id_spin.value = (RomReader.battle_bin_data.weapon_animation_ids[primary_weapon.item_type].y * 2) + int(is_back_facing) # TODO lookup based on target relative height
+		current_animation_id_fwd = (RomReader.battle_bin_data.weapon_animation_ids[primary_weapon.item_type].y * 2) # TODO lookup based on target relative height
+		set_base_animation_ptr_id(current_animation_id_fwd)
 	else:
 		var ability_animation_executing_id = ability_data.animation_executing_id
 		if ["RUKA.SEQ", "ARUTE.SEQ", "KANZEN.SEQ"].has(RomReader.sprs[sprite_file_idx].seq_name):
 			ability_animation_executing_id = 0x2c * 2 # https://ffhacktics.com/wiki/Set_attack_animation_flags_and_facing_3
-		debug_menu.anim_id_spin.value = ability_animation_executing_id + int(is_back_facing)
+		#debug_menu.anim_id_spin.value = ability_animation_executing_id + int(is_back_facing)
+		current_animation_id_fwd = ability_animation_executing_id
+		set_base_animation_ptr_id(current_animation_id_fwd)
 		
 	var new_vfx_location: Node3D = Node3D.new()
 	new_vfx_location.position = pos
@@ -283,7 +295,9 @@ func use_ability(pos: Vector3) -> void:
 
 	ability_completed.emit()
 	animation_manager.reset_sprites()
-	debug_menu.anim_id_spin.value = idle_animation_id  + int(is_back_facing)
+	#debug_menu.anim_id_spin.value = idle_animation_id  + int(is_back_facing)
+	current_animation_id_fwd = idle_animation_id
+	set_base_animation_ptr_id(current_animation_id_fwd)
 	can_move = true
 
 
@@ -306,7 +320,9 @@ func process_targeted() -> void:
 	
 	# take damage animation
 	#animation_manager.global_animation_ptr_id = taking_damage_animation_id
-	debug_menu.anim_id_spin.value = taking_damage_animation_id
+	#debug_menu.anim_id_spin.value = taking_damage_animation_id
+	current_animation_id_fwd = taking_damage_animation_id
+	set_base_animation_ptr_id(current_animation_id_fwd)
 	
 	# show result / damage numbers
 	
@@ -314,15 +330,34 @@ func process_targeted() -> void:
 	await UnitControllerRT.unit.ability_completed
 	# show death animation
 	#animation_manager.global_animation_ptr_id = knocked_out_animation_id
-	debug_menu.anim_id_spin.value = knocked_out_animation_id
+	#debug_menu.anim_id_spin.value = knocked_out_animation_id
 	idle_animation_id = knocked_out_animation_id
+	current_animation_id_fwd = idle_animation_id
+	set_base_animation_ptr_id(current_animation_id_fwd)
 	
 	knocked_out.emit(self)
 
 
+func set_base_animation_ptr_id(ptr_id: int) -> void:
+	var new_ptr: int = ptr_id
+	if is_back_facing:
+		new_ptr = ptr_id + 1
+	
+	#if is_back_facing:
+		#debug_menu.anim_id_spin.value = ptr_id + 1
+		##animation_manager.global_animation_ptr_id = ptr_id + 1
+	#else:
+		#debug_menu.anim_id_spin.value = ptr_id
+		##animation_manager.global_animation_ptr_id = ptr_id
+	
+	if animation_manager.global_animation_ptr_id != new_ptr:
+		debug_menu.anim_id_spin.value = new_ptr
+		#animation_manager.global_animation_ptr_id = new_ptr
+
+
 func update_unit_facing(dir: Vector3) -> void:
 	var angle_deg: float = rad_to_deg(atan2(dir.z, dir.x))
-	angle_deg = fposmod(angle_deg, 359.99) + 45
+	angle_deg = fposmod(angle_deg + 45, 359.99)
 	var new_facing: Facings = Facings.NORTH
 	if angle_deg < 90:
 		new_facing = Facings.EAST
@@ -334,6 +369,7 @@ func update_unit_facing(dir: Vector3) -> void:
 		new_facing = Facings.SOUTH
 	
 	if new_facing != facing:
+		var temp_facing = facing
 		facing = new_facing
 		update_animation_facing(UnitControllerRT.CameraFacingVectors[UnitControllerRT.camera_facing])
 
@@ -606,7 +642,7 @@ func walk_to_tile(to_tile: TerrainTile) -> void:
 	#if animation_manager.is_back_facing:
 		#animation_manager.global_animation_ptr_id = walk_to_animation_id + 1
 	#update_unit_facing(Vector3(new_facing_direction.x, 0, new_facing_direction.y))
-	current_base_animation_id = walk_to_animation_id
+	current_animation_id_fwd = walk_to_animation_id
 	await process_physics_move(to_tile.get_world_position())
 	
 	## https://docs.godotengine.org/en/stable/classes/class_tween.html
@@ -625,7 +661,7 @@ func walk_to_tile(to_tile: TerrainTile) -> void:
 
 
 func process_physics_move(target_position: Vector3) -> void:
-	var speed: float = 3.0
+	var speed: float = 4.0
 	var current_xy: Vector2 = Vector2(char_body.global_position.x, char_body.global_position.z)
 	var target_xy: Vector2 = Vector2(target_position.x, target_position.z)
 	var distance_left: float = current_xy.distance_to(target_xy)
@@ -639,8 +675,10 @@ func process_physics_move(target_position: Vector3) -> void:
 		velocity_2d.limit_length(distance_left)
 		char_body.velocity.x = velocity_2d.x
 		char_body.velocity.z = velocity_2d.y
-		if char_body.is_on_wall() and target_position.y + 0.25 > char_body.global_position.y: # TODO fix comparing target position to charbody, char_body's position is offset from the ground
-			char_body.velocity.y = 5.0
+		if (char_body.is_on_wall() 
+				and target_position.y + 0.25 > char_body.global_position.y
+				and char_body.velocity.y <= 0.1): # TODO fix comparing target position to charbody, char_body's position is offset from the ground
+			char_body.velocity.y = sqrt((target_position.y + 0.25) - char_body.global_position.y) * 4.5
 		await get_tree().process_frame
 	
 	char_body.velocity = Vector3.ZERO
@@ -664,7 +702,9 @@ func travel_path(path: Array[TerrainTile]) -> void:
 	for tile: TerrainTile in path:
 		await walk_to_tile(tile)
 	
-	animation_manager.global_animation_ptr_id = idle_animation_id
+	#animation_manager.global_animation_ptr_id = idle_animation_id
+	current_animation_id_fwd = idle_animation_id
+	set_base_animation_ptr_id(current_animation_id_fwd)
 	is_moving = false
 	completed_move.emit()
 

@@ -72,13 +72,6 @@ func _process(delta: float) -> void:
 		animation.increment_time(delta)
 
 
-func set_base_animation_ptr_id(ptr_id: int) -> void:
-	if is_back_facing:
-		global_animation_ptr_id = ptr_id + 1
-	else:
-		global_animation_ptr_id = ptr_id
-
-
 func start_animation(fft_animation: FftAnimation, draw_target: Sprite3D, is_playing: bool, isLooping: bool, force_loop: bool = false) -> void:
 	#if fft_animation.is_primary_anim:
 		#push_warning("Starting new animation")
@@ -450,7 +443,7 @@ func get_animation_frame_offset(local_frame_offset_index: int, shp: Shp, back_fa
 			return shp.zero_frames[local_frame_offset_index]
 	else:
 		if is_back_facing: # TODO how to handle combination of weapon and back facing?
-			return back_faced_offset
+			return back_faced_offset # Talcall's animation rewrite
 	
 	return 0
 

@@ -103,10 +103,8 @@ func display_vfx(location: Node3D) -> void:
 		#frame_meshes.append(vfx_data.get_frame_mesh(frameset_idx))
 	
 	# TODO show vfx animations on emitters, get correct position of vfx
-	
 	for emitter_idx: int in vfx_data.emitters.size():
 		var emitter := vfx_data.emitters[emitter_idx]
-		
 		var emitter_location: Node3D = Node3D.new()
 		emitter_location.position = emitter.start_position * MapData.SCALE
 		location.add_child(emitter_location)
@@ -114,71 +112,10 @@ func display_vfx(location: Node3D) -> void:
 		# TODO fix emitter timing; why do they need x3 to be reasonable?
 		emitter_location.get_tree().create_timer(emitter.start_time * 3.0 / animation_speed).timeout.connect(func(): display_vfx_animation(emitter, emitter_location))
 	
-	#for anim_idx: int in vfx_data.animations.size():
-		#var vfx_animation := vfx_data.animations[anim_idx]
-		
-		#var vfx_animation := vfx_data.animations[emitter.anim_index]
-		#var anim_location: Node3D = Node3D.new()
-		#anim_location.position = Vector3(vfx_animation.screen_offset.x, -vfx_animation.screen_offset.y, 0) * MapData.SCALE # TODO handle initial anim_location position as screen_space movement instead of world space
-		#emitter_location.add_child(anim_location)
-		#
-		#for anim_frame_idx: int in vfx_animation.animation_frames.size():
-			#var vfx_anim_frame := vfx_animation.animation_frames[anim_frame_idx]
-			#
-			#if vfx_anim_frame.frameset_id == 0x83: # move anim_location, TODO handle anim_location 0x83 movement as screen_space movement instead of world space
-				#anim_location.position += Vector3(vfx_anim_frame.duration, -vfx_anim_frame.byte_02, 0) * MapData.SCALE # byte01 is actually the X movement in function 0x83, not the duration
-				#continue
-			#elif vfx_anim_frame.frameset_id >= vfx_data.frame_sets.size(): 
-				#push_warning(name + " frameset_id: " + str(vfx_anim_frame.frameset_id))
-				#continue
-			#
-			## get composite frame
-			#for frame_idx: int in vfx_data.frame_sets[vfx_anim_frame.frameset_id].frame_set.size():
-				#var vfx_frame_mesh: MeshInstance3D = MeshInstance3D.new()
-				##mesh_instance.mesh = frame_meshes[frame_mesh_idx]
-				#vfx_frame_mesh.mesh = vfx_data.get_frame_mesh(vfx_anim_frame.frameset_id, frame_idx)
-				##vfx_frame_mesh.scale.y = -1
-				#anim_location.add_child(vfx_frame_mesh)
-			#
-			#if vfx_anim_frame.duration == 0: # TODO handle vfx animation with duration 00 corretly
-				#await anim_location.get_tree().create_timer(10 / animation_speed).timeout
-			#else:
-				#if vfx_anim_frame.duration < 0:
-					#vfx_anim_frame.duration += 256 # convert signed byte to unsigned 
-				#await anim_location.get_tree().create_timer(vfx_anim_frame.duration / animation_speed).timeout
-			#
-			## clear composite frame
-			#children = anim_location.get_children()
-			#for child: Node in children:
-				#child.queue_free()
-		#
-		#emitter_location.queue_free()
+	while location.get_child_count() > 0:
+		await Engine.get_main_loop().process_frame
 	
-	
-	# show each frameset
-	#for frameset_idx: int in vfx_data.frame_sets.size():
-		#for frame_idx: int in vfx_data.frame_sets[frameset_idx].frame_set.size():
-			#var mesh_instance: MeshInstance3D = MeshInstance3D.new()
-			##mesh_instance.mesh = frame_meshes[frame_mesh_idx]
-			#mesh_instance.mesh = vfx_data.get_frame_mesh(frameset_idx, frame_idx)
-			#location.add_child(mesh_instance)
-			#
-			#mesh_instance.position.y += 5
-			#var target_pos: Vector3 = Vector3.ZERO
-			#
-			## https://docs.godotengine.org/en/stable/classes/class_tween.html
-			#var tween: Tween = location.create_tween()
-			#tween.tween_property(mesh_instance, "position", target_pos, 0.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-		#
-		#await location.get_tree().create_timer(0.4).timeout
-	#
-	#await location.get_tree().create_timer(0.4).timeout
-	#
-	#children = location.get_children()
-	#for child: Node in children:
-		#child.queue_free()
-	
-	#location.queue_free()
+	location.queue_free()
 
 
 func display_vfx_animation(emitter_data, emitter_node: Node3D) -> void:

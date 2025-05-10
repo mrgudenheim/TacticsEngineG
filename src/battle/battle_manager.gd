@@ -26,7 +26,8 @@ var total_map_tiles: Dictionary[Vector2i, Array] = {} # Array[TerrainTile]
 var current_tile_hover: TerrainTile
 @export var tile_highlights: Dictionary[Color, Material] = {}
 
-@export var units: Node3D
+@export var units_container: Node3D
+@export var units: Array[UnitData]
 @export var unit_tscn: PackedScene
 @export var controller: UnitControllerRT
 
@@ -156,7 +157,7 @@ func on_map_selected(index: int) -> void:
 	var new_unit: UnitData = spawn_unit(random_tile, 0x01)
 	new_unit.is_player_controlled = true
 	new_unit.highlight_move_area(tile_highlights[Color.BLUE])
-	new_unit.completed_move.connect(func(): controller.unit.map_paths = controller.unit.get_map_paths(total_map_tiles))
+	new_unit.completed_move.connect(func(): controller.unit.map_paths = controller.unit.get_map_paths(total_map_tiles, units))
 	new_unit.completed_move.connect(func(): new_unit.highlight_move_area(tile_highlights[Color.BLUE]))
 	
 	# sest up character controller
@@ -178,13 +179,18 @@ func on_map_selected(index: int) -> void:
 	var rand_job: int = randi_range(0x01, 0x8e)
 	var new_unit3: UnitData = spawn_unit(random_tile, rand_job)
 	
+	new_unit.map_paths = new_unit.get_map_paths(total_map_tiles, units)
+	new_unit2.map_paths = new_unit.get_map_paths(total_map_tiles, units)
+	new_unit3.map_paths = new_unit.get_map_paths(total_map_tiles, units)
+	
 	
 	hide_debug_ui()
 
 
 func spawn_unit(tile_position: TerrainTile, job_id: int) -> UnitData:
 	var new_unit: UnitData = unit_tscn.instantiate()
-	units.add_child(new_unit)
+	units_container.add_child(new_unit)
+	units.append(new_unit)
 	new_unit.initialize_unit()
 	new_unit.tile_position = tile_position
 	new_unit.char_body.global_position = Vector3(tile_position.location.x + 0.5, randi_range(10, 15), tile_position.location.y + 0.5)
@@ -193,7 +199,7 @@ func spawn_unit(tile_position: TerrainTile, job_id: int) -> UnitData:
 	new_unit.set_sprite_by_id(new_unit.job_data.sprite_id)
 	controller.camera_rotated.connect(new_unit.char_body.set_rotation_degrees) # have sprite update as camera rotates
 	
-	new_unit.map_paths = new_unit.get_map_paths(total_map_tiles)
+	#new_unit.map_paths = new_unit.get_map_paths(total_map_tiles)
 	
 	return new_unit
 
@@ -333,8 +339,12 @@ func clear_maps() -> void:
 
 
 func clear_units() -> void:
-	for child: Node in units.get_children():
-		child.queue_free()
+	for unit: UnitData in units:
+		unit.queue_free()
+	
+	units.clear()
+	#for child: Node in units_container.get_children():
+		#child.queue_free()
 
 
 func load_random_map(_unit: UnitData) -> void:

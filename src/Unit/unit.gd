@@ -532,7 +532,7 @@ func on_sprite_idx_selected(index: int) -> void:
 
 
 ## map_tiles is Dictionary[Vector2i, Array[TerrainTile]], returns path to every tile
-func get_map_paths(map_tiles: Dictionary[Vector2i, Array], max_cost: int = 9999) -> Dictionary[TerrainTile, TerrainTile]:
+func get_map_paths(map_tiles: Dictionary[Vector2i, Array], units: Array[UnitData], max_cost: int = 9999) -> Dictionary[TerrainTile, TerrainTile]:
 	var start_tile: TerrainTile = tile_position
 	#var start_tile: TerrainTile = map_tiles[map_position][0]
 	#if map_tiles[map_position].size() > 1:
@@ -553,7 +553,7 @@ func get_map_paths(map_tiles: Dictionary[Vector2i, Array], max_cost: int = 9999)
 		#if current == goal:
 			#break  
 		
-		for next: TerrainTile in get_map_path_neighbors(current, map_tiles):
+		for next: TerrainTile in get_map_path_neighbors(current, map_tiles, units):
 			var new_cost: float = cost_so_far[current] + get_move_cost(current, next)
 			if new_cost > max_cost:
 				continue # break early
@@ -603,7 +603,7 @@ func get_map_path(start_tile: TerrainTile, target_tile: TerrainTile, came_from: 
 	return path
 
 
-func get_map_path_neighbors(current_tile: TerrainTile, map_tiles: Dictionary[Vector2i, Array]) -> Array[TerrainTile]:
+func get_map_path_neighbors(current_tile: TerrainTile, map_tiles: Dictionary[Vector2i, Array], units: Array[UnitData]) -> Array[TerrainTile]:
 	var neighbors: Array[TerrainTile]
 	const adjacent_offsets: Array[Vector2i] = [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]
 	
@@ -614,7 +614,9 @@ func get_map_path_neighbors(current_tile: TerrainTile, map_tiles: Dictionary[Vec
 			for tile: TerrainTile in map_tiles[potential_xy]:
 				if tile.no_walk == 1:
 					continue
-				elif abs(tile.height_mid - current_tile.height_mid) > jump_current:
+				elif abs(tile.height_mid - current_tile.height_mid) > jump_current: # restrict movement based on current jomp
+					continue
+				elif units.any(func(unit: UnitData): return unit.tile_position == tile): # prevent moving on top or through other units
 					continue
 				else:
 					neighbors.append(tile)

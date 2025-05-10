@@ -58,7 +58,7 @@ material = SubResource("StandardMaterial3D_p2e2h")
 [sub_resource type="BoxMesh" id="BoxMesh_cqdh8"]
 material = SubResource("StandardMaterial3D_tjj5r")
 
-[node name="BattleManager" type="Node3D" node_paths=PackedStringArray("texture_viewer", "reference_quad", "path_container", "phantom_camera", "load_rom_button", "background_gradient", "menu_list", "map_dropdown", "orthographic_check", "menu_reminder", "map_size_label", "maps", "units", "controller", "icon_counter")]
+[node name="BattleManager" type="Node3D" node_paths=PackedStringArray("texture_viewer", "reference_quad", "path_container", "phantom_camera", "load_rom_button", "background_gradient", "menu_list", "map_dropdown", "orthographic_check", "menu_reminder", "map_size_label", "maps", "units_container", "controller", "icon_counter")]
 script = ExtResource("1_hnd0w")
 texture_viewer = NodePath("SpriteViewer")
 reference_quad = NodePath("ReferenceQuad")
@@ -81,7 +81,7 @@ Color(1, 1, 0, 1): ExtResource("7_f2r6p"),
 Color(0, 0, 0, 1): ExtResource("6_l2dig"),
 Color(1, 1, 1, 1): ExtResource("8_kb1q2")
 })
-units = NodePath("Units")
+units_container = NodePath("Units")
 unit_tscn = ExtResource("4_wfrm2")
 controller = NodePath("CharacterController")
 icon_counter = NodePath("IconGridContainer")

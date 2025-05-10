@@ -125,11 +125,15 @@ var is_moving: bool = false
 var ability_id: int = 0
 var ability_data: AbilityData
 
-var idle_animation_id: int = 6
+var idle_animation_id: int = 6 # set based on status (critical, knocked out, etc.)
+var current_base_animation_id: int = 6 # set based on current action
+# constants?
 var idle_walk_animation_id: int = 6
 var walk_to_animation_id: int = 0x18
 var taking_damage_animation_id: int = 0x32
 var knocked_out_animation_id: int = 0x34
+var mid_jump_animation: int = 62
+
 var submerged_depth: int = 0
 
 func _ready() -> void:
@@ -180,8 +184,10 @@ func _physics_process(delta: float) -> void:
 	if not char_body.is_on_floor():
 		char_body.velocity += char_body.get_gravity() * delta
 	
-	if char_body.velocity * Vector3(1, 0, 1) != Vector3.ZERO:
-		update_unit_facing(char_body.velocity.normalized())
+	var velocity_horizontal = char_body.velocity
+	velocity_horizontal.y = 0
+	if velocity_horizontal.length_squared() > 0.01:
+		update_unit_facing(velocity_horizontal.normalized())
 	char_body.move_and_slide()
 
 
@@ -192,17 +198,21 @@ func _process(_delta: float) -> void:
 	if char_body.velocity.y != 0 and is_in_air == false:
 		is_in_air = true
 		
-		var mid_jump_animation: int = 62 # front facing mid jump animation
-		if animation_manager.is_back_facing:
-			mid_jump_animation += 1
-		debug_menu.anim_id_spin.value = mid_jump_animation
+		#var mid_jump_animation: int = 62 # front facing mid jump animation
+		#if animation_manager.is_back_facing:
+			#mid_jump_animation += 1
+		current_base_animation_id = mid_jump_animation
+		#debug_menu.anim_id_spin.value = mid_jump_animation
 	elif char_body.velocity.y == 0 and is_in_air == true:
 		is_in_air = false
 		
-		var idle_animation: int = 6 # front facing idle walk animation
-		if animation_manager.is_back_facing:
-			idle_animation += 1
-		debug_menu.anim_id_spin.value = idle_animation
+		#var idle_animation: int = 6 # front facing idle walk animation
+		#if animation_manager.is_back_facing:
+			#idle_animation += 1
+		current_base_animation_id = idle_animation_id
+		#debug_menu.anim_id_spin.value = idle_animation
+	
+	animation_manager.set_base_animation_ptr_id(current_base_animation_id)
 
 
 func use_attack() -> void:
@@ -591,10 +601,12 @@ func get_move_cost(from_tile: TerrainTile, to_tile: TerrainTile) -> float:
 func walk_to_tile(to_tile: TerrainTile) -> void:
 	#var walk_time: float = 0.3
 	
-	var new_facing_direction = to_tile.location - tile_position.location
-	animation_manager.global_animation_ptr_id = walk_to_animation_id
-	update_unit_facing(Vector3(new_facing_direction.x, 0, new_facing_direction.y))
-	
+	#var new_facing_direction = to_tile.location - tile_position.location
+	#animation_manager.global_animation_ptr_id = walk_to_animation_id
+	#if animation_manager.is_back_facing:
+		#animation_manager.global_animation_ptr_id = walk_to_animation_id + 1
+	#update_unit_facing(Vector3(new_facing_direction.x, 0, new_facing_direction.y))
+	current_base_animation_id = walk_to_animation_id
 	await process_physics_move(to_tile.get_world_position())
 	
 	## https://docs.godotengine.org/en/stable/classes/class_tween.html
@@ -605,6 +617,10 @@ func walk_to_tile(to_tile: TerrainTile) -> void:
 	#tween.tween_method(process_physics_move, tile_position.get_world_position(), to_tile.get_world_position(), walk_time)
 	#await tween.finished # TODO disconnect data from animations
 	tile_position = to_tile
+	
+	while not char_body.is_on_floor():
+		await get_tree().process_frame
+	
 	reached_tile.emit()
 
 
@@ -613,16 +629,18 @@ func process_physics_move(target_position: Vector3) -> void:
 	var current_xy: Vector2 = Vector2(char_body.global_position.x, char_body.global_position.z)
 	var target_xy: Vector2 = Vector2(target_position.x, target_position.z)
 	var distance_left: float = current_xy.distance_to(target_xy)
+	
 	while distance_left > 0.05: # char_body.position is about 0.25 off the ground
 		current_xy = Vector2(char_body.global_position.x, char_body.global_position.z)
 		var direction: Vector2 = current_xy.direction_to(target_xy)
 		#direction.y = 0
 		var velocity_2d: Vector2 = direction * speed
-		var velocity: Vector3 = Vector3(velocity_2d.x, 0, velocity_2d.y)
 		distance_left = current_xy.distance_to(target_xy)
-		velocity.limit_length(distance_left)
-		char_body.velocity = velocity
-		#char_body.move_and_slide() # processed within character_controller_realtime
+		velocity_2d.limit_length(distance_left)
+		char_body.velocity.x = velocity_2d.x
+		char_body.velocity.z = velocity_2d.y
+		if char_body.is_on_wall() and target_position.y + 0.25 > char_body.global_position.y: # TODO fix comparing target position to charbody, char_body's position is offset from the ground
+			char_body.velocity.y = 5.0
 		await get_tree().process_frame
 	
 	char_body.velocity = Vector3.ZERO

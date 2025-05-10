@@ -6,7 +6,6 @@
 backface_collision = true
 
 [node name="Map" type="StaticBody3D" node_paths=PackedStringArray("mesh", "collision_shape")]
-transform = Transform3D(1, -8.74228e-08, -8.74228e-08, -8.74228e-08, -1, 0, -8.74228e-08, 7.64274e-15, -1, 0, 0, 0)
 script = ExtResource("1_htm1s")
 mesh = NodePath("Map")
 collision_shape = NodePath("CollisionShape3D")

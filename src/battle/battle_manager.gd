@@ -198,13 +198,15 @@ func spawn_unit(tile_position: TerrainTile, job_id: int) -> UnitData:
 	return new_unit
 
 
-func get_map(new_map_data: MapData, position: Vector3, scale: Vector3) -> Map:
+func get_map(new_map_data: MapData, map_position: Vector3, map_scale: Vector3) -> Map:
+	var godot_scale: Vector3 = map_scale * Vector3(1, -1, 1) # vanilla used -y as up
+	#var godot_scale: Vector3 = map_scale
 	var new_map_instance: Map = map_tscn.instantiate()
 	new_map_instance.map_data = new_map_data
 	new_map_instance.mesh.mesh = new_map_data.mesh
-	new_map_instance.mesh.scale = scale
-	new_map_instance.position = position
-	new_map_instance.rotation_degrees = Vector3(0, 180, 180)
+	new_map_instance.mesh.scale = godot_scale
+	new_map_instance.position = map_position
+	#new_map_instance.rotation_degrees = Vector3(0, 0, 0)
 	
 	var new_mesh_material: ShaderMaterial = ShaderMaterial.new()
 	new_mesh_material.shader = map_shader
@@ -213,10 +215,10 @@ func get_map(new_map_data: MapData, position: Vector3, scale: Vector3) -> Map:
 	new_map_instance.mesh.material_override = new_mesh_material
 	
 	var shape_mesh: ConcavePolygonShape3D = new_map_data.mesh.create_trimesh_shape()
-	if scale == Vector3.ONE:
+	if godot_scale == Vector3.ONE:
 		new_map_instance.collision_shape.shape = new_map_data.mesh.create_trimesh_shape()
 	else:
-		new_map_instance.collision_shape.shape = get_scaled_collision_shape(new_map_data.mesh, scale)
+		new_map_instance.collision_shape.shape = get_scaled_collision_shape(new_map_data.mesh, godot_scale)
 	
 	new_map_instance.play_animations(new_map_data)
 	new_map_instance.input_event.connect(on_map_tile_hover)
@@ -224,11 +226,11 @@ func get_map(new_map_data: MapData, position: Vector3, scale: Vector3) -> Map:
 	return new_map_instance
 
 
-func get_scaled_collision_shape(mesh: Mesh, scale: Vector3) -> ConcavePolygonShape3D:
+func get_scaled_collision_shape(mesh: Mesh, collision_scale: Vector3) -> ConcavePolygonShape3D:
 	var new_collision_shape: ConcavePolygonShape3D = mesh.create_trimesh_shape()
 	var faces: PackedVector3Array = new_collision_shape.get_faces()
 	for i: int in faces.size():
-		faces[i] = faces[i] * scale
+		faces[i] = faces[i] * collision_scale
 	
 	#push_warning(faces)
 	new_collision_shape.set_faces(faces)
@@ -254,7 +256,7 @@ func instantiate_map(map_idx: int, mirror: bool) -> Node3D:
 	if not map_data.is_initialized:
 		map_data.init_map()
 	
-	map_holder.add_child(get_map(map_data, Vector3.ZERO, Vector3(1, 1, -1)))
+	map_holder.add_child(get_map(map_data, Vector3.ZERO, Vector3(1, 1, 1)))
 	
 	mirror = false
 	if mirror:
@@ -284,7 +286,7 @@ func initialize_map_tiles() -> void:
 				continue
 			
 			var total_location: Vector2i = tile.location
-			var map_scale: Vector2i = Vector2i(map_chunk.mesh.scale.x, -map_chunk.mesh.scale.z)
+			var map_scale: Vector2i = Vector2i(map_chunk.mesh.scale.x, map_chunk.mesh.scale.z)
 			total_location = total_location * map_scale
 			var mirror_shift: Vector2i = map_scale # ex. (0,0) should be (-1, -1) when mirrored across x and y
 			if map_scale.x == 1:
@@ -361,9 +363,9 @@ func on_map_tile_hover(camera: Camera3D, event: InputEvent, event_position: Vect
 	if event.is_action_pressed("primary_action"):
 		if controller.unit.path_costs.has(tile):
 			if controller.unit.path_costs[tile] <= controller.unit.move_current:
-				var path: Array[TerrainTile] = controller.unit.get_map_path(controller.unit.tile_position, tile, controller.unit.map_paths)
+				var map_path: Array[TerrainTile] = controller.unit.get_map_path(controller.unit.tile_position, tile, controller.unit.map_paths)
 				controller.unit.clear_tile_highlights(controller.unit.tile_highlights)
-				await controller.unit.travel_path(path)
+				await controller.unit.travel_path(map_path)
 				clear_path()
 				#controller.unit.map_paths = controller.unit.get_map_paths(total_map_tiles)
 				return

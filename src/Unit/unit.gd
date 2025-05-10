@@ -113,9 +113,9 @@ enum Facings {
 	}
 
 const FacingVectors: Dictionary[Facings, Vector3] = {
-	Facings.NORTH: Vector3.FORWARD,
+	Facings.NORTH: Vector3.BACK,
 	Facings.EAST: Vector3.RIGHT,
-	Facings.SOUTH: Vector3.BACK,
+	Facings.SOUTH: Vector3.FORWARD,
 	Facings.WEST: Vector3.LEFT,
 	}
 
@@ -310,16 +310,17 @@ func process_targeted() -> void:
 
 
 func update_unit_facing(dir: Vector3) -> void:
-	var angle_deg: float = rad_to_deg(atan2(dir.z, dir.x)) + 45 + 90
+	var angle_deg: float = rad_to_deg(atan2(dir.z, dir.x))
+	angle_deg = fposmod(angle_deg, 359.99) + 45
 	var new_facing: Facings = Facings.NORTH
 	if angle_deg < 90:
-		new_facing = Facings.NORTH
-	elif angle_deg < 180:
 		new_facing = Facings.EAST
+	elif angle_deg < 180:
+		new_facing = Facings.NORTH
 	elif angle_deg < 270:
-		new_facing = Facings.SOUTH
-	elif angle_deg < 360:
 		new_facing = Facings.WEST
+	elif angle_deg < 360:
+		new_facing = Facings.SOUTH
 	
 	if new_facing != facing:
 		facing = new_facing
@@ -331,9 +332,9 @@ func update_animation_facing(camera_facing_vector: Vector3) -> void:
 	#var camera_facing_vector: Vector3 = UnitControllerRT.CameraFacingVectors[controller.camera_facing]
 	#var facing_difference: Vector3 = camera_facing_vector - unt_facing_vectorwad
 	
-	var unit_facing_angle = fposmod(rad_to_deg(atan2(unit_facing_vector.z, unit_facing_vector.x)), 360)
-	var camera_facing_angle = fposmod(rad_to_deg(atan2(-camera_facing_vector.z, -camera_facing_vector.x)), 360)
-	var facing_difference_angle = fposmod(camera_facing_angle - unit_facing_angle, 360)
+	var unit_facing_angle = fposmod(rad_to_deg(atan2(unit_facing_vector.z, unit_facing_vector.x)), 359.99)
+	var camera_facing_angle = fposmod(rad_to_deg(atan2(-camera_facing_vector.z, -camera_facing_vector.x)), 359.99)
+	var facing_difference_angle = fposmod(camera_facing_angle - unit_facing_angle, 359.99)
 		
 	#push_warning("Difference: " + str(facing_difference) + ", UnitFacing: " + str(unit_facing_vector) + ", CameraFacing: " + str(camera_facing_vector))
 	push_warning("Difference: " + str(facing_difference_angle) + ", UnitFacing: " + str(unit_facing_angle) + ", CameraFacing: " + str(camera_facing_angle))
@@ -593,14 +594,44 @@ func walk_to_tile(to_tile: TerrainTile) -> void:
 	animation_manager.global_animation_ptr_id = walk_to_animation_id
 	update_unit_facing(Vector3(new_facing_direction.x, 0, new_facing_direction.y))
 	
+	await process_physics_move(to_tile.get_world_position())
 	
 	## https://docs.godotengine.org/en/stable/classes/class_tween.html
-	var tween: Tween = self.create_tween()
+	#var tween: Tween = self.create_tween()
 	#tween.tween_property(self, "position", to_tile.get_world_position(), 0.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	tween.tween_property(char_body, "position", to_tile.get_world_position(), walk_time)
-	await tween.finished # TODO disconnect data from animations
+	#tween.set_process_mode(Tween.TWEEN_PROCESS_PHYSICS)
+	#tween.tween_property(char_body, "position", to_tile.get_world_position(), walk_time)
+	#tween.tween_method(process_physics_move, tile_position.get_world_position(), to_tile.get_world_position(), walk_time)
+	#await tween.finished # TODO disconnect data from animations
 	tile_position = to_tile
 	reached_tile.emit()
+
+
+func process_physics_move(target_position: Vector3) -> void:
+	var speed: float = 1.0
+	var current_xy: Vector2 = Vector2(char_body.global_position.x, char_body.global_position.z)
+	var target_xy: Vector2 = Vector2(target_position.x, target_position.z)
+	var distance_left: float = current_xy.distance_to(target_xy)
+	while distance_left > 0.05: # char_body.position is about 0.25 off the ground
+		current_xy = Vector2(char_body.global_position.x, char_body.global_position.z)
+		var direction: Vector2 = current_xy.direction_to(target_xy)
+		#direction.y = 0
+		var velocity_2d: Vector2 = direction * speed
+		var velocity: Vector3 = Vector3(velocity_2d.x, 0, velocity_2d.y)
+		distance_left = current_xy.distance_to(target_xy)
+		velocity.limit_length(distance_left)
+		char_body.velocity = velocity
+		#char_body.move_and_slide() # processed within character_controller_realtime
+		await get_tree().process_frame
+	
+	char_body.velocity = Vector3.ZERO
+	
+	#var velocity: Vector3 = new_position - char_body.position
+	#char_body.position = new_position
+	#char_body.velocity = velocity
+	#char_body.velocity = velocity * get_physics_process_delta_time()
+	#char_body.get_real_velocity()
+	#char_body.move_and_slide()
 
 
 #func sort_ascending(a_idx: int, b_idx: int):

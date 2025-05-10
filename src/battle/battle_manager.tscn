@@ -192,7 +192,8 @@ texture_filter = 0
 transform = Transform3D(1, 0, 0, 0, 0.553391, -0.832921, 0, 0.832921, 0.553391, 0, 3.51982, 2.72607)
 
 [node name="ReferenceQuad" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 21.5, 2, 19.5)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+visible = false
 mesh = SubResource("QuadMesh_foefj")
 
 [node name="PathContainer" type="Node3D" parent="."]
@@ -229,18 +230,18 @@ billboard = 1
 text = "West (-1, 0, 0)"
 
 [node name="SouthLabel3D" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -20)
+visible = false
+pixel_size = 0.05
+billboard = 1
+text = "South (0, 0, -1)"
+
+[node name="NorthLabel3D" type="Label3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 20)
 visible = false
 pixel_size = 0.05
 billboard = 1
-text = "South (0, 0, 1)"
-
-[node name="NorthLabel3D" type="Label3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -40)
-visible = false
-pixel_size = 0.05
-billboard = 1
-text = "North (0, 0, -1)"
+text = "North (0, 0, 1)"
 
 [node name="IconGridContainer" type="GridContainer" parent="."]
 layout_direction = 3

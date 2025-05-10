@@ -55,9 +55,9 @@ func _physics_process(delta: float) -> void:
 	if direction:
 		unit.char_body.velocity.x = direction.x * SPEED
 		unit.char_body.velocity.z = direction.z * SPEED
-	else:
-		unit.char_body.velocity.x = move_toward(unit.char_body.velocity.x, 0, SPEED)
-		unit.char_body.velocity.z = move_toward(unit.char_body.velocity.z, 0, SPEED)
+	#else:
+		#unit.char_body.velocity.x = move_toward(unit.char_body.velocity.x, 0, SPEED)
+		#unit.char_body.velocity.z = move_toward(unit.char_body.velocity.z, 0, SPEED)
 	
 	if unit.char_body.velocity * Vector3(1, 0, 1) != Vector3.ZERO:
 		velocity_set.emit(direction)
@@ -95,8 +95,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		#push_warning("primary_action_clicked")
 		#unit.use_ability()
 	
-	if Input.is_action_just_pressed("primary_action") and unit.char_body.is_on_floor():
-		unit.use_attack()
+	# TODO implement a generic use_action system
+	#if Input.is_action_just_pressed("primary_action") and unit.char_body.is_on_floor():
+		#unit.use_attack()
 
 func rotate_camera(dir: int) -> void:
 	if is_rotating:

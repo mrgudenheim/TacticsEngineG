@@ -41,6 +41,7 @@ transform = Transform3D(0.707107, 0, 0.707107, 0, 0.999999, 0, -0.707107, 0, 0.7
 axis_lock_angular_x = true
 axis_lock_angular_y = true
 axis_lock_angular_z = true
+floor_max_angle = 1.0472
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.375, 0)

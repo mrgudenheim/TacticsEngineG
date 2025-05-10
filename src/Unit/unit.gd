@@ -675,7 +675,7 @@ func process_physics_move(target_position: Vector3) -> void:
 		velocity_2d.limit_length(distance_left)
 		char_body.velocity.x = velocity_2d.x
 		char_body.velocity.z = velocity_2d.y
-		if (char_body.is_on_wall() 
+		if (char_body.is_on_wall() # TODO implement jumping and leaping correctly
 				and target_position.y + 0.25 > char_body.global_position.y
 				and char_body.velocity.y <= 0.1): # TODO fix comparing target position to charbody, char_body's position is offset from the ground
 			char_body.velocity.y = sqrt((target_position.y + 0.25) - char_body.global_position.y) * 4.5

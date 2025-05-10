@@ -152,11 +152,14 @@ func on_map_selected(index: int) -> void:
 	
 	push_warning(middle_position)
 	
+	add_units_to_map()
+
+
+func add_units_to_map() -> void:
 	# add player unit
 	var random_tile: TerrainTile = get_random_stand_terrain_tile()
 	var new_unit: UnitData = spawn_unit(random_tile, 0x01)
 	new_unit.is_player_controlled = true
-	new_unit.highlight_move_area(tile_highlights[Color.BLUE])
 	new_unit.completed_move.connect(func(): controller.unit.map_paths = controller.unit.get_map_paths(total_map_tiles, units))
 	new_unit.completed_move.connect(func(): new_unit.highlight_move_area(tile_highlights[Color.BLUE]))
 	
@@ -168,14 +171,20 @@ func on_map_selected(index: int) -> void:
 	#controller.rotate_phantom_camera(Vector3(-26.54, 45, 0))
 	
 	# add non-player unit
-	random_tile = get_random_stand_terrain_tile()
+	var need_new_tile: bool = true
+	while need_new_tile:
+		random_tile = get_random_stand_terrain_tile()
+		need_new_tile = units.any(func(unit: UnitData): unit.tile_position == random_tile)
 	var new_unit2: UnitData = spawn_unit(random_tile, 0x07)
 	
 	# set up what to do when target unit is knocked out
 	new_unit2.knocked_out.connect(load_random_map)
 	new_unit2.knocked_out.connect(increment_counter)
 	
-	random_tile = get_random_stand_terrain_tile()
+	need_new_tile = true
+	while need_new_tile:
+		random_tile = get_random_stand_terrain_tile()
+		need_new_tile = units.any(func(unit: UnitData): unit.tile_position == random_tile)
 	var rand_job: int = randi_range(0x01, 0x8e)
 	var new_unit3: UnitData = spawn_unit(random_tile, rand_job)
 	
@@ -183,6 +192,7 @@ func on_map_selected(index: int) -> void:
 	new_unit2.map_paths = new_unit.get_map_paths(total_map_tiles, units)
 	new_unit3.map_paths = new_unit.get_map_paths(total_map_tiles, units)
 	
+	new_unit.highlight_move_area(tile_highlights[Color.BLUE])
 	
 	hide_debug_ui()
 

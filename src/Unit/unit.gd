@@ -357,7 +357,8 @@ func set_base_animation_ptr_id(ptr_id: int) -> void:
 
 func update_unit_facing(dir: Vector3) -> void:
 	var angle_deg: float = rad_to_deg(atan2(dir.z, dir.x))
-	angle_deg = fposmod(angle_deg, 359.99) + 45
+	angle_deg = fposmod(angle_deg, 359.99) + 45 # add 45 so EAST is just < 90 instead of < 45 and > 315
+	angle_deg = fposmod(angle_deg, 359.99) # correction for values over 360 due to adding 45
 	var new_facing: Facings = facing
 	if angle_deg < 90:
 		new_facing = Facings.EAST

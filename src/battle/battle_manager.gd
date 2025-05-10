@@ -249,7 +249,7 @@ func on_orthographic_check_toggled(toggled_on: bool) -> void:
 		#phantom_camera.set_collision_mask(1)
 
 
-func instantiate_map(map_idx: int, mirror: bool) -> Node3D:
+func instantiate_map(map_idx: int, mirror_chuncks: bool) -> Node3D:
 	var map_holder: Node3D = Node3D.new()
 	
 	var map_data: MapData = RomReader.maps[map_idx]
@@ -258,8 +258,8 @@ func instantiate_map(map_idx: int, mirror: bool) -> Node3D:
 	
 	map_holder.add_child(get_map(map_data, Vector3.ZERO, Vector3(1, 1, 1)))
 	
-	mirror = false
-	if mirror:
+	mirror_chuncks = false
+	if mirror_chuncks:
 		map_holder.add_child(get_map(map_data, Vector3.ZERO, Vector3(1, 1, 1)))
 		map_holder.add_child(get_map(map_data, Vector3.FORWARD * map_data.map_length * -2, Vector3(1, 1, 1)))
 		map_holder.add_child(get_map(map_data, Vector3.ZERO, Vector3(-1, 1, -1)))

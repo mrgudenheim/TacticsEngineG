@@ -666,7 +666,7 @@ func get_leaping_neighbors(current_tile: TerrainTile, map_tiles: Dictionary[Vect
 					if units.any(func(unit: UnitData): return unit.tile_position == intermediate_tile):
 						can_leap = current_tile.height_mid >= intermediate_tile.height_mid + 3 # prevent leaping over units taller than starting height
 					return not can_leap): 
-					continue # TODO fix leap check for leaping under a bridge/ceiling
+					continue
 				elif intermediate_tiles.any(func(intermediate_tile: TerrainTile): # prevent leaping when walking would be fine
 						var intermediate_is_taller_then_final: bool = intermediate_tile.height_mid >= tile.height_mid # TODO more complex check for if there is actually a path from the intermediate tile
 						var intermediate_is_walkable: bool = walk_neighbors.has(intermediate_tile) or leap_neighbors.has(intermediate_tile)
@@ -690,8 +690,14 @@ func get_move_cost(from_tile: TerrainTile, to_tile: TerrainTile) -> float:
 
 func walk_to_tile(to_tile: TerrainTile) -> void:
 	var distance_to_move: float = tile_position.location.distance_to(to_tile.location)
+	var immediate_path: Vector3 = to_tile.get_world_position() - tile_position.get_world_position()
 	if distance_to_move > 1.1: # TODO is leaping the only case where moving more than 1 distance at a time?
 		char_body.velocity.y = 1.1 * distance_to_move # hop over intermediate tiles
+	elif to_tile.height_mid - tile_position.height_mid >= 3:
+		update_unit_facing(immediate_path)
+		var vert_distance: float = (to_tile.height_mid - tile_position.height_mid) * MapData.HEIGHT_SCALE
+		char_body.velocity.y = sqrt(vert_distance) * 4.5 # jump for steep changes in height, to get to bridges that don't have walls
+		await get_tree().create_timer(vert_distance * 0.19).timeout
 	else:
 		current_animation_id_fwd = walk_to_animation_id
 	await process_physics_move(to_tile.get_world_position())
@@ -710,7 +716,6 @@ func process_physics_move(target_position: Vector3) -> void:
 	var target_xy: Vector2 = Vector2(target_position.x, target_position.z)
 	var distance_left: float = current_xy.distance_to(target_xy)
 	
-	# TODO jump to new tile when there is no wall, ie. jumping up to a bridge
 	while distance_left > 0.05: # char_body.position is about 0.25 off the ground
 		current_xy = Vector2(char_body.global_position.x, char_body.global_position.z)
 		var direction: Vector2 = current_xy.direction_to(target_xy)
@@ -765,7 +770,7 @@ func highlight_tiles(tiles: Array[TerrainTile], highlight_material: Material) ->
 		var new_tile_selector: MeshInstance3D = tile.get_tile_mesh()
 		new_tile_selector.material_override = highlight_material # use pre-existing materials
 		tile_highlights.add_child(new_tile_selector)
-		new_tile_selector.global_position = tile.get_world_position(true) + Vector3(0, 0.05, 0)
+		new_tile_selector.global_position = tile.get_world_position(true) + Vector3(0, 0.025, 0)
 
 
 func highlight_move_area(highlight_material: Material) -> void:
@@ -777,7 +782,7 @@ func highlight_move_area(highlight_material: Material) -> void:
 		var new_tile_selector: MeshInstance3D = tile.get_tile_mesh()
 		new_tile_selector.material_override = highlight_material # use pre-existing materials
 		tile_highlights.add_child(new_tile_selector)
-		new_tile_selector.global_position = tile.get_world_position(true) + Vector3(0, 0.05, 0)
+		new_tile_selector.global_position = tile.get_world_position(true) + Vector3(0, 0.025, 0)
 
 
 func clear_tile_highlights(highlight_container: Node3D) -> void:

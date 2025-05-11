@@ -174,7 +174,7 @@ func add_units_to_map() -> void:
 	var need_new_tile: bool = true
 	while need_new_tile:
 		random_tile = get_random_stand_terrain_tile()
-		need_new_tile = units.any(func(unit: UnitData): unit.tile_position == random_tile)
+		need_new_tile = units.any(func(unit: UnitData): return unit.tile_position == random_tile)
 	var new_unit2: UnitData = spawn_unit(random_tile, 0x07)
 	
 	# set up what to do when target unit is knocked out
@@ -184,7 +184,7 @@ func add_units_to_map() -> void:
 	need_new_tile = true
 	while need_new_tile:
 		random_tile = get_random_stand_terrain_tile()
-		need_new_tile = units.any(func(unit: UnitData): unit.tile_position == random_tile)
+		need_new_tile = units.any(func(unit: UnitData): return unit.tile_position == random_tile)
 	var rand_job: int = randi_range(0x01, 0x8e)
 	var new_unit3: UnitData = spawn_unit(random_tile, rand_job)
 	

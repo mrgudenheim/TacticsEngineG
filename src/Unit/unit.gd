@@ -624,7 +624,7 @@ func get_map_path_neighbors(current_tile: TerrainTile, map_tiles: Dictionary[Vec
 				else:
 					neighbors.append(tile)
 		
-		neighbors.append_array(get_leaping_neighbors(current_tile, map_tiles, units, offset))
+		neighbors.append_array(get_leaping_neighbors(current_tile, map_tiles, units, offset, neighbors))
 	# TODO check other cases - leaping, teleport, map warps, fly, float, etc.
 	# TODO get costs
 	# TODO get animations - walking, jumping, etc.
@@ -632,21 +632,21 @@ func get_map_path_neighbors(current_tile: TerrainTile, map_tiles: Dictionary[Vec
 	return neighbors
 
 
-func get_leaping_neighbors(current_tile: TerrainTile, map_tiles: Dictionary[Vector2i, Array], units: Array[UnitData], offset: Vector2i) -> Array[TerrainTile]:
-	var neighbors: Array[TerrainTile] = []
+func get_leaping_neighbors(current_tile: TerrainTile, map_tiles: Dictionary[Vector2i, Array], units: Array[UnitData], offset_direction: Vector2i, walk_neighbors: Array[TerrainTile]) -> Array[TerrainTile]:
+	var leap_neighbors: Array[TerrainTile] = []
 	var max_leap_distance: int = jump_current / 2
 	
 	if max_leap_distance == 0:
-		return neighbors
+		return leap_neighbors
 	
 	for leap_distance: int in range(1, max_leap_distance + 1):
-		var potential_xy: Vector2i = current_tile.location + (offset * (leap_distance + 1))
+		var potential_xy: Vector2i = current_tile.location + (offset_direction * (leap_distance + 1))
 		if map_tiles.has(potential_xy):
 			var intermediate_tiles: Array[TerrainTile] = []
-			for intermediate_offset: int in range(1, leap_distance):
-				var intermediate_xy: Vector2i = current_tile.location + (intermediate_offset * offset)
-				if map_tiles.has(potential_xy):
-					intermediate_tiles.append_array(map_tiles[potential_xy])
+			for intermediate_distance: int in range(1, leap_distance + 1):
+				var intermediate_xy: Vector2i = current_tile.location + (offset_direction * intermediate_distance)
+				if map_tiles.has(intermediate_xy):
+					intermediate_tiles.append_array(map_tiles[intermediate_xy])
 			for tile: TerrainTile in map_tiles[potential_xy]:
 				if tile.no_walk == 1:
 					continue
@@ -659,12 +659,24 @@ func get_leaping_neighbors(current_tile: TerrainTile, map_tiles: Dictionary[Vect
 				# TODO prevent trying to move vertically through floors/ceilings
 				elif units.any(func(unit: UnitData): return unit.tile_position == tile): # prevent moving on top or through other units
 					continue # TODO allow moving through knocked out units
-				elif intermediate_tiles.any(func(tile: TerrainTile): tile.height_mid > current_tile.height_mid): # prevent leaping through taller intermediate tiles
+				elif intermediate_tiles.any(func(intermediate_tile: TerrainTile): return intermediate_tile.height_mid > current_tile.height_mid): # prevent leaping through taller intermediate tiles
 					continue # TODO fix leap check for leaping under a bridge/ceiling
+				elif intermediate_tiles.any(func(intermediate_tile: TerrainTile): 
+					var can_walk: bool = true
+					if units.any(func(unit: UnitData): return unit.tile_position == tile):
+						can_walk = intermediate_tile.height_mid + 3 > current_tile.height_mid # prevent leaping over units taller than starting height
+					return not can_walk): 
+					continue # TODO fix leap check for leaping under a bridge/ceiling
+				elif intermediate_tiles.any(func(intermediate_tile: TerrainTile): # prevent leaping when walking would be fine
+						var intermediate_is_taller_then_final: bool = intermediate_tile.height_mid >= tile.height_mid # TODO more complex check for if there is actually a path from the intermediate tile
+						var intermediate_is_walkable: bool = walk_neighbors.has(intermediate_tile) or leap_neighbors.has(intermediate_tile)
+						return (intermediate_is_taller_then_final and intermediate_is_walkable)
+						): 
+					continue
 				else:
-					neighbors.append(tile)
+					leap_neighbors.append(tile)
 	
-	return neighbors
+	return leap_neighbors
 
 
 func get_move_cost(from_tile: TerrainTile, to_tile: TerrainTile) -> float:

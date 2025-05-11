@@ -710,6 +710,7 @@ func process_physics_move(target_position: Vector3) -> void:
 	var target_xy: Vector2 = Vector2(target_position.x, target_position.z)
 	var distance_left: float = current_xy.distance_to(target_xy)
 	
+	# TODO jump to new tile when there is no wall, ie. jumping up to a bridge
 	while distance_left > 0.05: # char_body.position is about 0.25 off the ground
 		current_xy = Vector2(char_body.global_position.x, char_body.global_position.z)
 		var direction: Vector2 = current_xy.direction_to(target_xy)

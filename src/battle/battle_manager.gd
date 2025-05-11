@@ -133,6 +133,7 @@ func on_map_selected(index: int) -> void:
 	clear_units()
 	
 	maps.add_child(instantiate_map(index, not walled_maps.has(index)))
+	maps.add_child(instantiate_map(0x09, not walled_maps.has(index), Vector3(-27, 18 * MapData.HEIGHT_SCALE, 0))) # 0x09 = Igros Citadel
 	initialize_map_tiles()
 	
 	var map_width_range: Vector2i = Vector2i(0, map_data.map_width)
@@ -141,16 +142,8 @@ func on_map_selected(index: int) -> void:
 		map_width_range = Vector2i(-map_data.map_width + 1, map_data.map_width * 2 - 2)
 		map_length_range = Vector2i(-map_data.map_length + 1, map_data.map_length * 2 - 2)
 	
-	var middle_height: float = (map_data.terrain_tiles[map_data.terrain_tiles.size() / 2].height_bottom * SCALED_UNITS_PER_HEIGHT) + 2
-	var middle_position: Vector3 = Vector3(map_data.map_width / 2.0, middle_height, -map_data.map_length / 2.0)
-	var random_position: Vector3 = Vector3(randi_range(map_width_range.x, map_width_range.y) + 0.5, randi_range(10, 15), -randi_range(map_length_range.x, map_length_range.y) - 0.5)
-	#camera_controller.position = middle_position
-	#camera_controller.camera_pivot.rotation_degrees = Vector3(-CameraController.LOW_ANGLE, 45, 0)
-	
 	push_warning("Time to create map (ms): " + str(Time.get_ticks_msec() - start_time))
 	push_warning("Map_created")
-	
-	push_warning(middle_position)
 	
 	add_units_to_map()
 
@@ -203,7 +196,7 @@ func spawn_unit(tile_position: TerrainTile, job_id: int) -> UnitData:
 	units.append(new_unit)
 	new_unit.initialize_unit()
 	new_unit.tile_position = tile_position
-	new_unit.char_body.global_position = Vector3(tile_position.location.x + 0.5, randi_range(10, 15), tile_position.location.y + 0.5)
+	new_unit.char_body.global_position = Vector3(tile_position.location.x + 0.5, randi_range(15, 20), tile_position.location.y + 0.5)
 	new_unit.job_id = job_id
 	new_unit.job_data = RomReader.scus_data.jobs_data[job_id]
 	new_unit.set_sprite_by_id(new_unit.job_data.sprite_id)
@@ -265,25 +258,25 @@ func on_orthographic_check_toggled(toggled_on: bool) -> void:
 		#phantom_camera.set_collision_mask(1)
 
 
-func instantiate_map(map_idx: int, mirror_chunks: bool) -> Node3D:
+func instantiate_map(map_idx: int, mirror_chunks: bool, offset: Vector3 = Vector3.ZERO) -> Node3D:
 	var map_holder: Node3D = Node3D.new()
 	
 	var map_data: MapData = RomReader.maps[map_idx]
 	if not map_data.is_initialized:
 		map_data.init_map()
 	
-	map_holder.add_child(get_map(map_data, Vector3.ZERO, Vector3(1, 1, 1)))
+	map_holder.add_child(get_map(map_data, offset, Vector3(1, 1, 1)))
 	
-	mirror_chunks = false
+	#mirror_chunks = false
 	if mirror_chunks:
-		map_holder.add_child(get_map(map_data, Vector3.ZERO, Vector3(1, 1, -1)))
-		map_holder.add_child(get_map(map_data, Vector3.FORWARD * map_data.map_length * -2, Vector3(1, 1, -1)))
-		map_holder.add_child(get_map(map_data, Vector3.ZERO, Vector3(-1, 1, -1)))
-		map_holder.add_child(get_map(map_data, Vector3.RIGHT * map_data.map_width * 2, Vector3(-1, 1, -1)))
-		map_holder.add_child(get_map(map_data, Vector3.ZERO, Vector3(-1, 1, 1)))
-		map_holder.add_child(get_map(map_data, Vector3.FORWARD * map_data.map_length * -2, Vector3(-1, 1, -1)))
-		map_holder.add_child(get_map(map_data, Vector3.RIGHT * map_data.map_width * 2, Vector3(-1, 1, 1)))
-		map_holder.add_child(get_map(map_data, (Vector3.RIGHT * map_data.map_width * 2) + (Vector3.FORWARD * map_data.map_length * -2), Vector3(-1, 1, -1)))
+		map_holder.add_child(get_map(map_data, offset, Vector3(1, 1, -1)))
+		map_holder.add_child(get_map(map_data, offset + (Vector3.FORWARD * map_data.map_length * -2), Vector3(1, 1, -1)))
+		map_holder.add_child(get_map(map_data, offset, Vector3(-1, 1, -1)))
+		map_holder.add_child(get_map(map_data, offset + (Vector3.RIGHT * map_data.map_width * 2), Vector3(-1, 1, -1)))
+		map_holder.add_child(get_map(map_data, offset, Vector3(-1, 1, 1)))
+		map_holder.add_child(get_map(map_data, offset + (Vector3.FORWARD * map_data.map_length * -2), Vector3(-1, 1, -1)))
+		map_holder.add_child(get_map(map_data, offset + (Vector3.RIGHT * map_data.map_width * 2), Vector3(-1, 1, 1)))
+		map_holder.add_child(get_map(map_data, offset + (Vector3.RIGHT * map_data.map_width * 2) + (Vector3.FORWARD * map_data.map_length * -2), Vector3(-1, 1, -1)))
 	
 	return map_holder
 
@@ -317,6 +310,8 @@ func initialize_map_tiles() -> void:
 			total_tile.location = total_location
 			total_tile.tile_scale.x = map_chunk.mesh.scale.x
 			total_tile.tile_scale.z = map_chunk.mesh.scale.z
+			total_tile.height_bottom += map_chunk.position.y / MapData.HEIGHT_SCALE
+			total_tile.height_mid = total_tile.height_bottom + total_tile.slope_height
 			total_map_tiles[total_location].append(total_tile)
 
 

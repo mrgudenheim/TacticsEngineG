@@ -614,16 +614,55 @@ func get_map_path_neighbors(current_tile: TerrainTile, map_tiles: Dictionary[Vec
 			for tile: TerrainTile in map_tiles[potential_xy]:
 				if tile.no_walk == 1:
 					continue
+				elif tile.surface_type_id == 0x12: # lava TODO check movement abilities
+					continue
 				elif abs(tile.height_mid - current_tile.height_mid) > jump_current: # restrict movement based on current jomp
 					continue
 				elif units.any(func(unit: UnitData): return unit.tile_position == tile): # prevent moving on top or through other units
 					continue # TODO allow moving through knocked out units
+				# TODO prevent trying to move vertically through floors/ceilings
 				else:
 					neighbors.append(tile)
-	
+		
+		neighbors.append_array(get_leaping_neighbors(current_tile, map_tiles, units, offset))
 	# TODO check other cases - leaping, teleport, map warps, fly, float, etc.
 	# TODO get costs
 	# TODO get animations - walking, jumping, etc.
+	
+	return neighbors
+
+
+func get_leaping_neighbors(current_tile: TerrainTile, map_tiles: Dictionary[Vector2i, Array], units: Array[UnitData], offset: Vector2i) -> Array[TerrainTile]:
+	var neighbors: Array[TerrainTile] = []
+	var max_leap_distance: int = jump_current / 2
+	
+	if max_leap_distance == 0:
+		return neighbors
+	
+	for leap_distance: int in range(1, max_leap_distance + 1):
+		var potential_xy: Vector2i = current_tile.location + (offset * (leap_distance + 1))
+		if map_tiles.has(potential_xy):
+			var intermediate_tiles: Array[TerrainTile] = []
+			for intermediate_offset: int in range(1, leap_distance):
+				var intermediate_xy: Vector2i = current_tile.location + (intermediate_offset * offset)
+				if map_tiles.has(potential_xy):
+					intermediate_tiles.append_array(map_tiles[potential_xy])
+			for tile: TerrainTile in map_tiles[potential_xy]:
+				if tile.no_walk == 1:
+					continue
+				elif tile.surface_type_id == 0x12: # lava TODO check movement abilities
+					continue
+				elif abs(tile.height_mid - current_tile.height_mid) > jump_current: # restrict movement based on current jomp
+					continue
+				elif tile.height_mid > current_tile.height_mid: # can't leap up
+					continue
+				# TODO prevent trying to move vertically through floors/ceilings
+				elif units.any(func(unit: UnitData): return unit.tile_position == tile): # prevent moving on top or through other units
+					continue # TODO allow moving through knocked out units
+				elif intermediate_tiles.any(func(tile: TerrainTile): tile.height_mid > current_tile.height_mid): # prevent leaping through taller intermediate tiles
+					continue # TODO fix leap check for leaping under a bridge/ceiling
+				else:
+					neighbors.append(tile)
 	
 	return neighbors
 
@@ -638,28 +677,17 @@ func get_move_cost(from_tile: TerrainTile, to_tile: TerrainTile) -> float:
 
 
 func walk_to_tile(to_tile: TerrainTile) -> void:
-	#var walk_time: float = 0.3
-	
-	#var new_facing_direction = to_tile.location - tile_position.location
-	#animation_manager.global_animation_ptr_id = walk_to_animation_id
-	#if animation_manager.is_back_facing:
-		#animation_manager.global_animation_ptr_id = walk_to_animation_id + 1
-	#update_unit_facing(Vector3(new_facing_direction.x, 0, new_facing_direction.y))
 	current_animation_id_fwd = walk_to_animation_id
+	var distance_to_move: float = tile_position.location.distance_to(to_tile.location)
+	if distance_to_move > 1.1: # TODO is leaping the only case where moving more than 1 distance at a time?
+		char_body.velocity.y = 1.1 * distance_to_move # hop over intermediate tiles
 	await process_physics_move(to_tile.get_world_position())
-	
-	## https://docs.godotengine.org/en/stable/classes/class_tween.html
-	#var tween: Tween = self.create_tween()
-	#tween.tween_property(self, "position", to_tile.get_world_position(), 0.7).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	#tween.set_process_mode(Tween.TWEEN_PROCESS_PHYSICS)
-	#tween.tween_property(char_body, "position", to_tile.get_world_position(), walk_time)
-	#tween.tween_method(process_physics_move, tile_position.get_world_position(), to_tile.get_world_position(), walk_time)
-	#await tween.finished # TODO disconnect data from animations
 	tile_position = to_tile
 	
 	while not char_body.is_on_floor():
 		await get_tree().process_frame
 	
+	tile_position = to_tile
 	reached_tile.emit()
 
 
@@ -687,13 +715,6 @@ func process_physics_move(target_position: Vector3) -> void:
 	#char_body.velocity = Vector3.ZERO
 	char_body.velocity.x = 0
 	char_body.velocity.z = 0
-	
-	#var velocity: Vector3 = new_position - char_body.position
-	#char_body.position = new_position
-	#char_body.velocity = velocity
-	#char_body.velocity = velocity * get_physics_process_delta_time()
-	#char_body.get_real_velocity()
-	#char_body.move_and_slide()
 
 
 #func sort_ascending(a_idx: int, b_idx: int):

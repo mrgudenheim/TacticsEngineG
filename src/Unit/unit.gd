@@ -662,10 +662,10 @@ func get_leaping_neighbors(current_tile: TerrainTile, map_tiles: Dictionary[Vect
 				elif intermediate_tiles.any(func(intermediate_tile: TerrainTile): return intermediate_tile.height_mid > current_tile.height_mid): # prevent leaping through taller intermediate tiles
 					continue # TODO fix leap check for leaping under a bridge/ceiling
 				elif intermediate_tiles.any(func(intermediate_tile: TerrainTile): 
-					var can_walk: bool = true
-					if units.any(func(unit: UnitData): return unit.tile_position == tile):
-						can_walk = intermediate_tile.height_mid + 3 > current_tile.height_mid # prevent leaping over units taller than starting height
-					return not can_walk): 
+					var can_leap: bool = true
+					if units.any(func(unit: UnitData): return unit.tile_position == intermediate_tile):
+						can_leap = current_tile.height_mid >= intermediate_tile.height_mid + 3 # prevent leaping over units taller than starting height
+					return not can_leap): 
 					continue # TODO fix leap check for leaping under a bridge/ceiling
 				elif intermediate_tiles.any(func(intermediate_tile: TerrainTile): # prevent leaping when walking would be fine
 						var intermediate_is_taller_then_final: bool = intermediate_tile.height_mid >= tile.height_mid # TODO more complex check for if there is actually a path from the intermediate tile
@@ -689,10 +689,11 @@ func get_move_cost(from_tile: TerrainTile, to_tile: TerrainTile) -> float:
 
 
 func walk_to_tile(to_tile: TerrainTile) -> void:
-	current_animation_id_fwd = walk_to_animation_id
 	var distance_to_move: float = tile_position.location.distance_to(to_tile.location)
 	if distance_to_move > 1.1: # TODO is leaping the only case where moving more than 1 distance at a time?
 		char_body.velocity.y = 1.1 * distance_to_move # hop over intermediate tiles
+	else:
+		current_animation_id_fwd = walk_to_animation_id
 	await process_physics_move(to_tile.get_world_position())
 	tile_position = to_tile
 	

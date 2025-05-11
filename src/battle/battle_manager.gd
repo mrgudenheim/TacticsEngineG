@@ -33,7 +33,7 @@ var current_tile_hover: TerrainTile
 
 @export var icon_counter: GridContainer
 
-@export var mirror: bool = true
+@export var allow_mirror: bool = true
 var walled_maps: PackedInt32Array = [
 	3,
 	4,
@@ -133,7 +133,7 @@ func on_map_selected(index: int) -> void:
 	clear_units()
 	
 	maps.add_child(instantiate_map(index, not walled_maps.has(index)))
-	maps.add_child(instantiate_map(0x09, not walled_maps.has(index), Vector3(-27, 18 * MapData.HEIGHT_SCALE, 0))) # 0x09 = Igros Citadel
+	#maps.add_child(instantiate_map(0x09, not walled_maps.has(index), Vector3(30, 0 * MapData.HEIGHT_SCALE, 0))) # 0x09 = Igros Citadel
 	initialize_map_tiles()
 	
 	var map_width_range: Vector2i = Vector2i(0, map_data.map_width)
@@ -267,8 +267,7 @@ func instantiate_map(map_idx: int, mirror_chunks: bool, offset: Vector3 = Vector
 	
 	map_holder.add_child(get_map(map_data, offset, Vector3(1, 1, 1)))
 	
-	#mirror_chunks = false
-	if mirror_chunks:
+	if mirror_chunks and allow_mirror:
 		map_holder.add_child(get_map(map_data, offset, Vector3(1, 1, -1)))
 		map_holder.add_child(get_map(map_data, offset + (Vector3.FORWARD * map_data.map_length * -2), Vector3(1, 1, -1)))
 		map_holder.add_child(get_map(map_data, offset, Vector3(-1, 1, -1)))

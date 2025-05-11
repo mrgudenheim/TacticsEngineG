@@ -54,9 +54,9 @@ func _physics_process(delta: float) -> void:
 	if direction:
 		unit.char_body.velocity.x = direction.x * SPEED
 		unit.char_body.velocity.z = direction.z * SPEED
-	#else:
-		#unit.char_body.velocity.x = move_toward(unit.char_body.velocity.x, 0, SPEED)
-		#unit.char_body.velocity.z = move_toward(unit.char_body.velocity.z, 0, SPEED)
+	elif not unit.is_traveling_path:
+		unit.char_body.velocity.x = move_toward(unit.char_body.velocity.x, 0, SPEED)
+		unit.char_body.velocity.z = move_toward(unit.char_body.velocity.z, 0, SPEED)
 	
 	if Input.is_action_just_pressed("secondary_action") and unit.char_body.is_on_floor():
 		# https://docs.godotengine.org/en/stable/tutorials/physics/ray-casting.html

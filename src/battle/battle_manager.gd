@@ -373,7 +373,7 @@ func on_map_tile_hover(camera: Camera3D, event: InputEvent, event_position: Vect
 	#push_warning(event_position)
 	var tile: TerrainTile = get_tile(event_position)
 	
-	if controller.unit.is_moving: # TODO handle allowable inputs somewhere else
+	if controller.unit.is_traveling_path: # TODO handle allowable inputs somewhere else
 		return
 	
 	# handle clicking tile

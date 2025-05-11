@@ -120,7 +120,7 @@ const FacingVectors: Dictionary[Facings, Vector3] = {
 	}
 
 var is_in_air: bool = false
-var is_moving: bool = false
+var is_traveling_path: bool = false
 
 var ability_id: int = 0
 var ability_data: AbilityData
@@ -753,14 +753,14 @@ func process_physics_move(target_position: Vector3) -> void:
 
 
 func travel_path(path: Array[TerrainTile]) -> void:
-	is_moving = true
+	is_traveling_path = true
 	for tile: TerrainTile in path:
 		await walk_to_tile(tile) # TODO handle movement types other than walking
 	
 	#animation_manager.global_animation_ptr_id = idle_animation_id
 	current_animation_id_fwd = idle_animation_id
 	set_base_animation_ptr_id(current_animation_id_fwd)
-	is_moving = false
+	is_traveling_path = false
 	completed_move.emit()
 
 

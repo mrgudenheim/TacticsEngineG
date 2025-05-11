@@ -617,7 +617,7 @@ func get_map_path_neighbors(current_tile: TerrainTile, map_tiles: Dictionary[Vec
 				elif abs(tile.height_mid - current_tile.height_mid) > jump_current: # restrict movement based on current jomp
 					continue
 				elif units.any(func(unit: UnitData): return unit.tile_position == tile): # prevent moving on top or through other units
-					continue
+					continue # TODO allow moving through knocked out units
 				else:
 					neighbors.append(tile)
 	
@@ -724,6 +724,7 @@ func get_move_targets() -> Array[TerrainTile]:
 	return move_targets
 
 
+# TODO implement generic actions that can have tiles as targets, use this to highlight targets
 func highlight_tiles(tiles: Array[TerrainTile], highlight_material: Material) -> void:
 	for tile: TerrainTile in tiles:
 		var new_tile_selector: MeshInstance3D = tile.get_tile_mesh()
@@ -734,10 +735,12 @@ func highlight_tiles(tiles: Array[TerrainTile], highlight_material: Material) ->
 
 func highlight_move_area(highlight_material: Material) -> void:
 	for tile: TerrainTile in path_costs.keys():
-		var new_tile_selector: MeshInstance3D = tile.get_tile_mesh()
-		new_tile_selector.material_override = highlight_material # use pre-existing materials
+		if tile == tile_position:
+			continue
 		if path_costs[tile] > move_current:
 			continue # don't highlight tiles beyond move range
+		var new_tile_selector: MeshInstance3D = tile.get_tile_mesh()
+		new_tile_selector.material_override = highlight_material # use pre-existing materials
 		tile_highlights.add_child(new_tile_selector)
 		new_tile_selector.global_position = tile.get_world_position(true) + Vector3(0, 0.05, 0)
 

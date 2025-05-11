@@ -533,6 +533,8 @@ func on_sprite_idx_selected(index: int) -> void:
 
 ## map_tiles is Dictionary[Vector2i, Array[TerrainTile]], returns path to every tile
 func get_map_paths(map_tiles: Dictionary[Vector2i, Array], units: Array[UnitData], max_cost: int = 9999) -> Dictionary[TerrainTile, TerrainTile]:
+	map_paths.clear()
+	
 	var start_tile: TerrainTile = tile_position
 	#var start_tile: TerrainTile = map_tiles[map_position][0]
 	#if map_tiles[map_position].size() > 1:
@@ -545,13 +547,17 @@ func get_map_paths(map_tiles: Dictionary[Vector2i, Array], units: Array[UnitData
 	came_from[start_tile] = null
 	cost_so_far[start_tile] = 0
 	
+	var start_time: int = Time.get_ticks_msec()
+	var max_frame_time_ms: float = 1000.0 / 60.0
+	
 	var current: TerrainTile
 	while not frontier.is_empty():
 		current = frontier.pop_front()
 		
 		# break early
 		#if current == goal:
-			#break  
+			#break 
+		
 		
 		for next: TerrainTile in get_map_path_neighbors(current, map_tiles, units):
 			var new_cost: float = cost_so_far[current] + get_move_cost(current, next)
@@ -582,6 +588,10 @@ func get_map_paths(map_tiles: Dictionary[Vector2i, Array], units: Array[UnitData
 								break
 				
 				came_from[next] = current
+			
+		if Time.get_ticks_msec() - start_time > max_frame_time_ms:
+			await get_tree().process_frame
+			start_time = Time.get_ticks_msec()
 	
 	path_costs = cost_so_far
 	return came_from

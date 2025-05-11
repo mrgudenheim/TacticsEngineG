@@ -153,8 +153,9 @@ func add_units_to_map() -> void:
 	var random_tile: TerrainTile = get_random_stand_terrain_tile()
 	var new_unit: UnitData = spawn_unit(random_tile, 0x01)
 	new_unit.is_player_controlled = true
-	new_unit.completed_move.connect(func(): controller.unit.map_paths = controller.unit.get_map_paths(total_map_tiles, units))
-	new_unit.completed_move.connect(func(): new_unit.highlight_move_area(tile_highlights[Color.BLUE]))
+	new_unit.completed_move.connect(func(): 
+			new_unit.map_paths = await new_unit.get_map_paths(total_map_tiles, units)
+			new_unit.highlight_move_area(tile_highlights[Color.BLUE]))
 	
 	# sest up character controller
 	controller.unit = new_unit
@@ -181,9 +182,9 @@ func add_units_to_map() -> void:
 	var rand_job: int = randi_range(0x01, 0x8e)
 	var new_unit3: UnitData = spawn_unit(random_tile, rand_job)
 	
-	new_unit.map_paths = new_unit.get_map_paths(total_map_tiles, units)
-	new_unit2.map_paths = new_unit.get_map_paths(total_map_tiles, units)
-	new_unit3.map_paths = new_unit.get_map_paths(total_map_tiles, units)
+	new_unit.map_paths = await new_unit.get_map_paths(total_map_tiles, units)
+	new_unit2.map_paths = await new_unit2.get_map_paths(total_map_tiles, units)
+	new_unit3.map_paths = await new_unit3.get_map_paths(total_map_tiles, units)
 	
 	new_unit.highlight_move_area(tile_highlights[Color.BLUE])
 	
@@ -396,6 +397,9 @@ func on_map_tile_hover(camera: Camera3D, event: InputEvent, event_position: Vect
 	clear_path()
 	
 	#controller.unit.map_paths = controller.unit.get_map_paths(total_map_tiles) # DONT for every tile hover, do once and cache
+	if controller.unit.map_paths.is_empty():
+		return
+	
 	var path: Array[TerrainTile] = controller.unit.get_map_path(controller.unit.tile_position, tile, controller.unit.map_paths)
 	for path_tile: TerrainTile in path:
 		var new_tile_selector: MeshInstance3D = path_tile.get_tile_mesh()

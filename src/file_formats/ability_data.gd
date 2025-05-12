@@ -28,6 +28,14 @@ var spell_quote: String = "spell quote"
 var jp_cost: int = 0
 var chance_to_learn: float = 100 # percent
 var ability_type: AbilityType = AbilityType.NORMAL
+var learn_with_jp: bool = true
+var display_ability_name: bool = true
+var learn_on_hit: bool = false
+var bit_0x10: bool = false
+var ai_flags_1: int = 0
+var ai_flags_2: int = 0
+var ai_flags_3: int = 0
+var ai_flags_4: int = 0
 
 var formula # TODO store Callable?
 var formula_id: int = 0
@@ -39,6 +47,22 @@ var vertical_tolerance: int = 2
 var inflict_status_id: int = 0
 var ticks_charge_time: int = 0
 var mp_cost: int = 0
+
+var normal_flags_1: int = 0
+var normal_flags_2: int = 0
+var normal_flags_3: int = 0
+var normal_flags_4: int = 0
+var element_type
+
+var used_item_id: int = 0
+var thrown_item_type: int = 0
+var jump_range: int = 0
+var jump_vert: int = 0
+var charge_ct: int = 0
+var charge_power: int = 0
+var math1: int = 0 # 0x80 - CT, 0x40 - Level, 0x20 - Exp, 0x10 - Height
+var math2: int = 0 # 0x08 - Prime Number, 0x04 - 5, 0x02 - 4, 0x01 - 3
+var rsm_id: int = 0 # RSM Ability ID (numbered from 0x00-0x59)
 
 var animation_charging_set_id: int # BATTLE.BIN offset="2ce10" - table of animations IDs used by Ability ID - byte 1
 var animation_start_id: int

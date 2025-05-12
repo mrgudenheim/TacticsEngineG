@@ -37,7 +37,7 @@ var shps: Array[Shp] = []
 var seqs: Array[Seq] = []
 var maps: Array[MapData] = []
 var vfx: Array[VisualEffectData] = []
-var abilities: Array[AbilityData] = []
+var abilities: Array[FftAbilityData] = []
 var items: Array[ItemData] = []
 
 # BATTLE.BIN tables
@@ -97,7 +97,7 @@ func process_rom() -> void:
 	cache_associated_files()
 	
 	for ability_id: int in NUM_ACTIVE_ABILITIES:
-		abilities.append(AbilityData.new(ability_id))
+		abilities.append(FftAbilityData.new(ability_id))
 	
 	items.resize(NUM_ITEMS)
 	for id: int in NUM_ITEMS:
@@ -107,7 +107,7 @@ func process_rom() -> void:
 	#for ability_id: int in NUM_ACTIVE_ABILITIES:
 		#if not abilities[ability_id].vfx_data.is_initialized:
 			#abilities[ability_id].vfx_data.init_from_file()
-		#var ability: AbilityData = abilities[ability_id]
+		#var ability: FftAbilityData = abilities[ability_id]
 		#for frameset_idx: int in ability.vfx_data.frame_sets.size():
 			#for frame_idx: int in ability.vfx_data.frame_sets[frameset_idx].frame_set.size():
 				#var frame_data: VisualEffectData.VfxFrame = ability.vfx_data.frame_sets[frameset_idx].frame_set[frame_idx]
@@ -265,4 +265,4 @@ func get_spr_file_idx(sprite_id: int) -> int:
 
 func init_abilities() -> void:
 	for ability_id: int in NUM_ABILITIES:
-		abilities[ability_id] = AbilityData.new(ability_id)
+		abilities[ability_id] = FftAbilityData.new(ability_id)

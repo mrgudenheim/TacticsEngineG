@@ -18,7 +18,7 @@ var skillsets_data: Array[SkillsetData] = []
 var ability_data_all_start: int = 0x4f3f0 # 0x200 entries, 0x08 bytes each
 var jp_costs: PackedInt32Array = []
 var chance_to_learn: PackedInt32Array = []
-var ability_types: Array[AbilityData.AbilityType] = [] # AbilityData.AbilityType.NORMAL
+var ability_types: Array[FftAbilityData.AbilityType] = [] # FftAbilityData.AbilityType.NORMAL
 
 var ability_data_normal_start: int = 0x503f0 # ids 0x000 - 0x16f, 0x170 entries, 0x0e bytes each
 var ranges: PackedInt32Array = []

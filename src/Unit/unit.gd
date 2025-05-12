@@ -123,7 +123,7 @@ var is_in_air: bool = false
 var is_traveling_path: bool = false
 
 var ability_id: int = 0
-var ability_data: AbilityData
+var ability_data: FftAbilityData
 
 var idle_animation_id: int = 6 # set based on status (critical, knocked out, etc.)
 var current_animation_id_fwd: int = 6 # set based on current action

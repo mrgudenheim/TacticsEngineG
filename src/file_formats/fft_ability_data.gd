@@ -1,4 +1,4 @@
-class_name AbilityData
+class_name FftAbilityData
 
 # https://ffhacktics.com/wiki/Ability_Data
 # https://ffhacktics.com/wiki/BATTLE.BIN_Data_Tables#Animation_.26_Display_Related_Data

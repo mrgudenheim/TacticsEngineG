@@ -1,10 +1,12 @@
 class_name BattleManager
 extends Node3D
 
+signal map_input_event(battle_manager: BattleManager, camera: Camera3D, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int)
+
 # debug vars
 @export var texture_viewer: Sprite3D # for debugging
 @export var reference_quad: MeshInstance3D # for debugging
-@export var path_container: Node3D
+@export var highlights_container: Node3D
 
 static var main_camera: Camera3D
 @export var phantom_camera: PhantomCamera3D
@@ -231,7 +233,7 @@ func get_map(new_map_data: MapData, map_position: Vector3, map_scale: Vector3) -
 		new_map_instance.collision_shape.shape = get_scaled_collision_shape(new_map_data.mesh, godot_scale)
 	
 	new_map_instance.play_animations(new_map_data)
-	new_map_instance.input_event.connect(on_map_tile_hover)
+	new_map_instance.input_event.connect(on_map_input_event)
 	
 	return new_map_instance
 
@@ -369,47 +371,49 @@ func increment_counter(unit: UnitData) -> void:
 	icon_counter.add_child(icon_rect)
 
 
-func on_map_tile_hover(camera: Camera3D, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
-	#push_warning(event_position)
-	var tile: TerrainTile = get_tile(event_position)
+func on_map_input_event(camera: Camera3D, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
+	map_input_event.emit(self, camera, event, event_position, normal, shape_idx)
 	
-	if controller.unit.is_traveling_path: # TODO handle allowable inputs somewhere else
-		return
-	
-	# handle clicking tile
-	if event.is_action_pressed("primary_action"):
-		if controller.unit.path_costs.has(tile):
-			if controller.unit.path_costs[tile] <= controller.unit.move_current:
-				var map_path: Array[TerrainTile] = controller.unit.get_map_path(controller.unit.tile_position, tile, controller.unit.map_paths)
-				controller.unit.clear_tile_highlights(controller.unit.tile_highlights)
-				await controller.unit.travel_path(map_path)
-				clear_path()
-				#controller.unit.map_paths = controller.unit.get_map_paths(total_map_tiles)
-				return
-	
-	# handle hovering over tile
-	# don't update path if hovered tile has not changed or is not valid for moving
-	if tile == null or tile == current_tile_hover:
-		return
-	current_tile_hover = tile
-	
-	# show path
-	clear_path()
-	
-	#controller.unit.map_paths = controller.unit.get_map_paths(total_map_tiles) # DONT for every tile hover, do once and cache
-	if controller.unit.map_paths.is_empty():
-		return
-	
-	var path: Array[TerrainTile] = controller.unit.get_map_path(controller.unit.tile_position, tile, controller.unit.map_paths)
-	for path_tile: TerrainTile in path:
-		var new_tile_selector: MeshInstance3D = path_tile.get_tile_mesh()
-		new_tile_selector.material_override = tile_highlights[Color.BLUE] # use pre-existing materials
-		if controller.unit.path_costs[path_tile] > controller.unit.move_current:
-			new_tile_selector.material_override = tile_highlights[Color.WHITE] # use pre-existing materials
-		path_container.add_child(new_tile_selector)
-		new_tile_selector.global_position = path_tile.get_world_position(true) + Vector3(0, 0.05, 0)
-	
-	#push_warning()
+	##push_warning(event_position)
+	#var tile: TerrainTile = get_tile(event_position)
+	#
+	#if controller.unit.is_traveling_path: # TODO handle allowable inputs somewhere else
+		#return
+	#
+	## handle clicking tile
+	#if event.is_action_pressed("primary_action"):
+		#if controller.unit.path_costs.has(tile):
+			#if controller.unit.path_costs[tile] <= controller.unit.move_current:
+				#var map_path: Array[TerrainTile] = controller.unit.get_map_path(controller.unit.tile_position, tile, controller.unit.map_paths)
+				#controller.unit.clear_tile_highlights(controller.unit.tile_highlights)
+				#await controller.unit.travel_path(map_path)
+				#clear_path()
+				##controller.unit.map_paths = controller.unit.get_map_paths(total_map_tiles)
+				#return
+	#
+	## handle hovering over tile
+	## don't update path if hovered tile has not changed or is not valid for moving
+	#if tile == null or tile == current_tile_hover:
+		#return
+	#current_tile_hover = tile
+	#
+	## show path
+	#clear_path()
+	#
+	##controller.unit.map_paths = controller.unit.get_map_paths(total_map_tiles) # DONT for every tile hover, do once and cache
+	#if controller.unit.map_paths.is_empty():
+		#return
+	#
+	#var path: Array[TerrainTile] = controller.unit.get_map_path(controller.unit.tile_position, tile, controller.unit.map_paths)
+	#for path_tile: TerrainTile in path:
+		#var new_tile_selector: MeshInstance3D = path_tile.get_tile_mesh()
+		#new_tile_selector.material_override = tile_highlights[Color.BLUE] # use pre-existing materials
+		#if controller.unit.path_costs[path_tile] > controller.unit.move_current:
+			#new_tile_selector.material_override = tile_highlights[Color.WHITE] # use pre-existing materials
+		#path_container.add_child(new_tile_selector)
+		#new_tile_selector.global_position = path_tile.get_world_position(true) + Vector3(0, 0.05, 0)
+	#
+	##push_warning()
 
 
 func get_tile(input_position: Vector3) -> TerrainTile:
@@ -430,6 +434,6 @@ func get_tile(input_position: Vector3) -> TerrainTile:
 	return tile
 
 
-func clear_path() -> void:
-	for child: Node3D in path_container.get_children():
-		child.queue_free()
+#func clear_path() -> void:
+	#for child: Node3D in path_container.get_children():
+		#child.queue_free()

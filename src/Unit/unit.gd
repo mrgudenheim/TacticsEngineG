@@ -764,25 +764,6 @@ func travel_path(path: Array[TerrainTile]) -> void:
 	completed_move.emit()
 
 
-func get_move_targets() -> Array[TerrainTile]:
-	var move_targets: Array[TerrainTile] = []
-	for tile: TerrainTile in path_costs.keys():
-		if path_costs[tile] > move_current:
-			continue # don't highlight tiles beyond move range
-		move_targets.append(tile)
-	
-	return move_targets
-
-
-# TODO implement generic actions that can have tiles as targets, use this to highlight targets
-func highlight_tiles(tiles: Array[TerrainTile], highlight_material: Material) -> void:
-	for tile: TerrainTile in tiles:
-		var new_tile_selector: MeshInstance3D = tile.get_tile_mesh()
-		new_tile_selector.material_override = highlight_material # use pre-existing materials
-		tile_highlights.add_child(new_tile_selector)
-		new_tile_selector.global_position = tile.get_world_position(true) + Vector3(0, 0.025, 0)
-
-
 func highlight_move_area(highlight_material: Material) -> void:
 	for tile: TerrainTile in path_costs.keys():
 		if tile == tile_position:

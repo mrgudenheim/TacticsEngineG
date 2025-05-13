@@ -41,7 +41,7 @@ var formula # TODO store Callable?
 var formula_id: int = 0
 var formula_x: int = 0
 var formula_y: int = 0
-var targeting_range: int = 1
+var targeting_range: int = 4
 var effect_radius: int = 1
 var vertical_tolerance: int = 2
 var inflict_status_id: int = 0
@@ -54,15 +54,15 @@ var normal_flags_3: int = 0
 var normal_flags_4: int = 0
 var element_type
 
-var used_item_id: int = 0
-var thrown_item_type: int = 0
+var used_item_id: int = -1
+var thrown_item_type: int = -1
 var jump_range: int = 0
 var jump_vert: int = 0
 var charge_ct: int = 0
 var charge_power: int = 0
-var math1: int = 0 # 0x80 - CT, 0x40 - Level, 0x20 - Exp, 0x10 - Height
-var math2: int = 0 # 0x08 - Prime Number, 0x04 - 5, 0x02 - 4, 0x01 - 3
-var rsm_id: int = 0 # RSM Ability ID (numbered from 0x00-0x59)
+var math1: int = -1 # 0x80 - CT, 0x40 - Level, 0x20 - Exp, 0x10 - Height
+var math2: int = -1 # 0x08 - Prime Number, 0x04 - 5, 0x02 - 4, 0x01 - 3
+var rsm_id: int = -1 # RSM Ability ID (numbered from 0x00-0x59)
 
 var animation_charging_set_id: int # BATTLE.BIN offset="2ce10" - table of animations IDs used by Ability ID - byte 1
 var animation_start_id: int

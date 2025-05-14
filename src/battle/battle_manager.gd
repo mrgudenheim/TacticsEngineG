@@ -157,7 +157,7 @@ func add_units_to_map() -> void:
 	new_unit.is_player_controlled = true
 	new_unit.completed_move.connect(func(): 
 			new_unit.map_paths = await new_unit.get_map_paths(total_map_tiles, units)
-			new_unit.highlight_move_area(tile_highlights[Color.BLUE]))
+			new_unit.highlight_move_area(self))
 	
 	# sest up character controller
 	controller.unit = new_unit
@@ -188,7 +188,7 @@ func add_units_to_map() -> void:
 	new_unit2.map_paths = await new_unit2.get_map_paths(total_map_tiles, units)
 	new_unit3.map_paths = await new_unit3.get_map_paths(total_map_tiles, units)
 	
-	new_unit.highlight_move_area(tile_highlights[Color.BLUE])
+	new_unit.highlight_move_area(self)
 	
 	hide_debug_ui()
 
@@ -372,7 +372,11 @@ func increment_counter(unit: UnitData) -> void:
 
 
 func on_map_input_event(camera: Camera3D, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
-	map_input_event.emit(self, camera, event, event_position, normal, shape_idx)
+	var new_action_instance: ActionInstance = ActionInstance.new() # TODO get action instance to pass to ability some other way
+	new_action_instance.battle_manager = self
+	new_action_instance.user = controller.unit
+	new_action_instance.reparent(self)
+	map_input_event.emit(new_action_instance, camera, event, event_position, normal, shape_idx)
 	
 	##push_warning(event_position)
 	#var tile: TerrainTile = get_tile(event_position)

@@ -124,6 +124,8 @@ var is_traveling_path: bool = false
 
 var ability_id: int = 0
 var ability_data: FftAbilityData
+@export var move_action: Action
+@export var actions: Array[Action] = []
 
 var idle_animation_id: int = 6 # set based on status (critical, knocked out, etc.)
 var current_animation_id_fwd: int = 6 # set based on current action
@@ -764,16 +766,23 @@ func travel_path(path: Array[TerrainTile]) -> void:
 	completed_move.emit()
 
 
-func highlight_move_area(highlight_material: Material) -> void:
-	for tile: TerrainTile in path_costs.keys():
-		if tile == tile_position:
-			continue
-		if path_costs[tile] > move_current:
-			continue # don't highlight tiles beyond move range
-		var new_tile_selector: MeshInstance3D = tile.get_tile_mesh()
-		new_tile_selector.material_override = highlight_material # use pre-existing materials
-		tile_highlights.add_child(new_tile_selector)
-		new_tile_selector.global_position = tile.get_world_position(true) + Vector3(0, 0.025, 0)
+func highlight_move_area(battle_manager: BattleManager) -> void:
+	var move_action_instance: ActionInstance = ActionInstance.new()
+	move_action_instance.user = self
+	move_action_instance.battle_manager = battle_manager
+	add_child(move_action_instance)
+	
+	move_action.start_targeting(move_action_instance)
+	
+	#for tile: TerrainTile in path_costs.keys():
+		#if tile == tile_position:
+			#continue
+		#if path_costs[tile] > move_current:
+			#continue # don't highlight tiles beyond move range
+		#var new_tile_selector: MeshInstance3D = tile.get_tile_mesh()
+		#new_tile_selector.material_override = highlight_material # use pre-existing materials
+		#tile_highlights.add_child(new_tile_selector)
+		#new_tile_selector.global_position = tile.get_world_position(true) + Vector3(0, 0.025, 0)
 
 
 func clear_tile_highlights(highlight_container: Node3D) -> void:

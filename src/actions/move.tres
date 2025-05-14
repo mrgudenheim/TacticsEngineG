@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="Action" load_steps=3 format=3 uid="uid://dv16rhvlwfg3h"]
+
+[ext_resource type="Script" uid="uid://dlaul7n568vti" path="res://src/actions/action.gd" id="1_spr2t"]
+[ext_resource type="Resource" uid="uid://dbptiq6hf5new" path="res://src/actions/move_targeting.tres" id="2_hkwuw"]
+
+[resource]
+script = ExtResource("1_spr2t")
+action_name = "Action Name"
+description = "Action description"
+targeting_strategy = ExtResource("2_hkwuw")
+metadata/_custom_type_script = "uid://dlaul7n568vti"

@@ -1,12 +1,8 @@
-class_name MoveTargeting extends TargetingStrategy
+class_name MoveTargeting
+extends TargetingStrategy
 
 
-func _get_potential_targets() -> Array:
-	push_error("Using base TargetingStrategy instead of specific targeting strategy")
-	return []
-
-
-func _start_targeting(action_instance: ActionInstance) -> void:
+func _get_potential_targets(action_instance: ActionInstance) -> Array:
 	var valid_targets: Array[TerrainTile] = []
 	
 	for tile: TerrainTile in action_instance.user.path_costs.keys():
@@ -19,6 +15,12 @@ func _start_targeting(action_instance: ActionInstance) -> void:
 	var potential_target_highlights: Node3D = highlight_tiles(valid_targets, action_instance.battle_manager.tile_highlights[Color.BLUE])
 	action_instance.potential_targets.append(potential_target_highlights)
 	action_instance.add_child(potential_target_highlights)
+	
+	return valid_targets
+
+
+func _start_targeting(action_instance: ActionInstance) -> void:
+	_get_potential_targets(action_instance)
 	
 	action_instance.battle_manager.map_input_event.connect(on_map_input_event)
 

@@ -1,7 +1,7 @@
 class_name BattleManager
 extends Node3D
 
-signal map_input_event(battle_manager: BattleManager, camera: Camera3D, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int)
+signal map_input_event(action_instance: ActionInstance, camera: Camera3D, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int)
 
 # debug vars
 @export var texture_viewer: Sprite3D # for debugging
@@ -28,6 +28,8 @@ var total_map_tiles: Dictionary[Vector2i, Array] = {} # Array[TerrainTile]
 var current_tile_hover: TerrainTile
 @export var tile_highlights: Dictionary[Color, Material] = {}
 
+@export var action_menu: Control
+@export var action_button_list: BoxContainer
 @export var units_container: Node3D
 @export var units: Array[UnitData]
 @export var unit_tscn: PackedScene
@@ -155,9 +157,7 @@ func add_units_to_map() -> void:
 	var random_tile: TerrainTile = get_random_stand_terrain_tile()
 	var new_unit: UnitData = spawn_unit(random_tile, 0x01)
 	new_unit.is_player_controlled = true
-	new_unit.completed_move.connect(func(): 
-			new_unit.map_paths = await new_unit.get_map_paths(total_map_tiles, units)
-			new_unit.highlight_move_area(self))
+	new_unit.completed_move.connect(func(): new_unit.map_paths = await new_unit.get_map_paths(total_map_tiles, units)) # TODO update map paths for all units
 	
 	# sest up character controller
 	controller.unit = new_unit
@@ -184,11 +184,11 @@ func add_units_to_map() -> void:
 	var rand_job: int = randi_range(0x01, 0x8e)
 	var new_unit3: UnitData = spawn_unit(random_tile, rand_job)
 	
-	new_unit.map_paths = await new_unit.get_map_paths(total_map_tiles, units)
+	new_unit.start_turn(self)
+	
+	#new_unit.map_paths = await new_unit.get_map_paths(total_map_tiles, units)
 	new_unit2.map_paths = await new_unit2.get_map_paths(total_map_tiles, units)
 	new_unit3.map_paths = await new_unit3.get_map_paths(total_map_tiles, units)
-	
-	new_unit.highlight_move_area(self)
 	
 	hide_debug_ui()
 
@@ -204,8 +204,6 @@ func spawn_unit(tile_position: TerrainTile, job_id: int) -> UnitData:
 	new_unit.job_data = RomReader.scus_data.jobs_data[job_id]
 	new_unit.set_sprite_by_id(new_unit.job_data.sprite_id)
 	controller.camera_rotated.connect(new_unit.char_body.set_rotation_degrees) # have sprite update as camera rotates
-	
-	#new_unit.map_paths = new_unit.get_map_paths(total_map_tiles)
 	
 	return new_unit
 
@@ -372,52 +370,7 @@ func increment_counter(unit: UnitData) -> void:
 
 
 func on_map_input_event(camera: Camera3D, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
-	var new_action_instance: ActionInstance = ActionInstance.new() # TODO get action instance to pass to ability some other way
-	new_action_instance.battle_manager = self
-	new_action_instance.user = controller.unit
-	new_action_instance.reparent(self)
-	map_input_event.emit(new_action_instance, camera, event, event_position, normal, shape_idx)
-	
-	##push_warning(event_position)
-	#var tile: TerrainTile = get_tile(event_position)
-	#
-	#if controller.unit.is_traveling_path: # TODO handle allowable inputs somewhere else
-		#return
-	#
-	## handle clicking tile
-	#if event.is_action_pressed("primary_action"):
-		#if controller.unit.path_costs.has(tile):
-			#if controller.unit.path_costs[tile] <= controller.unit.move_current:
-				#var map_path: Array[TerrainTile] = controller.unit.get_map_path(controller.unit.tile_position, tile, controller.unit.map_paths)
-				#controller.unit.clear_tile_highlights(controller.unit.tile_highlights)
-				#await controller.unit.travel_path(map_path)
-				#clear_path()
-				##controller.unit.map_paths = controller.unit.get_map_paths(total_map_tiles)
-				#return
-	#
-	## handle hovering over tile
-	## don't update path if hovered tile has not changed or is not valid for moving
-	#if tile == null or tile == current_tile_hover:
-		#return
-	#current_tile_hover = tile
-	#
-	## show path
-	#clear_path()
-	#
-	##controller.unit.map_paths = controller.unit.get_map_paths(total_map_tiles) # DONT for every tile hover, do once and cache
-	#if controller.unit.map_paths.is_empty():
-		#return
-	#
-	#var path: Array[TerrainTile] = controller.unit.get_map_path(controller.unit.tile_position, tile, controller.unit.map_paths)
-	#for path_tile: TerrainTile in path:
-		#var new_tile_selector: MeshInstance3D = path_tile.get_tile_mesh()
-		#new_tile_selector.material_override = tile_highlights[Color.BLUE] # use pre-existing materials
-		#if controller.unit.path_costs[path_tile] > controller.unit.move_current:
-			#new_tile_selector.material_override = tile_highlights[Color.WHITE] # use pre-existing materials
-		#path_container.add_child(new_tile_selector)
-		#new_tile_selector.global_position = path_tile.get_world_position(true) + Vector3(0, 0.05, 0)
-	#
-	##push_warning()
+	map_input_event.emit(controller.unit.active_action, camera, event, event_position, normal, shape_idx)
 
 
 func get_tile(input_position: Vector3) -> TerrainTile:
@@ -436,8 +389,3 @@ func get_tile(input_position: Vector3) -> TerrainTile:
 					tile = new_tile
 	
 	return tile
-
-
-#func clear_path() -> void:
-	#for child: Node3D in path_container.get_children():
-		#child.queue_free()

@@ -58,7 +58,7 @@ material = SubResource("StandardMaterial3D_p2e2h")
 [sub_resource type="BoxMesh" id="BoxMesh_cqdh8"]
 material = SubResource("StandardMaterial3D_tjj5r")
 
-[node name="BattleManager" type="Node3D" node_paths=PackedStringArray("texture_viewer", "reference_quad", "phantom_camera", "load_rom_button", "background_gradient", "menu_list", "map_dropdown", "orthographic_check", "menu_reminder", "map_size_label", "maps", "units_container", "controller", "icon_counter")]
+[node name="BattleManager" type="Node3D" node_paths=PackedStringArray("texture_viewer", "reference_quad", "phantom_camera", "load_rom_button", "background_gradient", "menu_list", "map_dropdown", "orthographic_check", "menu_reminder", "map_size_label", "maps", "action_menu", "action_button_list", "units_container", "controller", "icon_counter")]
 script = ExtResource("1_hnd0w")
 texture_viewer = NodePath("SpriteViewer")
 reference_quad = NodePath("ReferenceQuad")
@@ -80,6 +80,8 @@ Color(1, 1, 0, 1): ExtResource("7_f2r6p"),
 Color(0, 0, 0, 1): ExtResource("6_l2dig"),
 Color(1, 1, 1, 1): ExtResource("8_kb1q2")
 })
+action_menu = NodePath("ActionMenu")
+action_button_list = NodePath("ActionMenu/ActionButtonsList")
 units_container = NodePath("Units")
 unit_tscn = ExtResource("4_wfrm2")
 controller = NodePath("CharacterController")
@@ -247,3 +249,15 @@ layout_direction = 3
 offset_right = 40.0
 offset_bottom = 40.0
 columns = 5
+
+[node name="ActionMenu" type="PanelContainer" parent="."]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="ActionButtonsList" type="VBoxContainer" parent="ActionMenu"]
+layout_mode = 2

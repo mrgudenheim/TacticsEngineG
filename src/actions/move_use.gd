@@ -1,0 +1,79 @@
+class_name MoveUse
+extends UseStrategy
+
+func use(action_instance: ActionInstance) -> void:
+	if action_instance.submitted_targets.size() != 1:
+		push_warning(action_instance.action.action_name + ": num submitted targets != 1")
+	
+	var map_path: Array[TerrainTile] = action_instance.user.get_map_path(action_instance.user.tile_position, action_instance.submitted_targets[0], action_instance.user.map_paths)
+	
+	action_instance.clear() # clear all highlighting and target data
+	await travel_path(action_instance.user, map_path)
+	
+	action_completed.emit()
+
+
+func walk_to_tile(user: UnitData, to_tile: TerrainTile) -> void:
+	var distance_to_move: float = user.tile_position.location.distance_to(to_tile.location)
+	var immediate_path: Vector3 = to_tile.get_world_position() - user.tile_position.get_world_position()
+	if distance_to_move > 1.1: # TODO is leaping the only case where moving more than 1 distance at a time?
+		user.char_body.velocity.y = 1.1 * distance_to_move # hop over intermediate tiles
+	elif to_tile.height_mid - user.tile_position.height_mid >= 3:
+		user.update_unit_facing(immediate_path)
+		var vert_distance: float = (to_tile.height_mid - user.tile_position.height_mid) * MapData.HEIGHT_SCALE
+		user.char_body.velocity.y = sqrt(vert_distance) * 4.5 # jump for steep changes in height, to get to bridges that don't have walls
+		await user.get_tree().create_timer(vert_distance * 0.19).timeout
+	else:
+		user.current_animation_id_fwd = user.walk_to_animation_id
+	await process_physics_move(user, to_tile.get_world_position())
+	user.tile_position = to_tile
+	
+	while not user.char_body.is_on_floor():
+		await user.get_tree().process_frame
+	
+	user.tile_position = to_tile
+	user.reached_tile.emit()
+
+
+func process_physics_move(user: UnitData, target_position: Vector3) -> void:
+	var speed: float = 4.0
+	var current_xy: Vector2 = Vector2(user.char_body.global_position.x, user.char_body.global_position.z)
+	var target_xy: Vector2 = Vector2(target_position.x, target_position.z)
+	var distance_left: float = current_xy.distance_to(target_xy)
+	
+	while distance_left > 0.05: # char_body.position is about 0.25 off the ground
+		current_xy = Vector2(user.char_body.global_position.x, user.char_body.global_position.z)
+		var direction: Vector2 = current_xy.direction_to(target_xy)
+		#direction.y = 0
+		var velocity_2d: Vector2 = direction * speed
+		distance_left = current_xy.distance_to(target_xy)
+		velocity_2d = velocity_2d.limit_length(distance_left / user.get_physics_process_delta_time())
+		user.char_body.velocity.x = velocity_2d.x
+		user.char_body.velocity.z = velocity_2d.y
+		if (user.char_body.is_on_wall() # TODO implement jumping and leaping correctly
+				and target_position.y + 0.25 > user.char_body.global_position.y
+				and user.char_body.velocity.y <= 0.1): # TODO fix comparing target position to charbody, char_body's position is offset from the ground
+			user.char_body.velocity.y = sqrt((target_position.y + 0.25) - user.char_body.global_position.y) * 4.5
+		await user.get_tree().physics_frame
+	
+	#char_body.velocity = Vector3.ZERO
+	user.char_body.velocity.x = 0
+	user.char_body.velocity.z = 0
+
+
+#func sort_ascending(a_idx: int, b_idx: int):
+	#if a.cost < b.cost:
+		#return true
+	#return false
+
+
+func travel_path(user: UnitData, path: Array[TerrainTile]) -> void:
+	user.is_traveling_path = true
+	for tile: TerrainTile in path:
+		await walk_to_tile(user, tile) # TODO handle movement types other than walking
+	
+	#animation_manager.global_animation_ptr_id = idle_animation_id
+	user.current_animation_id_fwd = user.idle_animation_id
+	user.set_base_animation_ptr_id(user.current_animation_id_fwd)
+	user.is_traveling_path = false
+	user.completed_move.emit()

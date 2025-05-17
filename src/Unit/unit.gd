@@ -124,8 +124,16 @@ var is_traveling_path: bool = false
 
 var ability_id: int = 0
 var ability_data: FftAbilityData
+
+var active_action: ActionInstance
+#@export var action_instance: ActionInstance
 @export var move_action: Action
 @export var actions: Array[Action] = []
+var actions_data: Dictionary[Action, ActionInstance] = {}
+@export var move_points_start: int = 1
+@export var move_points_remaining: int = 1
+@export var action_points_start: int = 1
+@export var action_points_remaining: int = 1
 
 var idle_animation_id: int = 6 # set based on status (critical, knocked out, etc.)
 var current_animation_id_fwd: int = 6 # set based on current action
@@ -215,6 +223,43 @@ func _process(_delta: float) -> void:
 		#debug_menu.anim_id_spin.value = idle_animation
 	
 	set_base_animation_ptr_id(current_animation_id_fwd)
+
+
+func start_turn(battle_manager: BattleManager) -> void:
+	map_paths = await get_map_paths(battle_manager.total_map_tiles, battle_manager.units)
+	
+	# get possible actions
+	for action_instance: ActionInstance in actions_data.keys():
+		action_instance.clear()
+	
+	actions.clear()
+	actions_data.clear()
+	actions.append(move_action)
+	# TODO append all other potential actions, from jobs, wait, equipment, etc.
+	
+	# remove any existing buttons
+	for child in battle_manager.action_button_list.get_children():
+		child.queue_free()
+	
+	# TODO show list UI for selecting an action
+	for action: Action in actions:
+		var new_action_instance: ActionInstance = ActionInstance.new(action, self, battle_manager)
+		actions_data[action] = new_action_instance
+		var new_action_button: ActionButton = ActionButton.new(new_action_instance)
+		
+		battle_manager.action_button_list.add_child(new_action_button)
+		
+		# disable buttons for actions that are not usable - TODO provide hints why action is not usable - not enough mp, already moved, etc.
+		if not new_action_instance.is_usable():
+			new_action_button.disabled = true
+	
+	# select first usable action by default (usually Move)
+	for action_instance: ActionInstance in actions_data.values():
+		if action_instance.is_usable():
+			active_action = action_instance
+			active_action.update_potential_targets()
+			active_action.start_targeting()
+			break
 
 
 func use_attack() -> void:
@@ -534,6 +579,7 @@ func on_sprite_idx_selected(index: int) -> void:
 
 
 ## map_tiles is Dictionary[Vector2i, Array[TerrainTile]], returns path to every tile
+# TODO move to MoveTargeting?
 func get_map_paths(map_tiles: Dictionary[Vector2i, Array], units: Array[UnitData], max_cost: int = 9999) -> Dictionary[TerrainTile, TerrainTile]:
 	map_paths.clear()
 	
@@ -598,7 +644,7 @@ func get_map_paths(map_tiles: Dictionary[Vector2i, Array], units: Array[UnitData
 	path_costs = cost_so_far
 	return came_from
 
-
+# TODO move to MoveTargeting?
 func get_map_path(start_tile: TerrainTile, target_tile: TerrainTile, came_from: Dictionary[TerrainTile, TerrainTile]) -> Array[TerrainTile]:
 	if not came_from.has(target_tile):
 		push_warning("No path from " + str(start_tile.location) + " to target: " + str(target_tile.location))
@@ -614,7 +660,7 @@ func get_map_path(start_tile: TerrainTile, target_tile: TerrainTile, came_from: 
 	
 	return path
 
-
+# TODO move to MoveTargeting?
 func get_map_path_neighbors(current_tile: TerrainTile, map_tiles: Dictionary[Vector2i, Array], units: Array[UnitData]) -> Array[TerrainTile]:
 	var neighbors: Array[TerrainTile]
 	const adjacent_offsets: Array[Vector2i] = [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]
@@ -643,7 +689,7 @@ func get_map_path_neighbors(current_tile: TerrainTile, map_tiles: Dictionary[Vec
 	
 	return neighbors
 
-
+# TODO move to MoveTargeting?
 func get_leaping_neighbors(current_tile: TerrainTile, map_tiles: Dictionary[Vector2i, Array], units: Array[UnitData], offset_direction: Vector2i, walk_neighbors: Array[TerrainTile]) -> Array[TerrainTile]:
 	var leap_neighbors: Array[TerrainTile] = []
 	var max_leap_distance: int = jump_current / 2
@@ -690,7 +736,7 @@ func get_leaping_neighbors(current_tile: TerrainTile, map_tiles: Dictionary[Vect
 	
 	return leap_neighbors
 
-
+# TODO move to MoveTargeting?
 func get_move_cost(from_tile: TerrainTile, to_tile: TerrainTile) -> float:
 	var cost: float = 0
 	cost = from_tile.location.distance_to(to_tile.location)
@@ -698,96 +744,6 @@ func get_move_cost(from_tile: TerrainTile, to_tile: TerrainTile) -> float:
 	# TODO check depth
 	
 	return cost
-
-
-func walk_to_tile(to_tile: TerrainTile) -> void:
-	var distance_to_move: float = tile_position.location.distance_to(to_tile.location)
-	var immediate_path: Vector3 = to_tile.get_world_position() - tile_position.get_world_position()
-	if distance_to_move > 1.1: # TODO is leaping the only case where moving more than 1 distance at a time?
-		char_body.velocity.y = 1.1 * distance_to_move # hop over intermediate tiles
-	elif to_tile.height_mid - tile_position.height_mid >= 3:
-		update_unit_facing(immediate_path)
-		var vert_distance: float = (to_tile.height_mid - tile_position.height_mid) * MapData.HEIGHT_SCALE
-		char_body.velocity.y = sqrt(vert_distance) * 4.5 # jump for steep changes in height, to get to bridges that don't have walls
-		await get_tree().create_timer(vert_distance * 0.19).timeout
-	else:
-		current_animation_id_fwd = walk_to_animation_id
-	await process_physics_move(to_tile.get_world_position())
-	tile_position = to_tile
-	
-	while not char_body.is_on_floor():
-		await get_tree().process_frame
-	
-	tile_position = to_tile
-	reached_tile.emit()
-
-
-func process_physics_move(target_position: Vector3) -> void:
-	var speed: float = 4.0
-	var current_xy: Vector2 = Vector2(char_body.global_position.x, char_body.global_position.z)
-	var target_xy: Vector2 = Vector2(target_position.x, target_position.z)
-	var distance_left: float = current_xy.distance_to(target_xy)
-	
-	while distance_left > 0.05: # char_body.position is about 0.25 off the ground
-		current_xy = Vector2(char_body.global_position.x, char_body.global_position.z)
-		var direction: Vector2 = current_xy.direction_to(target_xy)
-		#direction.y = 0
-		var velocity_2d: Vector2 = direction * speed
-		distance_left = current_xy.distance_to(target_xy)
-		velocity_2d = velocity_2d.limit_length(distance_left / get_physics_process_delta_time())
-		char_body.velocity.x = velocity_2d.x
-		char_body.velocity.z = velocity_2d.y
-		if (char_body.is_on_wall() # TODO implement jumping and leaping correctly
-				and target_position.y + 0.25 > char_body.global_position.y
-				and char_body.velocity.y <= 0.1): # TODO fix comparing target position to charbody, char_body's position is offset from the ground
-			char_body.velocity.y = sqrt((target_position.y + 0.25) - char_body.global_position.y) * 4.5
-		await get_tree().physics_frame
-	
-	#char_body.velocity = Vector3.ZERO
-	char_body.velocity.x = 0
-	char_body.velocity.z = 0
-
-
-#func sort_ascending(a_idx: int, b_idx: int):
-	#if a.cost < b.cost:
-		#return true
-	#return false
-
-
-func travel_path(path: Array[TerrainTile]) -> void:
-	is_traveling_path = true
-	for tile: TerrainTile in path:
-		await walk_to_tile(tile) # TODO handle movement types other than walking
-	
-	#animation_manager.global_animation_ptr_id = idle_animation_id
-	current_animation_id_fwd = idle_animation_id
-	set_base_animation_ptr_id(current_animation_id_fwd)
-	is_traveling_path = false
-	completed_move.emit()
-
-
-func highlight_move_area(battle_manager: BattleManager) -> void:
-	var move_action_instance: ActionInstance = ActionInstance.new()
-	move_action_instance.user = self
-	move_action_instance.battle_manager = battle_manager
-	add_child(move_action_instance)
-	
-	move_action.start_targeting(move_action_instance)
-	
-	#for tile: TerrainTile in path_costs.keys():
-		#if tile == tile_position:
-			#continue
-		#if path_costs[tile] > move_current:
-			#continue # don't highlight tiles beyond move range
-		#var new_tile_selector: MeshInstance3D = tile.get_tile_mesh()
-		#new_tile_selector.material_override = highlight_material # use pre-existing materials
-		#tile_highlights.add_child(new_tile_selector)
-		#new_tile_selector.global_position = tile.get_world_position(true) + Vector3(0, 0.025, 0)
-
-
-func clear_tile_highlights(highlight_container: Node3D) -> void:
-	for child in highlight_container.get_children():
-		child.queue_free()
 
 
 func _on_character_body_3d_input_event(_camera: Node, _event: InputEvent, _event_position: Vector3, _normal: Vector3, _shape_idx: int) -> void:

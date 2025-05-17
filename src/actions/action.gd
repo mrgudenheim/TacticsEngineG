@@ -17,7 +17,11 @@ func is_usable(action_instance: ActionInstance) -> bool:
 
 
 func start_targeting(action_instance: ActionInstance) -> void:
-	targeting_strategy._start_targeting(action_instance)
+	targeting_strategy.start_targeting(action_instance)
+
+
+func stop_targeting(action_instance: ActionInstance) -> void:
+	targeting_strategy.stop_targeting(action_instance)
 
 
 func use(action_instance: ActionInstance) -> void:

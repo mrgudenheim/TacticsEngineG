@@ -1,17 +1,26 @@
-[gd_resource type="Resource" script_class="Action" load_steps=5 format=3 uid="uid://dv16rhvlwfg3h"]
+[gd_resource type="Resource" script_class="Action" load_steps=4 format=3 uid="uid://dv16rhvlwfg3h"]
 
 [ext_resource type="Script" uid="uid://dlaul7n568vti" path="res://src/actions/action.gd" id="1_spr2t"]
 [ext_resource type="Resource" uid="uid://dbptiq6hf5new" path="res://src/actions/move_targeting.tres" id="2_hkwuw"]
-[ext_resource type="Resource" uid="uid://cs4du1o6480lo" path="res://src/actions/move_usable.tres" id="3_5kxap"]
 [ext_resource type="Resource" uid="uid://nl6pdojiff0s" path="res://src/actions/move_use.tres" id="3_7kirg"]
 
 [resource]
 script = ExtResource("1_spr2t")
 action_name = "Move"
 description = "Action description"
-useable_strategy = ExtResource("3_5kxap")
+spell_quote = "spell quote"
+display_action_name = false
 targeting_strategy = ExtResource("2_hkwuw")
 use_strategy = ExtResource("3_7kirg")
 move_points_cost = 1
 action_points_cost = 0
+mp_cost = 0
+formula_id = 0
+formula_x = 0
+formula_y = 0
+targeting_range = 4
+effect_radius = 1
+vertical_tolerance = 2
+inflict_status_id = 0
+ticks_charge_time = 0
 metadata/_custom_type_script = "uid://dlaul7n568vti"

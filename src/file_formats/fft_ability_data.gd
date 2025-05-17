@@ -2,6 +2,7 @@ class_name FftAbilityData
 
 # https://ffhacktics.com/wiki/Ability_Data
 # https://ffhacktics.com/wiki/BATTLE.BIN_Data_Tables#Animation_.26_Display_Related_Data
+# https://ffhacktics.com/wiki/Abilities
 
 enum AbilityType {
 	NONE,
@@ -44,7 +45,7 @@ var formula_y: int = 0
 var targeting_range: int = 4
 var effect_radius: int = 1
 var vertical_tolerance: int = 2
-var inflict_status_id: int = 0
+var inflict_status_id: int = 0 # https://ffhacktics.com/wiki/Inflict_Status
 var ticks_charge_time: int = 0
 var mp_cost: int = 0
 

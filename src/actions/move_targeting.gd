@@ -63,7 +63,8 @@ func on_map_input_event(action_instance: ActionInstance, camera: Camera3D, event
 	if event.is_action_pressed("primary_action"):
 		if action_instance.user.path_costs.has(tile):
 			if action_instance.user.path_costs[tile] <= action_instance.user.move_current: # TODO allow parameter instead of move_current
-				action_instance.submitted_targets.append(tile)
+				action_instance.submitted_targets = get_map_path(action_instance.user.tile_position, tile, action_instance.user.map_paths)
+				#action_instance.submitted_targets.append(tile)
 				action_instance.use()
 				return
 

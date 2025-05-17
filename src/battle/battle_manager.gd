@@ -159,7 +159,6 @@ func add_units_to_map() -> void:
 	var random_tile: TerrainTile = get_random_stand_terrain_tile()
 	var new_unit: UnitData = spawn_unit(random_tile, 0x01)
 	new_unit.is_player_controlled = true
-	new_unit.completed_move.connect(func(): new_unit.map_paths = await new_unit.get_map_paths(total_map_tiles, units)) # TODO update map paths for all units
 	
 	# sest up character controller
 	controller.unit = new_unit

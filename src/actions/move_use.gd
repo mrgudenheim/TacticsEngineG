@@ -5,7 +5,11 @@ func use(action_instance: ActionInstance) -> void:
 	if action_instance.submitted_targets.size() != 1:
 		push_warning(action_instance.action.action_name + ": num submitted targets != 1")
 	
-	var map_path: Array[TerrainTile] = action_instance.user.get_map_path(action_instance.user.tile_position, action_instance.submitted_targets[0], action_instance.user.map_paths)
+	var map_path: Array[TerrainTile]
+	if action_instance.action.targeting_strategy.has_method("get_map_path"):
+		map_path = action_instance.action.targeting_strategy.get_map_path(action_instance.user.tile_position, action_instance.submitted_targets[0], action_instance.user.map_paths)
+	else:
+		push_error("Trying to use Move without a map path")
 	
 	action_instance.clear() # clear all highlighting and target data
 	await travel_path(action_instance.user, map_path)

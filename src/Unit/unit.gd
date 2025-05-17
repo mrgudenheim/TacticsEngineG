@@ -602,8 +602,8 @@ func on_sprite_idx_selected(index: int) -> void:
 
 
 func update_map_paths(map_tiles: Dictionary[Vector2i, Array], units: Array[UnitData], max_cost: int = 9999) -> void:
-	if move_action.has_method("get_map_paths"):
-		map_paths = await move_action.get_map_paths(map_tiles, units)
+	if move_action.targeting_strategy.has_method("get_map_paths"):
+		map_paths = await move_action.targeting_strategy.get_map_paths(self, map_tiles, units)
 
 
 func _on_character_body_3d_input_event(_camera: Node, _event: InputEvent, _event_position: Vector3, _normal: Vector3, _shape_idx: int) -> void:

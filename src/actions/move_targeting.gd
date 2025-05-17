@@ -46,7 +46,7 @@ func on_map_input_event(action_instance: ActionInstance, camera: Camera3D, event
 		action_instance.current_tile_hovered = tile
 		
 		# show preview path
-		var path: Array[TerrainTile] = action_instance.user.get_map_path(action_instance.user.tile_position, tile, action_instance.user.map_paths)
+		var path: Array[TerrainTile] = get_map_path(action_instance.user.tile_position, tile, action_instance.user.map_paths)
 		var path_in_range: Array[TerrainTile] = path.filter(func(tile: TerrainTile): return action_instance.user.path_costs[tile] <= action_instance.user.move_current) # TODO allow parameter instead of move_current
 		var path_out_of_range: Array[TerrainTile] = path.filter(func(tile: TerrainTile): return action_instance.user.path_costs[tile] > action_instance.user.move_current) # TODO allow parameter instead of move_current
 		
@@ -67,9 +67,9 @@ func on_map_input_event(action_instance: ActionInstance, camera: Camera3D, event
 				action_instance.use()
 				return
 
-# TODO move get_map_paths and related function from UnitData, allow cost based on Unit Move value or action range value
+
+# TODO allow cost based on Unit Move value or action range value, allow vertical jumping or horizontal leapint to use a parameter or unit stat
 ## map_tiles is Dictionary[Vector2i, Array[TerrainTile]], returns path to every tile
-# TODO move to MoveTargeting?
 func get_map_paths(user: UnitData, map_tiles: Dictionary[Vector2i, Array], units: Array[UnitData], max_cost: int = 9999) -> Dictionary[TerrainTile, TerrainTile]:
 	user.map_paths.clear()
 	
@@ -134,6 +134,7 @@ func get_map_paths(user: UnitData, map_tiles: Dictionary[Vector2i, Array], units
 	user.path_costs = cost_so_far
 	return came_from
 
+
 # TODO move to MoveTargeting?
 func get_map_path(start_tile: TerrainTile, target_tile: TerrainTile, came_from: Dictionary[TerrainTile, TerrainTile]) -> Array[TerrainTile]:
 	if not came_from.has(target_tile):
@@ -150,7 +151,7 @@ func get_map_path(start_tile: TerrainTile, target_tile: TerrainTile, came_from: 
 	
 	return path
 
-# TODO move to MoveTargeting?
+
 func get_map_path_neighbors(user: UnitData, current_tile: TerrainTile, map_tiles: Dictionary[Vector2i, Array], units: Array[UnitData]) -> Array[TerrainTile]:
 	var neighbors: Array[TerrainTile]
 	const adjacent_offsets: Array[Vector2i] = [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]
@@ -179,7 +180,7 @@ func get_map_path_neighbors(user: UnitData, current_tile: TerrainTile, map_tiles
 	
 	return neighbors
 
-# TODO move to MoveTargeting?
+
 func get_leaping_neighbors(user: UnitData, current_tile: TerrainTile, map_tiles: Dictionary[Vector2i, Array], units: Array[UnitData], offset_direction: Vector2i, walk_neighbors: Array[TerrainTile]) -> Array[TerrainTile]:
 	var leap_neighbors: Array[TerrainTile] = []
 	var max_leap_distance: int = user.jump_current / 2
@@ -226,7 +227,7 @@ func get_leaping_neighbors(user: UnitData, current_tile: TerrainTile, map_tiles:
 	
 	return leap_neighbors
 
-# TODO move to MoveTargeting?
+
 func get_move_cost(from_tile: TerrainTile, to_tile: TerrainTile) -> float:
 	var cost: float = 0
 	cost = from_tile.location.distance_to(to_tile.location)

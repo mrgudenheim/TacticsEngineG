@@ -217,6 +217,8 @@ func process_next_event() -> void:
 	event_num = (event_num + 1) % units.size()
 	var new_unit: UnitData = units[event_num]
 	controller.unit = new_unit
+	phantom_camera.follow_target = new_unit.char_body
+	
 	new_unit.start_turn(self)
 
 

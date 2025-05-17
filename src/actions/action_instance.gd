@@ -13,6 +13,7 @@ var preview_targets_highlights: Dictionary[TerrainTile, Node3D]
 var submitted_targets: Array[TerrainTile]
 
 var current_tile_hovered: TerrainTile
+var potential_targets_are_set: bool = false
 
 func _init(new_action: Action, new_user: UnitData, new_battle_manager: BattleManager) -> void:
 	action = new_action
@@ -47,6 +48,8 @@ func update_potential_targets() -> void:
 	
 	potential_targets = action.targeting_strategy.get_potential_targets(self)
 	update_potential_targets_highlights()
+	
+	potential_targets_are_set = true
 
 
 func update_potential_targets_highlights() -> void:
@@ -55,6 +58,16 @@ func update_potential_targets_highlights() -> void:
 		highlight_material = battle_manager.tile_highlights[Color.BLUE]
 	
 	potential_targets_highlights = get_tile_highlights(potential_targets, highlight_material)
+
+
+func show_potential_targets() -> void:
+	if not potential_targets_are_set:
+		update_potential_targets()
+	show_targets_highlights(potential_targets_highlights)
+
+
+func hide_potential_targets() -> void:
+	show_targets_highlights(potential_targets_highlights, false)
 
 
 func show_targets_highlights(targets_highlights: Dictionary[TerrainTile, Node3D], show: bool = true) -> void:

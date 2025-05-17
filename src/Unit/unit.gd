@@ -236,9 +236,6 @@ func start_turn(battle_manager: BattleManager) -> void:
 
 
 func update_actions(battle_manager: BattleManager) -> void:
-	# TODO get_map_paths at start of battle and when battlefield changes - any unit moves, leaves, etc.
-	await update_map_paths(battle_manager.total_map_tiles, battle_manager.units)
-	
 	# get possible actions
 	for action_instance: ActionInstance in actions_data.values():
 		action_instance.clear()

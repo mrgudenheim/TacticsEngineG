@@ -10,6 +10,8 @@ func use(action_instance: ActionInstance) -> void:
 	action_instance.clear() # clear all highlighting and target data
 	await travel_path(action_instance.user, map_path)
 	action_instance.user.move_points_remaining -= action_instance.action.move_points_cost
+	
+	action_instance.battle_manager.update_units_pathfinding()
 	action_instance.action_completed.emit(action_instance.battle_manager)
 
 

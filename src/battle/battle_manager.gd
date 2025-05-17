@@ -186,11 +186,9 @@ func add_units_to_map() -> void:
 	var rand_job: int = randi_range(0x01, 0x8e)
 	var new_unit3: UnitData = spawn_unit(random_tile, rand_job)
 	
-	new_unit.start_turn(self)
+	await update_units_pathfinding()
 	
-	#new_unit.map_paths = await new_unit.get_map_paths(total_map_tiles, units)
-	new_unit2.map_paths = await new_unit2.get_map_paths(total_map_tiles, units)
-	new_unit3.map_paths = await new_unit3.get_map_paths(total_map_tiles, units)
+	new_unit.start_turn(self)
 	
 	hide_debug_ui()
 
@@ -210,6 +208,11 @@ func spawn_unit(tile_position: TerrainTile, job_id: int) -> UnitData:
 	new_unit.turn_ended.connect(process_next_event)
 	
 	return new_unit
+
+
+func update_units_pathfinding() -> void:
+	for unit: UnitData in units:
+		await unit.update_map_paths(total_map_tiles, units)
 
 
 # TODO handle event timeline

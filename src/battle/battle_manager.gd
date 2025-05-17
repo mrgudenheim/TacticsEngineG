@@ -35,6 +35,8 @@ var current_tile_hover: TerrainTile
 @export var unit_tscn: PackedScene
 @export var controller: UnitControllerRT
 
+var event_num: int = 0 # TODO handle event timeline
+
 @export var icon_counter: GridContainer
 
 @export var allow_mirror: bool = true
@@ -205,7 +207,17 @@ func spawn_unit(tile_position: TerrainTile, job_id: int) -> UnitData:
 	new_unit.set_sprite_by_id(new_unit.job_data.sprite_id)
 	controller.camera_rotated.connect(new_unit.char_body.set_rotation_degrees) # have sprite update as camera rotates
 	
+	new_unit.turn_ended.connect(process_next_event)
+	
 	return new_unit
+
+
+# TODO handle event timeline
+func process_next_event() -> void:
+	event_num = (event_num + 1) % units.size()
+	var new_unit: UnitData = units[event_num]
+	controller.unit = new_unit
+	new_unit.start_turn(self)
 
 
 func get_map(new_map_data: MapData, map_position: Vector3, map_scale: Vector3) -> Map:

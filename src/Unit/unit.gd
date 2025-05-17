@@ -12,6 +12,7 @@ signal knocked_out(unit: UnitData)
 signal spritesheet_changed(new_spritesheet: ImageTexture)
 signal reached_tile()
 signal completed_move()
+signal turn_ended()
 
 var is_player_controlled: bool = false
 var is_active: bool = false
@@ -226,10 +227,20 @@ func _process(_delta: float) -> void:
 
 
 func start_turn(battle_manager: BattleManager) -> void:
-	map_paths = await get_map_paths(battle_manager.total_map_tiles, battle_manager.units)
+	# TODO focus camera on unit
+	
+	# set CT
+	ct_current = max(0, ct_current - 100)
+	
+	update_actions(battle_manager)
+
+
+func update_actions(battle_manager: BattleManager) -> void:
+	# TODO get_map_paths at start of battle and when battlefield changes - any unit moves, leaves, etc.
+	await update_map_paths(battle_manager.total_map_tiles, battle_manager.units)
 	
 	# get possible actions
-	for action_instance: ActionInstance in actions_data.keys():
+	for action_instance: ActionInstance in actions_data.values():
 		action_instance.clear()
 	
 	actions.clear()
@@ -241,7 +252,7 @@ func start_turn(battle_manager: BattleManager) -> void:
 	for child in battle_manager.action_button_list.get_children():
 		child.queue_free()
 	
-	# TODO show list UI for selecting an action
+	# show list UI for selecting an action TODO should action list be toggle/button group?
 	for action: Action in actions:
 		var new_action_instance: ActionInstance = ActionInstance.new(action, self, battle_manager)
 		actions_data[action] = new_action_instance
@@ -252,14 +263,29 @@ func start_turn(battle_manager: BattleManager) -> void:
 		# disable buttons for actions that are not usable - TODO provide hints why action is not usable - not enough mp, already moved, etc.
 		if not new_action_instance.is_usable():
 			new_action_button.disabled = true
+		
+		new_action_instance.action_completed.connect(update_actions)
 	
 	# select first usable action by default (usually Move)
+	active_action = null
 	for action_instance: ActionInstance in actions_data.values():
 		if action_instance.is_usable():
 			active_action = action_instance
 			active_action.update_potential_targets()
 			active_action.start_targeting()
 			break
+	
+	# end turn when no actions left
+	if active_action == null:
+		end_turn()
+
+
+func end_turn():
+	# set some stats for next turn - move_points_remaining, action_points_remaining, etc.
+	move_points_remaining = move_points_start
+	action_points_remaining = action_points_start
+	
+	turn_ended.emit()
 
 
 func use_attack() -> void:
@@ -576,6 +602,10 @@ func on_sprite_idx_selected(index: int) -> void:
 	#spritesheet_changed.emit(animation_manager.unit_sprites_manager.sprite_weapon.texture) # TODO hook up to sprite for debug purposes
 	if animation_changed:
 		animation_manager._on_animation_changed()
+
+
+func update_map_paths(map_tiles: Dictionary[Vector2i, Array], units: Array[UnitData], max_cost: int = 9999) -> void:
+	map_paths = await get_map_paths(map_tiles, units)
 
 
 ## map_tiles is Dictionary[Vector2i, Array[TerrainTile]], returns path to every tile

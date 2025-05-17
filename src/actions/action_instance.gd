@@ -1,5 +1,7 @@
 class_name ActionInstance
 
+signal action_completed(battle_manager: BattleManager)
+
 var action: Action
 var user: UnitData
 var battle_manager: BattleManager

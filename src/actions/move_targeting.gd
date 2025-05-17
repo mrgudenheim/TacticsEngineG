@@ -66,3 +66,5 @@ func on_map_input_event(action_instance: ActionInstance, camera: Camera3D, event
 				action_instance.submitted_targets.append(tile)
 				action_instance.use()
 				return
+
+# TODO move get_map_paths and related function from UnitData, allow cost based on Unit Move value or action range value

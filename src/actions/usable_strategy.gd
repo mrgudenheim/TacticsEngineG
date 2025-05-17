@@ -4,4 +4,5 @@ extends Resource
 
 # TODO implement UseableStrategy
 func is_usable(action_instance: ActionInstance) -> bool:
+	push_warning("Using default UseableStrategy, always true")
 	return true 

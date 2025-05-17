@@ -12,4 +12,6 @@ description = "Action description"
 useable_strategy = ExtResource("3_5kxap")
 targeting_strategy = ExtResource("2_hkwuw")
 use_strategy = ExtResource("3_7kirg")
+move_points_cost = 1
+action_points_cost = 0
 metadata/_custom_type_script = "uid://dlaul7n568vti"

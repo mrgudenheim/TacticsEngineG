@@ -8,6 +8,11 @@ extends Resource
 @export var targeting_strategy: TargetingStrategy
 @export var use_strategy: UseStrategy
 
+@export var move_points_cost: int = 0
+@export var action_points_cost: int = 1
+
+
+
 func _to_string() -> String:
 	return action_name
 

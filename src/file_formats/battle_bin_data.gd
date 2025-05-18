@@ -1,3 +1,4 @@
+# ffhacktics.com/wiki/BATTLE.BIN_Data_Tables
 class_name BattleBinData
 
 var sounds_whoosh_start: int = 0x2cd40

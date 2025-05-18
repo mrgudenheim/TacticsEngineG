@@ -233,6 +233,7 @@ func get_move_cost(from_tile: TerrainTile, to_tile: TerrainTile) -> float:
 	var cost: float = 0
 	cost = from_tile.location.distance_to(to_tile.location)
 	
-	# TODO check depth
+	# https://ffhacktics.com/wiki/Movement_modifiers_Table
+	# TODO check depth or terrain type?
 	
 	return cost

@@ -8,7 +8,8 @@ var id: int = 0
 @export var item_graphic_id: int = 0
 @export var item_palette_id: int = 0
 @export var min_level: int = 0
-@export var slot_type: SlotType
+@export var slot_type: SlotType = SlotType.NONE
+@export var is_rare: bool = false
 @export var item_type: ItemType = ItemType.FISTS
 var item_attribute_id: int = 0 # https://ffhacktics.com/wiki/Item_Attribute stat modifiers, always/start/immune statuses, elemental interaction
 @export var price: int = 100
@@ -53,10 +54,11 @@ var wep_frame_v_offset: int = 0
 @export var elemental_strengthen: Array[Utilities.ElementalTypes] = [] # 1 byte of bitflags, elemental types
 
 # chemist item data
-@export var chem_item_formula_id: int = 0
-@export var chem_item_z: int = 0
-@export var chem_item_inflict_status_id: int = 0
+@export var consumable_formula_id: int = 0
+@export var consumable_item_z: int = 0
+@export var consumable_inflict_status_id: int = 0
 
+@export var actions_granted: Array[Action] = []
 
 enum SlotType {
 	WEAPON = 0x80,
@@ -64,7 +66,7 @@ enum SlotType {
 	HEADGEAR = 0x20,
 	ARMOR = 0x10,
 	ACCESSORY = 0x08,
-	RARE = 0x02,
+	NONE = 0x04,
 	}
 
 enum ItemType {
@@ -102,7 +104,7 @@ enum ItemType {
 	PERFUME,
 	SHURIKEN,
 	BALL,
-	ITEM,
+	CONSUMABLE_ITEM,
 	}
 
 # In SCUS data tables
@@ -110,7 +112,8 @@ func _init(idx: int = 0) -> void:
 	name = RomReader.fft_text.item_names[idx]
 	id = idx
 	item_type = RomReader.scus_data.item_types[idx]
-	slot_type = RomReader.scus_data.item_slot_types[idx]
+	slot_type = RomReader.scus_data.item_slot_types[idx] & 0xfc # skip rare flag
+	is_rare = RomReader.scus_data.item_slot_types[idx] & 0x02 == 0x02 # rare flag
 	
 	item_graphic_id = RomReader.scus_data.item_sprite_ids[idx]
 	item_palette_id = RomReader.scus_data.item_palettes[idx]
@@ -152,9 +155,9 @@ func _init(idx: int = 0) -> void:
 		accessory_magical_evade = RomReader.scus_data.accessory_magical_evade[sub_index]
 	elif idx < 0xfe: # chemist item data
 		sub_index = idx - 0xf0
-		chem_item_formula_id = RomReader.scus_data.chem_item_formula_id[sub_index]
-		chem_item_z = RomReader.scus_data.chem_item_z[sub_index]
-		chem_item_inflict_status_id = RomReader.scus_data.chem_item_inflict_status_id[sub_index]
+		consumable_formula_id = RomReader.scus_data.chem_item_formula_id[sub_index]
+		consumable_item_z = RomReader.scus_data.chem_item_z[sub_index]
+		consumable_inflict_status_id = RomReader.scus_data.chem_item_inflict_status_id[sub_index]
 
 
 func set_item_attributes(item_attribute: ScusData.ItemAttribute) -> void:

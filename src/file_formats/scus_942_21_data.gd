@@ -385,4 +385,5 @@ func init_from_scus() -> void:
 		var new_status_effect_bytes: PackedByteArray = status_effect_data_bytes.slice(id * status_effect_entry_length, (id + 1) * status_effect_entry_length)
 		var new_status_effect: StatusEffect = StatusEffect.new()
 		new_status_effect.set_data(new_status_effect_bytes)
+		new_status_effect.status_effect_name = RomReader.fft_text.status_names[id]
 		status_effects[id] = new_status_effect

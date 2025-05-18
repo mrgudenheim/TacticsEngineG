@@ -104,6 +104,7 @@ var battle_effect_text: PackedStringArray = []
 var item_names: PackedStringArray = []
 var item_descriptions: PackedStringArray = []
 var equipment_types: PackedStringArray = []
+var status_names: PackedStringArray = []
 
 var map_names: PackedStringArray = []
 var location_names: PackedStringArray = []
@@ -122,6 +123,7 @@ func init_text() -> void:
 	battle_effect_text = battle_text.text_arrays[BattleBinTextSections.BATTLE_ACTION_EFFECT]
 	item_names = battle_text.text_arrays[BattleBinTextSections.ITEM_NAMES]
 	item_descriptions = attack_help_text.text_arrays[AttackHelpLzwSections.ITEM_DESCRIPTIONS]
+	status_names = battle_text.text_arrays[BattleBinTextSections.STATUSES_NAMES]
 	#equipment_types.resize(ItemData.ItemType.CLOTH + 1)
 	for idx: int in item_descriptions.size():
 		var type: String = ""

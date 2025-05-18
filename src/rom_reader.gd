@@ -78,6 +78,9 @@ func clear_data() -> void:
 	maps.clear()
 	vfx.clear()
 	abilities.clear()
+	items.clear()
+	status_effects.clear()
+	job_data.clear()
 
 
 func process_rom() -> void:

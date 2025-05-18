@@ -10,7 +10,7 @@ var id: int = 0
 @export var min_level: int = 0
 @export var slot_type: SlotType
 @export var item_type: ItemType = ItemType.FISTS
-@export var item_attribute_id: int = 0 # https://ffhacktics.com/wiki/Item_Attribute stat modifiers, always/start/immune statuses, elemental interaction
+var item_attribute_id: int = 0 # https://ffhacktics.com/wiki/Item_Attribute stat modifiers, always/start/immune statuses, elemental interaction
 @export var price: int = 100
 @export var shop_availability_start: int = 0
 
@@ -24,6 +24,39 @@ var wep_frame_v_offset: int = 0
 @export var weapon_evade: int = 1
 @export var weapon_element: Utilities.ElementalTypes = Utilities.ElementalTypes.NONE
 @export var weapon_inflict_status_spell_id: int = 1
+
+# shield data
+@export var shield_physical_evade: int = 0
+@export var shield_magical_evade: int = 0
+
+# armour/helm data
+@export var armour_hp_modifier: int = 0
+@export var armour_mp_modifier: int = 0
+
+# accessory data
+@export var accessory_physical_evade: int = 0
+@export var accessory_magical_evade: int = 0
+
+# attribute data
+@export var pa_modifier: int = 0
+@export var ma_modifier: int = 0
+@export var sp_modifier: int = 0
+@export var move_modifier: int = 0
+@export var jump_modifier: int = 0
+@export var status_always: Array[StatusEffect] = []
+@export var status_immune: Array[StatusEffect] = []
+@export var status_start: Array[StatusEffect] = []
+@export var elemental_absorb: Array[Utilities.ElementalTypes] = [] # 1 byte of bitflags, elemental types
+@export var elemental_cancel: Array[Utilities.ElementalTypes] = [] # 1 byte of bitflags, elemental types
+@export var elemental_half: Array[Utilities.ElementalTypes] = [] # 1 byte of bitflags, elemental types
+@export var elemental_weakness: Array[Utilities.ElementalTypes] = [] # 1 byte of bitflags, elemental types
+@export var elemental_strengthen: Array[Utilities.ElementalTypes] = [] # 1 byte of bitflags, elemental types
+
+# chemist item data
+@export var chem_item_formula_id: int = 0
+@export var chem_item_z: int = 0
+@export var chem_item_inflict_status_id: int = 0
+
 
 enum SlotType {
 	WEAPON = 0x80,
@@ -94,6 +127,47 @@ func _init(idx: int = 0) -> void:
 	#else:
 		#item_type = ItemType.FISTS
 	
+	set_item_attributes(RomReader.scus_data.item_attributes[RomReader.scus_data.item_attributes_id[idx]])
 	
-	
-	# TODO rest of item data
+	var sub_index: int = idx
+	# weapon data
+	if idx < 0x80:
+		range = RomReader.scus_data.weapon_range[idx]
+		formula_id = RomReader.scus_data.weapon_formula_id[idx]
+		weapon_power = RomReader.scus_data.weapon_power[idx]
+		weapon_evade = RomReader.scus_data.weapon_evade[idx]
+		weapon_element = RomReader.scus_data.weapon_element[idx]
+		weapon_inflict_status_spell_id = RomReader.scus_data.weapon_inflict_status_cast_id[idx]
+	elif idx < 0x90: # shield data
+		sub_index = idx - 0x80
+		shield_physical_evade = RomReader.scus_data.shield_physical_evade[sub_index]
+		shield_magical_evade = RomReader.scus_data.shield_magical_evade[sub_index]
+	elif idx < 0xd0: # armour/helm data
+		sub_index = idx - 0x90
+		armour_hp_modifier = RomReader.scus_data.armour_hp_modifier[sub_index]
+		armour_mp_modifier = RomReader.scus_data.armour_mp_modifier[sub_index]
+	elif idx < 0xf0: # accessory data
+		sub_index = idx - 0xd0
+		accessory_physical_evade = RomReader.scus_data.accessory_physical_evade[sub_index]
+		accessory_magical_evade = RomReader.scus_data.accessory_magical_evade[sub_index]
+	elif idx < 0xfe: # chemist item data
+		sub_index = idx - 0xf0
+		chem_item_formula_id = RomReader.scus_data.chem_item_formula_id[sub_index]
+		chem_item_z = RomReader.scus_data.chem_item_z[sub_index]
+		chem_item_inflict_status_id = RomReader.scus_data.chem_item_inflict_status_id[sub_index]
+
+
+func set_item_attributes(item_attribute: ScusData.ItemAttribute) -> void:
+	pa_modifier = item_attribute.pa_modifier
+	ma_modifier = item_attribute.ma_modifier
+	sp_modifier = item_attribute.sp_modifier
+	move_modifier = item_attribute.move_modifier
+	jump_modifier = item_attribute.jump_modifier
+	status_always = item_attribute.status_always
+	status_immune = item_attribute.status_immune
+	status_start = item_attribute.status_start
+	elemental_absorb = Utilities.get_elemental_types_array([item_attribute.elemental_absorb])
+	elemental_cancel = Utilities.get_elemental_types_array([item_attribute.elemental_cancel])
+	elemental_half = Utilities.get_elemental_types_array([item_attribute.elemental_half])
+	elemental_weakness = Utilities.get_elemental_types_array([item_attribute.elemental_weakness])
+	elemental_strengthen = Utilities.get_elemental_types_array([item_attribute.elemental_strengthen])

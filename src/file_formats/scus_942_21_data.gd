@@ -32,7 +32,7 @@ var element_flags: PackedInt32Array = []
 var formula_id: PackedInt32Array = []
 var formula_x: PackedInt32Array = []
 var formula_y: PackedInt32Array = []
-var inflict_status_id: PackedInt32Array = []
+var ability_inflict_status_id: PackedInt32Array = []
 var ct: PackedInt32Array = []
 var mp_cost: PackedInt32Array = []
 
@@ -113,51 +113,6 @@ class ItemAttribute:
 	var elemental_half: int = 0 # 1 byte of bitflags, elemental types
 	var elemental_weakness: int = 0 # 1 byte of bitflags, elemental types
 	var elemental_strengthen: int = 0 # 1 byte of bitflags, elemental types
-	
-	#Status Set 1
-	#0x80 - 
-	#0x40 - Crystal
-	#0x20 - Dead
-	#0x10 - Undead
-	#0x08 - Charging
-	#0x04 - Jump
-	#0x02 - Defending
-	#0x01 - Performing
-	#Status Set 2
-	#0x80 - Petrify
-	#0x40 - Invite
-	#0x20 - Darkness
-	#0x10 - Confusion
-	#0x08 - Silence
-	#0x04 - Blood Suck
-	#0x02 - Cursed
-	#0x01 - Treasure
-	#Status Set 3
-	#0x80 - Oil
-	#0x40 - Float
-	#0x20 - Reraise
-	#0x10 - Transparent
-	#0x08 - Berserk
-	#0x04 - Chicken
-	#0x02 - Frog
-	#0x01 - Critical
-	#Status Set 4
-	#0x80 - Poison
-	#0x40 - Regen
-	#0x20 - Protect
-	#0x10 - Shell
-	#0x08 - Haste
-	#0x04 - Slow
-	#0x02 - Stop
-	#Status Set 5
-	#0x80 - Faith
-	#0x40 - Innocent
-	#0x20 - Charm
-	#0x10 - Sleep
-	#0x08 - Don't Move
-	#0x04 - Don't Act
-	#0x02 - Reflect
-	#0x01 - Death Sentence
 	
 	func set_data(item_attribute_bytes: PackedByteArray) -> void:
 		pa_modifier = item_attribute_bytes.decode_u8(0)
@@ -285,7 +240,7 @@ func init_from_scus() -> void:
 	formula_id.resize(RomReader.NUM_ABILITIES)
 	formula_x.resize(RomReader.NUM_ABILITIES)
 	formula_y.resize(RomReader.NUM_ABILITIES)
-	inflict_status_id.resize(RomReader.NUM_ABILITIES)
+	ability_inflict_status_id.resize(RomReader.NUM_ABILITIES)
 	ct.resize(RomReader.NUM_ABILITIES)
 	mp_cost.resize(RomReader.NUM_ABILITIES)
 	
@@ -304,7 +259,7 @@ func init_from_scus() -> void:
 		formula_id[id] = ability_data_bytes.decode_u8((id * entry_size) + 8)
 		formula_x[id] = ability_data_bytes.decode_u8((id * entry_size) + 9)
 		formula_y[id] = ability_data_bytes.decode_u8((id * entry_size) + 10)
-		inflict_status_id[id] = ability_data_bytes.decode_u8((id * entry_size) + 11)
+		ability_inflict_status_id[id] = ability_data_bytes.decode_u8((id * entry_size) + 11)
 		ct[id] = ability_data_bytes.decode_u8((id * entry_size) + 12)
 		mp_cost[id] = ability_data_bytes.decode_u8((id * entry_size) + 13)
 	

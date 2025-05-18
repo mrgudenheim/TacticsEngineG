@@ -110,7 +110,7 @@ func _init(new_id: int = 0) -> void:
 	targeting_range = RomReader.scus_data.ranges[new_id]
 	effect_radius = RomReader.scus_data.effect_radius[new_id]
 	vertical_tolerance = RomReader.scus_data.vertical_tolerance[new_id]
-	inflict_status_id = RomReader.scus_data.inflict_status_id[new_id]
+	inflict_status_id = RomReader.scus_data.ability_inflict_status_id[new_id]
 	ticks_charge_time = RomReader.scus_data.ct[new_id]
 
 

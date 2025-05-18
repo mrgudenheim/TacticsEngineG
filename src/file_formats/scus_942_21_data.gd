@@ -105,9 +105,9 @@ class ItemAttribute:
 	var sp_modifier: int = 0
 	var move_modifier: int = 0
 	var jump_modifier: int = 0
-	var status_always: PackedByteArray = [] # 5 bytes of bitflags for up to 40 statuses
-	var status_immune: PackedByteArray = [] # 5 bytes of bitflags for up to 40 statuses
-	var status_start: PackedByteArray = [] # 5 bytes of bitflags for up to 40 statuses
+	var status_always: Array[StatusEffect] = [] # 5 bytes of bitflags for up to 40 statuses # TODO use bit index as index into StatusEffect array
+	var status_immune: Array[StatusEffect] = [] # 5 bytes of bitflags for up to 40 statuses # TODO use bit index as index into StatusEffect array
+	var status_start: Array[StatusEffect] = [] # 5 bytes of bitflags for up to 40 statuses # TODO use bit index as index into StatusEffect array
 	var elemental_absorb: int = 0 # 1 byte of bitflags, elemental types
 	var elemental_cancel: int = 0 # 1 byte of bitflags, elemental types
 	var elemental_half: int = 0 # 1 byte of bitflags, elemental types
@@ -165,9 +165,9 @@ class ItemAttribute:
 		sp_modifier = item_attribute_bytes.decode_u8(2)
 		move_modifier = item_attribute_bytes.decode_u8(3)
 		jump_modifier = item_attribute_bytes.decode_u8(4)
-		status_always.append_array(item_attribute_bytes.slice(5, 10))
-		status_immune.append_array(item_attribute_bytes.slice(10, 15))
-		status_start.append_array(item_attribute_bytes.slice(15, 20))
+		status_always = StatusEffect.get_status_array(item_attribute_bytes.slice(5, 10))
+		status_immune = StatusEffect.get_status_array(item_attribute_bytes.slice(10, 15))
+		status_start = StatusEffect.get_status_array(item_attribute_bytes.slice(15, 20))
 		elemental_absorb = item_attribute_bytes.decode_u8(20)
 		elemental_cancel = item_attribute_bytes.decode_u8(21)
 		elemental_half = item_attribute_bytes.decode_u8(22)
@@ -190,6 +190,18 @@ var status_effects: Array[StatusEffect] = []
 func init_from_scus() -> void:
 	var scus_bytes: PackedByteArray = RomReader.get_file_data("SCUS_942.21")
 	
+	# status effect data https://ffhacktics.com/wiki/SCUS_942.21_Data_Tables
+	# status effects need to be loaded first to be referenced by other data
+	var status_effect_data_bytes: PackedByteArray = scus_bytes.slice(status_effect_data_start, status_effect_data_start + (status_effect_entries * status_effect_entry_length))
+	status_effects.resize(status_effect_entries)
+	for id: int in status_effect_entries:
+		var new_status_effect_bytes: PackedByteArray = status_effect_data_bytes.slice(id * status_effect_entry_length, (id + 1) * status_effect_entry_length)
+		var new_status_effect: StatusEffect = StatusEffect.new()
+		new_status_effect.set_data(new_status_effect_bytes)
+		new_status_effect.status_effect_name = RomReader.fft_text.status_names[id]
+		status_effects[id] = new_status_effect
+	
+	
 	# job data
 	var entry_size: int = 0x30 # bytes
 	var num_entries: int = RomReader.NUM_JOBS
@@ -203,9 +215,9 @@ func init_from_scus() -> void:
 		#job_data.monster_type = job_bytes.decode_u8((job_id * entry_size) + 0x2f)
 		jobs_data[job_id] = job_data
 	
-	
-	skillsets_data.resize(RomReader.NUM_SKILLSETS)
 	# unit skillset data
+	skillsets_data.resize(RomReader.NUM_SKILLSETS)
+	
 	entry_size = 0x19 # bytes
 	num_entries = RomReader.NUM_UNIT_SKILLSETS
 	var unit_skillsets_bytes: PackedByteArray = scus_bytes.slice(skillsets_start, skillsets_start + (num_entries * entry_size))
@@ -377,13 +389,3 @@ func init_from_scus() -> void:
 		var new_item_attribute: ItemAttribute = ItemAttribute.new()
 		new_item_attribute.set_data(new_item_attribute_bytes)
 		item_attributes[id] = new_item_attribute
-	
-	# status effect data https://ffhacktics.com/wiki/SCUS_942.21_Data_Tables
-	var status_effect_data_bytes: PackedByteArray = scus_bytes.slice(status_effect_data_start, status_effect_data_start + (status_effect_entries * status_effect_entry_length))
-	status_effects.resize(status_effect_entries)
-	for id: int in status_effect_entries:
-		var new_status_effect_bytes: PackedByteArray = status_effect_data_bytes.slice(id * status_effect_entry_length, (id + 1) * status_effect_entry_length)
-		var new_status_effect: StatusEffect = StatusEffect.new()
-		new_status_effect.set_data(new_status_effect_bytes)
-		new_status_effect.status_effect_name = RomReader.fft_text.status_names[id]
-		status_effects[id] = new_status_effect

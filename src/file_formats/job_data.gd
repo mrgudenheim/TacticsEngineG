@@ -1,11 +1,12 @@
 class_name JobData
+extends Resource
 
 # Job Data # 800610b8 in RAM
 var job_id = 0
 var job_name: String = ""
 var skillset_id: int = 0
 #var innate_abilities: PackedInt32Array = []
-# equippable items
+# equippable items # 4 bytes of bitflags, 32 total
 # hp growth
 # hp multiplier
 # mp growth
@@ -19,9 +20,10 @@ var skillset_id: int = 0
 # move
 # jump
 # c-evade
-var status_always: Array[StatusEffect] = [] # 5 bytes of bitflags for up to 40 statuses
-var status_immune: Array[StatusEffect] = [] # 5 bytes of bitflags for up to 40 statuses
-var status_start: Array[StatusEffect] = [] # 5 bytes of bitflags for up to 40 statuses
+
+var status_always: Array[StatusEffect] = [] # 5 bytes of bitflags for up to 40 statuses # TODO use bit index as index into StatusEffect array
+var status_immune: Array[StatusEffect] = [] # 5 bytes of bitflags for up to 40 statuses # TODO use bit index as index into StatusEffect array
+var status_start: Array[StatusEffect] = [] # 5 bytes of bitflags for up to 40 statuses # TODO use bit index as index into StatusEffect array
 
 var elemental_absorb: Array[Utilities.ElementalTypes] = [] # 1 byte of bitflags, elemental types
 var elemental_cancel: Array[Utilities.ElementalTypes] = [] # 1 byte of bitflags, elemental types
@@ -50,3 +52,8 @@ func _init(new_job_id: int, job_bytes: PackedByteArray) -> void:
 	elif job_id >= 0x5e: # generic and special monsters
 		sprite_id = monster_portrait_id
 	
+	status_always = StatusEffect.get_status_array(job_bytes.slice(0x1a, 0x1f))
+	status_immune = StatusEffect.get_status_array(job_bytes.slice(0x1f, 0x24))
+	status_start = StatusEffect.get_status_array(job_bytes.slice(0x24, 0x29))
+	
+	# TODO rest of job data

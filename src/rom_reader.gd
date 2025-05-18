@@ -39,6 +39,8 @@ var maps: Array[MapData] = []
 var vfx: Array[VisualEffectData] = []
 var abilities: Array[FftAbilityData] = []
 var items: Array[ItemData] = []
+var status_effects: Array[StatusEffect] = [] # TODO reference scus_data.status_effects
+var job_data: Array[JobData] = [] # TODO reference scus_data.jobs
 
 # BATTLE.BIN tables
 var battle_bin_data: BattleBinData = BattleBinData.new()
@@ -91,8 +93,8 @@ func process_rom() -> void:
 	push_warning("Time to process ROM (ms): " + str(Time.get_ticks_msec() - start_time))
 	
 	fft_text.init_text()
-	battle_bin_data.init_from_battle_bin()
 	scus_data.init_from_scus()
+	battle_bin_data.init_from_battle_bin()
 	
 	cache_associated_files()
 	
@@ -102,6 +104,8 @@ func process_rom() -> void:
 	items.resize(NUM_ITEMS)
 	for id: int in NUM_ITEMS:
 		items[id] = (ItemData.new(id))
+	
+	
 	
 	# testing vfx vram data
 	#for ability_id: int in NUM_ACTIVE_ABILITIES:

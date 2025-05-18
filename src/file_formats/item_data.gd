@@ -20,23 +20,28 @@ var wep_frame_v_offset: int = 0
 
 # weapon data
 @export var range: int = 1
-@export var formula_id: int = 0
+@export var weapon_formula_id: int = 1
 @export var weapon_power: int = 1
-@export var weapon_evade: int = 1
+@export var weapon_evade: int = 0
 @export var weapon_element: Utilities.ElementalTypes = Utilities.ElementalTypes.NONE
-@export var weapon_inflict_status_spell_id: int = 1
+@export var weapon_inflict_status_spell_id: int = 0
+@export var weapon_targeting_strategy: TargetingStrategy
+@export var is_dual_wieldable: bool = false
+@export var is_two_handable: bool = false
+@export var is_throwable: bool = false
+@export var takes_both_hands: bool = false
 
 # shield data
 @export var shield_physical_evade: int = 0
 @export var shield_magical_evade: int = 0
 
-# armour/helm data
-@export var armour_hp_modifier: int = 0
-@export var armour_mp_modifier: int = 0
-
 # accessory data
 @export var accessory_physical_evade: int = 0
 @export var accessory_magical_evade: int = 0
+
+# armour/helm data
+@export var hp_modifier: int = 0
+@export var mp_modifier: int = 0
 
 # attribute data
 @export var pa_modifier: int = 0
@@ -136,19 +141,25 @@ func _init(idx: int = 0) -> void:
 	# weapon data
 	if idx < 0x80:
 		range = RomReader.scus_data.weapon_range[idx]
-		formula_id = RomReader.scus_data.weapon_formula_id[idx]
+		weapon_formula_id = RomReader.scus_data.weapon_formula_id[idx]
 		weapon_power = RomReader.scus_data.weapon_power[idx]
 		weapon_evade = RomReader.scus_data.weapon_evade[idx]
 		weapon_element = RomReader.scus_data.weapon_element[idx]
 		weapon_inflict_status_spell_id = RomReader.scus_data.weapon_inflict_status_cast_id[idx]
+		#weapon_targeting_strategy =  # TODO weapon targeting types based on weapon_flags
+		is_dual_wieldable = RomReader.scus_data.weapon_flags[idx] & 0x08 == 0x08
+		is_two_handable = RomReader.scus_data.weapon_flags[idx] & 0x04 == 0x04
+		is_throwable = RomReader.scus_data.weapon_flags[idx] & 0x02 == 0x02
+		takes_both_hands = RomReader.scus_data.weapon_flags[idx] & 0x01 == 0x01
+		
 	elif idx < 0x90: # shield data
 		sub_index = idx - 0x80
 		shield_physical_evade = RomReader.scus_data.shield_physical_evade[sub_index]
 		shield_magical_evade = RomReader.scus_data.shield_magical_evade[sub_index]
 	elif idx < 0xd0: # armour/helm data
 		sub_index = idx - 0x90
-		armour_hp_modifier = RomReader.scus_data.armour_hp_modifier[sub_index]
-		armour_mp_modifier = RomReader.scus_data.armour_mp_modifier[sub_index]
+		hp_modifier = RomReader.scus_data.armour_hp_modifier[sub_index]
+		mp_modifier = RomReader.scus_data.armour_mp_modifier[sub_index]
 	elif idx < 0xf0: # accessory data
 		sub_index = idx - 0xd0
 		accessory_physical_evade = RomReader.scus_data.accessory_physical_evade[sub_index]

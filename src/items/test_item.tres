@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=4 format=3 uid="uid://k82phe25gaet"]
+
+[ext_resource type="Script" uid="uid://dlaul7n568vti" path="res://src/actions/action.gd" id="1_5alu4"]
+[ext_resource type="Script" uid="uid://cf5w02iml4cqu" path="res://src/file_formats/item_data.gd" id="2_x6yjh"]
+[ext_resource type="Script" uid="uid://cg0yup2a7gcs8" path="res://src/Unit/status.gd" id="3_sx00x"]
+
+[resource]
+script = ExtResource("2_x6yjh")
+name = "Item name"
+item_graphic_id = 0
+item_palette_id = 0
+min_level = 0
+slot_type = 4
+is_rare = false
+item_type = 0
+price = 100
+shop_availability_start = 0
+wep_frame_palette = 0
+range = 1
+formula_id = 0
+weapon_power = 1
+weapon_evade = 0
+weapon_element = 0
+weapon_inflict_status_spell_id = 0
+shield_physical_evade = 0
+shield_magical_evade = 0
+accessory_physical_evade = 0
+accessory_magical_evade = 0
+hp_modifier = 0
+mp_modifier = 0
+pa_modifier = 0
+ma_modifier = 0
+sp_modifier = 0
+move_modifier = 0
+jump_modifier = 0
+status_always = Array[ExtResource("3_sx00x")]([])
+status_immune = Array[ExtResource("3_sx00x")]([])
+status_start = Array[ExtResource("3_sx00x")]([])
+elemental_absorb = Array[int]([])
+elemental_cancel = Array[int]([])
+elemental_half = Array[int]([])
+elemental_weakness = Array[int]([])
+elemental_strengthen = Array[int]([])
+consumable_formula_id = 0
+consumable_item_z = 0
+consumable_inflict_status_id = 0
+actions_granted = Array[ExtResource("1_5alu4")]([])
+metadata/_custom_type_script = "uid://cf5w02iml4cqu"

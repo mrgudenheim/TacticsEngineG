@@ -54,7 +54,7 @@ extends Resource
 
 @export var can_select_unit: bool = false
 
-@export var element: String = "None" # TODO create element enum?
+@export var element: Utilities.ElementalTypes = Utilities.ElementalTypes.NONE
 
 # TODO create status type enum?
 @export var status_prevents_any: Array[StatusEffect] = [] # silence, dont move, dont act, etc.

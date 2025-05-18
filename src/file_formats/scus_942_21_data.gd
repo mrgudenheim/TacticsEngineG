@@ -54,10 +54,87 @@ var item_sprite_ids: PackedInt32Array = []
 var item_min_levels: PackedInt32Array = []
 var item_slot_types: PackedInt32Array = []
 var item_types: PackedInt32Array = []
-var item_attributes # TODO item attributes
+var item_attributes_id: PackedInt32Array = [] # TODO item attributes https://ffhacktics.com/wiki/Item_Attribute
 var item_prices: PackedInt32Array = []
 var item_shop_availability: PackedInt32Array = []
 
+# item weapon data https://ffhacktics.com/wiki/Weapon_Secondary_Data
+var weapon_data_start: int = 0x542b8 # 0x80 entries, 0x08 bytes each
+var weapon_entries: int = 0x80
+var weapon_entry_length: int = 0x08
+var weapon_range: PackedInt32Array = []
+var weapon_flags: PackedInt32Array = []
+var weapon_formula_id: PackedInt32Array = []
+var weapon_power: PackedInt32Array = []
+var weapon_evade: PackedInt32Array = []
+var weapon_element: PackedInt32Array = []
+var weapon_inflict_status_cast_id: PackedInt32Array = []
+
+# item shield data https://ffhacktics.com/wiki/Shield_Secondary_Data
+var shield_data_start: int = 0x63eb8-0xf800
+var shield_entries: int = 0x90 - 0x80
+var shield_entry_length: int = 0x02
+var shield_physical_evade: PackedInt32Array = []
+var shield_magical_evade: PackedInt32Array = []
+
+# item helm/armour data https://ffhacktics.com/wiki/Helm/Armor_Secondary_Data
+var armour_data_start: int = 0x63ed8-0xf800
+var armour_entries: int = 0xd0 - 0x90
+var armour_entry_length: int = 0x02
+var armour_hp_modifier: PackedInt32Array = []
+var armour_mp_modifier: PackedInt32Array = []
+
+# item accessory data https://ffhacktics.com/wiki/Accessory_Secondary_Data
+var accessory_data_start: int = 0x63f58-0xf800
+var accessory_entries: int = 0xf0 - 0xd0
+var accessory_entry_length: int = 0x02
+var accessory_physical_evade: PackedInt32Array = []
+var accessory_magical_evade: PackedInt32Array = []
+
+# item chemist item data https://ffhacktics.com/wiki/Item_Secondary_Data
+var chem_item_data_start: int = 0x63f98-0xf800
+var chem_item_entries: int = 0xfe - 0xf0
+var chem_item_entry_length: int = 0x03
+var chem_item_formula_id: PackedInt32Array = []
+var chem_item_z: PackedInt32Array = []
+var chem_item_inflict_status_id: PackedInt32Array = []
+
+# item attribute data https://ffhacktics.com/wiki/Item_Attribute
+class ItemAttribute:
+	var pa_modifier: int = 0
+	var ma_modifier: int = 0
+	var sp_modifier: int = 0
+	var move_modifier: int = 0
+	var jump_modifier: int = 0
+	var status_always: PackedByteArray = [] # 5 bytes of bitflags for up to 40 statuses
+	var status_immune: PackedByteArray = [] # 5 bytes of bitflags for up to 40 statuses
+	var status_start: PackedByteArray = [] # 5 bytes of bitflags for up to 40 statuses
+	var elemental_absorb: int = 0 # 1 byte of bitflags, elemental types
+	var elemental_cancel: int = 0 # 1 byte of bitflags, elemental types
+	var elemental_half: int = 0 # 1 byte of bitflags, elemental types
+	var elemental_weakness: int = 0 # 1 byte of bitflags, elemental types
+	var elemental_strengthen: int = 0 # 1 byte of bitflags, elemental types
+	
+	func set_data(item_attribute_bytes: PackedByteArray) -> void:
+		pa_modifier = item_attribute_bytes.decode_u8(0)
+		ma_modifier = item_attribute_bytes.decode_u8(1)
+		sp_modifier = item_attribute_bytes.decode_u8(2)
+		move_modifier = item_attribute_bytes.decode_u8(3)
+		jump_modifier = item_attribute_bytes.decode_u8(4)
+		status_always.append_array(item_attribute_bytes.slice(5, 10))
+		status_immune.append_array(item_attribute_bytes.slice(10, 15))
+		status_start.append_array(item_attribute_bytes.slice(15, 20))
+		elemental_absorb = item_attribute_bytes.decode_u8(20)
+		elemental_cancel = item_attribute_bytes.decode_u8(21)
+		elemental_half = item_attribute_bytes.decode_u8(22)
+		elemental_weakness = item_attribute_bytes.decode_u8(23)
+		elemental_strengthen = item_attribute_bytes.decode_u8(24)
+
+
+var item_attribute_data_start: int = 0x642c4-0xf800
+var item_attribute_entries: int = 0x50
+var item_attribute_entry_length: int = 0x19
+var item_attributes: Array[ItemAttribute] = []
 
 func init_from_scus() -> void:
 	var scus_bytes: PackedByteArray = RomReader.get_file_data("SCUS_942.21")
@@ -174,7 +251,7 @@ func init_from_scus() -> void:
 	item_min_levels.resize(item_entries)
 	item_slot_types.resize(item_entries)
 	item_types.resize(item_entries)
-	# item_attributes # TODO item attributes
+	item_attributes_id.resize(item_entries)
 	item_prices.resize(item_entries)
 	item_shop_availability.resize(item_entries)
 	
@@ -185,5 +262,67 @@ func init_from_scus() -> void:
 		item_min_levels[id] = item_data_bytes.decode_u8((id * item_entry_length) + 2)
 		item_slot_types[id] = item_data_bytes.decode_u8((id * item_entry_length) + 3)
 		item_types[id] = item_data_bytes.decode_u8((id * item_entry_length) + 5)
+		item_attributes_id[id] = item_data_bytes.decode_u8((id * item_entry_length) + 7)
 		item_prices[id] = item_data_bytes.decode_u16((id * item_entry_length) + 8)
 		item_shop_availability[id] = item_data_bytes.decode_u8((id * item_entry_length) + 10)
+	
+	# item weapon data https://ffhacktics.com/wiki/Weapon_Secondary_Data
+	var weapon_data_bytes: PackedByteArray = scus_bytes.slice(weapon_data_start, weapon_data_start + (weapon_entries * weapon_entry_length))
+	weapon_range.resize(weapon_entries)
+	weapon_flags.resize(weapon_entries)
+	weapon_formula_id.resize(weapon_entries)
+	weapon_power.resize(weapon_entries)
+	weapon_evade.resize(weapon_entries)
+	weapon_element.resize(weapon_entries)
+	weapon_inflict_status_cast_id.resize(weapon_entries)
+	for id: int in weapon_entries:
+		weapon_range[id] = weapon_data_bytes.decode_u8(id * weapon_entry_length)
+		weapon_flags[id] = weapon_data_bytes.decode_u8((id * weapon_entry_length) + 1)
+		weapon_formula_id[id] = weapon_data_bytes.decode_u8((id * weapon_entry_length) + 2)
+		weapon_power[id] = weapon_data_bytes.decode_u8((id * weapon_entry_length) + 4)
+		weapon_evade[id] = weapon_data_bytes.decode_u8((id * weapon_entry_length) + 5)
+		weapon_element[id] = weapon_data_bytes.decode_u8((id * weapon_entry_length) + 6)
+		weapon_inflict_status_cast_id[id] = weapon_data_bytes.decode_u8((id * weapon_entry_length) + 7)
+	
+	# item shield data https://ffhacktics.com/wiki/Shield_Secondary_Data
+	var shield_data_bytes: PackedByteArray = scus_bytes.slice(shield_data_start, shield_data_start + (shield_entries * shield_entry_length))
+	shield_physical_evade.resize(shield_entries)
+	shield_magical_evade.resize(shield_entries)
+	for id: int in shield_entries:
+		shield_physical_evade[id] = shield_data_bytes.decode_u8(id * shield_entry_length)
+		shield_magical_evade[id] = shield_data_bytes.decode_u8((id * shield_entry_length) + 1)
+	
+	# item helm/armour data https://ffhacktics.com/wiki/Helm/Armor_Secondary_Data
+	var armour_data_bytes: PackedByteArray = scus_bytes.slice(armour_data_start,armour_data_start + (armour_entries * armour_entry_length))
+	armour_hp_modifier.resize(armour_entries)
+	armour_mp_modifier.resize(armour_entries)
+	for id: int in armour_entries:
+		armour_hp_modifier[id] = armour_data_bytes.decode_u8(id * armour_entry_length)
+		armour_mp_modifier[id] = armour_data_bytes.decode_u8((id * armour_entry_length) + 1)
+	
+	# item accessory data https://ffhacktics.com/wiki/Accessory_Secondary_Data
+	var accessory_data_bytes: PackedByteArray = scus_bytes.slice(accessory_data_start, accessory_data_start + (accessory_entries * accessory_entry_length))
+	accessory_physical_evade.resize(accessory_entries)
+	accessory_magical_evade.resize(accessory_entries)
+	for id: int in accessory_entries:
+		accessory_physical_evade[id] = accessory_data_bytes.decode_u8(id * accessory_entry_length)
+		accessory_magical_evade[id] = accessory_data_bytes.decode_u8((id * accessory_entry_length) + 1)
+	
+	# item chemist item data https://ffhacktics.com/wiki/Item_Secondary_Data
+	var chem_item_data_bytes: PackedByteArray = scus_bytes.slice(chem_item_data_start, chem_item_data_start + (chem_item_entries * chem_item_entry_length))
+	chem_item_formula_id.resize(chem_item_entries)
+	chem_item_z.resize(chem_item_entries)
+	chem_item_inflict_status_id.resize(chem_item_entries)
+	for id: int in chem_item_entries:
+		chem_item_formula_id[id] = chem_item_data_bytes.decode_u8(id * chem_item_entry_length)
+		chem_item_z[id] = chem_item_data_bytes.decode_u8((id * chem_item_entry_length) + 1)
+		chem_item_inflict_status_id[id] = chem_item_data_bytes.decode_u8((id * chem_item_entry_length) + 2)
+	
+	# item attribute data https://ffhacktics.com/wiki/Item_Attribute
+	var item_attribute_data_bytes: PackedByteArray = scus_bytes.slice(item_attribute_data_start, item_attribute_data_start + (item_attribute_entries * item_attribute_entry_length))
+	item_attributes.resize(item_attribute_entries)
+	for id: int in item_attribute_entries:
+		var new_item_attribute_bytes: PackedByteArray = item_attribute_data_bytes.slice(id * item_attribute_entry_length, (id + 1) * item_attribute_entry_length)
+		var new_item_attribute: ItemAttribute = ItemAttribute.new()
+		new_item_attribute.set_data(new_item_attribute_bytes)
+		item_attributes[id] = new_item_attribute

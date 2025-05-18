@@ -19,13 +19,16 @@ var skillset_id: int = 0
 # move
 # jump
 # c-evade
-# innate statuses
-# status immunities
-# starting statuses
-# absorbed elements
-# nullified elements
-# halved elements
-# element weaknesses
+var status_always: Array[StatusEffect] = [] # 5 bytes of bitflags for up to 40 statuses
+var status_immune: Array[StatusEffect] = [] # 5 bytes of bitflags for up to 40 statuses
+var status_start: Array[StatusEffect] = [] # 5 bytes of bitflags for up to 40 statuses
+
+var elemental_absorb: Array[Utilities.ElementalTypes] = [] # 1 byte of bitflags, elemental types
+var elemental_cancel: Array[Utilities.ElementalTypes] = [] # 1 byte of bitflags, elemental types
+var elemental_half: Array[Utilities.ElementalTypes] = [] # 1 byte of bitflags, elemental types
+var elemental_weakness: Array[Utilities.ElementalTypes] = [] # 1 byte of bitflags, elemental types
+var elemental_strengthen: Array[Utilities.ElementalTypes] = [] # 1 byte of bitflags, elemental types
+
 var monster_portrait_id: int = 0
 var monster_palette_id: int = 0
 var monster_type: int = 0 # monster type sprite? sprite_id = 0x85 + this

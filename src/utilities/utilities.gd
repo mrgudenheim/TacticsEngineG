@@ -1,0 +1,13 @@
+class_name Utilities
+
+enum ElementalTypes {
+	NONE = 0x00,
+	DARK = 0x01,
+	HOLY = 0x02,
+	WATER = 0x04,
+	EARTH = 0x08,
+	WIND = 0x10,
+	ICE = 0x20,
+	LIGHTNING = 0x40,
+	FIRE = 0x80,
+	}

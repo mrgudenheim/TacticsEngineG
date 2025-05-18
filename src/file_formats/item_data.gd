@@ -1,19 +1,29 @@
 class_name ItemData
+extends Resource
 
 # https://ffhacktics.com/wiki/Item_Data
 
-var name: String = "Item name"
+@export var name: String = "Item name"
 var id: int = 0
-var item_graphic_id: int = 0
-var item_palette_id: int = 0
-var min_level: int = 0
-var slot_type: SlotType
-var item_type: ItemType = ItemType.FISTS
-var price: int = 100
-var shop_availability_start: int = 0
+@export var item_graphic_id: int = 0
+@export var item_palette_id: int = 0
+@export var min_level: int = 0
+@export var slot_type: SlotType
+@export var item_type: ItemType = ItemType.FISTS
+@export var item_attribute_id: int = 0 # https://ffhacktics.com/wiki/Item_Attribute stat modifiers, always/start/immune statuses, elemental interaction
+@export var price: int = 100
+@export var shop_availability_start: int = 0
 
 var wep_frame_v_offset: int = 0
-var wep_frame_palette: int = 0
+@export var wep_frame_palette: int = 0
+
+# weapon data
+@export var range: int = 1
+@export var formula_id: int = 0
+@export var weapon_power: int = 1
+@export var weapon_evade: int = 1
+@export var weapon_element: Utilities.ElementalTypes = Utilities.ElementalTypes.NONE
+@export var weapon_inflict_status_spell_id: int = 1
 
 enum SlotType {
 	WEAPON = 0x80,
@@ -83,5 +93,7 @@ func _init(idx: int = 0) -> void:
 		#item_type = RomReader.scus_data.item_types[idx - 1]
 	#else:
 		#item_type = ItemType.FISTS
+	
+	
 	
 	# TODO rest of item data

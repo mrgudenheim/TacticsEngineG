@@ -39,7 +39,7 @@ func clear_targets(target_highlights: Dictionary[TerrainTile, Node3D]) -> void:
 
 
 func is_usable() -> bool:
-	return action.useable_strategy.is_usable(self)
+	return action.is_usable(self)
 
 
 func update_potential_targets() -> void:

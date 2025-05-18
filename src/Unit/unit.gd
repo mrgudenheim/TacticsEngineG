@@ -66,10 +66,10 @@ var mp_base: int = 100
 var mp_max: int = 100
 var mp_current: int = 70
 
-var physical_power_base: int = 5
-var physical_power_current: int = 5
-var magical_power_base: int = 5
-var magical_power_current: int = 5
+var physical_attack_base: int = 5
+var physical_attack_current: int = 5
+var magical_attack_base: int = 5
+var magical_attack_current: int = 5
 var speed_base: int = 5
 var speed_current: int = 5
 var move_base: int = 5

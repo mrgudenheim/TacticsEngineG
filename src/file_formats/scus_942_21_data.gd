@@ -43,7 +43,6 @@ var ability_data_charge_start: int = 0x503f0 # ids 0x196 - 0x19d, 0x08 entries, 
 var ability_data_math_start: int = 0x503f0 # ids 0x19e - 0x1a5, 0x08 entries, 0x02 bytes each
 var ability_data_rsm_start: int = 0x503f0 # ids 0x1a6 - 0x1ff, 0x5a entries, 0x01 bytes each
 
-
 # Item data
 # https://ffhacktics.com/wiki/Item_Data
 var item_data_base_start: int = 0x536b8 # 0xfd entries, 0x0c bytes each
@@ -115,6 +114,51 @@ class ItemAttribute:
 	var elemental_weakness: int = 0 # 1 byte of bitflags, elemental types
 	var elemental_strengthen: int = 0 # 1 byte of bitflags, elemental types
 	
+	#Status Set 1
+	#0x80 - 
+	#0x40 - Crystal
+	#0x20 - Dead
+	#0x10 - Undead
+	#0x08 - Charging
+	#0x04 - Jump
+	#0x02 - Defending
+	#0x01 - Performing
+	#Status Set 2
+	#0x80 - Petrify
+	#0x40 - Invite
+	#0x20 - Darkness
+	#0x10 - Confusion
+	#0x08 - Silence
+	#0x04 - Blood Suck
+	#0x02 - Cursed
+	#0x01 - Treasure
+	#Status Set 3
+	#0x80 - Oil
+	#0x40 - Float
+	#0x20 - Reraise
+	#0x10 - Transparent
+	#0x08 - Berserk
+	#0x04 - Chicken
+	#0x02 - Frog
+	#0x01 - Critical
+	#Status Set 4
+	#0x80 - Poison
+	#0x40 - Regen
+	#0x20 - Protect
+	#0x10 - Shell
+	#0x08 - Haste
+	#0x04 - Slow
+	#0x02 - Stop
+	#Status Set 5
+	#0x80 - Faith
+	#0x40 - Innocent
+	#0x20 - Charm
+	#0x10 - Sleep
+	#0x08 - Don't Move
+	#0x04 - Don't Act
+	#0x02 - Reflect
+	#0x01 - Death Sentence
+	
 	func set_data(item_attribute_bytes: PackedByteArray) -> void:
 		pa_modifier = item_attribute_bytes.decode_u8(0)
 		ma_modifier = item_attribute_bytes.decode_u8(1)
@@ -135,6 +179,13 @@ var item_attribute_data_start: int = 0x642c4-0xf800
 var item_attribute_entries: int = 0x50
 var item_attribute_entry_length: int = 0x19
 var item_attributes: Array[ItemAttribute] = []
+
+# Status Effect data https://ffhacktics.com/wiki/Status_Effects
+var status_effect_data_start: int = 0x565e4
+var status_effect_entries: int = 40
+var status_effect_entry_length: int = 0x10
+var status_effects: Array[StatusEffect] = []
+
 
 func init_from_scus() -> void:
 	var scus_bytes: PackedByteArray = RomReader.get_file_data("SCUS_942.21")
@@ -326,3 +377,12 @@ func init_from_scus() -> void:
 		var new_item_attribute: ItemAttribute = ItemAttribute.new()
 		new_item_attribute.set_data(new_item_attribute_bytes)
 		item_attributes[id] = new_item_attribute
+	
+	# status effect data https://ffhacktics.com/wiki/SCUS_942.21_Data_Tables
+	var status_effect_data_bytes: PackedByteArray = scus_bytes.slice(status_effect_data_start, status_effect_data_start + (status_effect_entries * status_effect_entry_length))
+	status_effects.resize(status_effect_entries)
+	for id: int in status_effect_entries:
+		var new_status_effect_bytes: PackedByteArray = status_effect_data_bytes.slice(id * status_effect_entry_length, (id + 1) * status_effect_entry_length)
+		var new_status_effect: StatusEffect = StatusEffect.new()
+		new_status_effect.set_data(new_status_effect_bytes)
+		status_effects[id] = new_status_effect

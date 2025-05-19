@@ -21,6 +21,7 @@ var wep_frame_v_offset: int = 0
 # weapon data
 @export var range: int = 1
 @export var weapon_formula_id: int = 1
+@export var weapon_base_damage_formula: WeaponFormulas = WeaponFormulas.PAxWP
 @export var weapon_power: int = 1
 @export var weapon_evade: int = 0
 @export var weapon_element: Utilities.ElementalTypes = Utilities.ElementalTypes.NONE
@@ -64,6 +65,30 @@ var wep_frame_v_offset: int = 0
 @export var consumable_inflict_status_id: int = 0
 
 @export var actions_granted: Array[Action] = []
+
+static var weapon_formula_descriptions: Dictionary[WeaponFormulas, String] = {
+	WeaponFormulas.ZERO: "0",
+	WeaponFormulas.PAxWP: "PAxWP",
+	WeaponFormulas.MAxWP: "MAxWP",
+	WeaponFormulas.AVG_PA_MAxWP: "AVG_PA_MAxWP",
+	WeaponFormulas.AVG_PA_SPxWP: "AVG_PA_SPxWP",
+	WeaponFormulas.PA_BRAVExWP: "PA_BRAVExWP",
+	WeaponFormulas.RANDOM_PAxWP: "RANDOM_PAxWP",
+	WeaponFormulas.WPxWP: "WPxWP",
+	WeaponFormulas.PA_BRAVExPA: "PA_BRAVExPA",
+	}
+
+enum WeaponFormulas {
+	ZERO,
+	PAxWP,
+	MAxWP,
+	AVG_PA_MAxWP,
+	AVG_PA_SPxWP,
+	PA_BRAVExWP,
+	RANDOM_PAxWP,
+	WPxWP,
+	PA_BRAVExPA,
+	}
 
 enum SlotType {
 	WEAPON = 0x80,
@@ -152,6 +177,24 @@ func _init(idx: int = 0) -> void:
 		is_throwable = RomReader.scus_data.weapon_flags[idx] & 0x02 == 0x02
 		takes_both_hands = RomReader.scus_data.weapon_flags[idx] & 0x01 == 0x01
 		
+		match item_type:
+			ItemType.FISTS:
+				weapon_base_damage_formula = WeaponFormulas.PA_BRAVExPA
+			ItemType.KNIFE, ItemType.NINJA_BLADE, ItemType.BOW, ItemType.SHURIKEN:
+				weapon_base_damage_formula = WeaponFormulas.AVG_PA_SPxWP
+			ItemType.SWORD, ItemType.ROD, ItemType.CROSSBOW, ItemType.SPEAR:
+				weapon_base_damage_formula = WeaponFormulas.PAxWP
+			ItemType.KNIGHT_SWORD, ItemType.KATANA:
+				weapon_base_damage_formula = WeaponFormulas.PA_BRAVExWP
+			ItemType.AXE, ItemType.FLAIL, ItemType.BAG:
+				weapon_base_damage_formula = WeaponFormulas.RANDOM_PAxWP
+			ItemType.STAFF, ItemType.POLE:
+				weapon_base_damage_formula = WeaponFormulas.MAxWP
+			ItemType.GUN:
+				weapon_base_damage_formula = WeaponFormulas.WPxWP
+			ItemType.INSTRUMENT, ItemType.BOOK, ItemType.CLOTH:
+				weapon_base_damage_formula = WeaponFormulas.MAxWP
+		
 	elif idx < 0x90: # shield data
 		sub_index = idx - 0x80
 		shield_physical_evade = RomReader.scus_data.shield_physical_evade[sub_index]
@@ -185,3 +228,29 @@ func set_item_attributes(item_attribute: ScusData.ItemAttribute) -> void:
 	elemental_half = Utilities.get_elemental_types_array([item_attribute.elemental_half])
 	elemental_weakness = Utilities.get_elemental_types_array([item_attribute.elemental_weakness])
 	elemental_strengthen = Utilities.get_elemental_types_array([item_attribute.elemental_strengthen])
+
+
+func get_base_damage(user: UnitData) -> int:
+	var base_damage: int = 0
+	
+	match weapon_base_damage_formula:
+		WeaponFormulas.ZERO:
+			base_damage = 0
+		WeaponFormulas.PAxWP:
+			base_damage = user.physical_attack_current * weapon_power
+		WeaponFormulas.MAxWP:
+			base_damage = user.magical_attack_current * weapon_power
+		WeaponFormulas.AVG_PA_MAxWP:
+			base_damage = round(((user.physical_attack_current + user.magical_attack_current) / 2.0) * weapon_power)
+		WeaponFormulas.AVG_PA_SPxWP:
+			base_damage = round(((user.physical_attack_current + user.speed_current) / 2.0) * weapon_power)
+		WeaponFormulas.PA_BRAVExWP:
+			base_damage = round(user.physical_attack_current * user.brave_current * weapon_power / 100.0)
+		WeaponFormulas.RANDOM_PAxWP:
+			base_damage = randi_range(1, user.physical_attack_current) * weapon_power
+		WeaponFormulas.WPxWP:
+			base_damage = weapon_power * weapon_power
+		WeaponFormulas.PA_BRAVExPA:
+			base_damage = round(user.physical_attack_current * user.brave_current / 100.0) * user.physical_attack_current
+	
+	return base_damage

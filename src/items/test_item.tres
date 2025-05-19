@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" load_steps=4 format=3 uid="uid://k82phe25gaet"]
 
 [ext_resource type="Script" uid="uid://dlaul7n568vti" path="res://src/actions/action.gd" id="1_5alu4"]
-[ext_resource type="Script" uid="uid://cf5w02iml4cqu" path="res://src/file_formats/item_data.gd" id="2_x6yjh"]
+[ext_resource type="Script" uid="uid://cf5w02iml4cqu" path="res://src/items/item_data.gd" id="2_x6yjh"]
 [ext_resource type="Script" uid="uid://cg0yup2a7gcs8" path="res://src/Unit/status.gd" id="3_sx00x"]
 
 [resource]

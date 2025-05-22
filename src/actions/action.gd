@@ -40,7 +40,8 @@ extends Resource
 @export var targeting_three_directions: bool = false
 @export var targeting_direct: bool = false # stop at obstacle
 
-@export var is_evadable: bool = false
+#@export var is_evadable: bool = false
+@export var evade_type: EvadeType = EvadeType.PHYSICAL
 @export var is_reflectable: bool = false
 @export var is_math_usable: bool = false
 @export var is_mimicable: bool = false
@@ -60,6 +61,13 @@ extends Resource
 @export var status_prevents_any: Array[StatusEffect] = [] # silence, dont move, dont act, etc.
 @export var required_equipment_type: Array[ItemData.ItemType] = [] # sword, materia_blade, etc.
 @export var required_equipment: Array[ItemData] = [] # sword, materia_blade, etc.
+
+enum EvadeType {
+	NONE,
+	PHYSICAL,
+	MAGICAL,
+	}
+
 
 func _to_string() -> String:
 	return action_name

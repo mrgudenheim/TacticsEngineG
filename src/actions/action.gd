@@ -41,7 +41,7 @@ extends Resource
 @export var targeting_direct: bool = false # stop at obstacle
 
 #@export var is_evadable: bool = false
-@export var evade_type: EvadeType = EvadeType.PHYSICAL
+@export var applicable_evasion: EvadeType = EvadeType.PHYSICAL
 @export var is_reflectable: bool = false
 @export var is_math_usable: bool = false
 @export var is_mimicable: bool = false

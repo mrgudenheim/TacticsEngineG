@@ -19,18 +19,24 @@ var wep_frame_v_offset: int = 0
 @export var wep_frame_palette: int = 0
 
 # weapon data
-@export var range: int = 1
+@export var max_range: int = 1
+@export var min_range: int = 1
 @export var weapon_formula_id: int = 1
 @export var weapon_base_damage_formula: WeaponFormulas = WeaponFormulas.PAxWP
 @export var weapon_power: int = 1
 @export var weapon_evade: int = 0
-@export var weapon_element: Utilities.ElementalTypes = Utilities.ElementalTypes.NONE
+@export var weapon_element: Action.ElementalTypes = Action.ElementalTypes.NONE
 @export var weapon_inflict_status_spell_id: int = 0
 @export var weapon_targeting_strategy: TargetingStrategy
 @export var is_dual_wieldable: bool = false
 @export var is_two_handable: bool = false
 @export var is_throwable: bool = false
 @export var takes_both_hands: bool = false
+
+@export var weapon_add_status_chance: int = 100
+@export var weapon_add_statuses: Array[StatusEffect] = []
+@export var weapon_other_effect_chance: int = 100
+@export var weapon_other_effects: Array = [] # TODO create data structure for other effects
 
 # shield data
 @export var shield_physical_evade: int = 0
@@ -53,11 +59,11 @@ var wep_frame_v_offset: int = 0
 @export var status_always: Array[StatusEffect] = []
 @export var status_immune: Array[StatusEffect] = []
 @export var status_start: Array[StatusEffect] = []
-@export var elemental_absorb: Array[Utilities.ElementalTypes] = [] # 1 byte of bitflags, elemental types
-@export var elemental_cancel: Array[Utilities.ElementalTypes] = [] # 1 byte of bitflags, elemental types
-@export var elemental_half: Array[Utilities.ElementalTypes] = [] # 1 byte of bitflags, elemental types
-@export var elemental_weakness: Array[Utilities.ElementalTypes] = [] # 1 byte of bitflags, elemental types
-@export var elemental_strengthen: Array[Utilities.ElementalTypes] = [] # 1 byte of bitflags, elemental types
+@export var elemental_absorb: Array[Action.ElementalTypes] = [] # 1 byte of bitflags, elemental types
+@export var elemental_cancel: Array[Action.ElementalTypes] = [] # 1 byte of bitflags, elemental types
+@export var elemental_half: Array[Action.ElementalTypes] = [] # 1 byte of bitflags, elemental types
+@export var elemental_weakness: Array[Action.ElementalTypes] = [] # 1 byte of bitflags, elemental types
+@export var elemental_strengthen: Array[Action.ElementalTypes] = [] # 1 byte of bitflags, elemental types
 
 # chemist item data
 @export var consumable_formula_id: int = 0
@@ -223,11 +229,11 @@ func set_item_attributes(item_attribute: ScusData.ItemAttribute) -> void:
 	status_always = item_attribute.status_always
 	status_immune = item_attribute.status_immune
 	status_start = item_attribute.status_start
-	elemental_absorb = Utilities.get_elemental_types_array([item_attribute.elemental_absorb])
-	elemental_cancel = Utilities.get_elemental_types_array([item_attribute.elemental_cancel])
-	elemental_half = Utilities.get_elemental_types_array([item_attribute.elemental_half])
-	elemental_weakness = Utilities.get_elemental_types_array([item_attribute.elemental_weakness])
-	elemental_strengthen = Utilities.get_elemental_types_array([item_attribute.elemental_strengthen])
+	elemental_absorb = Action.get_elemental_types_array([item_attribute.elemental_absorb])
+	elemental_cancel = Action.get_elemental_types_array([item_attribute.elemental_cancel])
+	elemental_half = Action.get_elemental_types_array([item_attribute.elemental_half])
+	elemental_weakness = Action.get_elemental_types_array([item_attribute.elemental_weakness])
+	elemental_strengthen = Action.get_elemental_types_array([item_attribute.elemental_strengthen])
 
 
 func get_base_damage(user: UnitData) -> int:

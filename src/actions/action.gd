@@ -57,10 +57,20 @@ extends Resource
 
 @export var element: ElementalTypes = ElementalTypes.NONE
 
+@export var base_hit_chance: int = 100
 
-@export var status_prevents_any: Array[StatusEffect] = [] # silence, dont move, dont act, etc.
-@export var required_equipment_type: Array[ItemData.ItemType] = [] # sword, materia_blade, etc.
-@export var required_equipment: Array[ItemData] = [] # sword, materia_blade, etc.
+# inflict status data
+@export var status_list: Array[StatusEffect] = []
+@export var status_chance: int = 100
+@export var status_remove: bool = false
+@export var status_list_type: StatusListType = StatusListType.EACH
+var all_status: bool = false
+var random_status: bool = false
+var separate_status: bool = false
+
+@export var status_prevents_use_any: Array[StatusEffect] = [] # silence, dont move, dont act, etc.
+@export var required_equipment_type: Array[ItemData.ItemType] = [] # sword, gun, etc.
+@export var required_equipment: Array[ItemData] = [] # materia_blade, etc.
 
 enum EvadeType {
 	NONE,

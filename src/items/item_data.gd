@@ -171,7 +171,7 @@ func _init(idx: int = 0) -> void:
 	var sub_index: int = idx
 	# weapon data
 	if idx < 0x80:
-		range = RomReader.scus_data.weapon_range[idx]
+		max_range = RomReader.scus_data.weapon_range[idx]
 		weapon_formula_id = RomReader.scus_data.weapon_formula_id[idx]
 		weapon_power = RomReader.scus_data.weapon_power[idx]
 		weapon_evade = RomReader.scus_data.weapon_evade[idx]

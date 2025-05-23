@@ -3,7 +3,7 @@ extends Resource
 
 @export var action_name: String = "Action Name"
 @export var description: String = "Action description"
-@export var spell_quote: String = "spell quote"
+@export var quote: String = "Action quote"
 @export var display_action_name: bool = true
 
 @export var useable_strategy: UseableStrategy
@@ -18,8 +18,9 @@ extends Resource
 @export var formula_id: int = 0
 @export var formula_x: int = 0
 @export var formula_y: int = 0
-@export var targeting_range: int = 4
-@export var effect_radius: int = 1
+@export var min_targeting_range: int = 0
+@export var max_targeting_range: int = 4
+@export var area_of_effect_radius: int = 1
 @export var vertical_tolerance: int = 2
 @export var inflict_status_id: int = 0
 @export var ticks_charge_time: int = 0
@@ -88,6 +89,12 @@ enum ElementalTypes {
 	ICE = 0x20,
 	LIGHTNING = 0x40,
 	FIRE = 0x80,
+	}
+
+enum StatusListType {
+	ALL,
+	EACH,
+	RANDOM,
 	}
 
 

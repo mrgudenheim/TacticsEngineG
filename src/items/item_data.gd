@@ -19,24 +19,31 @@ var wep_frame_v_offset: int = 0
 @export var wep_frame_palette: int = 0
 
 # weapon data
-@export var max_range: int = 1
-@export var min_range: int = 1
-@export var weapon_formula_id: int = 1
-@export var weapon_base_damage_formula: WeaponFormulas = WeaponFormulas.PAxWP
-@export var weapon_power: int = 1
-@export var weapon_evade: int = 0
-@export var weapon_element: Action.ElementalTypes = Action.ElementalTypes.NONE
-@export var weapon_inflict_status_spell_id: int = 0
-@export var weapon_targeting_strategy: TargetingStrategy
+# ROM data for debug mostly, equivalent data is stored in weapon_attack_action
+var max_range: int = 1
+var weapon_formula_id: int = 1
+var weapon_base_damage_formula: WeaponFormulas = WeaponFormulas.PAxWP
+var weapon_power: int = 1
+var weapon_evade: int = 0
+var weapon_element: Action.ElementalTypes = Action.ElementalTypes.NONE
+var weapon_inflict_status_spell_id: int = 0
+var weapon_targeting_type # striking, lunging, arc, direct
+var weapon_is_striking: bool = true
+var weapon_is_lunging: bool = false
+var weapon_is_direct: bool = false
+var weapon_is_arc: bool = false
+#@export var weapon_targeting_strategy: TargetingStrategy
+
+@export var weapon_attack_action: Action
 @export var is_dual_wieldable: bool = false
 @export var is_two_handable: bool = false
 @export var is_throwable: bool = false
 @export var takes_both_hands: bool = false
 
-@export var weapon_add_status_chance: int = 100
-@export var weapon_add_statuses: Array[StatusEffect] = []
-@export var weapon_other_effect_chance: int = 100
-@export var weapon_other_effects: Array = [] # TODO create data structure for other effects
+#@export var weapon_add_status_chance: int = 100
+#@export var weapon_add_statuses: Array[StatusEffect] = []
+#@export var weapon_other_effect_chance: int = 100
+#@export var weapon_other_effects: Array = [] # TODO create data structure for other effects
 
 # shield data
 @export var shield_physical_evade: int = 0

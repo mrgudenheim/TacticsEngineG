@@ -22,7 +22,7 @@ var ability_types: Array[FftAbilityData.AbilityType] = [] # FftAbilityData.Abili
 
 var ability_data_normal_start: int = 0x503f0 # ids 0x000 - 0x16f, 0x170 entries, 0x0e bytes each
 var ranges: PackedInt32Array = []
-var effect_radius: PackedInt32Array = []
+var area_of_effect_radius: PackedInt32Array = []
 var vertical_tolerance: PackedInt32Array = []
 var flags1: PackedInt32Array = []
 var flags2: PackedInt32Array = []
@@ -230,7 +230,7 @@ func init_from_scus() -> void:
 	
 	# ability data normal
 	ranges.resize(RomReader.NUM_ABILITIES)
-	effect_radius.resize(RomReader.NUM_ABILITIES)
+	area_of_effect_radius.resize(RomReader.NUM_ABILITIES)
 	vertical_tolerance.resize(RomReader.NUM_ABILITIES)
 	flags1.resize(RomReader.NUM_ABILITIES)
 	flags2.resize(RomReader.NUM_ABILITIES)
@@ -249,7 +249,7 @@ func init_from_scus() -> void:
 	ability_data_bytes = scus_bytes.slice(ability_data_normal_start, ability_data_normal_start + (num_entries * entry_size))
 	for id: int in num_entries:
 		ranges[id] = ability_data_bytes.decode_u8(id * entry_size)
-		effect_radius[id] = ability_data_bytes.decode_u8((id * entry_size) + 1)
+		area_of_effect_radius[id] = ability_data_bytes.decode_u8((id * entry_size) + 1)
 		vertical_tolerance[id] = ability_data_bytes.decode_u8((id * entry_size) + 2)
 		flags1[id] = ability_data_bytes.decode_u8((id * entry_size) + 3)
 		flags2[id] = ability_data_bytes.decode_u8((id * entry_size) + 4)

@@ -65,7 +65,7 @@ var inflict_status_id: int = 0
 # inflict status data
 @export var status_list: Array[StatusEffect] = []
 @export var status_chance: int = 100
-@export var status_remove: bool = false
+@export var will_remove_status: bool = false
 @export var status_list_type: StatusListType = StatusListType.EACH
 var all_status: bool = false
 var random_status: bool = false

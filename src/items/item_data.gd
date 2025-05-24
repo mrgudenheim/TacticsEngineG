@@ -207,20 +207,27 @@ func _init(idx: int = 0) -> void:
 			ItemType.INSTRUMENT, ItemType.BOOK, ItemType.CLOTH:
 				weapon_attack_action.base_damage_formula = Action.Formulas.MAxWP
 		
-		weapon_attack_action.inflict_status_id = weapon_inflict_status_spell_id
-		# TODO inflict status data
-		weapon_attack_action.status_list_type
-		weapon_attack_action.status_list
-		weapon_attack_action.status_chance = 19
 		
-		# TODO proc ability for Formula 02
-		if weapon_formula_id == 2 or weapon_formula_id == 4:
+		
+		
+		if weapon_formula_id == 2: # TODO proc ability for Formula 02
 			pass
-		
-		# TODO proc ability for Formula 04 (magic gun)
-		if weapon_formula_id == 4:
+		elif weapon_formula_id == 4: # TODO proc ability for Formula 04 (magic gun)
 			pass
-		
+		else: # inflict status data
+			weapon_attack_action.inflict_status_id = weapon_inflict_status_spell_id
+			var inflict_status: ScusData.InflictStatus = RomReader.scus_data.inflict_statuses[weapon_inflict_status_spell_id]
+			weapon_attack_action.status_list = inflict_status.status_list
+			weapon_attack_action.will_remove_status = inflict_status.will_cancel
+			weapon_attack_action.status_chance = 19
+			
+			weapon_attack_action.status_list_type = Action.StatusListType.ALL
+			if inflict_status.is_random:
+				weapon_attack_action.status_list_type = Action.StatusListType.RANDOM
+			elif inflict_status.is_separate:
+				weapon_attack_action.status_list_type = Action.StatusListType.EACH
+				weapon_attack_action.status_chance = 25 # TODO 25% of the base chance, to max of 25%
+			
 		
 		weapon_attack_action.status_prevents_use_any.append(RomReader.scus_data.status_effects[-3]) # Don't Act status prevents weapon attack 
 		weapon_attack_action.targeting_strategy # TODO set weapon targeting strategy

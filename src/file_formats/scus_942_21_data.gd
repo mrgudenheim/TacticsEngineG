@@ -130,7 +130,7 @@ class ItemAttribute:
 		elemental_strengthen = item_attribute_bytes.decode_u8(24)
 
 
-var item_attribute_data_start: int = 0x642c4-0xf800
+var item_attribute_data_start: int = 0x642c4 - 0xf800
 var item_attribute_entries: int = 0x50
 var item_attribute_entry_length: int = 0x19
 var item_attributes: Array[ItemAttribute] = []
@@ -141,6 +141,28 @@ var status_effect_entries: int = 40
 var status_effect_entry_length: int = 0x10
 var status_effects: Array[StatusEffect] = []
 
+
+class InflictStatus:
+	var is_all: bool = false
+	var is_random: bool = false
+	var is_separate: bool = false
+	var will_cancel: bool = false
+	var status_flags: PackedByteArray = []
+	var status_list: Array[StatusEffect]
+	
+	func set_data(inflict_status_bytes: PackedByteArray) -> void:
+		is_all = inflict_status_bytes.decode_u8(0) & 0x80 == 0x80
+		is_random = inflict_status_bytes.decode_u8(0) & 0x40 == 0x40
+		is_separate = inflict_status_bytes.decode_u8(0) & 0x20 == 0x20
+		will_cancel = inflict_status_bytes.decode_u8(0) & 0x10 == 0x10
+		status_flags = inflict_status_bytes.slice(1)
+		status_list = StatusEffect.get_status_array(status_flags)
+
+# Inflict Status data https://ffhacktics.com/wiki/Inflict_Statuses
+var inflict_status_data_start: int = 0x63fc4 - 0xf800
+var inflict_status_entries: int = 0x80
+var inflict_status_entry_length: int = 0x06
+var inflict_statuses: Array[InflictStatus] = []
 
 func init_from_scus() -> void:
 	var scus_bytes: PackedByteArray = RomReader.get_file_data("SCUS_942.21")
@@ -158,6 +180,17 @@ func init_from_scus() -> void:
 	
 	for status_effect: StatusEffect in status_effects:
 		status_effect.status_flags_to_status_array() # called after all StatusEffects have already been initialized since this indexes into the complete array
+	
+	# Inflict Status data https://ffhacktics.com/wiki/Inflict_Statuses
+	# inflict status data needs to be loaded before abilities and items that reference the array
+	var inflict_status_data_bytes: PackedByteArray = scus_bytes.slice(inflict_status_data_start, inflict_status_data_start + (inflict_status_entries * inflict_status_entry_length))
+	inflict_statuses.resize(inflict_status_entries)
+	for id: int in inflict_status_entries:
+		var new_inflict_status_bytes: PackedByteArray = inflict_status_data_bytes.slice(id * inflict_status_entry_length, (id + 1) * inflict_status_entry_length)
+		var new_inflict_status: InflictStatus = InflictStatus.new()
+		new_inflict_status.set_data(new_inflict_status_bytes)
+		inflict_statuses[id] = new_inflict_status
+	
 	
 	# job data
 	var entry_size: int = 0x30 # bytes

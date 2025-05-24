@@ -180,14 +180,21 @@ func _init(idx: int = 0) -> void:
 		weapon_attack_action.action_name = name + " Attack"
 		weapon_attack_action.description = "Attack Base Damage = " + Action.formula_descriptions[weapon_attack_action.base_damage_formula]
 		weapon_attack_action.display_action_name = false
-		weapon_attack_action.min_targeting_range = 0 # TODO min_targeting_range = 3 for BOOK, INSTRUMENT, BOW, CROSSBOW, INSTRUMENT, GUN
+		weapon_attack_action.min_targeting_range = 0
 		weapon_attack_action.max_targeting_range = max_range
-		weapon_attack_action.area_of_effect_radius = 0
+		weapon_attack_action.area_of_effect_range = 0
+		weapon_attack_action.has_vertical_tolerance_from_user = true
 		weapon_attack_action.cant_target_self = true
 		weapon_attack_action.applicable_evasion = Action.EvadeType.PHYSICAL # TODO Guns have NONE, formula_id = 03 or 07 
 		weapon_attack_action.blocked_by_golem = true
 		weapon_attack_action.trigger_counter_flood = true
 		weapon_attack_action.trigger_counter_grasp = true
+		
+		weapon_attack_action.targeting_strategy # TODO set weapon targeting strategy to TargetingRange by default
+		
+		match item_type:
+			ItemType.BOW, ItemType.CROSSBOW, ItemType.GUN, ItemType.INSTRUMENT, ItemType.BOOK:
+				weapon_attack_action.min_targeting_range = 3
 		
 		match item_type:
 			ItemType.FISTS:
@@ -207,12 +214,10 @@ func _init(idx: int = 0) -> void:
 			ItemType.INSTRUMENT, ItemType.BOOK, ItemType.CLOTH:
 				weapon_attack_action.base_damage_formula = Action.Formulas.MAxWP
 		
-		
-		
+		if weapon_formula_id == 4: # TODO proc ability for Formula 04 (magic gun)
+			pass
 		
 		if weapon_formula_id == 2: # TODO proc ability for Formula 02
-			pass
-		elif weapon_formula_id == 4: # TODO proc ability for Formula 04 (magic gun)
 			pass
 		else: # inflict status data
 			weapon_attack_action.inflict_status_id = weapon_inflict_status_spell_id
@@ -227,10 +232,16 @@ func _init(idx: int = 0) -> void:
 			elif inflict_status.is_separate:
 				weapon_attack_action.status_list_type = Action.StatusListType.EACH
 				weapon_attack_action.status_chance = 25 # TODO 25% of the base chance, to max of 25%
-			
+		
+		if weapon_is_striking:
+			weapon_attack_action.max_targeting_range = 1
+			weapon_attack_action.vertical_tolerance = 2.5 # TODO striking can hit 3 lower https://ffhacktics.com/wiki/Strike/Lunge_Routine
+		elif weapon_is_lunging:
+			weapon_attack_action.max_targeting_range = 2
+			weapon_attack_action.vertical_tolerance = 3.5 # TODO lunging can hit 4 lower https://ffhacktics.com/wiki/Strike/Lunge_Routine
+			weapon_attack_action.targeting_strategy # TODO weapon targeting is linear
 		
 		weapon_attack_action.status_prevents_use_any.append(RomReader.scus_data.status_effects[-3]) # Don't Act status prevents weapon attack 
-		weapon_attack_action.targeting_strategy # TODO set weapon targeting strategy
 		
 		
 	elif idx < 0x90: # shield data

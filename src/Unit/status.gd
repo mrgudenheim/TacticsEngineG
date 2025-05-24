@@ -12,8 +12,11 @@ var byte_01: int = 0
 @export var ct: int = 10
 @export_flags("Freeze CT", "(Crystal/Treasure)", "(Defend/Perform)", "(Poison/Regen)", "(Confusion/Transparent/Charm/Sleep)", "(Checks 3)", "(Checks 2)", "Counts as KO") var checks_01: int = 0
 @export_flags("Cant React", "Unknown", "Ignore Attcks", "(Checks 10)", "(Checks 9)", "(Checks 8)", "(Checks 7 - Cancelled by Immortal?)", "(Checks 6)") var checks_02: int = 0
-@export var status_cancels: PackedByteArray = [] # 5 bytes of bitflags for up to 40 statuses # TODO use bit index as index into StatusEffect array
-@export var status_cant_stack: PackedByteArray = [] # 5 bytes of bitflags for up to 40 statuses # TODO use bit index as index into StatusEffect array
+@export var status_cancels_flags: PackedByteArray = [] # 5 bytes of bitflags for up to 40 statuses 
+@export var status_cant_stack_flags: PackedByteArray = [] # 5 bytes of bitflags for up to 40 statuses
+
+@export var status_cancels: Array[StatusEffect] = [] 
+@export var status_cant_stack: Array[StatusEffect] = [] # TODO use bit index as index into StatusEffect array
 
 func set_data(status_effect_bytes: PackedByteArray) -> void:
 	byte_00 = status_effect_bytes.decode_u8(0)
@@ -22,8 +25,14 @@ func set_data(status_effect_bytes: PackedByteArray) -> void:
 	ct = status_effect_bytes.decode_u8(3)
 	checks_01 = status_effect_bytes.decode_u8(4)
 	checks_02 = status_effect_bytes.decode_u8(5)
-	status_cancels = status_effect_bytes.slice(6, 11)
-	status_cant_stack = status_effect_bytes.slice(11, 16)
+	status_cancels_flags = get_status_array(status_effect_bytes.slice(6, 11))
+	status_cant_stack_flags = get_status_array(status_effect_bytes.slice(11, 16))
+
+
+# called after all StatusEffects have already been initialized since this indexes into the complete array
+func status_flags_to_status_array() -> void:
+	status_cancels = get_status_array(status_cancels_flags)
+	status_cant_stack = get_status_array(status_cant_stack_flags)
 
 
 static func get_status_array(status_bitflags: PackedByteArray) -> Array[StatusEffect]:

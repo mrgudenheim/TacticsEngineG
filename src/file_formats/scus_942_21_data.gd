@@ -156,6 +156,8 @@ func init_from_scus() -> void:
 		new_status_effect.status_effect_name = RomReader.fft_text.status_names[id]
 		status_effects[id] = new_status_effect
 	
+	for status_effect: StatusEffect in status_effects:
+		status_effect.status_flags_to_status_array() # called after all StatusEffects have already been initialized since this indexes into the complete array
 	
 	# job data
 	var entry_size: int = 0x30 # bytes

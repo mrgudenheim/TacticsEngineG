@@ -59,6 +59,8 @@ extends Resource
 @export var element: ElementalTypes = ElementalTypes.NONE
 
 @export var base_hit_chance: int = 100
+@export var action_power: int = 5
+@export var base_damage_formula: Formulas = Formulas.PAxWP
 
 # inflict status data
 @export var status_list: Array[StatusEffect] = []
@@ -97,6 +99,30 @@ enum StatusListType {
 	RANDOM,
 	}
 
+static var formula_descriptions: Dictionary[Formulas, String] = {
+	Formulas.ZERO: "0",
+	Formulas.PAxWP: "PAxWP",
+	Formulas.MAxWP: "MAxWP",
+	Formulas.AVG_PA_MAxWP: "AVG_PA_MAxWP",
+	Formulas.AVG_PA_SPxWP: "AVG_PA_SPxWP",
+	Formulas.PA_BRAVExWP: "PA_BRAVExWP",
+	Formulas.RANDOM_PAxWP: "RANDOM_PAxWP",
+	Formulas.WPxWP: "WPxWP",
+	Formulas.PA_BRAVExPA: "PA_BRAVExPA",
+	}
+
+enum Formulas {
+	ZERO,
+	PAxWP,
+	MAxWP,
+	AVG_PA_MAxWP,
+	AVG_PA_SPxWP,
+	PA_BRAVExWP,
+	RANDOM_PAxWP,
+	WPxWP,
+	PA_BRAVExPA,
+	}
+
 
 func _to_string() -> String:
 	return action_name
@@ -124,6 +150,34 @@ func stop_targeting(action_instance: ActionInstance) -> void:
 
 func use(action_instance: ActionInstance) -> void:
 	use_strategy.use(action_instance)
+
+
+
+
+func get_base_damage(user: UnitData) -> int:
+	var base_damage: int = 0
+	
+	match base_damage_formula:
+		Formulas.ZERO:
+			base_damage = 0
+		Formulas.PAxWP:
+			base_damage = user.physical_attack_current * action_power
+		Formulas.MAxWP:
+			base_damage = user.magical_attack_current * action_power
+		Formulas.AVG_PA_MAxWP:
+			base_damage = round(((user.physical_attack_current + user.magical_attack_current) / 2.0) * action_power)
+		Formulas.AVG_PA_SPxWP:
+			base_damage = round(((user.physical_attack_current + user.speed_current) / 2.0) * action_power)
+		Formulas.PA_BRAVExWP:
+			base_damage = round(user.physical_attack_current * user.brave_current * action_power / 100.0)
+		Formulas.RANDOM_PAxWP:
+			base_damage = randi_range(1, user.physical_attack_current) * action_power
+		Formulas.WPxWP:
+			base_damage = action_power * action_power
+		Formulas.PA_BRAVExPA:
+			base_damage = round(user.physical_attack_current * user.brave_current / 100.0) * user.physical_attack_current
+	
+	return base_damage
 
 
 

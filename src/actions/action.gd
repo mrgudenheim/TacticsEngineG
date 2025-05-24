@@ -15,14 +15,14 @@ extends Resource
 
 @export var mp_cost: int = 0
 
-@export var formula_id: int = 0
+var formula_id: int = 0
 @export var formula_x: int = 0
 @export var formula_y: int = 0
 @export var min_targeting_range: int = 0
 @export var max_targeting_range: int = 4
-@export var area_of_effect_radius: int = 1
+@export var area_of_effect_radius: int = 0
 @export var vertical_tolerance: int = 2
-@export var inflict_status_id: int = 0
+var inflict_status_id: int = 0
 @export var ticks_charge_time: int = 0
 
 @export var has_vertical_tolerance_from_user: bool = false # vertical fixed / linear range
@@ -35,7 +35,7 @@ extends Resource
 @export var cant_hit_allies: bool = false
 @export var cant_hit_user: bool = false
 @export var top_down_targeting: bool = false
-@export var cant_follow_target: bool = false
+@export var cant_follow_target: bool = true
 @export var random_fire: bool = false
 @export var targeting_linear: bool = false
 @export var targeting_three_directions: bool = false
@@ -54,7 +54,7 @@ extends Resource
 @export var trigger_counter_magic: bool = false
 @export var trigger_counter_grasp: bool = false
 
-@export var can_select_unit: bool = false
+@export var can_select_unit: bool = true
 
 @export var element: ElementalTypes = ElementalTypes.NONE
 

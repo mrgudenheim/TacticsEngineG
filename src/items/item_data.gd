@@ -26,7 +26,6 @@ var weapon_power: int = 1
 var weapon_evade: int = 0
 var weapon_element: Action.ElementalTypes = Action.ElementalTypes.NONE
 var weapon_inflict_status_spell_id: int = 0
-var weapon_targeting_type # striking, lunging, arc, direct
 var weapon_is_striking: bool = true
 var weapon_is_lunging: bool = false
 var weapon_is_direct: bool = false
@@ -160,11 +159,20 @@ func _init(idx: int = 0) -> void:
 		weapon_evade = RomReader.scus_data.weapon_evade[idx]
 		weapon_element = RomReader.scus_data.weapon_element[idx]
 		weapon_inflict_status_spell_id = RomReader.scus_data.weapon_inflict_status_cast_id[idx]
-		#weapon_targeting_strategy =  # TODO weapon targeting types based on weapon_flags
+		
+		# weapon targeting types based on weapon_flags
+		weapon_is_striking = RomReader.scus_data.weapon_flags[idx] & 0x80 == 0x80
+		weapon_is_lunging = RomReader.scus_data.weapon_flags[idx] & 0x40 == 0x40
+		weapon_is_direct = RomReader.scus_data.weapon_flags[idx] & 0x20 == 0x20
+		weapon_is_arc = RomReader.scus_data.weapon_flags[idx] & 0x10 == 0x10
+		
 		is_dual_wieldable = RomReader.scus_data.weapon_flags[idx] & 0x08 == 0x08
 		is_two_handable = RomReader.scus_data.weapon_flags[idx] & 0x04 == 0x04
 		is_throwable = RomReader.scus_data.weapon_flags[idx] & 0x02 == 0x02
 		takes_both_hands = RomReader.scus_data.weapon_flags[idx] & 0x01 == 0x01
+		
+		# make attack action
+		weapon_attack_action = Action.new()
 		
 		match item_type:
 			ItemType.FISTS:
@@ -183,6 +191,33 @@ func _init(idx: int = 0) -> void:
 				weapon_attack_action.base_damage_formula = Action.Formulas.WPxWP
 			ItemType.INSTRUMENT, ItemType.BOOK, ItemType.CLOTH:
 				weapon_attack_action.base_damage_formula = Action.Formulas.MAxWP
+		
+		weapon_attack_action.action_power = weapon_power
+		weapon_attack_action.element = weapon_element
+		
+		weapon_attack_action.action_name = name + " Attack"
+		weapon_attack_action.description = "Attack Base Damage = " + Action.formula_descriptions[weapon_attack_action.base_damage_formula]
+		weapon_attack_action.display_action_name = false
+		weapon_attack_action.min_targeting_range = 0 # TODO min_targeting_range = 3 for BOOK, INSTRUMENT, BOW, CROSSBOW, INSTRUMENT, GUN
+		weapon_attack_action.max_targeting_range = max_range
+		weapon_attack_action.area_of_effect_radius = 0
+		weapon_attack_action.cant_target_self = true
+		weapon_attack_action.applicable_evasion = Action.EvadeType.PHYSICAL # TODO Guns have NONE, formula_id = 03 or 07 
+		weapon_attack_action.blocked_by_golem = true
+		weapon_attack_action.trigger_counter_flood = true
+		weapon_attack_action.trigger_counter_grasp = true
+		
+		weapon_attack_action.inflict_status_id = weapon_inflict_status_spell_id
+		# TODO inflict status data
+		weapon_attack_action.status_list_type
+		weapon_attack_action.status_list
+		weapon_attack_action.status_chance = 19
+		
+		# TODO proc ability for Formula 02
+		
+		#weapon_attack_action.status_prevents_use_any = RomReader.scus_data.status_effects[] # TODO prevent weapon attack on Don't Act status
+		weapon_attack_action.targeting_strategy # TODO set weapon targeting strategy
+		
 		
 	elif idx < 0x90: # shield data
 		sub_index = idx - 0x80

@@ -174,6 +174,21 @@ func _init(idx: int = 0) -> void:
 		# make attack action
 		weapon_attack_action = Action.new()
 		
+		weapon_attack_action.action_power = weapon_power
+		weapon_attack_action.element = weapon_element
+		
+		weapon_attack_action.action_name = name + " Attack"
+		weapon_attack_action.description = "Attack Base Damage = " + Action.formula_descriptions[weapon_attack_action.base_damage_formula]
+		weapon_attack_action.display_action_name = false
+		weapon_attack_action.min_targeting_range = 0 # TODO min_targeting_range = 3 for BOOK, INSTRUMENT, BOW, CROSSBOW, INSTRUMENT, GUN
+		weapon_attack_action.max_targeting_range = max_range
+		weapon_attack_action.area_of_effect_radius = 0
+		weapon_attack_action.cant_target_self = true
+		weapon_attack_action.applicable_evasion = Action.EvadeType.PHYSICAL # TODO Guns have NONE, formula_id = 03 or 07 
+		weapon_attack_action.blocked_by_golem = true
+		weapon_attack_action.trigger_counter_flood = true
+		weapon_attack_action.trigger_counter_grasp = true
+		
 		match item_type:
 			ItemType.FISTS:
 				weapon_attack_action.base_damage_formula = Action.Formulas.PA_BRAVExPA
@@ -192,21 +207,6 @@ func _init(idx: int = 0) -> void:
 			ItemType.INSTRUMENT, ItemType.BOOK, ItemType.CLOTH:
 				weapon_attack_action.base_damage_formula = Action.Formulas.MAxWP
 		
-		weapon_attack_action.action_power = weapon_power
-		weapon_attack_action.element = weapon_element
-		
-		weapon_attack_action.action_name = name + " Attack"
-		weapon_attack_action.description = "Attack Base Damage = " + Action.formula_descriptions[weapon_attack_action.base_damage_formula]
-		weapon_attack_action.display_action_name = false
-		weapon_attack_action.min_targeting_range = 0 # TODO min_targeting_range = 3 for BOOK, INSTRUMENT, BOW, CROSSBOW, INSTRUMENT, GUN
-		weapon_attack_action.max_targeting_range = max_range
-		weapon_attack_action.area_of_effect_radius = 0
-		weapon_attack_action.cant_target_self = true
-		weapon_attack_action.applicable_evasion = Action.EvadeType.PHYSICAL # TODO Guns have NONE, formula_id = 03 or 07 
-		weapon_attack_action.blocked_by_golem = true
-		weapon_attack_action.trigger_counter_flood = true
-		weapon_attack_action.trigger_counter_grasp = true
-		
 		weapon_attack_action.inflict_status_id = weapon_inflict_status_spell_id
 		# TODO inflict status data
 		weapon_attack_action.status_list_type
@@ -214,6 +214,13 @@ func _init(idx: int = 0) -> void:
 		weapon_attack_action.status_chance = 19
 		
 		# TODO proc ability for Formula 02
+		if weapon_formula_id == 2 or weapon_formula_id == 4:
+			pass
+		
+		# TODO proc ability for Formula 04 (magic gun)
+		if weapon_formula_id == 4:
+			pass
+		
 		
 		#weapon_attack_action.status_prevents_use_any = RomReader.scus_data.status_effects[] # TODO prevent weapon attack on Don't Act status
 		weapon_attack_action.targeting_strategy # TODO set weapon targeting strategy

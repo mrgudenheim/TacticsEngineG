@@ -222,7 +222,7 @@ func _init(idx: int = 0) -> void:
 			pass
 		
 		
-		#weapon_attack_action.status_prevents_use_any = RomReader.scus_data.status_effects[] # TODO prevent weapon attack on Don't Act status
+		weapon_attack_action.status_prevents_use_any.append(RomReader.scus_data.status_effects[-3]) # Don't Act status prevents weapon attack 
 		weapon_attack_action.targeting_strategy # TODO set weapon targeting strategy
 		
 		

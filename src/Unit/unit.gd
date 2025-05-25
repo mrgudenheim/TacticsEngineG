@@ -311,7 +311,7 @@ func use_attack() -> void:
 	# TODO implement proper timeout for abilities that execute using an infinite loop animation
 	# this implementation can overwrite can_move when in the middle of another ability
 	get_tree().create_timer(2).timeout.connect(func() -> void: can_move = true) 
-		
+	
 	await animation_manager.animation_completed
 
 	#ability_completed.emit()

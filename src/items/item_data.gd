@@ -177,7 +177,7 @@ func _init(idx: int = 0) -> void:
 		weapon_attack_action.action_power = weapon_power
 		weapon_attack_action.element = weapon_element
 		
-		weapon_attack_action.action_name = name + " Attack"
+		weapon_attack_action.action_name = "Attack (" + name + ")"
 		weapon_attack_action.description = "Attack Base Damage = " + Action.formula_descriptions[weapon_attack_action.base_damage_formula]
 		weapon_attack_action.display_action_name = false
 		weapon_attack_action.min_targeting_range = 0

@@ -384,10 +384,10 @@ func process_targeted() -> void:
 		targeted_frame_index = RomReader.battle_bin_data.targeted_back_frame_id[animation_manager.global_spr.seq_id]
 	
 	#animation_manager.global_animation_ptr_id = 0
-	debug_menu.anim_id_spin.value = 0
-	var assembled_image: Image = animation_manager.global_shp.get_assembled_frame(targeted_frame_index, animation_manager.global_spr.spritesheet, 0, 
-		0, 0, 0)
-	animation_manager.unit_sprites_manager.sprite_primary.texture = ImageTexture.create_from_image(assembled_image)
+	#debug_menu.anim_id_spin.value = 0
+	#var assembled_image: Image = animation_manager.global_shp.get_assembled_frame(targeted_frame_index, animation_manager.global_spr.spritesheet, 0, 
+		#0, 0, 0)
+	#animation_manager.unit_sprites_manager.sprite_primary.texture = ImageTexture.create_from_image(assembled_image)
 	
 	await get_tree().create_timer(0.2).timeout
 	
@@ -409,6 +409,24 @@ func process_targeted() -> void:
 	set_base_animation_ptr_id(current_animation_id_fwd)
 	
 	knocked_out.emit(self)
+
+
+func take_hit() -> void:
+	current_animation_id_fwd = taking_damage_animation_id
+	set_base_animation_ptr_id(current_animation_id_fwd)
+
+
+func knock_out() -> void:
+	idle_animation_id = knocked_out_animation_id
+	current_animation_id_fwd = idle_animation_id
+	set_base_animation_ptr_id(current_animation_id_fwd)
+	
+	knocked_out.emit(self)
+
+
+func return_to_idle() -> void:
+	current_animation_id_fwd = idle_animation_id
+	set_base_animation_ptr_id(current_animation_id_fwd)
 
 
 func set_base_animation_ptr_id(ptr_id: int) -> void:

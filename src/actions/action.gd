@@ -162,30 +162,38 @@ func use(action_instance: ActionInstance) -> void:
 		var direction_to_target: Vector2i = action_instance.submitted_targets[0].location - action_instance.user.tile_position.location
 		action_instance.user.update_unit_facing(Vector3(direction_to_target.x, 0, direction_to_target.y))
 		
-		action_instance.clear() # clear all highlighting and target data
-		
-		# pay costs
-		action_instance.user.move_points_remaining -= action_instance.action.move_points_cost
-		action_instance.user.action_points_remaining -= action_instance.action.action_points_cost
-		action_instance.user.mp_current -= action_instance.action.mp_cost
-		
 		# TODO look up animation based on action data?
 		action_instance.user.current_animation_id_fwd = (RomReader.battle_bin_data.weapon_animation_ids[action_instance.user.primary_weapon.item_type].y * 2) # TODO lookup based on target relative height
 		action_instance.user.set_base_animation_ptr_id(action_instance.user.current_animation_id_fwd)
 		
 		# TODO implement proper timeout for abilities that execute using an infinite loop animation
 		# this implementation can overwrite can_move when in the middle of another ability
-		action_instance.user.get_tree().create_timer(2).timeout.connect(func() -> void: action_instance.user.can_move = true) 
-			
+		action_instance.user.get_tree().create_timer(2).timeout.connect(func() -> void: action_instance.user.can_move = true)
+		
+		var target_units: Array[UnitData] = []
+		for target_tile: TerrainTile in action_instance.submitted_targets:
+			var unit_index: int = action_instance.battle_manager.units.find_custom(func(unit: UnitData): return unit.tile_position == target_tile)
+			var target_unit: UnitData = action_instance.battle_manager.units[unit_index]
+			target_units.append(target_unit)
+		
+		await action_instance.user.get_tree().create_timer(0.2).timeout
+		
+		for target_unit: UnitData in target_units:
+			target_unit.take_hit()
+		
 		await action_instance.user.animation_manager.animation_completed
 
-		#ability_completed.emit()
-		action_instance.user.animation_manager.reset_sprites()
-		#debug_menu.anim_id_spin.value = idle_animation_id  + int(is_back_facing)
-		action_instance.user.current_animation_id_fwd = action_instance.user.idle_animation_id
-		action_instance.user.set_base_animation_ptr_id(action_instance.user.current_animation_id_fwd)
+		action_instance.user.return_to_idle()
 		
+		for target_unit: UnitData in target_units:
+			target_unit.return_to_idle()
 		
+		action_instance.clear() # clear all highlighting and target data
+		
+		# pay costs
+		action_instance.user.move_points_remaining -= action_instance.action.move_points_cost
+		action_instance.user.action_points_remaining -= action_instance.action.action_points_cost
+		action_instance.user.mp_current -= action_instance.action.mp_cost
 		
 		action_instance.action_completed.emit(action_instance.battle_manager)
 	else:

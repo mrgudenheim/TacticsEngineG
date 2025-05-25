@@ -133,10 +133,16 @@ func _to_string() -> String:
 func is_usable(action_instance: ActionInstance) -> bool:
 	var is_usable: bool = false
 	if useable_strategy == null: # default usable check
-		var user_has_enough_move_points: bool = action_instance.user.move_points_remaining - action_instance.action.move_points_cost >= 0
-		var user_has_enough_action_points: bool = action_instance.user.action_points_remaining - action_instance.action.action_points_cost >= 0
+		var user_has_enough_move_points: bool = action_instance.user.move_points_remaining >= action_instance.action.move_points_cost
+		var user_has_enough_action_points: bool = action_instance.user.action_points_remaining >= action_instance.action.action_points_cost
+		var user_has_enough_mp: bool = action_instance.user.mp_current >= action_instance.action.mp_cost
 		
-		is_usable= user_has_enough_move_points and user_has_enough_action_points
+		var action_not_prevented_by_status: bool = not action_instance.action.status_prevents_use_any.any(func(status: StatusEffect): return action_instance.user.current_statuses.has(status))
+		
+		is_usable = (user_has_enough_move_points 
+				and user_has_enough_action_points 
+				and user_has_enough_mp
+				and action_not_prevented_by_status)
 	else: # custom usable check
 		is_usable = useable_strategy.is_usable(action_instance)
 		
@@ -151,7 +157,15 @@ func stop_targeting(action_instance: ActionInstance) -> void:
 
 
 func use(action_instance: ActionInstance) -> void:
-	use_strategy.use(action_instance)
+	if use_strategy == null: # default usable check
+		action_instance.clear() # clear all highlighting and target data
+		action_instance.user.move_points_remaining -= action_instance.action.move_points_cost
+		action_instance.user.action_points_remaining -= action_instance.action.action_points_cost
+		action_instance.user.mp_current -= action_instance.action.mp_cost
+		
+		action_instance.action_completed.emit(action_instance.battle_manager)
+	else:
+		use_strategy.use(action_instance)
 
 
 

@@ -1,7 +1,0 @@
-[gd_resource type="Resource" script_class="MoveUsable" load_steps=2 format=3 uid="uid://cs4du1o6480lo"]
-
-[ext_resource type="Script" uid="uid://blqedcsi0g48o" path="res://src/actions/usable_move.gd" id="1_2bld0"]
-
-[resource]
-script = ExtResource("1_2bld0")
-metadata/_custom_type_script = "uid://blqedcsi0g48o"

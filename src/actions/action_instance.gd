@@ -106,4 +106,4 @@ func stop_targeting() -> void:
 func use() -> void:
 	stop_targeting()
 	
-	action.use_strategy.use(self)
+	action.use(self)

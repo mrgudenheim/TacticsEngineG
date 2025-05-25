@@ -77,9 +77,9 @@ var move_current: int = 5
 var jump_base: int = 5
 var jump_current: int = 3
 
-var innate_statuses: Array = []
-var immune_status_types: Array = []
-var current_statuses: Array = [] # Status may have a corresponding CT countdown?
+var innate_statuses: Array[StatusEffect] = []
+var immune_status_types: Array[StatusEffect] = []
+var current_statuses: Array[StatusEffect] = [] # Status may have a corresponding CT countdown?
 
 var learned_abilities: Array = []
 var job_levels
@@ -95,7 +95,7 @@ var special_job_skillset_id: int = 0
 
 var can_move: bool = true
 
-var map_position: Vector2i
+#var map_position: Vector2i
 var tile_position: TerrainTile
 var map_paths: Dictionary[TerrainTile, TerrainTile]
 var path_costs: Dictionary[TerrainTile, float]

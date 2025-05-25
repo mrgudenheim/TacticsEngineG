@@ -1,7 +1,6 @@
 class_name RangeTargeting
 extends TargetingStrategy
 
-# TODO Arc https://ffhacktics.com/wiki/Arc_Range_Calculation_Routine
 
 func get_potential_targets(action_instance: ActionInstance) -> Array[TerrainTile]:
 	var potential_targets: Array[TerrainTile] = []
@@ -50,15 +49,24 @@ func get_potential_targets(action_instance: ActionInstance) -> Array[TerrainTile
 						elif abs(distance_vert) <= action_instance.action.vertical_tolerance:
 							potential_targets.append(tile)
 					
-					# TODO direct (raycast), arc
+					# TODO arc https://ffhacktics.com/wiki/Arc_Range_Calculation_Routine
 					# TODO aoe flags: linear, 3 directions, direct, vertical tolerance, top-down
 	
 	return potential_targets
 
 
 func start_targeting(action_instance: ActionInstance) -> void:
-	action_instance.show_targets_highlights(action_instance.potential_targets_highlights)
+	super.start_targeting(action_instance)
+	
+	action_instance.battle_manager.map_input_event.connect(on_map_input_event)
 
 
 func stop_targeting(action_instance: ActionInstance) -> void:
-	push_error("Using base TargetingStrategy instead of specific targeting strategy")
+	if action_instance.battle_manager.map_input_event.is_connected(on_map_input_event):
+		action_instance.battle_manager.map_input_event.disconnect(on_map_input_event)
+
+
+func on_map_input_event(action_instance: ActionInstance, camera: Camera3D, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
+	#push_warning(event_position)
+	var tile: TerrainTile = action_instance.battle_manager.get_tile(event_position)
+	# TODO preview target highlighting

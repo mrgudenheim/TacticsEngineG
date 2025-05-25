@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="RangeTargeting" load_steps=2 format=3 uid="uid://bu2sto41olfil"]
+
+[ext_resource type="Script" uid="uid://ba2wklkq5kl0i" path="res://src/actions/targeting_range.gd" id="1_xkrdh"]
+
+[resource]
+script = ExtResource("1_xkrdh")
+metadata/_custom_type_script = "uid://ba2wklkq5kl0i"

@@ -23,13 +23,12 @@ signal spritesheet_changed(new_image: ImageTexture)
 func _ready() -> void:
 	sprite_options.item_selected.connect(_on_sprite_option_selected)
 	anim_id_spin.value_changed.connect(_on_anim_id_spin_value_changed)
-	weapon_options.item_selected.connect(func(idx) -> void: 
-		unit.set_primary_weapon(idx))
+	weapon_options.item_selected.connect(unit.set_primary_weapon)
 	item_options.item_selected.connect(animation_manager.set_item)
 	
 	ability_id_spin.value_changed.connect(_on_ability_id_value_changed)
 	unit.ability_assigned.connect(func(id): ability_id_spin.value = id)
-	unit.primary_weapon_assigned.connect(func(id): weapon_options.select(id))
+	unit.primary_weapon_assigned.connect(weapon_options.select)
 
 func _process(delta: float) -> void:
 	if is_instance_valid(BattleManager.main_camera):

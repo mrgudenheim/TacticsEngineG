@@ -129,6 +129,8 @@ var ability_data: FftAbilityData
 var active_action: ActionInstance
 #@export var action_instance: ActionInstance
 @export var move_action: Action
+@export var attack_action: Action
+@export var wait_action: Action
 @export var actions: Array[Action] = []
 var actions_data: Dictionary[Action, ActionInstance] = {}
 @export var move_points_start: int = 1
@@ -243,6 +245,7 @@ func update_actions(battle_manager: BattleManager) -> void:
 	actions.clear()
 	actions_data.clear()
 	actions.append(move_action)
+	actions.append(attack_action)
 	# TODO append all other potential actions, from jobs, wait, equipment, etc.
 	
 	# remove any existing buttons
@@ -511,6 +514,8 @@ func set_primary_weapon(new_weapon_id: int) -> void:
 	#var weapon_palette_id = RomReader.battle_bin_data.weapon_graphic_palettes_1[primary_weapon.id]
 	animation_manager.unit_sprites_manager.sprite_weapon.texture = animation_manager.wep_spr.create_frame_grid_texture(
 		primary_weapon.wep_frame_palette, 0, 0, primary_weapon.wep_frame_v_offset, 0, animation_manager.wep_shp.file_name)
+	
+	attack_action = primary_weapon.weapon_attack_action
 	primary_weapon_assigned.emit(new_weapon_id)
 
 

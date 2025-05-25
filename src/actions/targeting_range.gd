@@ -29,7 +29,7 @@ func get_potential_targets(action_instance: ActionInstance) -> Array[TerrainTile
 						min_height = map_tiles_at_pos[0].height_mid
 						
 				
-				for tile: TileData in action_instance.battle_manager.total_map_tiles[map_pos]:
+				for tile in action_instance.battle_manager.total_map_tiles[map_pos]:
 					if action_instance.action.targeting_top_down and tile.height_mid < min_height:
 						continue
 					

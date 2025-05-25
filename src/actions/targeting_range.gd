@@ -34,6 +34,14 @@ func get_potential_targets(action_instance: ActionInstance) -> Array[TerrainTile
 						continue
 					
 					var distance_vert: float = tile.height_mid - action_instance.user.tile_position.height_mid
+					if action_instance.action.targeting_direct:
+						var collider = Raycaster.raycast(action_instance.user.tile_position.get_world_position() + Vector3.UP, tile.get_world_position() + Vector3.UP) # TODO adjust for different height sprites: chicken, frog, Altima
+						if not is_instance_valid(collider):
+							if collider is CharacterBody3D:
+								var intersected_unit: UnitData = collider.get_parent_node_3d()
+								if intersected_unit.tile_position != tile:
+									continue
+						# TODO raycast from action_instance.user.tile_position + 0.5? to tile.world_position + 0.5?
 					if action_instance.action.cant_target_self and tile == action_instance.user.tile_position:
 						continue
 					elif distance_xy >= action_instance.action.min_targeting_range and distance_xy <= action_instance.action.max_targeting_range:

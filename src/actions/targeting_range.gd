@@ -91,6 +91,9 @@ func on_map_input_event(action_instance: ActionInstance, camera: Camera3D, event
 		
 		action_instance.show_targets_highlights(action_instance.preview_targets_highlights)
 	
+	if not action_instance.potential_targets.has(tile):
+		return
+	
 	# handle clicking tile
 	if event.is_action_pressed("primary_action"):
 		action_instance.submitted_targets = action_instance.preview_targets

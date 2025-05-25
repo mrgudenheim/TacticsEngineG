@@ -40,7 +40,7 @@ func get_potential_targets(action_instance: ActionInstance) -> Array[TerrainTile
 								var intersected_unit: UnitData = collider.get_parent_node_3d()
 								if intersected_unit.tile_position != tile:
 									continue
-						# TODO raycast from action_instance.user.tile_position + 0.5? to tile.world_position + 0.5?
+						# TODO fix raycast?
 					if action_instance.action.cant_target_self and tile == action_instance.user.tile_position:
 						continue
 					elif distance_xy >= action_instance.action.min_targeting_range and distance_xy <= action_instance.action.max_targeting_range:
@@ -70,3 +70,30 @@ func on_map_input_event(action_instance: ActionInstance, camera: Camera3D, event
 	#push_warning(event_position)
 	var tile: TerrainTile = action_instance.battle_manager.get_tile(event_position)
 	# TODO preview target highlighting
+	if tile == null:
+		return
+	
+	if tile != action_instance.current_tile_hovered:
+		action_instance.current_tile_hovered = tile
+		
+		# show preview targets
+		action_instance.clear_targets(action_instance.preview_targets_highlights)
+		action_instance.preview_targets.clear()
+		
+		action_instance.preview_targets.append(tile)
+		# TODO get aoe targets
+		# TODO if targeting_direct and distance > 1, show line
+		
+		if action_instance.potential_targets.has(tile):
+			action_instance.preview_targets_highlights = action_instance.get_tile_highlights(action_instance.preview_targets, action_instance.battle_manager.tile_highlights[Color.RED])
+		else:
+			action_instance.preview_targets_highlights = action_instance.get_tile_highlights(action_instance.preview_targets, action_instance.battle_manager.tile_highlights[Color.WHITE])
+		
+		action_instance.show_targets_highlights(action_instance.preview_targets_highlights)
+	
+	# handle clicking tile
+	if event.is_action_pressed("primary_action"):
+		action_instance.submitted_targets = action_instance.preview_targets
+		#action_instance.submitted_targets.append(tile)
+		action_instance.use()
+		return

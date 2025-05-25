@@ -180,7 +180,7 @@ func initialize_unit() -> void:
 	# 0xc8 blood suck
 	# 0x9b stasis sword
 	set_ability(0x9b)
-	set_primary_weapon(1)
+	set_primary_weapon(101) # 1 - dagger, 72 - mythril gun, 101 - mythril spear
 	set_sprite_by_file_idx(98) # RAMUZA.SPR # TODO use sprite_id?
 	#set_sprite_by_file_name("RAMUZA.SPR")
 	

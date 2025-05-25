@@ -190,7 +190,7 @@ func _init(idx: int = 0) -> void:
 		weapon_attack_action.trigger_counter_flood = true
 		weapon_attack_action.trigger_counter_grasp = true
 		
-		weapon_attack_action.targeting_strategy # TODO set weapon targeting strategy to TargetingRange by default
+		weapon_attack_action.targeting_strategy = Utilities.targeting_strategies[Utilities.TargetingTypes.RANGE] # set weapon targeting strategy to TargetingRange by default
 		
 		match item_type:
 			ItemType.BOW, ItemType.CROSSBOW, ItemType.GUN, ItemType.INSTRUMENT, ItemType.BOOK:
@@ -239,7 +239,10 @@ func _init(idx: int = 0) -> void:
 		elif weapon_is_lunging:
 			weapon_attack_action.max_targeting_range = 2
 			weapon_attack_action.vertical_tolerance = 3.5 # TODO lunging can hit 4 lower https://ffhacktics.com/wiki/Strike/Lunge_Routine
-			weapon_attack_action.targeting_strategy # TODO weapon targeting is linear
+			weapon_attack_action.targeting_linear = true
+			weapon_attack_action.targeting_direct = true
+		elif weapon_is_direct:
+			weapon_attack_action.targeting_direct = true
 		
 		weapon_attack_action.status_prevents_use_any.append(RomReader.scus_data.status_effects[-3]) # Don't Act status prevents weapon attack 
 		

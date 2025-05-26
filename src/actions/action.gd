@@ -183,13 +183,10 @@ func use(action_instance: ActionInstance) -> void:
 			mod_animation_executing_id = RomReader.battle_bin_data.weapon_animation_ids[action_instance.user.primary_weapon.item_type].y * 2
 			var angle_to_target: float = ((action_instance.submitted_targets[0].height_mid - action_instance.user.tile_position.height_mid) 
 					/ (action_instance.submitted_targets[0].location - action_instance.user.tile_position.location).length())
-			if angle_to_target > 1:
+			if angle_to_target > 0.5:
 				mod_animation_executing_id += -2
-			elif angle_to_target < 1:
+			elif angle_to_target < -0.5:
 				mod_animation_executing_id += 2
-		
-		#action_instance.user.current_animation_id_fwd = (RomReader.battle_bin_data.weapon_animation_ids[action_instance.user.primary_weapon.item_type].y * 2) # TODO lookup based on target relative height
-		#action_instance.user.set_base_animation_ptr_id(action_instance.user.current_animation_id_fwd)
 		
 		await action_instance.user.animate_start_action(animation_start_id, animation_charging_id)
 		

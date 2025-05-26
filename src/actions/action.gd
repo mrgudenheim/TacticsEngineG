@@ -183,9 +183,9 @@ func use(action_instance: ActionInstance) -> void:
 			mod_animation_executing_id = RomReader.battle_bin_data.weapon_animation_ids[action_instance.user.primary_weapon.item_type].y * 2
 			var angle_to_target: float = ((action_instance.submitted_targets[0].height_mid - action_instance.user.tile_position.height_mid) 
 					/ (action_instance.submitted_targets[0].location - action_instance.user.tile_position.location).length())
-			if angle_to_target > 0.5:
+			if angle_to_target > 0.51:
 				mod_animation_executing_id += -2
-			elif angle_to_target < -0.5:
+			elif angle_to_target < -0.51:
 				mod_animation_executing_id += 2
 		
 		await action_instance.user.animate_start_action(animation_start_id, animation_charging_id)

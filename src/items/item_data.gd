@@ -174,11 +174,10 @@ func _init(idx: int = 0) -> void:
 		# make attack action
 		weapon_attack_action = Action.new()
 		
-		weapon_attack_action.action_power = weapon_power
+		weapon_attack_action.base_power_formula.value_01 = weapon_power
 		weapon_attack_action.element = weapon_element
 		
 		weapon_attack_action.action_name = "Attack (" + name + ")"
-		weapon_attack_action.description = "Attack Base Damage = " + Action.formula_descriptions[weapon_attack_action.base_damage_formula]
 		weapon_attack_action.display_action_name = false
 		weapon_attack_action.min_targeting_range = 0
 		weapon_attack_action.max_targeting_range = max_range
@@ -198,21 +197,23 @@ func _init(idx: int = 0) -> void:
 		
 		match item_type:
 			ItemType.FISTS:
-				weapon_attack_action.base_damage_formula = Action.Formulas.PA_BRAVExPA
+				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.PA_BRAVExPA
 			ItemType.KNIFE, ItemType.NINJA_BLADE, ItemType.BOW, ItemType.SHURIKEN:
-				weapon_attack_action.base_damage_formula = Action.Formulas.AVG_PA_SPxWP
+				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.AVG_PA_SPxWP
 			ItemType.SWORD, ItemType.ROD, ItemType.CROSSBOW, ItemType.SPEAR:
-				weapon_attack_action.base_damage_formula = Action.Formulas.PAxWP
+				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.PAxWP
 			ItemType.KNIGHT_SWORD, ItemType.KATANA:
-				weapon_attack_action.base_damage_formula = Action.Formulas.PA_BRAVExWP
+				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.PA_BRAVExWP
 			ItemType.AXE, ItemType.FLAIL, ItemType.BAG:
-				weapon_attack_action.base_damage_formula = Action.Formulas.RANDOM_PAxWP
+				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.RANDOM_PAxWP
 			ItemType.STAFF, ItemType.POLE:
-				weapon_attack_action.base_damage_formula = Action.Formulas.MAxWP
+				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.MAxWP
 			ItemType.GUN:
-				weapon_attack_action.base_damage_formula = Action.Formulas.WPxWP
+				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.WPxWP
 			ItemType.INSTRUMENT, ItemType.BOOK, ItemType.CLOTH:
-				weapon_attack_action.base_damage_formula = Action.Formulas.MAxWP
+				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.MAxWP
+		
+		weapon_attack_action.description = "Attack Base Damage = " + FormulaData.formula_descriptions[weapon_attack_action.base_power_formula.formula]
 		
 		if weapon_formula_id == 4: # TODO proc ability for Formula 04 (magic gun)
 			pass

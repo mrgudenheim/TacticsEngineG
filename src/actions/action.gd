@@ -58,11 +58,12 @@ var inflict_status_id: int = 0
 
 @export var can_select_unit: bool = true
 
-@export var element: ElementalTypes = ElementalTypes.NONE
+@export var element: ElementTypes = ElementTypes.NONE
 
-@export var base_hit_chance: int = 100
-@export var action_power: int = 5
-@export var base_damage_formula: Formulas = Formulas.PAxWP
+@export var base_power_formula: FormulaData = FormulaData.new(FormulaData.Formulas.PAxWP, 5, 0, false, false, true)
+@export var base_hit_formula: FormulaData = FormulaData.new(FormulaData.Formulas.UNMODIFIED, 100, 0, false, false, true)
+
+@export var healing_damages_undead: bool = false
 
 # inflict status data
 @export var status_list: Array[StatusEffect] = []
@@ -108,30 +109,6 @@ enum StatusListType {
 	RANDOM,
 	}
 
-static var formula_descriptions: Dictionary[Formulas, String] = {
-	Formulas.ZERO: "0",
-	Formulas.PAxWP: "PAxWP",
-	Formulas.MAxWP: "MAxWP",
-	Formulas.AVG_PA_MAxWP: "AVG_PA_MAxWP",
-	Formulas.AVG_PA_SPxWP: "AVG_PA_SPxWP",
-	Formulas.PA_BRAVExWP: "PA_BRAVExWP",
-	Formulas.RANDOM_PAxWP: "RANDOM_PAxWP",
-	Formulas.WPxWP: "WPxWP",
-	Formulas.PA_BRAVExPA: "PA_BRAVExPA",
-	}
-
-enum Formulas {
-	ZERO,
-	PAxWP,
-	MAxWP,
-	AVG_PA_MAxWP,
-	AVG_PA_SPxWP,
-	PA_BRAVExWP,
-	RANDOM_PAxWP,
-	WPxWP,
-	PA_BRAVExPA,
-	}
-
 
 func _to_string() -> String:
 	return action_name
@@ -155,6 +132,7 @@ func is_usable(action_instance: ActionInstance) -> bool:
 		
 	return is_usable
 
+
 func start_targeting(action_instance: ActionInstance) -> void:
 	targeting_strategy.start_targeting(action_instance)
 
@@ -177,6 +155,8 @@ func use(action_instance: ActionInstance) -> void:
 			var target_unit: UnitData = action_instance.battle_manager.units[unit_index]
 			target_units.append(target_unit)
 		
+		# TODO action effects: Formulas
+		
 		# look up animation based on weapon type and vertical angle to target
 		var mod_animation_executing_id: int = animation_executing_id
 		if animation_executing_id == 0:
@@ -194,8 +174,10 @@ func use(action_instance: ActionInstance) -> void:
 		
 		await action_instance.user.get_tree().create_timer(0.2).timeout
 		
+		# TODO show vfx, including rock, arrow, bolt...
+		
 		for target_unit: UnitData in target_units:
-			target_unit.animate_take_hit()
+			target_unit.animate_take_hit() # TODO or animate_receive_heal, status change, evade, shield block?
 		
 		await action_instance.user.animation_manager.animation_completed
 
@@ -216,33 +198,18 @@ func use(action_instance: ActionInstance) -> void:
 		use_strategy.use(action_instance)
 
 
-
-
-func get_base_damage(user: UnitData) -> int:
-	var base_damage: int = 0
+func get_application_value(user: UnitData, target: UnitData) -> int:
+	var value: float = base_power_formula.get_result(user, target, element)
 	
-	match base_damage_formula:
-		Formulas.ZERO:
-			base_damage = 0
-		Formulas.PAxWP:
-			base_damage = user.physical_attack_current * action_power
-		Formulas.MAxWP:
-			base_damage = user.magical_attack_current * action_power
-		Formulas.AVG_PA_MAxWP:
-			base_damage = round(((user.physical_attack_current + user.magical_attack_current) / 2.0) * action_power)
-		Formulas.AVG_PA_SPxWP:
-			base_damage = round(((user.physical_attack_current + user.speed_current) / 2.0) * action_power)
-		Formulas.PA_BRAVExWP:
-			base_damage = round(user.physical_attack_current * user.brave_current * action_power / 100.0)
-		Formulas.RANDOM_PAxWP:
-			base_damage = randi_range(1, user.physical_attack_current) * action_power
-		Formulas.WPxWP:
-			base_damage = action_power * action_power
-		Formulas.PA_BRAVExPA:
-			base_damage = round(user.physical_attack_current * user.brave_current / 100.0) * user.physical_attack_current
-	
-	return base_damage
+	return roundi(value)
 
+
+func get_hit_chance(user: UnitData, target: UnitData) -> int:
+	var value: float = base_hit_formula.get_result(user, target, element)
+	
+	# TODO check evade
+	
+	return roundi(value)
 
 
 static func get_elemental_types_array(element_bitflags: PackedByteArray) -> Array[ElementTypes]:

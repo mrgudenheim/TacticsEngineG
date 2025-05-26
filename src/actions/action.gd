@@ -90,7 +90,7 @@ enum EvadeType {
 	MAGICAL,
 	}
 
-enum ElementalTypes {
+enum ElementTypes {
 	NONE = 0x00,
 	DARK = 0x01,
 	HOLY = 0x02,
@@ -245,8 +245,8 @@ func get_base_damage(user: UnitData) -> int:
 
 
 
-static func get_elemental_types_array(element_bitflags: PackedByteArray) -> Array[ElementalTypes]:
-	var elemental_types: Array[ElementalTypes] = []
+static func get_elemental_types_array(element_bitflags: PackedByteArray) -> Array[ElementTypes]:
+	var elemental_types: Array[ElementTypes] = []
 	
 	for byte_idx: int in element_bitflags.size():
 		for bit_idx: int in range(7, -1, -1):

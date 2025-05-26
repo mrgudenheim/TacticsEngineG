@@ -53,7 +53,7 @@ var normal_flags_1: int = 0
 var normal_flags_2: int = 0
 var normal_flags_3: int = 0
 var normal_flags_4: int = 0
-var element_type: Action.ElementalTypes = Action.ElementalTypes.NONE
+var element_type: Action.ElementTypes = Action.ElementTypes.NONE
 
 var used_item_id: int = -1
 var thrown_item_type: int = -1

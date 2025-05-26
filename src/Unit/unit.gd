@@ -93,6 +93,13 @@ var portrait_palette_id: int = 0
 var unit_id: int = 0
 var special_job_skillset_id: int = 0
 
+@export var elemental_absorb: Array[Action.ElementTypes] = []
+@export var elemental_cancel: Array[Action.ElementTypes] = []
+@export var elemental_half: Array[Action.ElementTypes] = []
+@export var elemental_weakness: Array[Action.ElementTypes] = []
+@export var elemental_strengthen: Array[Action.ElementTypes] = []
+
+
 var can_move: bool = true
 
 #var map_position: Vector2i
@@ -145,7 +152,7 @@ var idle_walk_animation_id: int = 6
 var walk_to_animation_id: int = 0x18
 var taking_damage_animation_id: int = 0x32
 var knocked_out_animation_id: int = 0x34
-var receive_buff_animation_id: int = 0x36
+var heal_animation_id: int = 0x36
 var mid_jump_animation: int = 0x3e
 
 var submerged_depth: int = 0
@@ -445,8 +452,8 @@ func animate_take_hit() -> void:
 	set_base_animation_ptr_id(current_animation_id_fwd)
 
 
-func animate_recieve_buff() -> void:
-	current_animation_id_fwd = receive_buff_animation_id
+func animate_recieve_heal() -> void:
+	current_animation_id_fwd = heal_animation_id
 	set_base_animation_ptr_id(current_animation_id_fwd)
 
 

@@ -24,7 +24,7 @@ var max_range: int = 1
 var weapon_formula_id: int = 1
 var weapon_power: int = 1
 var weapon_evade: int = 0
-var weapon_element: Action.ElementalTypes = Action.ElementalTypes.NONE
+var weapon_element: Action.ElementTypes = Action.ElementTypes.NONE
 var weapon_inflict_status_spell_id: int = 0
 var weapon_is_striking: bool = true
 var weapon_is_lunging: bool = false
@@ -64,11 +64,11 @@ var weapon_is_arc: bool = false
 @export var status_always: Array[StatusEffect] = []
 @export var status_immune: Array[StatusEffect] = []
 @export var status_start: Array[StatusEffect] = []
-@export var elemental_absorb: Array[Action.ElementalTypes] = [] # 1 byte of bitflags, elemental types
-@export var elemental_cancel: Array[Action.ElementalTypes] = [] # 1 byte of bitflags, elemental types
-@export var elemental_half: Array[Action.ElementalTypes] = [] # 1 byte of bitflags, elemental types
-@export var elemental_weakness: Array[Action.ElementalTypes] = [] # 1 byte of bitflags, elemental types
-@export var elemental_strengthen: Array[Action.ElementalTypes] = [] # 1 byte of bitflags, elemental types
+@export var elemental_absorb: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
+@export var elemental_cancel: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
+@export var elemental_half: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
+@export var elemental_weakness: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
+@export var elemental_strengthen: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
 
 # chemist item data
 @export var consumable_formula_id: int = 0

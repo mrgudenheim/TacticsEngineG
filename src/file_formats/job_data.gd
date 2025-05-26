@@ -25,11 +25,11 @@ var status_always: Array[StatusEffect] = [] # 5 bytes of bitflags for up to 40 s
 var status_immune: Array[StatusEffect] = [] # 5 bytes of bitflags for up to 40 statuses # TODO use bit index as index into StatusEffect array
 var status_start: Array[StatusEffect] = [] # 5 bytes of bitflags for up to 40 statuses # TODO use bit index as index into StatusEffect array
 
-var elemental_absorb: Array[Action.ElementalTypes] = [] # 1 byte of bitflags, elemental types
-var elemental_cancel: Array[Action.ElementalTypes] = [] # 1 byte of bitflags, elemental types
-var elemental_half: Array[Action.ElementalTypes] = [] # 1 byte of bitflags, elemental types
-var elemental_weakness: Array[Action.ElementalTypes] = [] # 1 byte of bitflags, elemental types
-var elemental_strengthen: Array[Action.ElementalTypes] = [] # 1 byte of bitflags, elemental types
+var elemental_absorb: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
+var elemental_cancel: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
+var elemental_half: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
+var elemental_weakness: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
+var elemental_strengthen: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
 
 var monster_portrait_id: int = 0
 var monster_palette_id: int = 0

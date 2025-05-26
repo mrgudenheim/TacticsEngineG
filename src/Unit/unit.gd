@@ -145,7 +145,8 @@ var idle_walk_animation_id: int = 6
 var walk_to_animation_id: int = 0x18
 var taking_damage_animation_id: int = 0x32
 var knocked_out_animation_id: int = 0x34
-var mid_jump_animation: int = 62
+var receive_buff_animation_id: int = 0x36
+var mid_jump_animation: int = 0x3e
 
 var submerged_depth: int = 0
 
@@ -441,6 +442,11 @@ func animate_execute_action(animation_executing_id: int) -> void:
 
 func animate_take_hit() -> void:
 	current_animation_id_fwd = taking_damage_animation_id
+	set_base_animation_ptr_id(current_animation_id_fwd)
+
+
+func animate_recieve_buff() -> void:
+	current_animation_id_fwd = receive_buff_animation_id
 	set_base_animation_ptr_id(current_animation_id_fwd)
 
 

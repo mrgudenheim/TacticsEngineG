@@ -77,6 +77,13 @@ var separate_status: bool = false
 @export var required_equipment_type: Array[ItemData.ItemType] = [] # sword, gun, etc.
 @export var required_equipment: Array[ItemData] = [] # materia_blade, etc.
 
+# animation data
+@export var animation_start_id: int = 0
+@export var animation_charging_id: int = 0
+@export var animation_executing_id: int = 0
+
+var vfx_data: VisualEffectData
+
 enum EvadeType {
 	NONE,
 	PHYSICAL,
@@ -162,31 +169,43 @@ func use(action_instance: ActionInstance) -> void:
 		var direction_to_target: Vector2i = action_instance.submitted_targets[0].location - action_instance.user.tile_position.location
 		action_instance.user.update_unit_facing(Vector3(direction_to_target.x, 0, direction_to_target.y))
 		
-		# TODO look up animation based on action data?
-		action_instance.user.current_animation_id_fwd = (RomReader.battle_bin_data.weapon_animation_ids[action_instance.user.primary_weapon.item_type].y * 2) # TODO lookup based on target relative height
-		action_instance.user.set_base_animation_ptr_id(action_instance.user.current_animation_id_fwd)
-		
-		# TODO implement proper timeout for abilities that execute using an infinite loop animation
-		# this implementation can overwrite can_move when in the middle of another ability
-		action_instance.user.get_tree().create_timer(2).timeout.connect(func() -> void: action_instance.user.can_move = true)
-		
 		var target_units: Array[UnitData] = []
 		for target_tile: TerrainTile in action_instance.submitted_targets:
 			var unit_index: int = action_instance.battle_manager.units.find_custom(func(unit: UnitData): return unit.tile_position == target_tile)
+			if unit_index == -1:
+				continue
 			var target_unit: UnitData = action_instance.battle_manager.units[unit_index]
 			target_units.append(target_unit)
+		
+		# look up animation based on weapon type and vertical angle to target
+		var mod_animation_executing_id: int = animation_executing_id
+		if animation_executing_id == 0:
+			mod_animation_executing_id = RomReader.battle_bin_data.weapon_animation_ids[action_instance.user.primary_weapon.item_type].y * 2
+			var angle_to_target: float = ((action_instance.submitted_targets[0].height_mid - action_instance.user.tile_position.height_mid) 
+					/ (action_instance.submitted_targets[0].location - action_instance.user.tile_position.location).length())
+			if angle_to_target > 1:
+				mod_animation_executing_id += -2
+			elif angle_to_target < 1:
+				mod_animation_executing_id += 2
+		
+		#action_instance.user.current_animation_id_fwd = (RomReader.battle_bin_data.weapon_animation_ids[action_instance.user.primary_weapon.item_type].y * 2) # TODO lookup based on target relative height
+		#action_instance.user.set_base_animation_ptr_id(action_instance.user.current_animation_id_fwd)
+		
+		await action_instance.user.animate_start_action(animation_start_id, animation_charging_id)
+		
+		action_instance.user.animate_execute_action(mod_animation_executing_id)
 		
 		await action_instance.user.get_tree().create_timer(0.2).timeout
 		
 		for target_unit: UnitData in target_units:
-			target_unit.take_hit()
+			target_unit.animate_take_hit()
 		
 		await action_instance.user.animation_manager.animation_completed
 
-		action_instance.user.return_to_idle()
+		action_instance.user.animate_return_to_idle()
 		
 		for target_unit: UnitData in target_units:
-			target_unit.return_to_idle()
+			target_unit.animate_return_to_idle()
 		
 		action_instance.clear() # clear all highlighting and target data
 		

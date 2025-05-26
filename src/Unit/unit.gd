@@ -138,7 +138,7 @@ var actions_data: Dictionary[Action, ActionInstance] = {}
 @export var action_points_start: int = 1
 @export var action_points_remaining: int = 1
 
-var idle_animation_id: int = 6 # set based on status (critical, knocked out, etc.)
+var current_idle_animation_id: int = 6 # set based on status (critical, knocked out, etc.)
 var current_animation_id_fwd: int = 6 # set based on current action
 # constants?
 var idle_walk_animation_id: int = 6
@@ -222,7 +222,7 @@ func _process(_delta: float) -> void:
 		#var idle_animation: int = 6 # front facing idle walk animation
 		#if animation_manager.is_back_facing:
 			#idle_animation += 1
-		current_animation_id_fwd = idle_animation_id
+		current_animation_id_fwd = current_idle_animation_id
 		#debug_menu.anim_id_spin.value = idle_animation
 	
 	set_base_animation_ptr_id(current_animation_id_fwd)
@@ -316,8 +316,8 @@ func use_attack() -> void:
 
 	#ability_completed.emit()
 	animation_manager.reset_sprites()
-	#debug_menu.anim_id_spin.value = idle_animation_id  + int(is_back_facing)
-	current_animation_id_fwd = idle_animation_id
+	#debug_menu.anim_id_spin.value = current_idle_animation_id  + int(is_back_facing)
+	current_animation_id_fwd = current_idle_animation_id
 	set_base_animation_ptr_id(current_animation_id_fwd)
 	can_move = true
 
@@ -368,8 +368,8 @@ func use_ability(pos: Vector3) -> void:
 
 	ability_completed.emit()
 	animation_manager.reset_sprites()
-	#debug_menu.anim_id_spin.value = idle_animation_id  + int(is_back_facing)
-	current_animation_id_fwd = idle_animation_id
+	#debug_menu.anim_id_spin.value = current_idle_animation_id  + int(is_back_facing)
+	current_animation_id_fwd = current_idle_animation_id
 	set_base_animation_ptr_id(current_animation_id_fwd)
 	can_move = true
 
@@ -404,28 +404,56 @@ func process_targeted() -> void:
 	# show death animation
 	#animation_manager.global_animation_ptr_id = knocked_out_animation_id
 	#debug_menu.anim_id_spin.value = knocked_out_animation_id
-	idle_animation_id = knocked_out_animation_id
-	current_animation_id_fwd = idle_animation_id
+	current_idle_animation_id = knocked_out_animation_id
+	current_animation_id_fwd = current_idle_animation_id
 	set_base_animation_ptr_id(current_animation_id_fwd)
 	
 	knocked_out.emit(self)
 
 
-func take_hit() -> void:
+func animate_start_action(animation_start_id: int, animation_charging_id: int) -> void:
+	if animation_start_id != 0:
+		current_animation_id_fwd = animation_start_id
+		set_base_animation_ptr_id(current_animation_id_fwd)
+		await animation_manager.animation_completed
+	
+	if animation_charging_id != 0:
+		current_animation_id_fwd = animation_charging_id
+		set_base_animation_ptr_id(current_animation_id_fwd)
+		#await get_tree().create_timer(0.1 + (ability_data.ticks_charge_time * 0.1)).timeout # TODO allow looping until changed, ie. charging a spell
+
+
+func animate_execute_action(animation_executing_id: int) -> void:
+	if animation_executing_id == 0:
+		#animation_executing_id = 0x3e * 2 # TODO look up based on equiped weapon and target relative height
+		#animation_manager.unit_debug_menu.anim_id_spin.value = 0x3e * 2 # TODO look up based on equiped weapon and target relative height
+		#debug_menu.anim_id_spin.value = (RomReader.battle_bin_data.weapon_animation_ids[primary_weapon.item_type].y * 2) + int(is_back_facing) # TODO lookup based on target relative height
+		current_animation_id_fwd = (RomReader.battle_bin_data.weapon_animation_ids[primary_weapon.item_type].y * 2) # TODO lookup based on target relative height
+		set_base_animation_ptr_id(current_animation_id_fwd)
+	else:
+		var ability_animation_executing_id = animation_executing_id
+		if ["RUKA.SEQ", "ARUTE.SEQ", "KANZEN.SEQ"].has(RomReader.sprs[sprite_file_idx].seq_name):
+			ability_animation_executing_id = 0x2c * 2 # https://ffhacktics.com/wiki/Set_attack_animation_flags_and_facing_3
+		#debug_menu.anim_id_spin.value = ability_animation_executing_id + int(is_back_facing)
+		current_animation_id_fwd = ability_animation_executing_id
+		set_base_animation_ptr_id(current_animation_id_fwd)
+
+
+func animate_take_hit() -> void:
 	current_animation_id_fwd = taking_damage_animation_id
 	set_base_animation_ptr_id(current_animation_id_fwd)
 
 
-func knock_out() -> void:
-	idle_animation_id = knocked_out_animation_id
-	current_animation_id_fwd = idle_animation_id
+func animate_knock_out() -> void:
+	current_idle_animation_id = knocked_out_animation_id
+	current_animation_id_fwd = current_idle_animation_id
 	set_base_animation_ptr_id(current_animation_id_fwd)
 	
 	knocked_out.emit(self)
 
 
-func return_to_idle() -> void:
-	current_animation_id_fwd = idle_animation_id
+func animate_return_to_idle() -> void:
+	current_animation_id_fwd = current_idle_animation_id
 	set_base_animation_ptr_id(current_animation_id_fwd)
 
 
@@ -551,7 +579,7 @@ func set_sprite_by_file_idx(new_sprite_file_idx: int) -> void:
 	on_sprite_idx_selected(new_sprite_file_idx)
 	update_spritesheet_grid_texture()
 	
-	debug_menu.anim_id_spin.value = idle_animation_id
+	debug_menu.anim_id_spin.value = current_idle_animation_id
 
 
 func set_sprite_by_file_name(sprite_file_name: String) -> void:

@@ -86,6 +86,7 @@ units_container = NodePath("Units")
 unit_tscn = ExtResource("4_wfrm2")
 controller = NodePath("CharacterController")
 icon_counter = NodePath("IconGridContainer")
+allow_mirror = false
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_njvnp")

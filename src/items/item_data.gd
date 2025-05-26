@@ -199,19 +199,19 @@ func _init(idx: int = 0) -> void:
 			ItemType.FISTS:
 				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.PA_BRAVExPA
 			ItemType.KNIFE, ItemType.NINJA_BLADE, ItemType.BOW, ItemType.SHURIKEN:
-				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.AVG_PA_SPxWP
+				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.AVG_PA_SPxV1
 			ItemType.SWORD, ItemType.ROD, ItemType.CROSSBOW, ItemType.SPEAR:
-				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.PAxWP
+				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.PAxV1
 			ItemType.KNIGHT_SWORD, ItemType.KATANA:
-				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.PA_BRAVExWP
+				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.PA_BRAVExV1
 			ItemType.AXE, ItemType.FLAIL, ItemType.BAG:
-				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.RANDOM_PAxWP
+				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.RANDOM_PAxV1
 			ItemType.STAFF, ItemType.POLE:
-				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.MAxWP
+				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.MAxV1
 			ItemType.GUN:
-				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.WPxWP
+				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.V1xV1
 			ItemType.INSTRUMENT, ItemType.BOOK, ItemType.CLOTH:
-				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.MAxWP
+				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.MAxV1
 		
 		weapon_attack_action.description = "Attack Base Damage = " + FormulaData.formula_descriptions[weapon_attack_action.base_power_formula.formula]
 		

@@ -204,12 +204,34 @@ func get_application_value(user: UnitData, target: UnitData) -> int:
 	return roundi(value)
 
 
-func get_hit_chance(user: UnitData, target: UnitData) -> int:
-	var value: float = base_hit_formula.get_result(user, target, element)
+func check_hit(user: UnitData, target: UnitData) -> bool:
+	var hit: bool = false
+	var hit_chance: float = base_hit_formula.get_result(user, target, element)
+	
+	var job_evade_factor: float = 1 - (target.job_data.evade / 100.0)
+	var shield_evade_factor: float = 1 - (target.job_data.evade / 100.0) # TODO shield evade factor - only front facing?
+	var accessory_factor: float = 1 - (target.job_data.evade / 100.0) # TODO accessory evade factor
+	var weapon_evade_factor: float = 1 - (target.job_data.evade / 100.0) # TODO weapon evade factor - only front facing?
+	var target_total_evade_factor: float = 1 - (job_evade_factor * shield_evade_factor * accessory_factor * weapon_evade_factor)
+	var total_hit_chance: int = roundi(hit_chance - (target_total_evade_factor * 100.0))
+	
+	hit = randi_range(0, 99) < total_hit_chance
+	if not hit:
+		# TODO animate_evade, shield block, or weapon block
+		return hit
+	
+	
+	
+	
+	return hit
+
+
+func get_preview_total_hit_chance(user: UnitData, target: UnitData) -> int:
+	var hit_chance: float = base_hit_formula.get_result(user, target, element)
 	
 	# TODO check evade
 	
-	return roundi(value)
+	return roundi(hit_chance)
 
 static func get_element_types_array(element_bitflags: PackedByteArray) -> Array[ElementTypes]:
 	var elemental_types: Array[ElementTypes] = []

@@ -278,8 +278,8 @@ func set_item_attributes(item_attribute: ScusData.ItemAttribute) -> void:
 	status_always = item_attribute.status_always
 	status_immune = item_attribute.status_immune
 	status_start = item_attribute.status_start
-	elemental_absorb = Action.get_elemental_types_array([item_attribute.elemental_absorb])
-	elemental_cancel = Action.get_elemental_types_array([item_attribute.elemental_cancel])
-	elemental_half = Action.get_elemental_types_array([item_attribute.elemental_half])
-	elemental_weakness = Action.get_elemental_types_array([item_attribute.elemental_weakness])
-	elemental_strengthen = Action.get_elemental_types_array([item_attribute.elemental_strengthen])
+	elemental_absorb = Action.get_element_types_array([item_attribute.elemental_absorb])
+	elemental_cancel = Action.get_element_types_array([item_attribute.elemental_cancel])
+	elemental_half = Action.get_element_types_array([item_attribute.elemental_half])
+	elemental_weakness = Action.get_element_types_array([item_attribute.elemental_weakness])
+	elemental_strengthen = Action.get_element_types_array([item_attribute.elemental_strengthen])

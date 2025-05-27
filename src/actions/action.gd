@@ -211,8 +211,7 @@ func get_hit_chance(user: UnitData, target: UnitData) -> int:
 	
 	return roundi(value)
 
-
-static func get_elemental_types_array(element_bitflags: PackedByteArray) -> Array[ElementTypes]:
+static func get_element_types_array(element_bitflags: PackedByteArray) -> Array[ElementTypes]:
 	var elemental_types: Array[ElementTypes] = []
 	
 	for byte_idx: int in element_bitflags.size():

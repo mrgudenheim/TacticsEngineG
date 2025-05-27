@@ -12,7 +12,9 @@ extends Resource
 @export var value_02: float = 0
 @export var is_modified_by_user_faith: bool = false
 @export var is_modified_by_target_faith: bool = false
-@export var is_modified_by_element: bool = false
+@export var is_modified_by_element: bool = true
+@export var is_modified_by_zodiac: bool = true
+#@export var healing_damages_undead: bool = false # needs to be on Action since formula does not know if value will be used for healing
 
 # applicable evasion is defined on Action
 #@export var physical_evasion_applies: bool = false
@@ -89,6 +91,9 @@ func get_result(user: UnitData, target: UnitData, element: Action.ElementTypes) 
 	
 	if is_modified_by_element:
 		result = element_modify(result, user, target, element)
+	
+	if is_modified_by_zodiac:
+		result = zodiac_modify(result, user, target)
 	
 	return result
 
@@ -183,7 +188,13 @@ func support_modify(value: float, user: UnitData, target: UnitData) -> float:
 
 
 func status_modify(value: float, user: UnitData, target: UnitData) -> float:
-	# TODO Oil, Undead, Charging, etc.
+	# TODO Oil, Undead?, Charging, etc.
+	
+	return value
+
+
+func zodiac_modify(value: float, user: UnitData, target: UnitData) -> float:
+	# TODO user vs target zodiac compatability
 	
 	return value
 
@@ -207,24 +218,3 @@ func element_modify(value: float, user: UnitData, target: UnitData, element: Act
 			new_value = -new_value
 	
 	return new_value
-
-
-
-
-func dmg_weapon_01() -> void:
-	# damage calculation - base damage, modifiers (elements, status, zodiac, support abilities, critical hits, charge+x abilities)
-	# apply status
-	# post action proc # https://ffhacktics.com/wiki/02_Dmg_(Weapon)
-	# reaction?
-	pass
-
-
-func get_hit_chance() -> int:
-	var hit_chance: int = 100
-	
-	# check evades
-	
-	# check user and target faith?
-	
-	return hit_chance
-	

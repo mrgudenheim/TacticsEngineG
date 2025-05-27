@@ -3,33 +3,35 @@ extends Resource
 
 # Job Data # 800610b8 in RAM
 var job_id = 0
-var job_name: String = ""
+var job_name: String = "Job Name"
 var skillset_id: int = 0
 #var innate_abilities: PackedInt32Array = []
 # equippable items # 4 bytes of bitflags, 32 total
-# hp growth
-# hp multiplier
-# mp growth
-# mp multiplier
-# speed growth
-# speed multiplier
-# pa growth
-# pa multiplier
-# ma growth
-# ma multiplier
-# move
-# jump
-# c-evade
+var hp_growth: int = 1
+var mp_growth: int = 1
+var speed_growth: int = 1
+var pa_growth: int = 1
+var ma_growth: int = 1
 
-var status_always: Array[StatusEffect] = [] # 5 bytes of bitflags for up to 40 statuses # TODO use bit index as index into StatusEffect array
-var status_immune: Array[StatusEffect] = [] # 5 bytes of bitflags for up to 40 statuses # TODO use bit index as index into StatusEffect array
-var status_start: Array[StatusEffect] = [] # 5 bytes of bitflags for up to 40 statuses # TODO use bit index as index into StatusEffect array
+var hp_multiplier: int = 1
+var mp_multiplier: int = 1
+var speed_multiplier: int = 1
+var pa_multiplier: int = 1
+var ma_multiplier: int = 1
 
-var elemental_absorb: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
-var elemental_cancel: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
-var elemental_half: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
-var elemental_weakness: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
-var elemental_strengthen: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
+var move: int = 3
+var jump: int = 3
+var evade: int = 0
+
+var status_always: Array[StatusEffect] = [] # 5 bytes of bitflags for up to 40 statuses
+var status_immune: Array[StatusEffect] = [] # 5 bytes of bitflags for up to 40 statuses
+var status_start: Array[StatusEffect] = [] # 5 bytes of bitflags for up to 40 statuses
+
+var element_absorb: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
+var element_cancel: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
+var element_half: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
+var element_weakness: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
+var element_strengthen: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
 
 var monster_portrait_id: int = 0
 var monster_palette_id: int = 0
@@ -52,8 +54,31 @@ func _init(new_job_id: int, job_bytes: PackedByteArray) -> void:
 	elif job_id >= 0x5e: # generic and special monsters
 		sprite_id = monster_portrait_id
 	
+	# TODO job innate abilities and equippable types
+	
+	hp_growth = job_bytes.decode_u8(0x0d)
+	mp_growth = job_bytes.decode_u8(0x0f)
+	speed_growth = job_bytes.decode_u8(0x11)
+	pa_growth = job_bytes.decode_u8(0x13)
+	ma_growth = job_bytes.decode_u8(0x15)
+
+	hp_multiplier = job_bytes.decode_u8(0x0e)
+	mp_multiplier = job_bytes.decode_u8(0x10)
+	speed_multiplier = job_bytes.decode_u8(0x12)
+	pa_multiplier = job_bytes.decode_u8(0x14)
+	ma_multiplier = job_bytes.decode_u8(0x16)
+	
+	move = job_bytes.decode_u8(0x17)
+	jump = job_bytes.decode_u8(0x18)
+	evade = job_bytes.decode_u8(0x19)
+	
 	status_always = StatusEffect.get_status_array(job_bytes.slice(0x1a, 0x1f))
 	status_immune = StatusEffect.get_status_array(job_bytes.slice(0x1f, 0x24))
 	status_start = StatusEffect.get_status_array(job_bytes.slice(0x24, 0x29))
 	
-	# TODO rest of job data
+	element_absorb = Action.get_element_types_array([job_bytes.decode_u8(0x29)])
+	element_cancel = Action.get_element_types_array([job_bytes.decode_u8(0x2a)])
+	element_half = Action.get_element_types_array([job_bytes.decode_u8(0x2b)])
+	element_weakness = Action.get_element_types_array([job_bytes.decode_u8(0x2c)])
+	#element_strengthen = Action.get_element_types_array([job_bytes.decode_u8(0x29)])
+	

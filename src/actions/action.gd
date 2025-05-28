@@ -43,6 +43,9 @@ var inflict_status_id: int = 0
 @export var aoe_targeting_three_directions: bool = false
 @export var aoe_targeting_direct: bool = false # stop at obstacle
 
+@export var target_effects: Array[ActionEffect] = []
+@export var user_effects: Array[ActionEffect] = []
+
 #@export var is_evadable: bool = false
 @export var applicable_evasion: EvadeType = EvadeType.PHYSICAL
 @export var is_reflectable: bool = false
@@ -176,8 +179,22 @@ func use(action_instance: ActionInstance) -> void:
 		
 		# TODO show vfx, including rock, arrow, bolt...
 		
+		# apply effects to targets
 		for target_unit: UnitData in target_units:
-			target_unit.animate_take_hit() # TODO or animate_receive_heal, status change, evade, shield block?
+			var hit_success: bool = check_hit(action_instance.user, target_unit)
+			if hit_success:
+				for effect: ActionEffect in target_effects:
+					var effect_value: int = get_application_value(action_instance.user, target_unit)
+					effect.apply(action_instance.user, target_unit, effect_value)
+				
+				target_unit.animate_take_hit() # TODO or animate_receive_heal, status change, evade, shield block?
+			else:
+				target_unit.animate_evade()
+		
+		# apply effects to user
+		for effect: ActionEffect in user_effects:
+			var effect_value: int = get_application_value(action_instance.user, action_instance.user)
+			effect.apply(action_instance.user, action_instance.user, effect_value)
 		
 		await action_instance.user.animation_manager.animation_completed
 

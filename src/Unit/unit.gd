@@ -150,6 +150,7 @@ var current_animation_id_fwd: int = 6 # set based on current action
 # constants?
 var idle_walk_animation_id: int = 6
 var walk_to_animation_id: int = 0x18
+var evade_animation_id: int = 0x30
 var taking_damage_animation_id: int = 0x32
 var knocked_out_animation_id: int = 0x34
 var heal_animation_id: int = 0x36
@@ -454,6 +455,11 @@ func animate_take_hit() -> void:
 
 func animate_recieve_heal() -> void:
 	current_animation_id_fwd = heal_animation_id
+	set_base_animation_ptr_id(current_animation_id_fwd)
+
+
+func animate_evade() -> void:
+	current_animation_id_fwd = evade_animation_id
 	set_base_animation_ptr_id(current_animation_id_fwd)
 
 

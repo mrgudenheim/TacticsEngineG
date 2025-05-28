@@ -29,6 +29,14 @@ enum EffectType {
 	#ME,
 	}
 
+
+func _init(new_type: EffectType, new_show_ui: bool = true, new_transfer_target_to_user: bool = false, new_set_value: bool = false) -> void:
+	type = new_type
+	show_ui = new_show_ui
+	transfer_target_to_user = new_transfer_target_to_user
+	set_value = new_set_value
+
+
 func apply(user: UnitData, target: UnitData, value: int) -> int:
 	match type:
 		EffectType.HP:

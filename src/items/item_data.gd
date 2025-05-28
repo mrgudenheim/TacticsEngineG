@@ -247,6 +247,8 @@ func _init(idx: int = 0) -> void:
 		
 		weapon_attack_action.status_prevents_use_any.append(RomReader.scus_data.status_effects[-3]) # Don't Act status prevents weapon attack
 		
+		weapon_attack_action.target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+		
 		#weapon_attack_action.animation_executing_id = RomReader.battle_bin_data.weapon_animation_ids[item_type].y * 2
 		
 		

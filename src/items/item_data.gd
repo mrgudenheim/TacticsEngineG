@@ -225,7 +225,7 @@ func _init(idx: int = 0) -> void:
 				Action.ElementTypes.ICE:
 					secondary_action_ids = [0x18, 0x19, 0x1a]
 			for id: int in secondary_action_ids:
-				var new_secondary_action: Action = RomReader.abilities[id].ability_action
+				var new_secondary_action: Action = RomReader.abilities[id].ability_action # abilities need to be initialized before items
 				weapon_attack_action.secondary_actions.append(new_secondary_action)
 			
 			weapon_attack_action.secondary_actions_chances = [60, 30, 10]
@@ -234,7 +234,7 @@ func _init(idx: int = 0) -> void:
 		
 		if weapon_formula_id == 2: # proc ability for Formula 02
 			weapon_attack_action.secondary_actions.append(RomReader.abilities[weapon_inflict_status_spell_id].ability_action)
-			weapon_attack_action.secondary_action_chance = 19
+			weapon_attack_action.secondary_actions_chances = [19]
 		else: # inflict status data
 			weapon_attack_action.inflict_status_id = weapon_inflict_status_spell_id
 			var inflict_status: ScusData.InflictStatus = RomReader.scus_data.inflict_statuses[weapon_inflict_status_spell_id]

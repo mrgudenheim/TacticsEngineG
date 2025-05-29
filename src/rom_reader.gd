@@ -104,6 +104,7 @@ func process_rom() -> void:
 	for ability_id: int in NUM_ACTIVE_ABILITIES:
 		abilities.append(FftAbilityData.new(ability_id))
 	
+	# must be after abilities to set secondary actions
 	items.resize(NUM_ITEMS)
 	for id: int in NUM_ITEMS:
 		items[id] = (ItemData.new(id))

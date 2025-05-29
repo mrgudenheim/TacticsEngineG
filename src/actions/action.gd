@@ -88,6 +88,11 @@ var separate_status: bool = false
 
 var vfx_data: VisualEffectData
 
+@export var secondary_actions: Array[Action] = [] # skip right to applying ActionEffects to targets, but can use new FormulaData
+@export var secondary_actions_chances: PackedInt32Array = [100]
+@export var secondary_action_list_type: StatusListType = StatusListType.EACH
+
+
 enum EvadeType {
 	NONE,
 	PHYSICAL,
@@ -249,6 +254,18 @@ func get_preview_total_hit_chance(user: UnitData, target: UnitData) -> int:
 	# TODO check evade
 	
 	return roundi(hit_chance)
+
+
+func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> void:
+	formula_id = new_formula_id
+	
+	match formula_id:
+		0, 1:
+			pass
+
+
+
+
 
 static func get_element_types_array(element_bitflags: PackedByteArray) -> Array[ElementTypes]:
 	var elemental_types: Array[ElementTypes] = []

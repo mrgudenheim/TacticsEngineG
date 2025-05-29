@@ -77,6 +77,8 @@ var vfx_id: int = 0
 
 var animation_speed: float = 59 # frames per second
 
+var ability_action: Action
+
 func _init(new_id: int = 0) -> void:
 	id = new_id
 	

@@ -216,10 +216,25 @@ func _init(idx: int = 0) -> void:
 		weapon_attack_action.description = "Attack Base Damage = " + FormulaData.formula_descriptions[weapon_attack_action.base_power_formula.formula]
 		
 		if weapon_formula_id == 4: # TODO proc ability for Formula 04 (magic gun)
-			pass
+			var secondary_action_ids: PackedInt32Array = []
+			match weapon_element:
+				Action.ElementTypes.FIRE:
+					secondary_action_ids = [0x10, 0x11, 0x12]
+				Action.ElementTypes.LIGHTNING:
+					secondary_action_ids = [0x14, 0x15, 0x16]
+				Action.ElementTypes.ICE:
+					secondary_action_ids = [0x18, 0x19, 0x1a]
+			for id: int in secondary_action_ids:
+				var new_secondary_action: Action = RomReader.abilities[id].ability_action
+				weapon_attack_action.secondary_actions.append(new_secondary_action)
+			
+			weapon_attack_action.secondary_actions_chances = [60, 30, 10]
+			weapon_attack_action.secondary_action_list_type = Action.StatusListType.RANDOM
+			pass # new flag to do random secondary action?
 		
-		if weapon_formula_id == 2: # TODO proc ability for Formula 02
-			pass
+		if weapon_formula_id == 2: # proc ability for Formula 02
+			weapon_attack_action.secondary_actions.append(RomReader.abilities[weapon_inflict_status_spell_id].ability_action)
+			weapon_attack_action.secondary_action_chance = 19
 		else: # inflict status data
 			weapon_attack_action.inflict_status_id = weapon_inflict_status_spell_id
 			var inflict_status: ScusData.InflictStatus = RomReader.scus_data.inflict_statuses[weapon_inflict_status_spell_id]

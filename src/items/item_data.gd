@@ -214,23 +214,29 @@ func _init(idx: int = 0) -> void:
 				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.MAxV1
 		
 		weapon_attack_action.description = "Attack Base Damage = " + FormulaData.formula_descriptions[weapon_attack_action.base_power_formula.formula]
+		weapon_attack_action.target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
 		
-		if weapon_formula_id == 4: # TODO proc ability for Formula 04 (magic gun)
-			var secondary_action_ids: PackedInt32Array = []
-			match weapon_element:
-				Action.ElementTypes.FIRE:
-					secondary_action_ids = [0x10, 0x11, 0x12]
-				Action.ElementTypes.LIGHTNING:
-					secondary_action_ids = [0x14, 0x15, 0x16]
-				Action.ElementTypes.ICE:
-					secondary_action_ids = [0x18, 0x19, 0x1a]
-			for id: int in secondary_action_ids:
-				var new_secondary_action: Action = RomReader.abilities[id].ability_action # abilities need to be initialized before items
-				weapon_attack_action.secondary_actions.append(new_secondary_action)
-			
-			weapon_attack_action.secondary_actions_chances = [60, 30, 10]
-			weapon_attack_action.secondary_action_list_type = Action.StatusListType.RANDOM
-			pass # new flag to do random secondary action?
+		match weapon_formula_id:
+			4: # TODO proc ability for Formula 04 (magic gun)
+				var secondary_action_ids: PackedInt32Array = []
+				match weapon_element:
+					Action.ElementTypes.FIRE:
+						secondary_action_ids = [0x10, 0x11, 0x12]
+					Action.ElementTypes.LIGHTNING:
+						secondary_action_ids = [0x14, 0x15, 0x16]
+					Action.ElementTypes.ICE:
+						secondary_action_ids = [0x18, 0x19, 0x1a]
+				for id: int in secondary_action_ids:
+					var new_secondary_action: Action = RomReader.abilities[id].ability_action # abilities need to be initialized before items
+					weapon_attack_action.secondary_actions.append(new_secondary_action)
+				
+				weapon_attack_action.secondary_actions_chances = [60, 30, 10]
+				weapon_attack_action.secondary_action_list_type = Action.StatusListType.RANDOM
+				pass # new flag to do random secondary action?
+			6:
+				weapon_attack_action.target_effects[0].transfer_to_user = true # absorb hp
+			7:
+				weapon_attack_action.base_power_formula.reverse_sign = false # positive action power is healing when false
 		
 		if weapon_formula_id == 2: # proc ability for Formula 02
 			weapon_attack_action.secondary_actions.append(RomReader.abilities[weapon_inflict_status_spell_id].ability_action)
@@ -261,8 +267,6 @@ func _init(idx: int = 0) -> void:
 			weapon_attack_action.targeting_direct = true
 		
 		weapon_attack_action.status_prevents_use_any.append(RomReader.scus_data.status_effects[-3]) # Don't Act status prevents weapon attack
-		
-		weapon_attack_action.target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
 		
 		#weapon_attack_action.animation_executing_id = RomReader.battle_bin_data.weapon_animation_ids[item_type].y * 2
 		

@@ -10,6 +10,7 @@ extends Resource
 @export var formula: Formulas = Formulas.UNMODIFIED
 @export var value_01: float = 100
 @export var value_02: float = 0
+@export var reverse_sign: bool = true
 @export var is_modified_by_user_faith: bool = false
 @export var is_modified_by_target_faith: bool = false
 @export var is_modified_by_element: bool = true
@@ -101,6 +102,7 @@ func get_result(user: UnitData, target: UnitData, element: Action.ElementTypes) 
 
 func get_base_value(formula: Formulas, user: UnitData, target: UnitData) -> float:
 	var base_value: float = value_01
+	var wp = user.primary_weapon.weapon_attack_action.base_power_formula.value_01
 	
 	match formula:
 		Formulas.UNMODIFIED:
@@ -130,7 +132,7 @@ func get_base_value(formula: Formulas, user: UnitData, target: UnitData) -> floa
 		Formulas.PA_plus_V1xMA_div_2:
 			base_value = (user.physical_attack_current + value_01) * user.magical_attack_current / 2.0 # 0x24 geomancy
 		Formulas.PA_plus_WP_plus_V1:
-			base_value = user.physical_attack_current + user.primary_weapon.weapon_attack_action.action_power + value_01 # 0x25 break equipment
+			base_value = user.physical_attack_current + wp + value_01 # 0x25 break equipment
 		Formulas.SP_plus_V1:
 			base_value = user.speed_current + value_01 # 0x26 steal equipment SPplusX
 		Formulas.LVLxSPxV1:
@@ -140,9 +142,9 @@ func get_base_value(formula: Formulas, user: UnitData, target: UnitData) -> floa
 		Formulas.PA_plus_V1:
 			base_value = user.physical_attack_current + value_01 # 0x2b, 0x2c PAplusY
 		Formulas.PAxWP_plus_V1:
-			base_value = user.physical_attack_current * (user.primary_weapon.weapon_attack_action.action_power + value_01) # 0x2d agrais sword skills
+			base_value = user.physical_attack_current * (wp + value_01) # 0x2d agrais sword skills
 		Formulas.PAxWPxV1:
-			base_value = user.physical_attack_current * user.primary_weapon.weapon_attack_action.action_power * value_01 # 0x2e, 0x2f, 0x30
+			base_value = user.physical_attack_current * wp * value_01 # 0x2e, 0x2f, 0x30
 		Formulas.PAxPA_plus_V1_div_2:
 			base_value = (user.physical_attack_current + value_01) * user.physical_attack_current / 2.0 # 0x31 monk skills
 		Formulas.RANDOM_V1xPAx3_plus_V2_div_2:
@@ -167,8 +169,10 @@ func get_base_value(formula: Formulas, user: UnitData, target: UnitData) -> floa
 			
 			
 			#base_value = action_modifier / 100.0 # % treat value as a percent when actually applying effect
-			
 			# TODO target ct?
+			
+	if reverse_sign:
+		base_value = -base_value
 	
 	return base_value
 
@@ -214,7 +218,7 @@ func element_modify(value: float, user: UnitData, target: UnitData, element: Act
 		new_value = new_value / 2
 	
 	if target.elemental_absorb.has(element):
-		if new_value > 0:
-			new_value = -new_value
+		if new_value < 0:
+			new_value = abs(new_value) # positive is healing
 	
 	return new_value

@@ -232,7 +232,6 @@ func _init(idx: int = 0) -> void:
 				
 				weapon_attack_action.secondary_actions_chances = [60, 30, 10]
 				weapon_attack_action.secondary_action_list_type = Action.StatusListType.RANDOM
-				pass # new flag to do random secondary action?
 			6:
 				weapon_attack_action.target_effects[0].transfer_to_user = true # absorb hp
 			7:

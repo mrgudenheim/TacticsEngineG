@@ -11,8 +11,10 @@ extends Resource
 @export var value_01: float = 100
 @export var value_02: float = 0
 @export var reverse_sign: bool = true
-@export var is_modified_by_user_faith: bool = false
-@export var is_modified_by_target_faith: bool = false
+@export var user_faith_modifer: FaithModifier = FaithModifier.NONE
+@export var target_faith_modifer: FaithModifier = FaithModifier.NONE
+#@export var is_modified_by_user_faith: bool = false
+#@export var is_modified_by_target_faith: bool = false
 @export var is_modified_by_element: bool = true
 @export var is_modified_by_zodiac: bool = true
 #@export var healing_damages_undead: bool = false # needs to be on Action since formula does not know if value will be used for healing
@@ -33,6 +35,12 @@ static var formula_descriptions: Dictionary[Formulas, String] = {
 	Formulas.RANDOM_PAxV1: "RANDOM_PAxWP",
 	Formulas.V1xV1: "WPxWP",
 	Formulas.PA_BRAVExPA: "PA_BRAVExPA",
+	}
+
+enum FaithModifier {
+	NONE,
+	FAITH,
+	UNFAITH,
 	}
 
 enum Formulas {
@@ -61,6 +69,9 @@ enum Formulas {
 	RANDOM_V1xPA,
 	USER_MAX_HPxV1,
 	USER_MAX_MPxV1,
+	TARGET_MAX_HPxV1,
+	TARGET_MAX_MPxV1,
+	USER_CURRENT_HP_minus_V1,
 	TARGET_CURRENT_MP_minus_V1,
 	TARGET_CURRENT_HP_minus_V1,
 	USER_MISSING_HPxV1,
@@ -69,22 +80,29 @@ enum Formulas {
 	}
 
 
-func _init(new_formula: Formulas, new_value_01: int, new_value_02: int, new_modified_by_user_faith: bool, new_modified_by_target_faith: bool, new_modified_by_element: bool) -> void:
+func _init(new_formula: Formulas, new_value_01: int, new_value_02: int, new_user_faith_modifer: FaithModifier, new_target_faith_modifer: FaithModifier, new_modified_by_element: bool) -> void:
 	formula = new_formula
 	value_01 = new_value_01
 	value_02 = new_value_02
-	is_modified_by_user_faith = new_modified_by_user_faith
-	is_modified_by_target_faith = new_modified_by_target_faith
+	user_faith_modifer = new_user_faith_modifer
+	target_faith_modifer = new_target_faith_modifer
 	is_modified_by_element = new_modified_by_element
 
 
 func get_result(user: UnitData, target: UnitData, element: Action.ElementTypes) -> float:
 	var result: float = get_base_value(formula, user, target)
-	if is_modified_by_user_faith:
-		result = faith_modify(result, user)
 	
-	if is_modified_by_target_faith:
-		result = faith_modify(result, target)
+	match user_faith_modifer:
+		FaithModifier.FAITH:
+			result = faith_modify(result, user)
+		FaithModifier.UNFAITH:
+			result = unfaith_modify(result, user)
+	
+	match target_faith_modifer:
+		FaithModifier.FAITH:
+			result = faith_modify(result, target)
+		FaithModifier.UNFAITH:
+			result = unfaith_modify(result, target)
 	
 	result = support_modify(result, user, target)
 	
@@ -156,6 +174,13 @@ func get_base_value(formula: Formulas, user: UnitData, target: UnitData) -> floa
 			base_value = user.hp_max * value_01 # 0x3c wish, energy USER_MAX_HP
 		Formulas.USER_MAX_MPxV1:
 			base_value = user.mp_max * value_01 # USER_MAX_MP
+		Formulas.TARGET_MAX_HPxV1:
+			base_value = target.hp_max * value_01 # 0x09 wish, energy TARGET_MAX_HP
+		Formulas.TARGET_MAX_MPxV1:
+			base_value = target.mp_max * value_01 # 0x09 wish, energy TARGET_MAX_HP
+		
+		Formulas.USER_CURRENT_HP_minus_V1:
+			base_value = user.hp_current - value_01 # 0x17, 0x3e TARGET_CURRENT_HP
 		Formulas.TARGET_CURRENT_MP_minus_V1:
 			base_value = target.mp_current - value_01 # 0x16 mute TARGET_CURRENT_MP
 		Formulas.TARGET_CURRENT_HP_minus_V1:

@@ -1,12 +1,12 @@
 class_name ActionEffect
 extends Resource
 
-var type: EffectType = EffectType.HP
+@export var base_power_formula: FormulaData = FormulaData.new(FormulaData.Formulas.PAxV1, 5, 0, FormulaData.FaithModifier.NONE, FormulaData.FaithModifier.NONE, true)
+@export var type: EffectType = EffectType.HP
 var show_ui: bool = true
 var transfer_to_user: bool = false # absorb, steal
+var apply_to_user: bool = false
 var set_value: bool = false # fales = add value, true = set value
-
-# on caster?
 
 enum EffectType {
 	HP, # Absorb if transfer = true

@@ -173,8 +173,9 @@ func _init(idx: int = 0) -> void:
 		
 		# make attack action
 		weapon_attack_action = Action.new()
+		weapon_attack_action.target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
 		
-		weapon_attack_action.base_power_formula.value_01 = weapon_power
+		weapon_attack_action.target_effects[0].base_power_formula.value_01 = weapon_power
 		weapon_attack_action.element = weapon_element
 		
 		weapon_attack_action.action_name = "Attack (" + name + ")"
@@ -197,24 +198,24 @@ func _init(idx: int = 0) -> void:
 		
 		match item_type:
 			ItemType.FISTS:
-				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.PA_BRAVExPA
+				weapon_attack_action.target_effects[0].base_power_formula.formula = FormulaData.Formulas.PA_BRAVExPA
 			ItemType.KNIFE, ItemType.NINJA_BLADE, ItemType.BOW, ItemType.SHURIKEN:
-				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.AVG_PA_SPxV1
+				weapon_attack_action.target_effects[0].base_power_formula.formula = FormulaData.Formulas.AVG_PA_SPxV1
 			ItemType.SWORD, ItemType.ROD, ItemType.CROSSBOW, ItemType.SPEAR:
-				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.PAxV1
+				weapon_attack_action.target_effects[0].base_power_formula.formula = FormulaData.Formulas.PAxV1
 			ItemType.KNIGHT_SWORD, ItemType.KATANA:
-				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.PA_BRAVExV1
+				weapon_attack_action.target_effects[0].base_power_formula.formula = FormulaData.Formulas.PA_BRAVExV1
 			ItemType.AXE, ItemType.FLAIL, ItemType.BAG:
-				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.RANDOM_PAxV1
+				weapon_attack_action.target_effects[0].base_power_formula.formula = FormulaData.Formulas.RANDOM_PAxV1
 			ItemType.STAFF, ItemType.POLE:
-				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.MAxV1
+				weapon_attack_action.target_effects[0].base_power_formula.formula = FormulaData.Formulas.MAxV1
 			ItemType.GUN:
-				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.V1xV1
+				weapon_attack_action.target_effects[0].base_power_formula.formula = FormulaData.Formulas.V1xV1
 			ItemType.INSTRUMENT, ItemType.BOOK, ItemType.CLOTH:
-				weapon_attack_action.base_power_formula.formula = FormulaData.Formulas.MAxV1
+				weapon_attack_action.target_effects[0].base_power_formula.formula = FormulaData.Formulas.MAxV1
 		
-		weapon_attack_action.description = "Attack Base Damage = " + FormulaData.formula_descriptions[weapon_attack_action.base_power_formula.formula]
-		weapon_attack_action.target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+		weapon_attack_action.description = "Attack Base Damage = " + FormulaData.formula_descriptions[weapon_attack_action.target_effects[0].base_power_formula.formula]
+		
 		
 		match weapon_formula_id:
 			4: # TODO proc ability for Formula 04 (magic gun)
@@ -235,7 +236,7 @@ func _init(idx: int = 0) -> void:
 			6:
 				weapon_attack_action.target_effects[0].transfer_to_user = true # absorb hp
 			7:
-				weapon_attack_action.base_power_formula.reverse_sign = false # positive action power is healing when false
+				weapon_attack_action.target_effects[0].base_power_formula.reverse_sign = false # positive action power is healing when false
 		
 		if weapon_formula_id == 2: # proc ability for Formula 02
 			weapon_attack_action.secondary_actions.append(RomReader.abilities[weapon_inflict_status_spell_id].ability_action)

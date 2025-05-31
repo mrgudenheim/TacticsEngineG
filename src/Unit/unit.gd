@@ -16,6 +16,7 @@ signal turn_ended()
 
 var is_player_controlled: bool = false
 var is_active: bool = false
+var team: Team
 
 @export var char_body: CharacterBody3D
 @export var animation_manager: UnitAnimationManager
@@ -582,6 +583,12 @@ func set_primary_weapon(new_weapon_id: int) -> void:
 	
 	attack_action = primary_weapon.weapon_attack_action
 	primary_weapon_assigned.emit(new_weapon_id)
+
+
+func change_equipment(slot_id: int, new_equipment_id: int) -> void:
+	equipment[slot_id] = new_equipment_id
+	
+	# TODO update stats and/or weapon
 
 
 func set_sprite_by_file_idx(new_sprite_file_idx: int) -> void:

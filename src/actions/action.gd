@@ -48,7 +48,7 @@ var inflict_status_id: int = 0
 @export var user_effects: Array[ActionEffect] = []
 
 #@export var is_evadable: bool = false
-@export var applicable_evasion: EvadeType = EvadeType.PHYSICAL
+@export var applicable_evasion: EvadeData.EvadeType = EvadeData.EvadeType.PHYSICAL
 @export var is_reflectable: bool = false
 @export var is_math_usable: bool = false
 @export var is_mimicable: bool = false
@@ -93,12 +93,6 @@ var vfx_data: VisualEffectData
 @export var secondary_action_list_type: StatusListType = StatusListType.EACH
 
 
-enum EvadeType {
-	NONE,
-	PHYSICAL,
-	MAGICAL,
-	}
-
 enum ElementTypes {
 	NONE = 0x00,
 	DARK = 0x01,
@@ -115,6 +109,13 @@ enum StatusListType {
 	ALL,
 	EACH,
 	RANDOM,
+	}
+
+
+enum ActionRelativePosition {
+	FRONT,
+	SIDE,
+	BACK,
 	}
 
 
@@ -159,14 +160,18 @@ func use(action_instance: ActionInstance) -> void:
 func check_hit(user: UnitData, target: UnitData) -> bool:
 	var hit: bool = false
 	var hit_chance: float = base_hit_formula.get_result(user, target, element)
+	var relative_position: Vector2i = target.tile_position.location - user.tile_position.location
+	# TODO check target facing, check x>y accounting for facing and positive/negative
 	
 	# TODO physical evade vs magic evade
-	
-	var job_evade_factor: float = 1 - (target.job_data.evade / 100.0)
-	var shield_evade_factor: float = 1 - (target.job_data.evade / 100.0) # TODO shield evade factor - only front facing?
-	var accessory_factor: float = 1 - (target.job_data.evade / 100.0) # TODO accessory evade factor
-	var weapon_evade_factor: float = 1 - (target.job_data.evade / 100.0) # TODO weapon evade factor - only front facing?
-	var target_total_evade_factor: float = 1 - (job_evade_factor * shield_evade_factor * accessory_factor * weapon_evade_factor)
+	var target_total_evade_factor: float = 0.0
+	if applicable_evasion != EvadeData.EvadeType.NONE:
+		var job_evade_factor: float = 1 - (target.get_evade(EvadeData.EvadeSource.JOB, applicable_evasion) / 100.0) # TODO job/class evade factor - only front facing?
+		var shield_evade_factor: float = 1 - (target.get_evade(EvadeData.EvadeSource.SHIELD, applicable_evasion) / 100.0) # TODO shield evade factor - only front and side facing?
+		var accessory_factor: float = 1 - (target.get_evade(EvadeData.EvadeSource.ACCESSORY, applicable_evasion) / 100.0) # TODO accessory evade factor
+		var weapon_evade_factor: float = 1 - (target.get_evade(EvadeData.EvadeSource.WEAPON, applicable_evasion) / 100.0) # TODO weapon evade factor - only front and side facing? and only with "Weapon Guard" ability
+
+		target_total_evade_factor = 1 - (job_evade_factor * shield_evade_factor * accessory_factor * weapon_evade_factor)
 	#var target_total_evade_factor: float = 0
 	var total_hit_chance: int = roundi(hit_chance - (target_total_evade_factor * 100.0))
 	
@@ -203,8 +208,6 @@ func apply_standard(action_instance: ActionInstance) -> void:
 		var target_unit: UnitData = action_instance.battle_manager.units[unit_index]
 		target_units.append(target_unit)
 	
-	# TODO action effects: Formulas
-	
 	# look up animation based on weapon type and vertical angle to target
 	var mod_animation_executing_id: int = animation_executing_id
 	if animation_executing_id == 0:
@@ -234,6 +237,7 @@ func apply_standard(action_instance: ActionInstance) -> void:
 			
 			target_unit.animate_take_hit() # TODO or animate_receive_heal, status change, evade, shield block?
 		else:
+			# TODO face user
 			target_unit.animate_evade()
 	
 	# apply effects to user
@@ -247,6 +251,7 @@ func apply_standard(action_instance: ActionInstance) -> void:
 	
 	for target_unit: UnitData in target_units:
 		target_unit.animate_return_to_idle()
+		# TODO return to original facing
 	
 	action_instance.clear() # clear all highlighting and target data
 	
@@ -649,7 +654,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.value_01 = formula_x
 		0x42:
-			applicable_evasion = EvadeType.NONE
+			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PAxV1
@@ -834,7 +839,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MA_plus_V1xMA_div_2
 			target_effects[0].base_power_formula.value_01 = formula_y
 		0x60:
-			applicable_evasion = EvadeType.NONE
+			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MA_plus_V1xMA_div_2

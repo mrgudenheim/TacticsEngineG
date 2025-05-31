@@ -77,6 +77,7 @@ var weapon_is_arc: bool = false
 
 @export var actions_granted: Array[Action] = []
 
+@export var evade_datas: Array[EvadeData] = []
 
 enum SlotType {
 	WEAPON = 0x80,
@@ -157,6 +158,8 @@ func _init(idx: int = 0) -> void:
 		weapon_formula_id = RomReader.scus_data.weapon_formula_id[idx]
 		weapon_power = RomReader.scus_data.weapon_power[idx]
 		weapon_evade = RomReader.scus_data.weapon_evade[idx]
+		evade_datas.append(EvadeData.new(weapon_evade, EvadeData.EvadeSource.WEAPON, EvadeData.EvadeType.PHYSICAL))
+		
 		weapon_element = RomReader.scus_data.weapon_element[idx]
 		weapon_inflict_status_spell_id = RomReader.scus_data.weapon_inflict_status_cast_id[idx]
 		
@@ -185,7 +188,7 @@ func _init(idx: int = 0) -> void:
 		weapon_attack_action.area_of_effect_range = 0
 		weapon_attack_action.has_vertical_tolerance_from_user = true
 		weapon_attack_action.cant_target_self = true
-		weapon_attack_action.applicable_evasion = Action.EvadeType.PHYSICAL # TODO Guns have NONE, formula_id = 03 or 07 
+		weapon_attack_action.applicable_evasion = EvadeData.EvadeType.PHYSICAL # TODO Guns have NONE, formula_id = 03 or 07 
 		weapon_attack_action.blocked_by_golem = true
 		weapon_attack_action.trigger_counter_flood = true
 		weapon_attack_action.trigger_counter_grasp = true
@@ -275,6 +278,9 @@ func _init(idx: int = 0) -> void:
 		sub_index = idx - 0x80
 		shield_physical_evade = RomReader.scus_data.shield_physical_evade[sub_index]
 		shield_magical_evade = RomReader.scus_data.shield_magical_evade[sub_index]
+		
+		evade_datas.append(EvadeData.new(shield_physical_evade, EvadeData.EvadeSource.SHIELD, EvadeData.EvadeType.PHYSICAL))
+		evade_datas.append(EvadeData.new(shield_magical_evade, EvadeData.EvadeSource.SHIELD, EvadeData.EvadeType.MAGICAL))
 	elif idx < 0xd0: # armour/helm data
 		sub_index = idx - 0x90
 		hp_modifier = RomReader.scus_data.armour_hp_modifier[sub_index]
@@ -283,6 +289,9 @@ func _init(idx: int = 0) -> void:
 		sub_index = idx - 0xd0
 		accessory_physical_evade = RomReader.scus_data.accessory_physical_evade[sub_index]
 		accessory_magical_evade = RomReader.scus_data.accessory_magical_evade[sub_index]
+		
+		evade_datas.append(EvadeData.new(accessory_physical_evade, EvadeData.EvadeSource.ACCESSORY, EvadeData.EvadeType.PHYSICAL))
+		evade_datas.append(EvadeData.new(accessory_magical_evade, EvadeData.EvadeSource.ACCESSORY, EvadeData.EvadeType.MAGICAL))
 	elif idx < 0xfe: # chemist item data
 		sub_index = idx - 0xf0
 		consumable_formula_id = RomReader.scus_data.chem_item_formula_id[sub_index]

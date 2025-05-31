@@ -591,6 +591,21 @@ func change_equipment(slot_id: int, new_equipment: ItemData) -> void:
 	# TODO update stats and/or weapon
 
 
+func get_evade(evade_source: EvadeData.EvadeSource, evade_type: EvadeData.EvadeType) -> int:
+	var evade: int = 0
+	
+	for evade_data: EvadeData in job_data.evade_datas:
+		if evade_data.source == evade_source and evade_data.type == evade_type:
+			evade += evade_data.value
+	
+	for equipment: ItemData in equipped:
+		for evade_data: EvadeData in equipment.evade_datas:
+			if evade_data.source == evade_source and evade_data.type == evade_type:
+				evade += evade_data.value
+	
+	return evade
+
+
 func set_sprite_by_file_idx(new_sprite_file_idx: int) -> void:
 	sprite_file_idx = new_sprite_file_idx
 	var spr: Spr = RomReader.sprs[new_sprite_file_idx]

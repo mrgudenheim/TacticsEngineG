@@ -21,7 +21,8 @@ var ma_multiplier: int = 1
 
 var move: int = 3
 var jump: int = 3
-var evade: int = 0
+var evade_physical: int = 0
+var evade_datas: Array[EvadeData] = []
 
 var status_always: Array[StatusEffect] = [] # 5 bytes of bitflags for up to 40 statuses
 var status_immune: Array[StatusEffect] = [] # 5 bytes of bitflags for up to 40 statuses
@@ -70,7 +71,8 @@ func _init(new_job_id: int, job_bytes: PackedByteArray) -> void:
 	
 	move = job_bytes.decode_u8(0x17)
 	jump = job_bytes.decode_u8(0x18)
-	evade = job_bytes.decode_u8(0x19)
+	evade_physical = job_bytes.decode_u8(0x19)
+	evade_datas.append(EvadeData.new(evade_physical, EvadeData.EvadeSource.JOB, EvadeData.EvadeType.PHYSICAL))
 	
 	status_always = StatusEffect.get_status_array(job_bytes.slice(0x1a, 0x1f))
 	status_immune = StatusEffect.get_status_array(job_bytes.slice(0x1f, 0x24))

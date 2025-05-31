@@ -37,84 +37,95 @@ func _init(new_type: EffectType, new_show_ui: bool = true, new_transfer_to_user:
 	set_value = new_set_value
 
 
-func apply(user: UnitData, target: UnitData, value: int) -> int:
-	var unit: UnitData = target
-	if apply_to_user:
-		unit = user
-	
+func get_value(user: UnitData, target: UnitData, element: Action.ElementTypes) -> int:
+	return roundi(base_power_formula.get_result(user, target, element))
+
+
+func apply_value(apply_unit: UnitData, value: int) -> int:
 	match type:
-		EffectType.HP:
+		EffectType.HP: # TODO change_hp function on Unit? would return the actual changed hp based on capped hp values (0, max_hp)
 			if set_value:
-				unit.hp_current = value
+				apply_unit.hp_current = value
 			else:
-				unit.hp_current += value
+				apply_unit.hp_current += value
 		EffectType.MP:
 			if set_value:
-				unit.mp_current = value
+				apply_unit.mp_current = value
 			else:
-				unit.mp_current += value
+				apply_unit.mp_current += value
 		EffectType.CT:
 			if set_value:
-				unit.ct_current = value
+				apply_unit.ct_current = value
 			else:
-				unit.ct_current += value
+				apply_unit.ct_current += value
 		EffectType.MOVE:
 			if set_value:
-				unit.move_current = value
+				apply_unit.move_current = value
 			else:
-				unit.move_current += value
+				apply_unit.move_current += value
 		EffectType.JUMP:
 			if set_value:
-				unit.jump_current = value
+				apply_unit.jump_current = value
 			else:
-				unit.jump_current += value
+				apply_unit.jump_current += value
 		EffectType.SPEED:
 			if set_value:
-				unit.speed_current = value
+				apply_unit.speed_current = value
 			else:
-				unit.speed_current += value
+				apply_unit.speed_current += value
 		EffectType.PHYSICAL_ATTACK: # TODO way to modify MA
 			if set_value:
-				unit.hp_current = value
+				apply_unit.physical_attack_current = value
 			else:
-				unit.hp_current += value
+				apply_unit.physical_attack_current += value
 		EffectType.MAGIC_ATTACK: # TODO way to modify MA
 			if set_value:
-				unit.hp_current = value
+				apply_unit.magical_attack_current = value
 			else:
-				unit.hp_current += value
+				apply_unit.magical_attack_current += value
 		EffectType.BRAVE:
 			if set_value:
-				unit.brave_current = value
+				apply_unit.brave_current = value
 			else:
-				unit.brave_current += value
+				apply_unit.brave_current += value
 		EffectType.FAITH:
 			if set_value:
-				unit.faith_current = value
+				apply_unit.faith_current = value
 			else:
-				unit.faith_current += value
+				apply_unit.faith_current += value
 		EffectType.EXP:
 			if set_value:
-				unit.unit_exp = value
+				apply_unit.unit_exp = value
 			else:
-				unit.unit_exp += value
+				apply_unit.unit_exp += value
 		EffectType.LEVEL:
 			if set_value:
-				unit.level = value
+				apply_unit.level = value
 			else:
-				unit.level += value
+				apply_unit.level += value
 		EffectType.CURRENCY:
 			if set_value:
-				unit.team.currency = value
+				apply_unit.team.currency = value
 			else:
-				unit.team.currency += value
+				apply_unit.team.currency += value
 		EffectType.INVENTORY:
 			if set_value:
-				unit.team.inventory[0] = value # TODO get inventory item id to change
+				apply_unit.team.inventory[0] = value # TODO get inventory item id to change
 			else:
-				unit.team.inventory[0] += value # TODO get inventory item id to change
+				apply_unit.team.inventory[0] += value # TODO get inventory item id to change
 		EffectType.REMOVE_EQUIPMENT:
-			unit.change_equipment(0, 0) # TODO get equipment slot id to change
+			apply_unit.change_equipment(0, 0) # TODO get equipment slot id to change
 	
 	return value
+
+func apply(user: UnitData, target: UnitData, value: int) -> int:
+	var apply_unit: UnitData = target
+	if apply_to_user:
+		apply_unit = user
 	
+	value = apply_value(apply_unit, value)
+	
+	if transfer_to_user:
+		apply(user, user, -value)
+	
+	return value

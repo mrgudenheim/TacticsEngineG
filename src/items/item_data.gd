@@ -222,6 +222,7 @@ func _init(idx: int = 0) -> void:
 		
 		match weapon_formula_id:
 			4: # TODO proc ability for Formula 04 (magic gun)
+				weapon_attack_action.applicable_evasion = EvadeData.EvadeType.NONE
 				var secondary_action_ids: PackedInt32Array = []
 				match weapon_element:
 					Action.ElementTypes.FIRE:
@@ -239,6 +240,7 @@ func _init(idx: int = 0) -> void:
 			6:
 				weapon_attack_action.target_effects[0].transfer_to_user = true # absorb hp
 			7:
+				weapon_attack_action.applicable_evasion = EvadeData.EvadeType.NONE
 				weapon_attack_action.target_effects[0].base_power_formula.reverse_sign = false # positive action power is healing when false
 		
 		if weapon_formula_id == 2: # proc ability for Formula 02

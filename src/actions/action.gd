@@ -151,71 +151,7 @@ func stop_targeting(action_instance: ActionInstance) -> void:
 
 func use(action_instance: ActionInstance) -> void:
 	if use_strategy == null: # default usable check
-		# face target
-		var direction_to_target: Vector2i = action_instance.submitted_targets[0].location - action_instance.user.tile_position.location
-		action_instance.user.update_unit_facing(Vector3(direction_to_target.x, 0, direction_to_target.y))
-		
-		var target_units: Array[UnitData] = []
-		for target_tile: TerrainTile in action_instance.submitted_targets:
-			var unit_index: int = action_instance.battle_manager.units.find_custom(func(unit: UnitData): return unit.tile_position == target_tile)
-			if unit_index == -1:
-				continue
-			var target_unit: UnitData = action_instance.battle_manager.units[unit_index]
-			target_units.append(target_unit)
-		
-		# TODO action effects: Formulas
-		
-		# look up animation based on weapon type and vertical angle to target
-		var mod_animation_executing_id: int = animation_executing_id
-		if animation_executing_id == 0:
-			mod_animation_executing_id = RomReader.battle_bin_data.weapon_animation_ids[action_instance.user.primary_weapon.item_type].y * 2
-			var angle_to_target: float = ((action_instance.submitted_targets[0].height_mid - action_instance.user.tile_position.height_mid) 
-					/ (action_instance.submitted_targets[0].location - action_instance.user.tile_position.location).length())
-			if angle_to_target > 0.51:
-				mod_animation_executing_id += -2
-			elif angle_to_target < -0.51:
-				mod_animation_executing_id += 2
-		
-		await action_instance.user.animate_start_action(animation_start_id, animation_charging_id)
-		
-		action_instance.user.animate_execute_action(mod_animation_executing_id)
-		
-		await action_instance.user.get_tree().create_timer(0.2).timeout
-		
-		# TODO show vfx, including rock, arrow, bolt...
-		
-		# apply effects to targets
-		for target_unit: UnitData in target_units:
-			var hit_success: bool = check_hit(action_instance.user, target_unit)
-			if hit_success:
-				for effect: ActionEffect in target_effects:
-					var effect_value: int = roundi(effect.base_power_formula.get_result(action_instance.user, target_unit, element))
-					effect.apply(action_instance.user, target_unit, effect_value)
-				
-				target_unit.animate_take_hit() # TODO or animate_receive_heal, status change, evade, shield block?
-			else:
-				target_unit.animate_evade()
-		
-		# apply effects to user
-		for effect: ActionEffect in user_effects:
-			var effect_value: int = roundi(effect.base_power_formula.get_result(action_instance.user, action_instance.user, element))
-			effect.apply(action_instance.user, action_instance.user, effect_value)
-		
-		await action_instance.user.animation_manager.animation_completed
-
-		action_instance.user.animate_return_to_idle()
-		
-		for target_unit: UnitData in target_units:
-			target_unit.animate_return_to_idle()
-		
-		action_instance.clear() # clear all highlighting and target data
-		
-		# pay costs
-		action_instance.user.move_points_remaining -= action_instance.action.move_points_cost
-		action_instance.user.action_points_remaining -= action_instance.action.action_points_cost
-		action_instance.user.mp_current -= action_instance.action.mp_cost
-		
-		action_instance.action_completed.emit(action_instance.battle_manager)
+		apply_standard(action_instance)
 	else:
 		use_strategy.use(action_instance)
 
@@ -224,16 +160,20 @@ func check_hit(user: UnitData, target: UnitData) -> bool:
 	var hit: bool = false
 	var hit_chance: float = base_hit_formula.get_result(user, target, element)
 	
+	# TODO physical evade vs magic evade
+	
 	var job_evade_factor: float = 1 - (target.job_data.evade / 100.0)
 	var shield_evade_factor: float = 1 - (target.job_data.evade / 100.0) # TODO shield evade factor - only front facing?
 	var accessory_factor: float = 1 - (target.job_data.evade / 100.0) # TODO accessory evade factor
 	var weapon_evade_factor: float = 1 - (target.job_data.evade / 100.0) # TODO weapon evade factor - only front facing?
 	var target_total_evade_factor: float = 1 - (job_evade_factor * shield_evade_factor * accessory_factor * weapon_evade_factor)
+	#var target_total_evade_factor: float = 0
 	var total_hit_chance: int = roundi(hit_chance - (target_total_evade_factor * 100.0))
 	
 	hit = randi_range(0, 99) < total_hit_chance
 	if not hit:
 		# TODO animate_evade, shield block, or weapon block
+		push_warning("miss")
 		return hit
 	
 	
@@ -249,6 +189,73 @@ func get_preview_total_hit_chance(user: UnitData, target: UnitData) -> int:
 	
 	return roundi(hit_chance)
 
+
+func apply_standard(action_instance: ActionInstance) -> void:
+	# face target
+	var direction_to_target: Vector2i = action_instance.submitted_targets[0].location - action_instance.user.tile_position.location
+	action_instance.user.update_unit_facing(Vector3(direction_to_target.x, 0, direction_to_target.y))
+	
+	var target_units: Array[UnitData] = []
+	for target_tile: TerrainTile in action_instance.submitted_targets:
+		var unit_index: int = action_instance.battle_manager.units.find_custom(func(unit: UnitData): return unit.tile_position == target_tile)
+		if unit_index == -1:
+			continue
+		var target_unit: UnitData = action_instance.battle_manager.units[unit_index]
+		target_units.append(target_unit)
+	
+	# TODO action effects: Formulas
+	
+	# look up animation based on weapon type and vertical angle to target
+	var mod_animation_executing_id: int = animation_executing_id
+	if animation_executing_id == 0:
+		mod_animation_executing_id = RomReader.battle_bin_data.weapon_animation_ids[action_instance.user.primary_weapon.item_type].y * 2
+		var angle_to_target: float = ((action_instance.submitted_targets[0].height_mid - action_instance.user.tile_position.height_mid) 
+				/ (action_instance.submitted_targets[0].location - action_instance.user.tile_position.location).length())
+		if angle_to_target > 0.51:
+			mod_animation_executing_id += -2
+		elif angle_to_target < -0.51:
+			mod_animation_executing_id += 2
+	
+	await action_instance.user.animate_start_action(animation_start_id, animation_charging_id)
+	
+	action_instance.user.animate_execute_action(mod_animation_executing_id)
+	
+	await action_instance.user.get_tree().create_timer(0.2).timeout
+	
+	# TODO show vfx, including rock, arrow, bolt...
+	
+	# apply effects to targets
+	for target_unit: UnitData in target_units:
+		var hit_success: bool = check_hit(action_instance.user, target_unit)
+		if hit_success:
+			for effect: ActionEffect in target_effects:
+				var effect_value: int = roundi(effect.base_power_formula.get_result(action_instance.user, target_unit, element))
+				effect.apply(action_instance.user, target_unit, effect_value)
+			
+			target_unit.animate_take_hit() # TODO or animate_receive_heal, status change, evade, shield block?
+		else:
+			target_unit.animate_evade()
+	
+	# apply effects to user
+	for effect: ActionEffect in user_effects:
+		var effect_value: int = roundi(effect.base_power_formula.get_result(action_instance.user, action_instance.user, element))
+		effect.apply(action_instance.user, action_instance.user, effect_value)
+	
+	await action_instance.user.animation_manager.animation_completed
+
+	action_instance.user.animate_return_to_idle()
+	
+	for target_unit: UnitData in target_units:
+		target_unit.animate_return_to_idle()
+	
+	action_instance.clear() # clear all highlighting and target data
+	
+	# pay costs
+	action_instance.user.move_points_remaining -= action_instance.action.move_points_cost
+	action_instance.user.action_points_remaining -= action_instance.action.action_points_cost
+	action_instance.user.mp_current -= action_instance.action.mp_cost
+	
+	action_instance.action_completed.emit(action_instance.battle_manager)
 
 func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> void:
 	formula_id = new_formula_id

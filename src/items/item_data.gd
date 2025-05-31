@@ -214,6 +214,7 @@ func _init(idx: int = 0) -> void:
 				weapon_attack_action.target_effects[0].base_power_formula.formula = FormulaData.Formulas.MAxV1
 			ItemType.GUN:
 				weapon_attack_action.target_effects[0].base_power_formula.formula = FormulaData.Formulas.V1xV1
+				weapon_attack_action.has_vertical_tolerance_from_user = false
 			ItemType.INSTRUMENT, ItemType.BOOK, ItemType.CLOTH:
 				weapon_attack_action.target_effects[0].base_power_formula.formula = FormulaData.Formulas.MAxV1
 		

@@ -64,7 +64,7 @@ var inflict_status_id: int = 0
 
 @export var element: ElementTypes = ElementTypes.NONE
 
-@export var base_hit_formula: FormulaData = FormulaData.new(FormulaData.Formulas.UNMODIFIED, 100, 0, FormulaData.FaithModifier.NONE, FormulaData.FaithModifier.NONE, true)
+@export var base_hit_formula: FormulaData = FormulaData.new(FormulaData.Formulas.UNMODIFIED, 100, 0, FormulaData.FaithModifier.NONE, FormulaData.FaithModifier.NONE, true, false)
 
 @export var healing_damages_undead: bool = false
 

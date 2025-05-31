@@ -11,8 +11,8 @@ extends Resource
 @export var value_01: float = 100
 @export var value_02: float = 0
 @export var reverse_sign: bool = true
-@export var user_faith_modifer: FaithModifier = FaithModifier.NONE
-@export var target_faith_modifer: FaithModifier = FaithModifier.NONE
+@export var user_faith_modifier: FaithModifier = FaithModifier.NONE
+@export var target_faith_modifier: FaithModifier = FaithModifier.NONE
 #@export var is_modified_by_user_faith: bool = false
 #@export var is_modified_by_target_faith: bool = false
 @export var is_modified_by_element: bool = true
@@ -81,13 +81,13 @@ enum Formulas {
 
 
 func _init(new_formula: Formulas, new_value_01: int, new_value_02: int, 
-		new_user_faith_modifer: FaithModifier, new_target_faith_modifer: FaithModifier, 
+		new_user_faith_modifier: FaithModifier, new_target_faith_modifier: FaithModifier, 
 		new_modified_by_element: bool, new_reverse_sign = true) -> void:
 	formula = new_formula
 	value_01 = new_value_01
 	value_02 = new_value_02
-	user_faith_modifer = new_user_faith_modifer
-	target_faith_modifer = new_target_faith_modifer
+	user_faith_modifier = new_user_faith_modifier
+	target_faith_modifier = new_target_faith_modifier
 	is_modified_by_element = new_modified_by_element
 	reverse_sign = new_reverse_sign
 
@@ -95,13 +95,13 @@ func _init(new_formula: Formulas, new_value_01: int, new_value_02: int,
 func get_result(user: UnitData, target: UnitData, element: Action.ElementTypes) -> float:
 	var result: float = get_base_value(formula, user, target)
 	
-	match user_faith_modifer:
+	match user_faith_modifier:
 		FaithModifier.FAITH:
 			result = faith_modify(result, user)
 		FaithModifier.UNFAITH:
 			result = unfaith_modify(result, user)
 	
-	match target_faith_modifer:
+	match target_faith_modifier:
 		FaithModifier.FAITH:
 			result = faith_modify(result, target)
 		FaithModifier.UNFAITH:

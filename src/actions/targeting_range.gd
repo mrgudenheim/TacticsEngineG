@@ -33,7 +33,7 @@ func get_potential_targets(action_instance: ActionInstance) -> Array[TerrainTile
 						continue
 					
 					var distance_vert: float = tile.height_mid - action_instance.user.tile_position.height_mid
-					if action_instance.action.targeting_direct:
+					if action_instance.action.targeting_los:
 						var collider = Raycaster.raycast(action_instance.user.tile_position.get_world_position() + Vector3.UP, tile.get_world_position() + Vector3.UP) # TODO adjust for different height sprites: chicken, frog, Altima
 						if not is_instance_valid(collider):
 							if collider is CharacterBody3D:
@@ -82,7 +82,7 @@ func on_map_input_event(action_instance: ActionInstance, camera: Camera3D, event
 		
 		action_instance.preview_targets.append(tile)
 		# TODO get aoe targets
-		# TODO if targeting_direct and distance > 1, show line
+		# TODO if targeting_los and distance > 1, show line
 		
 		if action_instance.potential_targets.has(tile):
 			action_instance.preview_targets_highlights = action_instance.get_tile_highlights(action_instance.preview_targets, action_instance.battle_manager.tile_highlights[Color.RED])

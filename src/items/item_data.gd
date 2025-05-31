@@ -267,9 +267,9 @@ func _init(idx: int = 0) -> void:
 			weapon_attack_action.max_targeting_range = 2
 			weapon_attack_action.vertical_tolerance = 3.5 # TODO lunging can hit 4 lower https://ffhacktics.com/wiki/Strike/Lunge_Routine
 			weapon_attack_action.targeting_linear = true
-			weapon_attack_action.targeting_direct = true
+			weapon_attack_action.targeting_los = true
 		elif weapon_is_direct:
-			weapon_attack_action.targeting_direct = true
+			weapon_attack_action.targeting_los = true
 		
 		weapon_attack_action.status_prevents_use_any.append(RomReader.scus_data.status_effects[-3]) # Don't Act status prevents weapon attack
 		

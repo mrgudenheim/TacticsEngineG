@@ -109,6 +109,12 @@ func process_rom() -> void:
 	for id: int in NUM_ITEMS:
 		items[id] = (ItemData.new(id))
 	
+	status_effects = scus_data.status_effects
+	
+	# must be after items and status effects to reference requirements
+	for ability: FftAbilityData in abilities:
+		ability.set_action()
+	
 	
 	
 	# testing vfx vram data

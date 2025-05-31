@@ -38,11 +38,11 @@ var inflict_status_id: int = 0
 @export var cant_follow_target: bool = true
 @export var random_fire: bool = false
 @export var targeting_linear: bool = false
-@export var targeting_direct: bool = false # stop at obstacle
+@export var targeting_los: bool = false # stop at obstacle
 @export var aoe_has_vertical_tolerance: bool = false # vertical tolerance
 @export var aoe_vertical_tolerance: float = 2
 @export var aoe_targeting_three_directions: bool = false
-@export var aoe_targeting_direct: bool = false # stop at obstacle
+@export var aoe_targeting_los: bool = false # stop at obstacle
 
 @export var target_effects: Array[ActionEffect] = []
 @export var user_effects: Array[ActionEffect] = []
@@ -60,7 +60,7 @@ var inflict_status_id: int = 0
 @export var trigger_counter_magic: bool = false
 @export var trigger_counter_grasp: bool = false
 
-@export var can_select_unit: bool = true
+@export var can_target: bool = true
 
 @export var element: ElementTypes = ElementTypes.NONE
 
@@ -1005,8 +1005,8 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.value_01 = formula_x
-			base_hit_formula.user_faith_modifer = FormulaData.FaithModifier.FAITH
-			base_hit_formula.target_faith_modifer = FormulaData.FaithModifier.FAITH
+			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
+			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.BRAVE))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED

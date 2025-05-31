@@ -197,10 +197,93 @@ func set_normal_flags(flag_bytes: PackedInt32Array) -> void:
 
 
 func set_action() -> void:
-	ability_action.set_data_from_formula_id(formula_id)
-	#if evadea
+	ability_action.action_name = name
+	ability_action.description = RomReader.fft_text.ability_descriptions[id]
+	ability_action.quote = spell_quote
+	ability_action.display_action_name = show_quote
+	
+	ability_action.mp_cost = mp_cost
+	
+	ability_action.formula_x = formula_x
+	ability_action.formula_y = formula_y
+	ability_action.min_targeting_range = 0
+	ability_action.max_targeting_range = max_targeting_range
+	ability_action.area_of_effect_range = area_of_effect_radius
+	ability_action.vertical_tolerance = vertical_tolerance
+	ability_action.inflict_status_id = inflict_status_id # TODO set status effect data
+	ability_action.ticks_charge_time = ticks_charge_time
+	
+	ability_action.has_vertical_tolerance_from_user = vertical_tolerance_from_user # vertical fixed / linear range
+	ability_action.use_weapon_range = use_weapon_range
+	ability_action.use_weapon_potential_targets = false
+	ability_action.use_weapon_damage = false # weapon_strike?
+	ability_action.auto_target = auto_target
+	ability_action.cant_target_self = cant_hit_user
+	ability_action.cant_hit_enimies = cant_hit_enemies
+	ability_action.cant_hit_allies = cant_hit_allies
+	ability_action.cant_hit_user = cant_hit_user
+	ability_action.targeting_top_down = top_down_targeting
+	ability_action.cant_follow_target = cant_follow_target
+	ability_action.random_fire = random_target
+	ability_action.targeting_linear = linear_range
+	ability_action.targeting_los = stop_at_obstacle # stop at obstacle
+	ability_action.aoe_has_vertical_tolerance = true # always applies in vanilla
+	ability_action.aoe_vertical_tolerance = vertical_tolerance
+	ability_action.aoe_targeting_three_directions = three_direction_aoe
+	ability_action.aoe_targeting_los = false # stop at obstacle
+	
+	ability_action.is_reflectable = is_reflectable
+	ability_action.is_math_usable = usable_by_math
+	ability_action.is_mimicable = not cant_mimic
+	ability_action.blocked_by_golem = blocked_by_golem
+	ability_action.repeat_use = performing # performing
+	ability_action.vfx_on_empty = animate_on_miss
+	
+	ability_action.trigger_counter_flood = trigger_counter_flood
+	ability_action.trigger_counter_magic = trigger_counter_magic
+	ability_action.trigger_counter_grasp = trigger_counter_grasp
+	
+	ability_action.can_target = not no_targeting
 	
 	ability_action.element = element_type
+	
+	
+	
+	# inflict status data
+	var inflict_status_data: ScusData.InflictStatus = RomReader.scus_data.inflict_statuses[inflict_status_id]
+	ability_action.status_list = inflict_status_data.status_list
+	ability_action.status_chance = 19
+	ability_action.will_remove_status = inflict_status_data.will_cancel
+	
+	ability_action.all_status = inflict_status_data.is_all
+	ability_action.random_status = inflict_status_data.is_random
+	ability_action.separate_status = inflict_status_data.is_separate
+	if inflict_status_data.is_all:
+		ability_action.status_list_type = Action.StatusListType.ALL
+	elif inflict_status_data.is_random:
+		ability_action.status_list_type = Action.StatusListType.RANDOM
+	elif inflict_status_data.is_separate:
+		ability_action.status_list_type = Action.StatusListType.EACH
+		ability_action.status_chance = 25
+
+	if affected_by_silence:
+		ability_action.status_prevents_use_any = [RomReader.status_effects[12]] # silence, dont move, dont act, etc.
+	if require_sword:
+		ability_action.required_equipment_type = [ItemData.ItemType.SWORD] # sword, gun, etc.
+	if require_materia_blade:
+		ability_action.required_equipment = [RomReader.items[0x20]] # materia_blade, etc.
+	
+	ability_action.set_data_from_formula_id(formula_id)
+	if not is_evadeable: # set after formula
+		ability_action.applicable_evasion = EvadeData.EvadeType.NONE
+
+	# animation data
+	ability_action.animation_start_id = animation_start_id
+	ability_action.animation_charging_id = animation_charging_id
+	ability_action.animation_executing_id = animation_executing_id
+	
+	ability_action.vfx_data = vfx_data
+	
 
 
 

@@ -47,7 +47,7 @@ var support_ability: Array = []
 var movement_ability: Array = []
 
 var primary_weapon: ItemData
-var equipment: PackedInt32Array = []
+var equipped: Array[ItemData] = []
 
 var unit_exp: int = 0
 var level: int = 0
@@ -585,8 +585,8 @@ func set_primary_weapon(new_weapon_id: int) -> void:
 	primary_weapon_assigned.emit(new_weapon_id)
 
 
-func change_equipment(slot_id: int, new_equipment_id: int) -> void:
-	equipment[slot_id] = new_equipment_id
+func change_equipment(slot_id: int, new_equipment: ItemData) -> void:
+	equipped[slot_id] = new_equipment
 	
 	# TODO update stats and/or weapon
 

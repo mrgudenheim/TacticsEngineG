@@ -160,14 +160,30 @@ func use(action_instance: ActionInstance) -> void:
 func check_hit(user: UnitData, target: UnitData) -> bool:
 	var hit: bool = false
 	var hit_chance: float = base_hit_formula.get_result(user, target, element)
-	var relative_position: Vector2i = user.tile_position.location - target.tile_position.location
-	# TODO check target facing, check x>y accounting for facing and positive/negative
-	var evade_direction: EvadeData.Directions = EvadeData.Directions.FRONT
 	
-	# TODO physical evade vs magic evade
+	var relative_position: Vector2i = user.tile_position.location - target.tile_position.location
+	var relative_facing_position: Vector2i = relative_position
+	if target.facing == UnitData.Facings.NORTH:
+		pass # relative position is already correct for North facing
+	elif target.facing == UnitData.Facings.EAST:
+		relative_facing_position = Vector2i(-relative_position.y, relative_position.x)
+	elif target.facing == UnitData.Facings.SOUTH:
+		relative_facing_position = -relative_position
+	elif target.facing == UnitData.Facings.WEST:
+		relative_facing_position = Vector2i(relative_position.y, -relative_position.x)
+	
+	# check target facing, check x>y
+	var evade_direction: EvadeData.Directions = EvadeData.Directions.FRONT
+	if relative_facing_position.y < 0:
+		evade_direction = EvadeData.Directions.BACK
+		if abs(relative_facing_position.x) >= abs(relative_facing_position.y):
+			evade_direction = EvadeData.Directions.SIDE
+	elif abs(relative_facing_position.x) > abs(relative_facing_position.y):
+		evade_direction = EvadeData.Directions.SIDE
+	
 	var target_total_evade_factor: float = 0.0
 	if applicable_evasion != EvadeData.EvadeType.NONE:
-		# TODO loop over EvadeData.EvadeSource possibilites?
+		# TODO loop over all EvadeData.EvadeSource possibilites?
 		var job_evade_factor: float = 1 - (target.get_evade(EvadeData.EvadeSource.JOB, applicable_evasion, evade_direction) / 100.0) # TODO job/class evade factor - only front facing?
 		var shield_evade_factor: float = 1 - (target.get_evade(EvadeData.EvadeSource.SHIELD, applicable_evasion, evade_direction) / 100.0) # TODO shield evade factor - only front and side facing?
 		var accessory_factor: float = 1 - (target.get_evade(EvadeData.EvadeSource.ACCESSORY, applicable_evasion, evade_direction) / 100.0) # TODO accessory evade factor

@@ -591,16 +591,20 @@ func change_equipment(slot_id: int, new_equipment: ItemData) -> void:
 	# TODO update stats and/or weapon
 
 
-func get_evade(evade_source: EvadeData.EvadeSource, evade_type: EvadeData.EvadeType) -> int:
+func get_evade(evade_source: EvadeData.EvadeSource, evade_type: EvadeData.EvadeType, evade_position: EvadeData.Position) -> int:
 	var evade: int = 0
 	
 	for evade_data: EvadeData in job_data.evade_datas:
-		if evade_data.source == evade_source and evade_data.type == evade_type:
+		if (evade_data.source == evade_source 
+				and evade_data.type == evade_type
+				and evade_data.positions.has(evade_position)):
 			evade += evade_data.value
 	
 	for equipment: ItemData in equipped:
 		for evade_data: EvadeData in equipment.evade_datas:
-			if evade_data.source == evade_source and evade_data.type == evade_type:
+			if (evade_data.source == evade_source 
+					and evade_data.type == evade_type
+					and evade_data.positions.has(evade_position)):
 				evade += evade_data.value
 	
 	return evade

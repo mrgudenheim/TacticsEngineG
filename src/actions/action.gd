@@ -111,7 +111,6 @@ enum StatusListType {
 	RANDOM,
 	}
 
-
 enum ActionRelativePosition {
 	FRONT,
 	SIDE,

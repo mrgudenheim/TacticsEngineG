@@ -38,7 +38,6 @@ var ai_flags_2: int = 0
 var ai_flags_3: int = 0
 var ai_flags_4: int = 0
 
-var formula # TODO store Callable?
 var formula_id: int = 0
 var formula_x: int = 0
 var formula_y: int = 0
@@ -50,9 +49,45 @@ var ticks_charge_time: int = 0
 var mp_cost: int = 0
 
 var normal_flags_1: int = 0
+var force_self_target_1: bool = false
+var force_self_target_2: bool = false
+var use_weapon_range: bool = false
+var linear_range: bool = false
+var vertical_tolerance_from_user: bool = false
+var weapon_strike: bool = false
+var auto_target: bool = false
+var cant_target_self: bool = false
+
 var normal_flags_2: int = 0
+var cant_hit_enemies: bool = false
+var cant_hit_allies: bool = false
+var top_down_targeting: bool = false
+var cant_follow_target: bool = false
+var random_target: bool = false
+var linear_aoe: bool = false
+var three_direction_aoe: bool = false
+var cant_hit_user: bool = false
+
 var normal_flags_3: int = 0
+var is_reflectable: bool = false
+var usable_by_math: bool = false
+var affected_by_silence: bool = false
+var cant_mimic: bool = false
+var blocked_by_golem: bool = false
+var performing: bool = false
+var show_quote: bool = false
+var animate_on_miss: bool = false
+
 var normal_flags_4: int = 0
+var trigger_counter_flood: bool = false
+var trigger_counter_magic: bool = false
+var stop_at_obstacle: bool = false
+var trigger_counter_grasp: bool = false
+var require_sword: bool = false
+var require_materia_blade: bool = false
+var is_evadeable: bool = false
+var no_targeting: bool = false
+
 var element_type: Action.ElementTypes = Action.ElementTypes.NONE
 
 var used_item_id: int = -1
@@ -77,7 +112,7 @@ var vfx_id: int = 0
 
 var animation_speed: float = 59 # frames per second
 
-var ability_action: Action
+var ability_action: Action = Action.new()
 
 func _init(new_id: int = 0) -> void:
 	id = new_id
@@ -114,6 +149,13 @@ func _init(new_id: int = 0) -> void:
 	vertical_tolerance = RomReader.scus_data.vertical_tolerance[new_id]
 	inflict_status_id = RomReader.scus_data.ability_inflict_status_id[new_id]
 	ticks_charge_time = RomReader.scus_data.ct[new_id]
+
+
+func set_action() -> void:
+	ability_action.set_data_from_formula_id(formula_id)
+	#if evadea
+	
+	ability_action.element = element_type
 
 
 func display_vfx(location: Node3D) -> void:

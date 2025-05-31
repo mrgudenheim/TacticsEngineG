@@ -180,7 +180,7 @@ func check_hit(user: UnitData, target: UnitData) -> bool:
 	elif abs(relative_facing_position.x) > abs(relative_facing_position.y):
 		evade_direction = EvadeData.Directions.SIDE
 	
-	var target_total_evade_factor: float = 0.0
+	var target_total_evade_factor: float = 1.0
 	if applicable_evasion != EvadeData.EvadeType.NONE:
 		# TODO loop over all EvadeData.EvadeSource possibilites?
 		var job_evade_factor: float = 1 - (target.get_evade(EvadeData.EvadeSource.JOB, applicable_evasion, evade_direction) / 100.0) # TODO job/class evade factor - only front facing?

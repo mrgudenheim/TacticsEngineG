@@ -217,6 +217,7 @@ func update_units_pathfinding() -> void:
 
 # TODO handle event timeline
 func process_next_event() -> void:
+	# TODO implement action timeline
 	event_num = (event_num + 1) % units.size()
 	var new_unit: UnitData = units[event_num]
 	controller.unit = new_unit

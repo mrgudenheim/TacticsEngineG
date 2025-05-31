@@ -56,9 +56,14 @@ func get_potential_targets(action_instance: ActionInstance) -> Array[TerrainTile
 
 
 func start_targeting(action_instance: ActionInstance) -> void:
-	super.start_targeting(action_instance)
-	
-	action_instance.battle_manager.map_input_event.connect(on_map_input_event)
+	if not action_instance.action.auto_target:
+		super.start_targeting(action_instance)
+
+		action_instance.battle_manager.map_input_event.connect(on_map_input_event)
+	else: # TODO auto targeting for reactions and all enimies/allies for dance/sing?
+		action_instance.preview_targets.append(action_instance.user.tile_position)
+		action_instance.submitted_targets = action_instance.preview_targets
+		action_instance.use()
 
 
 func stop_targeting(action_instance: ActionInstance) -> void:

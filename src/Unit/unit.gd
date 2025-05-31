@@ -256,6 +256,7 @@ func update_actions(battle_manager: BattleManager) -> void:
 	actions_data.clear()
 	actions.append(move_action)
 	actions.append(attack_action)
+	actions.append(wait_action)
 	# TODO append all other potential actions, from jobs, wait, equipment, etc.
 	
 	# remove any existing buttons
@@ -279,7 +280,7 @@ func update_actions(battle_manager: BattleManager) -> void:
 	# select first usable action by default (usually Move)
 	active_action = null
 	for action_instance: ActionInstance in actions_data.values():
-		if action_instance.is_usable():
+		if action_instance.is_usable() and action_instance.action != wait_action:
 			active_action = action_instance
 			active_action.update_potential_targets()
 			active_action.start_targeting()
@@ -291,11 +292,16 @@ func update_actions(battle_manager: BattleManager) -> void:
 
 
 func end_turn():
+	if active_action != null:
+		active_action.clear()
+		active_action.stop_targeting()
+	
 	# set some stats for next turn - move_points_remaining, action_points_remaining, etc.
 	move_points_remaining = move_points_start
 	action_points_remaining = action_points_start
 	
-	turn_ended.emit()
+	if UnitControllerRT.unit == self: # prevent accidentally ending a different units turn TODO what if the next turn is also this unit?
+		turn_ended.emit()
 
 
 func use_attack() -> void:

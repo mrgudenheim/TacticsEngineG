@@ -16,8 +16,8 @@ extends Resource
 @export var mp_cost: int = 0
 
 var formula_id: int = 0
-@export var formula_x: int = 0
-@export var formula_y: int = 0
+var formula_x: int = 0
+var formula_y: int = 0
 @export var min_targeting_range: int = 0
 @export var max_targeting_range: int = 4
 @export var area_of_effect_range: int = 0
@@ -92,6 +92,8 @@ var vfx_data: VisualEffectData
 @export var secondary_actions_chances: PackedInt32Array = [100]
 @export var secondary_action_list_type: StatusListType = StatusListType.EACH
 
+@export var set_target_animation_on_hit: bool = true
+@export var ends_turn: bool = false
 
 enum ElementTypes {
 	NONE = 0x00,
@@ -142,11 +144,13 @@ func is_usable(action_instance: ActionInstance) -> bool:
 
 
 func start_targeting(action_instance: ActionInstance) -> void:
-	targeting_strategy.start_targeting(action_instance)
+	if targeting_strategy != null:
+		targeting_strategy.start_targeting(action_instance)
 
 
 func stop_targeting(action_instance: ActionInstance) -> void:
-	targeting_strategy.stop_targeting(action_instance)
+	if targeting_strategy != null:
+		targeting_strategy.stop_targeting(action_instance)
 
 
 func use(action_instance: ActionInstance) -> void:
@@ -253,18 +257,20 @@ func apply_standard(action_instance: ActionInstance) -> void:
 				var effect_value: int = roundi(effect.base_power_formula.get_result(action_instance.user, target_unit, element))
 				effect.apply(action_instance.user, target_unit, effect_value)
 			
-			target_unit.animate_take_hit() # TODO or animate_receive_heal, status change, evade, shield block?
+			if set_target_animation_on_hit:
+				target_unit.animate_take_hit() # TODO or animate_receive_heal, status change
 		else:
 			# TODO face user
-			target_unit.animate_evade()
+			target_unit.animate_evade() # TODO or shield block?
 	
 	# apply effects to user
 	for effect: ActionEffect in user_effects:
 		var effect_value: int = roundi(effect.base_power_formula.get_result(action_instance.user, action_instance.user, element))
 		effect.apply(action_instance.user, action_instance.user, effect_value)
 	
-	await action_instance.user.animation_manager.animation_completed
-
+	if action_instance.user.current_animation_id_fwd != action_instance.user.current_idle_animation_id:
+		await action_instance.user.animation_manager.animation_completed
+	
 	action_instance.user.animate_return_to_idle()
 	
 	for target_unit: UnitData in target_units:
@@ -279,6 +285,9 @@ func apply_standard(action_instance: ActionInstance) -> void:
 	action_instance.user.mp_current -= action_instance.action.mp_cost
 	
 	action_instance.action_completed.emit(action_instance.battle_manager)
+	
+	if ends_turn:
+		action_instance.user.end_turn()
 
 func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> void:
 	formula_id = new_formula_id

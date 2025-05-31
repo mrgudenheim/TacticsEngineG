@@ -1,0 +1,104 @@
+[gd_resource type="Resource" script_class="Action" load_steps=10 format=3 uid="uid://hfseiukq3qpk"]
+
+[ext_resource type="Script" uid="uid://cf5w02iml4cqu" path="res://src/items/item_data.gd" id="1_v43vl"]
+[ext_resource type="Script" uid="uid://dlaul7n568vti" path="res://src/actions/action.gd" id="2_22o4i"]
+[ext_resource type="Script" uid="uid://cg0yup2a7gcs8" path="res://src/Unit/status.gd" id="3_jmljt"]
+[ext_resource type="Script" uid="uid://cpa42ca48we8h" path="res://src/actions/action_effect.gd" id="4_ltkoj"]
+[ext_resource type="Script" uid="uid://2y1mi77a2isp" path="res://src/actions/formula_data.gd" id="5_22o4i"]
+[ext_resource type="Resource" uid="uid://bu2sto41olfil" path="res://src/actions/targeting_range.tres" id="6_jmljt"]
+
+[sub_resource type="Resource" id="Resource_22o4i"]
+script = ExtResource("5_22o4i")
+formula = 0
+value_01 = 100.0
+value_02 = 0.0
+reverse_sign = false
+user_faith_modifier = 0
+target_faith_modifier = 0
+is_modified_by_element = false
+is_modified_by_zodiac = false
+metadata/_custom_type_script = "uid://2y1mi77a2isp"
+
+[sub_resource type="Resource" id="Resource_jmljt"]
+script = ExtResource("5_22o4i")
+formula = 0
+value_01 = 20.0
+value_02 = 0.0
+reverse_sign = false
+user_faith_modifier = 0
+target_faith_modifier = 0
+is_modified_by_element = false
+is_modified_by_zodiac = false
+metadata/_custom_type_script = "uid://2y1mi77a2isp"
+
+[sub_resource type="Resource" id="Resource_ltkoj"]
+script = ExtResource("4_ltkoj")
+base_power_formula = SubResource("Resource_jmljt")
+type = 2
+metadata/_custom_type_script = "uid://cpa42ca48we8h"
+
+[resource]
+script = ExtResource("2_22o4i")
+action_name = "Wait"
+description = "Ends turn"
+quote = "Action quote"
+display_action_name = false
+targeting_strategy = ExtResource("6_jmljt")
+move_points_cost = 0
+action_points_cost = 0
+mp_cost = 0
+min_targeting_range = 0
+max_targeting_range = 0
+area_of_effect_range = 0
+vertical_tolerance = 2.0
+ticks_charge_time = 0
+has_vertical_tolerance_from_user = true
+use_weapon_range = false
+use_weapon_potential_targets = false
+use_weapon_damage = false
+auto_target = true
+cant_target_self = false
+cant_hit_enimies = false
+cant_hit_allies = false
+cant_hit_user = false
+targeting_top_down = false
+cant_follow_target = true
+random_fire = false
+targeting_linear = false
+targeting_los = false
+aoe_has_vertical_tolerance = false
+aoe_vertical_tolerance = 2.0
+aoe_targeting_three_directions = false
+aoe_targeting_los = false
+target_effects = Array[ExtResource("4_ltkoj")]([SubResource("Resource_ltkoj")])
+user_effects = Array[ExtResource("4_ltkoj")]([])
+applicable_evasion = 0
+is_reflectable = false
+is_math_usable = false
+is_mimicable = false
+blocked_by_golem = false
+repeat_use = false
+vfx_on_empty = false
+trigger_counter_flood = false
+trigger_counter_magic = false
+trigger_counter_grasp = false
+can_target = false
+element = 0
+base_hit_formula = SubResource("Resource_22o4i")
+healing_damages_undead = false
+status_list = Array[ExtResource("3_jmljt")]([])
+status_chance = 100
+will_remove_status = false
+status_list_type = 1
+status_prevents_use_any = Array[ExtResource("3_jmljt")]([])
+required_equipment_type = Array[int]([])
+required_equipment = Array[ExtResource("1_v43vl")]([])
+animation_start_id = 0
+animation_charging_id = 0
+animation_executing_id = 0
+secondary_actions = Array[ExtResource("2_22o4i")]([])
+secondary_actions_chances = [100]
+secondary_action_list_type = 1
+set_target_animation_on_hit = false
+ends_turn = true
+metadata/_custom_type_script = "uid://dlaul7n568vti"

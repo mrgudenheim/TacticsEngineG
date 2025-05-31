@@ -149,6 +149,51 @@ func _init(new_id: int = 0) -> void:
 	vertical_tolerance = RomReader.scus_data.vertical_tolerance[new_id]
 	inflict_status_id = RomReader.scus_data.ability_inflict_status_id[new_id]
 	ticks_charge_time = RomReader.scus_data.ct[new_id]
+	
+	if ability_type == AbilityType.NORMAL:
+		normal_flags_1 = RomReader.scus_data.flags1[id]
+		normal_flags_2 = RomReader.scus_data.flags2[id]
+		normal_flags_3 = RomReader.scus_data.flags3[id]
+		normal_flags_4 = RomReader.scus_data.flags4[id]
+		set_normal_flags([normal_flags_1, normal_flags_2, normal_flags_3, normal_flags_4])
+
+
+func set_normal_flags(flag_bytes: PackedInt32Array) -> void:
+	force_self_target_1 = normal_flags_1 & 0x80 == 0x80
+	force_self_target_2 = normal_flags_1 & 0x40 == 0x40
+	use_weapon_range = normal_flags_1 & 0x20 == 0x20
+	linear_range = normal_flags_1 & 0x10 == 0x10
+	vertical_tolerance_from_user = normal_flags_1 & 0x08 == 0x08
+	weapon_strike = normal_flags_1 & 0x04 == 0x04
+	auto_target = normal_flags_1 & 0x02 == 0x02
+	cant_target_self = normal_flags_1 & 0x01 == 0x01
+	
+	cant_hit_enemies = normal_flags_2 & 0x80 == 0x80
+	cant_hit_allies = normal_flags_2 & 0x40 == 0x40
+	top_down_targeting = normal_flags_2 & 0x20 == 0x20
+	cant_follow_target = normal_flags_2 & 0x10 == 0x10
+	random_target = normal_flags_2 & 0x08 == 0x08
+	linear_aoe = normal_flags_2 & 0x04 == 0x04
+	three_direction_aoe = normal_flags_2 & 0x02 == 0x02
+	cant_hit_user = normal_flags_2 & 0x01 == 0x01
+	
+	is_reflectable = normal_flags_3 & 0x80 == 0x80
+	usable_by_math = normal_flags_3 & 0x40 == 0x40
+	affected_by_silence = normal_flags_3 & 0x20 == 0x20
+	cant_mimic = normal_flags_3  & 0x10 == 0x10
+	blocked_by_golem = normal_flags_3 & 0x08 == 0x08
+	performing = normal_flags_3 & 0x04 == 0x04
+	show_quote = normal_flags_3 & 0x02 == 0x02
+	animate_on_miss = normal_flags_3 & 0x01 == 0x01
+	
+	trigger_counter_flood = normal_flags_4 & 0x80 == 0x80
+	trigger_counter_magic = normal_flags_4 & 0x40 == 0x40
+	stop_at_obstacle = normal_flags_4 & 0x20 == 0x20
+	trigger_counter_grasp = normal_flags_4 & 0x10 == 0x10
+	require_sword = normal_flags_4 & 0x08 == 0x08
+	require_materia_blade = normal_flags_4 & 0x04 == 0x04
+	is_evadeable = normal_flags_4 & 0x02 == 0x02
+	no_targeting = normal_flags_4 & 0x01 == 0x01
 
 
 func set_action() -> void:
@@ -156,6 +201,7 @@ func set_action() -> void:
 	#if evadea
 	
 	ability_action.element = element_type
+
 
 
 func display_vfx(location: Node3D) -> void:

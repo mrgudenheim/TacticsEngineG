@@ -80,13 +80,16 @@ enum Formulas {
 	}
 
 
-func _init(new_formula: Formulas, new_value_01: int, new_value_02: int, new_user_faith_modifer: FaithModifier, new_target_faith_modifer: FaithModifier, new_modified_by_element: bool) -> void:
+func _init(new_formula: Formulas, new_value_01: int, new_value_02: int, 
+		new_user_faith_modifer: FaithModifier, new_target_faith_modifer: FaithModifier, 
+		new_modified_by_element: bool, new_reverse_sign = true) -> void:
 	formula = new_formula
 	value_01 = new_value_01
 	value_02 = new_value_02
 	user_faith_modifer = new_user_faith_modifer
 	target_faith_modifer = new_target_faith_modifer
 	is_modified_by_element = new_modified_by_element
+	reverse_sign = new_reverse_sign
 
 
 func get_result(user: UnitData, target: UnitData, element: Action.ElementTypes) -> float:
@@ -120,7 +123,7 @@ func get_result(user: UnitData, target: UnitData, element: Action.ElementTypes) 
 
 func get_base_value(formula: Formulas, user: UnitData, target: UnitData) -> float:
 	var base_value: float = value_01
-	var wp = user.primary_weapon.weapon_attack_action.base_power_formula.value_01
+	var wp = user.primary_weapon.weapon_attack_action.target_effects[0].base_power_formula.value_01
 	
 	match formula:
 		Formulas.UNMODIFIED:

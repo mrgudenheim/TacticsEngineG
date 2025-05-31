@@ -160,16 +160,17 @@ func use(action_instance: ActionInstance) -> void:
 func check_hit(user: UnitData, target: UnitData) -> bool:
 	var hit: bool = false
 	var hit_chance: float = base_hit_formula.get_result(user, target, element)
-	var relative_position: Vector2i = target.tile_position.location - user.tile_position.location
+	var relative_position: Vector2i = user.tile_position.location - target.tile_position.location
 	# TODO check target facing, check x>y accounting for facing and positive/negative
+	var evade_position: EvadeData.Position = EvadeData.Position.FRONT
 	
 	# TODO physical evade vs magic evade
 	var target_total_evade_factor: float = 0.0
 	if applicable_evasion != EvadeData.EvadeType.NONE:
-		var job_evade_factor: float = 1 - (target.get_evade(EvadeData.EvadeSource.JOB, applicable_evasion) / 100.0) # TODO job/class evade factor - only front facing?
-		var shield_evade_factor: float = 1 - (target.get_evade(EvadeData.EvadeSource.SHIELD, applicable_evasion) / 100.0) # TODO shield evade factor - only front and side facing?
-		var accessory_factor: float = 1 - (target.get_evade(EvadeData.EvadeSource.ACCESSORY, applicable_evasion) / 100.0) # TODO accessory evade factor
-		var weapon_evade_factor: float = 1 - (target.get_evade(EvadeData.EvadeSource.WEAPON, applicable_evasion) / 100.0) # TODO weapon evade factor - only front and side facing? and only with "Weapon Guard" ability
+		var job_evade_factor: float = 1 - (target.get_evade(EvadeData.EvadeSource.JOB, applicable_evasion, evade_position) / 100.0) # TODO job/class evade factor - only front facing?
+		var shield_evade_factor: float = 1 - (target.get_evade(EvadeData.EvadeSource.SHIELD, applicable_evasion, evade_position) / 100.0) # TODO shield evade factor - only front and side facing?
+		var accessory_factor: float = 1 - (target.get_evade(EvadeData.EvadeSource.ACCESSORY, applicable_evasion, evade_position) / 100.0) # TODO accessory evade factor
+		var weapon_evade_factor: float = 1 - (target.get_evade(EvadeData.EvadeSource.WEAPON, applicable_evasion, evade_position) / 100.0) # TODO weapon evade factor - only front and side facing? and only with "Weapon Guard" ability
 
 		target_total_evade_factor = 1 - (job_evade_factor * shield_evade_factor * accessory_factor * weapon_evade_factor)
 	#var target_total_evade_factor: float = 0

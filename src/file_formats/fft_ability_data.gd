@@ -232,6 +232,7 @@ func set_action() -> void:
 	ability_action.aoe_has_vertical_tolerance = true # always applies in vanilla
 	ability_action.aoe_vertical_tolerance = vertical_tolerance
 	ability_action.aoe_targeting_three_directions = three_direction_aoe
+	ability_action.aoe_targeting_linear = linear_range
 	ability_action.aoe_targeting_los = false # stop at obstacle
 	
 	ability_action.is_reflectable = is_reflectable

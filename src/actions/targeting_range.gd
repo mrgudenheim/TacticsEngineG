@@ -39,7 +39,7 @@ func get_potential_targets(action_instance: ActionInstance) -> Array[TerrainTile
 					var distance_vert: float = tile.height_mid - action_instance.user.tile_position.height_mid
 					if action_instance.action.targeting_los:
 						var collider = Raycaster.raycast(action_instance.user.tile_position.get_world_position() + Vector3.UP, tile.get_world_position() + Vector3.UP) # TODO adjust for different height sprites: chicken, frog, Altima
-						if not is_instance_valid(collider):
+						if is_instance_valid(collider):
 							if collider is CharacterBody3D:
 								var intersected_unit: UnitData = collider.get_parent_node_3d()
 								if intersected_unit.tile_position != tile:
@@ -54,7 +54,6 @@ func get_potential_targets(action_instance: ActionInstance) -> Array[TerrainTile
 							potential_targets.append(tile)
 					
 					# TODO arc https://ffhacktics.com/wiki/Arc_Range_Calculation_Routine
-					# TODO aoe flags: linear, 3 directions, direct, vertical tolerance, top-down
 	
 	return potential_targets
 
@@ -89,7 +88,7 @@ func on_map_input_event(action_instance: ActionInstance, camera: Camera3D, event
 		action_instance.clear_targets(action_instance.preview_targets_highlights)
 		action_instance.preview_targets.clear()
 		
-		action_instance.preview_targets.append(tile)
+		action_instance.preview_targets = get_aoe_targets(action_instance, tile)
 		# TODO get aoe targets
 		# TODO if targeting_los and distance > 1, show line
 		
@@ -109,3 +108,67 @@ func on_map_input_event(action_instance: ActionInstance, camera: Camera3D, event
 		#action_instance.submitted_targets.append(tile)
 		action_instance.use()
 		return
+
+
+func get_aoe_targets(action_instance: ActionInstance, tile_target: TerrainTile) -> Array[TerrainTile]:
+	# TODO aoe flags: linear, 3 directions, direct, vertical tolerance, top-down
+	var aoe_targets: Array[TerrainTile] = []
+	#action_instance.user.get_map_paths(action_instance.battle_manager.total_map_tiles, action_instance.battle_manager.units)
+	
+	var target_relative_user: Vector2i = tile_target.location - action_instance.user.tile_position.location
+	
+	if action_instance.action.aoe_targeting_linear:
+		if target_relative_user.x != 0 and target_relative_user.y != 0:
+			aoe_targets.append(tile_target)
+			return aoe_targets
+	
+	var min_tile_pos: Vector2i = tile_target.location - Vector2i(action_instance.action.area_of_effect_range, action_instance.action.area_of_effect_range)
+	var max_tile_pos: Vector2i = tile_target.location + Vector2i(action_instance.action.area_of_effect_range, action_instance.action.area_of_effect_range)
+	
+	for map_x: int in range(min_tile_pos.x, max_tile_pos.x + 1):
+		for map_y: int in range(min_tile_pos.y, max_tile_pos.y + 1):
+			var map_pos: Vector2i = Vector2i(map_x, map_y)
+			if action_instance.battle_manager.total_map_tiles.has(map_pos):
+				var relative_pos_target: Vector2i = map_pos - tile_target.location
+				#if action_instance.action.aoe_targeting_linear:
+				var relative_pos_user: Vector2i = map_pos - action_instance.user.tile_position.location
+				#var target_relative_user: Vector2i = tile_target.location - action_instance.user.tile_position.location
+				
+				var distance_xy: int = abs(relative_pos_target.x) + abs(relative_pos_target.y)
+				
+				if action_instance.action.aoe_targeting_linear:
+					distance_xy = abs(relative_pos_user.x) + abs(relative_pos_user.y)
+					if ((relative_pos_user.x != 0 and relative_pos_user.y != 0)
+							or not Vector2(relative_pos_user).normalized().is_equal_approx(Vector2(target_relative_user).normalized())):
+						continue
+				
+				var min_height: float = 0
+				if action_instance.action.targeting_top_down:
+					var map_tiles_at_pos: Array[TileData] = action_instance.battle_manager.total_map_tiles[map_pos].duplicate()
+					if map_tiles_at_pos.size() > 1:
+						map_tiles_at_pos.sort_custom(func(a: TileData, b: TileData): return a.height_mid > b.height_mid)
+						min_height = map_tiles_at_pos[0].height_mid
+						
+				
+				for tile in action_instance.battle_manager.total_map_tiles[map_pos]:
+					if action_instance.action.targeting_top_down and tile.height_mid < min_height:
+						continue
+					
+					var distance_vert: float = tile.height_mid - tile_target.height_mid
+					if action_instance.action.aoe_targeting_los:
+						var collider = Raycaster.raycast(tile_target.get_world_position() + Vector3.UP, tile.get_world_position() + Vector3.UP) # TODO adjust for different height sprites: chicken, frog, Altima
+						if is_instance_valid(collider):
+							if collider is CharacterBody3D:
+								var intersected_unit: UnitData = collider.get_parent_node_3d()
+								if intersected_unit.tile_position != tile:
+									continue
+						# TODO fix raycast?
+					if action_instance.action.cant_hit_user and tile == action_instance.user.tile_position:
+						continue
+					elif distance_xy <= action_instance.action.area_of_effect_range:
+						if not action_instance.action.aoe_vertical_tolerance:
+							aoe_targets.append(tile)
+						elif abs(distance_vert) <= action_instance.action.vertical_tolerance:
+							aoe_targets.append(tile)
+	
+	return aoe_targets

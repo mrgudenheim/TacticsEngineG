@@ -42,6 +42,7 @@ var inflict_status_id: int = 0
 @export var aoe_has_vertical_tolerance: bool = false # vertical tolerance
 @export var aoe_vertical_tolerance: float = 2
 @export var aoe_targeting_three_directions: bool = false
+@export var aoe_targeting_linear: bool = false
 @export var aoe_targeting_los: bool = false # stop at obstacle
 
 @export var target_effects: Array[ActionEffect] = []

@@ -202,6 +202,8 @@ func set_action() -> void:
 	ability_action.quote = spell_quote
 	ability_action.display_action_name = show_quote
 	
+	ability_action.targeting_strategy = Utilities.targeting_strategies[Utilities.TargetingTypes.RANGE]
+	
 	ability_action.mp_cost = mp_cost
 	
 	ability_action.formula_x = formula_x
@@ -215,7 +217,7 @@ func set_action() -> void:
 	
 	ability_action.has_vertical_tolerance_from_user = vertical_tolerance_from_user # vertical fixed / linear range
 	ability_action.use_weapon_range = use_weapon_range
-	ability_action.use_weapon_potential_targets = false
+	ability_action.use_weapon_targeting = use_weapon_range
 	ability_action.use_weapon_damage = false # weapon_strike?
 	ability_action.auto_target = auto_target
 	ability_action.cant_target_self = cant_hit_user

@@ -2,9 +2,6 @@ class_name MoveUse
 extends UseStrategy
 
 func use(action_instance: ActionInstance) -> void:
-	if action_instance.submitted_targets.size() != 1:
-		push_warning(action_instance.action.action_name + ": num submitted targets != 1")
-	
 	var map_path: Array[TerrainTile] = action_instance.submitted_targets.duplicate()
 	
 	action_instance.clear() # clear all highlighting and target data

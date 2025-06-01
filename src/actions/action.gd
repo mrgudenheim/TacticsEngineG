@@ -27,7 +27,7 @@ var inflict_status_id: int = 0
 
 @export var has_vertical_tolerance_from_user: bool = false # vertical fixed / linear range
 @export var use_weapon_range: bool = false
-@export var use_weapon_potential_targets: bool = false
+@export var use_weapon_targeting: bool = false
 @export var use_weapon_damage: bool = false
 @export var auto_target: bool = false
 @export var cant_target_self: bool = false

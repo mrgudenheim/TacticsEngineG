@@ -3,6 +3,10 @@ extends TargetingStrategy
 
 
 func get_potential_targets(action_instance: ActionInstance) -> Array[TerrainTile]:
+	if action_instance.action.use_weapon_targeting:
+		var weapon_attack_action_instance: ActionInstance = action_instance.user.actions_data[action_instance.user.attack_action]
+		return weapon_attack_action_instance.action.targeting_strategy.get_potential_targets(weapon_attack_action_instance)
+	
 	var potential_targets: Array[TerrainTile] = []
 	#action_instance.user.get_map_paths(action_instance.battle_manager.total_map_tiles, action_instance.battle_manager.units)
 	

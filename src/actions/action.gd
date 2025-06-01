@@ -302,6 +302,10 @@ func show_vfx(action_instance: ActionInstance, position: Vector3) -> void:
 	#new_vfx_location.position.y += 2 # TODO set position dependent on ability vfx data
 	new_vfx_location.name = "VfxLocation"
 	action_instance.user.get_parent().add_child(new_vfx_location)
+	
+	if not vfx_data.is_initialized:
+		vfx_data.init_from_file()
+	
 	vfx_data.display_vfx(new_vfx_location)
 
 

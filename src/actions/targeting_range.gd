@@ -112,6 +112,7 @@ func on_map_input_event(action_instance: ActionInstance, camera: Camera3D, event
 
 func get_aoe_targets(action_instance: ActionInstance, tile_target: TerrainTile) -> Array[TerrainTile]:
 	# TODO aoe flags: linear, 3 directions, direct, vertical tolerance, top-down
+	# TODO fix multiple highlighting?
 	var aoe_targets: Array[TerrainTile] = []
 	#action_instance.user.get_map_paths(action_instance.battle_manager.total_map_tiles, action_instance.battle_manager.units)
 	

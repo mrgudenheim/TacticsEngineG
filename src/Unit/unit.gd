@@ -20,6 +20,7 @@ var team: Team
 
 @export var char_body: CharacterBody3D
 @export var animation_manager: UnitAnimationManager
+@export var popup_texts: PopupTextContainer
 @export var debug_menu: UnitDebugMenu
 
 @export var unit_nickname: String = "Unit Nickname"
@@ -634,6 +635,10 @@ func get_evade(evade_source: EvadeData.EvadeSource, evade_type: EvadeData.EvadeT
 				evade += evade_data.value
 	
 	return evade
+
+
+func show_popup_text(text: String) -> void:
+	popup_texts.show_popup_text(text)
 
 
 func set_sprite_by_file_idx(new_sprite_file_idx: int) -> void:

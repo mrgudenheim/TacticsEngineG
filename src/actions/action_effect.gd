@@ -48,16 +48,20 @@ func apply_value(apply_unit: UnitData, value: int) -> int:
 				apply_unit.hp_current = value
 			else:
 				apply_unit.hp_current += value
+				apply_unit.show_popup_text(str(value) + " HP")
 		EffectType.MP:
 			if set_value:
 				apply_unit.mp_current = value
 			else:
 				apply_unit.mp_current += value
+				apply_unit.show_popup_text(str(value) + " MP")
 		EffectType.CT:
 			if set_value:
 				apply_unit.ct_current = value
+				apply_unit.show_popup_text("CT = " + str(value))
 			else:
 				apply_unit.ct_current += value
+				apply_unit.show_popup_text(str(value) + " CT")
 		EffectType.MOVE:
 			if set_value:
 				apply_unit.move_current = value
@@ -73,36 +77,43 @@ func apply_value(apply_unit: UnitData, value: int) -> int:
 				apply_unit.speed_current = value
 			else:
 				apply_unit.speed_current += value
+				apply_unit.show_popup_text(str(value) + " Speed")
 		EffectType.PHYSICAL_ATTACK: # TODO way to modify MA
 			if set_value:
 				apply_unit.physical_attack_current = value
 			else:
 				apply_unit.physical_attack_current += value
+				apply_unit.show_popup_text(str(value) + " PA")
 		EffectType.MAGIC_ATTACK: # TODO way to modify MA
 			if set_value:
 				apply_unit.magical_attack_current = value
 			else:
 				apply_unit.magical_attack_current += value
+				apply_unit.show_popup_text(str(value) + " MA")
 		EffectType.BRAVE:
 			if set_value:
 				apply_unit.brave_current = value
 			else:
 				apply_unit.brave_current += value
+				apply_unit.show_popup_text(str(value) + " Brave")
 		EffectType.FAITH:
 			if set_value:
 				apply_unit.faith_current = value
 			else:
 				apply_unit.faith_current += value
+				apply_unit.show_popup_text(str(value) + " Faith")
 		EffectType.EXP:
 			if set_value:
 				apply_unit.unit_exp = value
 			else:
 				apply_unit.unit_exp += value
+				apply_unit.show_popup_text(str(value) + " EXP")
 		EffectType.LEVEL:
 			if set_value:
 				apply_unit.level = value
 			else:
 				apply_unit.level += value
+				apply_unit.show_popup_text(str(value) + " LVL")
 		EffectType.CURRENCY:
 			if set_value:
 				apply_unit.team.currency = value

@@ -269,6 +269,7 @@ func apply_standard(action_instance: ActionInstance) -> void:
 		else:
 			# TODO face user
 			target_unit.animate_evade() # TODO or shield block?
+			target_unit.show_popup_text("Missed")
 	
 	# apply effects to user
 	for effect: ActionEffect in user_effects:

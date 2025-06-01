@@ -163,6 +163,8 @@ func _ready() -> void:
 	if not RomReader.is_ready:
 		RomReader.rom_loaded.connect(initialize_unit)
 	
+	equipped.resize(5)
+	equipped.fill(RomReader.items[0])
 	add_to_group("Units")
 
 
@@ -582,6 +584,7 @@ func set_ability(new_ability_id: int) -> void:
 
 func set_primary_weapon(new_weapon_id: int) -> void:
 	primary_weapon = RomReader.items[new_weapon_id]
+	equipped[0] = primary_weapon
 	#animation_manager.weapon_id = new_weapon_id
 	#var weapon_palette_id = RomReader.battle_bin_data.weapon_graphic_palettes_1[primary_weapon.id]
 	animation_manager.unit_sprites_manager.sprite_weapon.texture = animation_manager.wep_spr.create_frame_grid_texture(
@@ -592,6 +595,9 @@ func set_primary_weapon(new_weapon_id: int) -> void:
 
 
 func change_equipment(slot_id: int, new_equipment: ItemData) -> void:
+	if new_equipment == null: # used by RemoveEquipment action effect?
+		equipped[slot_id] = RomReader.items[0] 
+	else:
 	equipped[slot_id] = new_equipment
 	
 	# TODO update stats and/or weapon

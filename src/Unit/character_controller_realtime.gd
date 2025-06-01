@@ -113,7 +113,7 @@ func rotate_camera(dir: int) -> void:
 	tween.tween_method(rotate_phantom_camera, BattleManager.main_camera.rotation_degrees, new_rotation, ROTATE_INTERVAL / ROTATE_SPEED)
 	await tween.finished
 	
-	push_warning(str(camera_facing))
+	#push_warning(str(camera_facing))
 	is_rotating = false
 
 

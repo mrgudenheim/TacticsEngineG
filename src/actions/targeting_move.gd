@@ -139,7 +139,7 @@ func get_map_paths(user: UnitData, map_tiles: Dictionary[Vector2i, Array], units
 # TODO move to MoveTargeting?
 func get_map_path(start_tile: TerrainTile, target_tile: TerrainTile, came_from: Dictionary[TerrainTile, TerrainTile]) -> Array[TerrainTile]:
 	if not came_from.has(target_tile):
-		push_warning("No path from " + str(start_tile.location) + " to target: " + str(target_tile.location))
+		#push_warning("No path from " + str(start_tile.location) + " to target: " + str(target_tile.location))
 		return []
 	
 	var current: TerrainTile = target_tile

@@ -30,7 +30,7 @@ enum EffectType {
 	}
 
 
-func _init(new_type: EffectType, new_show_ui: bool = true, new_transfer_to_user: bool = false, new_set_value: bool = false) -> void:
+func _init(new_type: EffectType = EffectType.HP, new_show_ui: bool = true, new_transfer_to_user: bool = false, new_set_value: bool = false) -> void:
 	type = new_type
 	show_ui = new_show_ui
 	transfer_to_user = new_transfer_to_user

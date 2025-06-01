@@ -80,9 +80,9 @@ enum Formulas {
 	}
 
 
-func _init(new_formula: Formulas, new_value_01: int, new_value_02: int, 
-		new_user_faith_modifier: FaithModifier, new_target_faith_modifier: FaithModifier, 
-		new_modified_by_element: bool, new_reverse_sign = true) -> void:
+func _init(new_formula: Formulas = Formulas.UNMODIFIED, new_value_01: int = 1, new_value_02: int = 1, 
+		new_user_faith_modifier: FaithModifier = FaithModifier.NONE, new_target_faith_modifier: FaithModifier = FaithModifier.NONE, 
+		new_modified_by_element: bool = true, new_reverse_sign = true) -> void:
 	formula = new_formula
 	value_01 = new_value_01
 	value_02 = new_value_02

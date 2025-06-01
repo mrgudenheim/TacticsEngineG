@@ -41,7 +41,7 @@ var death_counter: int = 3
 var zodiac = "Ares"
 
 var innate_ability_ids: PackedInt32Array = []
-var skillsets: Array = []
+var skillsets: Array = [ScusData.SkillsetData]
 var reaction_abilities: Array = []
 var support_ability: Array = []
 var movement_ability: Array = []
@@ -259,6 +259,11 @@ func update_actions(battle_manager: BattleManager) -> void:
 	actions.append(move_action)
 	actions.append(attack_action)
 	actions.append(wait_action)
+	for skillset: ScusData.SkillsetData in skillsets:
+		for ability_id: int in skillset.action_ability_ids:
+			if ability_id != 0:
+				var new_action: Action = RomReader.abilities[ability_id].ability_action
+				actions.append(new_action)
 	# TODO append all other potential actions, from jobs, wait, equipment, etc.
 	
 	# remove any existing buttons
@@ -532,7 +537,7 @@ func update_animation_facing(camera_facing_vector: Vector3) -> void:
 	var facing_difference_angle = fposmod(camera_facing_angle - unit_facing_angle, 359.99)
 		
 	#push_warning("Difference: " + str(facing_difference) + ", UnitFacing: " + str(unit_facing_vector) + ", CameraFacing: " + str(camera_facing_vector))
-	push_warning("Difference: " + str(facing_difference_angle) + ", UnitFacing: " + str(unit_facing_angle) + ", CameraFacing: " + str(camera_facing_angle))
+	#push_warning("Difference: " + str(facing_difference_angle) + ", UnitFacing: " + str(unit_facing_angle) + ", CameraFacing: " + str(camera_facing_angle))
 	#push_warning(rad_to_deg(atan2(facing_difference.z, facing_difference.x)))
 	
 	var new_is_right_facing: bool = false
@@ -570,6 +575,15 @@ func hide_debug_menu() -> void:
 	debug_menu.visible = false
 
 
+func set_job_id(job_id: int) -> void:
+	job_id = job_id
+	job_data = RomReader.scus_data.jobs_data[job_id]
+	set_sprite_by_id(job_data.sprite_id)
+	
+	skillsets.clear()
+	skillsets.append(RomReader.scus_data.skillsets_data[job_data.skillset_id])
+
+
 func set_ability(new_ability_id: int) -> void:
 	ability_id = new_ability_id
 	ability_data = RomReader.abilities[new_ability_id]
@@ -598,7 +612,7 @@ func change_equipment(slot_id: int, new_equipment: ItemData) -> void:
 	if new_equipment == null: # used by RemoveEquipment action effect?
 		equipped[slot_id] = RomReader.items[0] 
 	else:
-	equipped[slot_id] = new_equipment
+		equipped[slot_id] = new_equipment
 	
 	# TODO update stats and/or weapon
 

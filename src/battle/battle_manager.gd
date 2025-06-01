@@ -157,8 +157,9 @@ func on_map_selected(index: int) -> void:
 func add_units_to_map() -> void:
 	# add player unit
 	var random_tile: TerrainTile = get_random_stand_terrain_tile()
-	var new_unit: UnitData = spawn_unit(random_tile, 0x01)
+	var new_unit: UnitData = spawn_unit(random_tile, 0x05)
 	new_unit.is_player_controlled = true
+	new_unit.set_primary_weapon(0x16) # sword
 	
 	# sest up character controller
 	controller.unit = new_unit

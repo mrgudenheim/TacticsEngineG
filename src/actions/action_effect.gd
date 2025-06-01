@@ -126,6 +126,6 @@ func apply(user: UnitData, target: UnitData, value: int) -> int:
 	value = apply_value(apply_unit, value)
 	
 	if transfer_to_user:
-		apply(user, user, -value)
+		apply_value(user, -value)
 	
 	return value

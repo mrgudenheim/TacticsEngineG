@@ -255,6 +255,8 @@ func apply_standard(action_instance: ActionInstance) -> void:
 	
 	# apply effects to targets
 	for target_unit: UnitData in target_units:
+		if vfx_data != null:
+			show_vfx(action_instance, target_unit.tile_position.get_world_position())
 		var hit_success: bool = check_hit(action_instance.user, target_unit)
 		if hit_success:
 			for effect: ActionEffect in target_effects:
@@ -292,6 +294,16 @@ func apply_standard(action_instance: ActionInstance) -> void:
 	
 	if ends_turn:
 		action_instance.user.end_turn()
+
+
+func show_vfx(action_instance: ActionInstance, position: Vector3) -> void:
+	var new_vfx_location: Node3D = Node3D.new()
+	new_vfx_location.position = position
+	#new_vfx_location.position.y += 2 # TODO set position dependent on ability vfx data
+	new_vfx_location.name = "VfxLocation"
+	action_instance.user.get_parent().add_child(new_vfx_location)
+	vfx_data.display_vfx(new_vfx_location)
+
 
 func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> void:
 	formula_id = new_formula_id

@@ -69,6 +69,7 @@ targeting_los = false
 aoe_has_vertical_tolerance = false
 aoe_vertical_tolerance = 2.0
 aoe_targeting_three_directions = false
+aoe_targeting_linear = false
 aoe_targeting_los = false
 target_effects = Array[ExtResource("4_ltkoj")]([SubResource("Resource_ltkoj")])
 user_effects = Array[ExtResource("4_ltkoj")]([])

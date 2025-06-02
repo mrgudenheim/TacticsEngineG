@@ -42,26 +42,24 @@ func get_value(user: UnitData, target: UnitData, element: Action.ElementTypes) -
 
 
 func apply_value(apply_unit: UnitData, value: int) -> int:
+	var type_name: String = EffectType.keys()[type]
+	
 	match type:
 		EffectType.HP: # TODO change_hp function on Unit? would return the actual changed hp based on capped hp values (0, max_hp)
 			if set_value:
 				apply_unit.hp_current = value
 			else:
 				apply_unit.hp_current += value
-				apply_unit.show_popup_text(str(value) + " HP")
 		EffectType.MP:
 			if set_value:
 				apply_unit.mp_current = value
 			else:
 				apply_unit.mp_current += value
-				apply_unit.show_popup_text(str(value) + " MP")
 		EffectType.CT:
 			if set_value:
 				apply_unit.ct_current = value
-				apply_unit.show_popup_text("CT = " + str(value))
 			else:
 				apply_unit.ct_current += value
-				apply_unit.show_popup_text(str(value) + " CT")
 		EffectType.MOVE:
 			if set_value:
 				apply_unit.move_current = value
@@ -77,44 +75,40 @@ func apply_value(apply_unit: UnitData, value: int) -> int:
 				apply_unit.speed_current = value
 			else:
 				apply_unit.speed_current += value
-				apply_unit.show_popup_text(str(value) + " Speed")
 		EffectType.PHYSICAL_ATTACK: # TODO way to modify MA
+			type_name = "PA"
 			if set_value:
 				apply_unit.physical_attack_current = value
 			else:
 				apply_unit.physical_attack_current += value
-				apply_unit.show_popup_text(str(value) + " PA")
 		EffectType.MAGIC_ATTACK: # TODO way to modify MA
+			type_name = "MA"
 			if set_value:
 				apply_unit.magical_attack_current = value
 			else:
 				apply_unit.magical_attack_current += value
-				apply_unit.show_popup_text(str(value) + " MA")
 		EffectType.BRAVE:
 			if set_value:
 				apply_unit.brave_current = value
 			else:
 				apply_unit.brave_current += value
-				apply_unit.show_popup_text(str(value) + " Brave")
 		EffectType.FAITH:
 			if set_value:
 				apply_unit.faith_current = value
 			else:
 				apply_unit.faith_current += value
-				apply_unit.show_popup_text(str(value) + " Faith")
 		EffectType.EXP:
 			if set_value:
 				apply_unit.unit_exp = value
 			else:
 				apply_unit.unit_exp += value
-				apply_unit.show_popup_text(str(value) + " EXP")
 		EffectType.LEVEL:
 			if set_value:
 				apply_unit.level = value
 			else:
 				apply_unit.level += value
-				apply_unit.show_popup_text(str(value) + " LVL")
 		EffectType.CURRENCY:
+			type_name = "Gold"
 			if set_value:
 				apply_unit.team.currency = value
 			else:
@@ -126,6 +120,15 @@ func apply_value(apply_unit: UnitData, value: int) -> int:
 				apply_unit.team.inventory[0] += value # TODO get inventory item id to change
 		EffectType.REMOVE_EQUIPMENT:
 			apply_unit.change_equipment(0, null) # TODO get equipment slot id to change
+	
+	var text: String = str(value) + " " + type_name
+	if value > 0:
+		text = "+" + text
+	
+	if set_value:
+		text = type_name + " = " + str(value)
+	
+	apply_unit.show_popup_text(text)
 	
 	return value
 

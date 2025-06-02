@@ -157,9 +157,9 @@ func on_map_selected(index: int) -> void:
 func add_units_to_map() -> void:
 	# add player unit
 	var random_tile: TerrainTile = get_random_stand_terrain_tile()
-	var new_unit: UnitData = spawn_unit(random_tile, 0x05)
+	var new_unit: UnitData = spawn_unit(random_tile, 0x05) # 0x05 is Delita holy knight
 	new_unit.is_player_controlled = true
-	new_unit.set_primary_weapon(0x16) # sword
+	new_unit.set_primary_weapon(0x1d) # ice brand
 	
 	# sest up character controller
 	controller.unit = new_unit
@@ -173,7 +173,8 @@ func add_units_to_map() -> void:
 	while need_new_tile:
 		random_tile = get_random_stand_terrain_tile()
 		need_new_tile = units.any(func(unit: UnitData): return unit.tile_position == random_tile)
-	var new_unit2: UnitData = spawn_unit(random_tile, 0x07)
+	var new_unit2: UnitData = spawn_unit(random_tile, 0x07) # 0x07 is Algus
+	new_unit2.set_primary_weapon(0x4e) # crossbow
 	
 	# set up what to do when target unit is knocked out
 	new_unit2.knocked_out.connect(load_random_map)
@@ -184,7 +185,10 @@ func add_units_to_map() -> void:
 		random_tile = get_random_stand_terrain_tile()
 		need_new_tile = units.any(func(unit: UnitData): return unit.tile_position == random_tile)
 	var rand_job: int = randi_range(0x01, 0x8e)
-	var new_unit3: UnitData = spawn_unit(random_tile, rand_job)
+	
+	#var new_unit3: UnitData = spawn_unit(random_tile, rand_job)
+	var new_unit3: UnitData = spawn_unit(random_tile, 0x11) # 0x11 is Gafgorian dark knight
+	new_unit3.set_primary_weapon(0x17) # crossbow
 	
 	await update_units_pathfinding()
 	

@@ -371,7 +371,7 @@ func use_ability(pos: Vector3) -> void:
 		set_base_animation_ptr_id(current_animation_id_fwd)
 	else:
 		var ability_animation_executing_id = ability_data.animation_executing_id
-		if ["RUKA.SEQ", "ARUTE.SEQ", "KANZEN.SEQ"].has(RomReader.sprs[sprite_file_idx].seq_name):
+		if ["MON.SEQ", "RUKA.SEQ", "ARUTE.SEQ", "KANZEN.SEQ"].has(RomReader.sprs[sprite_file_idx].seq_name):
 			ability_animation_executing_id = 0x2c * 2 # https://ffhacktics.com/wiki/Set_attack_animation_flags_and_facing_3
 		#debug_menu.anim_id_spin.value = ability_animation_executing_id + int(is_back_facing)
 		current_animation_id_fwd = ability_animation_executing_id
@@ -487,6 +487,9 @@ func animate_knock_out() -> void:
 
 
 func animate_return_to_idle() -> void:
+	# TODO add random delay to prevent unit animations from syncing
+	# Talcall: if changing animation to one of the walking animations (anything less than 0xC) it checks the unit ID && 0x3 against the event timer. if they are equal, start animating the unit. else... don't animate the unit.
+	
 	current_animation_id_fwd = current_idle_animation_id
 	set_base_animation_ptr_id(current_animation_id_fwd)
 
@@ -560,6 +563,8 @@ func update_animation_facing(camera_facing_vector: Vector3) -> void:
 			or animation_manager.is_back_facing != is_back_facing):
 		animation_manager.set_face_right(new_is_right_facing)
 		
+		# TODO when changing fwd/back animations, retain the current step of the animation
+		# Talcall: the direction the unit is facing gets updated on every parse of the routine, but unless the animation is changing, the instruction pointer byte doesn't get refreshed every vanilla animation is coded such that this swapping between front and back works flawlessly.
 		if animation_manager.is_back_facing != is_back_facing:
 			animation_manager.is_back_facing = is_back_facing
 			if is_back_facing == true:
@@ -580,6 +585,8 @@ func set_job_id(job_id: int) -> void:
 	job_id = job_id
 	job_data = RomReader.scus_data.jobs_data[job_id]
 	set_sprite_by_id(job_data.sprite_id)
+	if job_id >= 0x5e: # monster
+		set_sprite_palette(job_data.monster_palette_id)
 	
 	skillsets.clear()
 	skillsets.append(RomReader.scus_data.skillsets_data[job_data.skillset_id])

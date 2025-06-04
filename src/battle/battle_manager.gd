@@ -169,26 +169,24 @@ func add_units_to_map() -> void:
 	#controller.rotate_phantom_camera(Vector3(-26.54, 45, 0))
 	
 	# add non-player unit
-	var need_new_tile: bool = true
-	while need_new_tile:
-		random_tile = get_random_stand_terrain_tile()
-		need_new_tile = units.any(func(unit: UnitData): return unit.tile_position == random_tile)
-	var new_unit2: UnitData = spawn_unit(random_tile, 0x07) # 0x07 is Algus
+	var new_unit2: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x07) # 0x07 is Algus
 	new_unit2.set_primary_weapon(0x4e) # crossbow
 	
 	# set up what to do when target unit is knocked out
 	new_unit2.knocked_out.connect(load_random_map)
 	new_unit2.knocked_out.connect(increment_counter)
 	
-	need_new_tile = true
-	while need_new_tile:
-		random_tile = get_random_stand_terrain_tile()
-		need_new_tile = units.any(func(unit: UnitData): return unit.tile_position == random_tile)
-	var rand_job: int = randi_range(0x01, 0x8e)
-	
 	#var new_unit3: UnitData = spawn_unit(random_tile, rand_job)
-	var new_unit3: UnitData = spawn_unit(random_tile, 0x11) # 0x11 is Gafgorian dark knight
-	new_unit3.set_primary_weapon(0x17) # crossbow
+	var new_unit3: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x11) # 0x11 is Gafgorian dark knight
+	new_unit3.set_primary_weapon(0x17) # blood sword
+	
+	var new_unit4: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x65) # 0x65 is Grenade
+	var new_unit5: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x67) # 0x67 is Red Panther
+	
+	for random_unit: int in 7:
+		var rand_job: int = randi_range(0x01, 0x8e)
+		spawn_unit(get_random_stand_terrain_tile(), rand_job)
+	
 	
 	await update_units_pathfinding()
 	
@@ -351,8 +349,13 @@ func get_random_stand_terrain_tile() -> TerrainTile:
 	var tile: TerrainTile
 	for tile_idx: int in total_map_tiles.size():
 		tile = get_random_terrain_tile()
-		if tile.no_stand_select == 0 and tile.no_walk == 0:
-			break
+		if tile.no_stand_select != 0 or tile.no_walk != 0:
+			continue
+		
+		if units.any(func(unit: UnitData): return unit.tile_position == tile):
+			continue
+		
+		break
 	
 	return tile
 

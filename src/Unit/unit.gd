@@ -371,7 +371,7 @@ func use_ability(pos: Vector3) -> void:
 		set_base_animation_ptr_id(current_animation_id_fwd)
 	else:
 		var ability_animation_executing_id = ability_data.animation_executing_id
-		if ["MON.SEQ", "RUKA.SEQ", "ARUTE.SEQ", "KANZEN.SEQ"].has(RomReader.sprs[sprite_file_idx].seq_name):
+		if ["RUKA.SEQ", "ARUTE.SEQ", "KANZEN.SEQ"].has(RomReader.sprs[sprite_file_idx].seq_name):
 			ability_animation_executing_id = 0x2c * 2 # https://ffhacktics.com/wiki/Set_attack_animation_flags_and_facing_3
 		#debug_menu.anim_id_spin.value = ability_animation_executing_id + int(is_back_facing)
 		current_animation_id_fwd = ability_animation_executing_id
@@ -650,16 +650,15 @@ func show_popup_text(text: String) -> void:
 
 func set_sprite_by_file_idx(new_sprite_file_idx: int) -> void:
 	sprite_file_idx = new_sprite_file_idx
-	var spr: Spr = RomReader.sprs[new_sprite_file_idx]
-	if spr.file_name == "WEP.SPR":
-		animation_manager.unit_sprites_manager.sprite_primary.vframes = 32
-	else:
-		animation_manager.unit_sprites_manager.sprite_primary.vframes = 16 + (16 * spr.sp2s.size())
-	
+	var spr: Spr = RomReader.sprs[new_sprite_file_idx]	
 	if RomReader.spr_file_name_to_id.has(spr.file_name):
 		sprite_id = RomReader.spr_file_name_to_id[spr.file_name]
 	debug_menu.sprite_options.select(new_sprite_file_idx)
 	on_sprite_idx_selected(new_sprite_file_idx)
+	if spr.file_name == "WEP.SPR":
+		animation_manager.unit_sprites_manager.sprite_primary.vframes = 32
+	else:
+		animation_manager.unit_sprites_manager.sprite_primary.vframes = 16 + (16 * spr.sp2s.size())
 	update_spritesheet_grid_texture()
 	
 	debug_menu.anim_id_spin.value = current_idle_animation_id

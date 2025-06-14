@@ -180,6 +180,7 @@ func _init(idx: int = 0) -> void:
 		
 		weapon_attack_action.target_effects[0].base_power_formula.value_01 = weapon_power
 		weapon_attack_action.element = weapon_element
+		weapon_attack_action.use_weapon_animation = true
 		
 		weapon_attack_action.action_name = "Attack (" + name + ")"
 		weapon_attack_action.display_action_name = false

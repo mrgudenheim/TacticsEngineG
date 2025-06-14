@@ -29,6 +29,7 @@ var inflict_status_id: int = 0
 @export var use_weapon_range: bool = false
 @export var use_weapon_targeting: bool = false
 @export var use_weapon_damage: bool = false
+@export var use_weapon_animation: bool = false
 @export var auto_target: bool = false
 @export var cant_target_self: bool = false
 @export var cant_hit_enimies: bool = false
@@ -224,8 +225,9 @@ func get_preview_total_hit_chance(user: UnitData, target: UnitData) -> int:
 
 func apply_standard(action_instance: ActionInstance) -> void:
 	# face target
-	var direction_to_target: Vector2i = action_instance.submitted_targets[0].location - action_instance.user.tile_position.location
-	action_instance.user.update_unit_facing(Vector3(direction_to_target.x, 0, direction_to_target.y))
+	if action_instance.submitted_targets[0] != action_instance.user.tile_position:
+		var direction_to_target: Vector2i = action_instance.submitted_targets[0].location - action_instance.user.tile_position.location
+		action_instance.user.update_unit_facing(Vector3(direction_to_target.x, 0, direction_to_target.y))
 	
 	var target_units: Array[UnitData] = []
 	for target_tile: TerrainTile in action_instance.submitted_targets:
@@ -237,7 +239,7 @@ func apply_standard(action_instance: ActionInstance) -> void:
 	
 	# look up animation based on weapon type and vertical angle to target
 	var mod_animation_executing_id: int = animation_executing_id
-	if animation_executing_id == 0:
+	if animation_executing_id == 0 and use_weapon_animation:
 		mod_animation_executing_id = RomReader.battle_bin_data.weapon_animation_ids[action_instance.user.primary_weapon.item_type].y * 2
 		var angle_to_target: float = ((action_instance.submitted_targets[0].height_mid - action_instance.user.tile_position.height_mid) 
 				/ (action_instance.submitted_targets[0].location - action_instance.user.tile_position.location).length())
@@ -250,7 +252,7 @@ func apply_standard(action_instance: ActionInstance) -> void:
 	
 	action_instance.user.animate_execute_action(mod_animation_executing_id)
 	
-	await action_instance.user.get_tree().create_timer(0.2).timeout
+	await action_instance.user.get_tree().create_timer(0.2).timeout # TODO delay should be based on effect/vfx data? 
 	
 	# TODO show vfx, including rock, arrow, bolt...
 	

@@ -300,6 +300,9 @@ func update_actions(battle_manager: BattleManager) -> void:
 
 
 func end_turn():
+	#if UnitControllerRT.unit != self: # prevent accidentally ending a different units turn TODO what if the next turn is also this unit?
+		#return
+	
 	if active_action != null:
 		active_action.clear()
 		active_action.stop_targeting()
@@ -377,12 +380,12 @@ func use_ability(pos: Vector3) -> void:
 		current_animation_id_fwd = ability_animation_executing_id
 		set_base_animation_ptr_id(current_animation_id_fwd)
 		
-	var new_vfx_location: Node3D = Node3D.new()
-	new_vfx_location.position = pos
-	#new_vfx_location.position.y += 2 # TODO set position dependent on ability vfx data
-	new_vfx_location.name = "VfxLocation"
-	get_parent().add_child(new_vfx_location)
-	ability_data.display_vfx(new_vfx_location)
+	#var new_vfx_location: Node3D = Node3D.new()
+	#new_vfx_location.position = pos
+	##new_vfx_location.position.y += 2 # TODO set position dependent on ability vfx data
+	#new_vfx_location.name = "VfxLocation"
+	#get_parent().add_child(new_vfx_location)
+	active_action.action.show_vfx(active_action, pos)
 	
 	# TODO implement proper timeout for abilities that execute using an infinite loop animation
 	# this implementation can overwrite can_move when in the middle of another ability

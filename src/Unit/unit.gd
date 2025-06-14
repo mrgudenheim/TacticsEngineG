@@ -448,13 +448,7 @@ func animate_start_action(animation_start_id: int, animation_charging_id: int) -
 
 
 func animate_execute_action(animation_executing_id: int) -> void:
-	if animation_executing_id == 0:
-		#animation_executing_id = 0x3e * 2 # TODO look up based on equiped weapon and target relative height
-		#animation_manager.unit_debug_menu.anim_id_spin.value = 0x3e * 2 # TODO look up based on equiped weapon and target relative height
-		#debug_menu.anim_id_spin.value = (RomReader.battle_bin_data.weapon_animation_ids[primary_weapon.item_type].y * 2) + int(is_back_facing) # TODO lookup based on target relative height
-		current_animation_id_fwd = (RomReader.battle_bin_data.weapon_animation_ids[primary_weapon.item_type].y * 2) # TODO lookup based on target relative height
-		set_base_animation_ptr_id(current_animation_id_fwd)
-	else:
+	if animation_executing_id != 0:
 		var ability_animation_executing_id = animation_executing_id
 		if ["RUKA.SEQ", "ARUTE.SEQ", "KANZEN.SEQ"].has(RomReader.sprs[sprite_file_idx].seq_name):
 			ability_animation_executing_id = 0x2c * 2 # https://ffhacktics.com/wiki/Set_attack_animation_flags_and_facing_3

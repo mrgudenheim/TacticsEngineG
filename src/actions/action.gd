@@ -301,6 +301,9 @@ func apply_standard(action_instance: ActionInstance) -> void:
 
 
 func show_vfx(action_instance: ActionInstance, position: Vector3) -> void:
+	if not is_instance_valid(vfx_data):
+		return
+	
 	var new_vfx_location: Node3D = Node3D.new()
 	new_vfx_location.position = position
 	#new_vfx_location.position.y += 2 # TODO set position dependent on ability vfx data

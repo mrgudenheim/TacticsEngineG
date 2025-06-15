@@ -48,9 +48,11 @@ var opcode_frame_offset: int = 0
 		return global_animation_id
 	set(value):
 		if (value != global_animation_id):
+			var facing_switch: bool = value / 2 == global_animation_id / 2
+			
 			global_animation_id = value
 			#ui_manager.animation_name_options.select(value)
-			_on_animation_changed()
+			_on_animation_changed(facing_switch)
 			#if isReady:
 				#if not global_fft_animation.sequence.seq_parts[0].isOpcode:
 					#frame_id_spinbox.value = global_fft_animation.sequence.seq_parts[0].parameters[0]
@@ -67,7 +69,7 @@ var opcode_frame_offset: int = 0
 			#_on_animation_changed()
 
 
-func _process(delta: float) -> void:	
+func _process(delta: float) -> void:
 	for animation: FftAnimation in animations.values():
 		animation.increment_time(delta)
 
@@ -477,10 +479,10 @@ func get_sub_animation(length: int, sub_animation_end_part_id: int, parent_anima
 	return sub_anim
 
 
-func _on_animation_changed() -> void:
+func _on_animation_changed(facing_switch: bool = false) -> void:
 	reset_sprites()
 	animations.clear()
-	var new_fft_animation: FftAnimation = get_animation_from_globals()
+	var new_fft_animation: FftAnimation = get_animation_from_globals(facing_switch)
 	var num_parts: int = new_fft_animation.sequence.seq_parts.size()
 	start_animation(new_fft_animation, unit_sprites_manager.sprite_primary, animation_is_playing, false)
 
@@ -491,7 +493,7 @@ func reset_sprites() -> void:
 	unit_sprites_manager.reset_sprites()
 
 
-func get_animation_from_globals() -> FftAnimation:
+func get_animation_from_globals(keep_time: bool = false) -> FftAnimation:
 	var fft_animation: FftAnimation = FftAnimation.new()
 	fft_animation.draw_target = unit_sprites_manager.sprite_primary
 	fft_animation.seq = global_seq
@@ -499,6 +501,9 @@ func get_animation_from_globals() -> FftAnimation:
 	fft_animation.sequence = global_seq.sequences[global_animation_id]
 	fft_animation.flipped_v = false
 	fft_animation.back_face_offset = 0
+	
+	if keep_time:
+		fft_animation.time = global_fft_animation.get_time()
 	
 	global_fft_animation = fft_animation
 	return fft_animation

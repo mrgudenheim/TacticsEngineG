@@ -161,7 +161,7 @@ func add_units_to_map() -> void:
 	new_unit.is_player_controlled = true
 	new_unit.set_primary_weapon(0x1d) # ice brand
 	
-	# sest up character controller
+	# set up character controller
 	controller.unit = new_unit
 	#controller.velocity_set.connect(controller.unit.update_unit_facing)
 	phantom_camera.follow_target = new_unit.char_body
@@ -180,12 +180,11 @@ func add_units_to_map() -> void:
 	var new_unit3: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x11) # 0x11 is Gafgorian dark knight
 	new_unit3.set_primary_weapon(0x17) # blood sword
 	
-	var new_unit4: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x65) # 0x65 is Grenade
-	var new_unit5: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x67) # 0x67 is Red Panther
-	var new_unit6: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x50) # 0x50 is black mage
-	var new_unit7: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x4f) # 0x4f is white mage
+	# grenade, panther, juravis, black mage, white mage
+	for specific_job: int in [0x65, 0x67, 0x76, 0x50, 0x4f]:
+		spawn_unit(get_random_stand_terrain_tile(), specific_job)
 	
-	#for random_unit: int in 7:
+	#for random_unit: int in 15:
 		#var rand_job: int = randi_range(0x01, 0x8e)
 		#spawn_unit(get_random_stand_terrain_tile(), rand_job)
 	

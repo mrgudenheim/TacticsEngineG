@@ -266,8 +266,11 @@ func apply_standard(action_instance: ActionInstance) -> void:
 				var effect_value: int = roundi(effect.base_power_formula.get_result(action_instance.user, target_unit, element))
 				effect.apply(action_instance.user, target_unit, effect_value)
 			
-			if set_target_animation_on_hit:
-				target_unit.animate_take_hit() # TODO or animate_receive_heal, status change
+				if set_target_animation_on_hit and [ActionEffect.EffectType.HP, ActionEffect.EffectType.MP].has(effect.type) and effect_value < 0:
+					target_unit.animate_take_hit(vfx_data)
+				elif set_target_animation_on_hit and [ActionEffect.EffectType.HP, ActionEffect.EffectType.MP].has(effect.type) and effect_value > 0:
+					target_unit.animate_recieve_heal(vfx_data)
+				# TODO status change
 		else:
 			# TODO face user
 			target_unit.animate_evade() # TODO or shield block?

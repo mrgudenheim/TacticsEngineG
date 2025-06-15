@@ -183,6 +183,7 @@ func add_units_to_map() -> void:
 	var new_unit4: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x65) # 0x65 is Grenade
 	var new_unit5: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x67) # 0x67 is Red Panther
 	var new_unit6: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x50) # 0x50 is black mage
+	var new_unit7: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x4f) # 0x4f is white mage
 	
 	#for random_unit: int in 7:
 		#var rand_job: int = randi_range(0x01, 0x8e)

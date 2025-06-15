@@ -448,7 +448,7 @@ func animate_start_action(animation_start_id: int, animation_charging_id: int) -
 		await get_tree().create_timer(0.1 + (ability_data.ticks_charge_time * 0.1)).timeout # TODO allow looping until changed, ie. charging a spell
 
 
-func animate_execute_action(animation_executing_id: int) -> void:
+func animate_execute_action(animation_executing_id: int, vfx: VisualEffectData = null) -> void:
 	if animation_executing_id < 0: # no animatione
 		return
 	
@@ -464,19 +464,25 @@ func animate_execute_action(animation_executing_id: int) -> void:
 		animate_return_to_idle()
 
 
-func animate_take_hit() -> void:
+func animate_take_hit(vfx: VisualEffectData = null) -> void:
 	set_base_animation_ptr_id(taking_damage_animation_id)
 	
-	await get_tree().create_timer(1).timeout # TODO show based on vfx timing data?
+	if vfx != null:
+		await vfx.vfx_completed
+	else:
+		await get_tree().create_timer(1).timeout # TODO show based on vfx timing data?
 	
 	if current_animation_id_fwd == taking_damage_animation_id:
 		animate_return_to_idle()
 
 
-func animate_recieve_heal() -> void:
+func animate_recieve_heal(vfx: VisualEffectData = null) -> void:
 	set_base_animation_ptr_id(heal_animation_id)
 	
-	await get_tree().create_timer(1).timeout # TODO show based on vfx timing data?
+	if vfx != null:
+		await vfx.vfx_completed
+	else:
+		await get_tree().create_timer(1).timeout # TODO show based on vfx timing data?
 	
 	if current_animation_id_fwd == heal_animation_id:
 		animate_return_to_idle()
@@ -499,11 +505,12 @@ func animate_knock_out() -> void:
 
 
 func animate_return_to_idle() -> void:
-	# TODO add random delay to prevent unit animations from syncing
+	# add random delay to prevent unit animations from syncing
 	# Talcall: if changing animation to one of the walking animations (anything less than 0xC) it checks the unit ID && 0x3 against the event timer. if they are equal, start animating the unit. else... don't animate the unit.
+	var desync_delay: float = randf_range(0.0, 0.25)
+	await  get_tree().create_timer(desync_delay).timeout 
 	
-	current_animation_id_fwd = current_idle_animation_id
-	set_base_animation_ptr_id(current_animation_id_fwd)
+	set_base_animation_ptr_id(current_idle_animation_id)
 
 
 func set_base_animation_ptr_id(ptr_id: int) -> void:
@@ -520,7 +527,7 @@ func set_base_animation_ptr_id(ptr_id: int) -> void:
 		##animation_manager.global_animation_ptr_id = ptr_id
 	
 	if animation_manager.global_animation_ptr_id != new_ptr:
-		debug_menu.anim_id_spin.value = new_ptr
+		debug_menu.anim_id_spin.value = new_ptr # TODO the debug ui should not be the primary path to changing he animation
 		#animation_manager.global_animation_ptr_id = new_ptr
 
 

@@ -610,7 +610,13 @@ func set_job_id(job_id: int) -> void:
 	
 	skillsets.clear()
 	skillsets.append(RomReader.scus_data.skillsets_data[job_data.skillset_id])
-
+	
+	job_nickname = job_data.job_name
+	
+	if animation_manager.global_seq.file_name == "MON.SEQ" and job_data.innate_abilities.has(0x01fb):
+		idle_walk_animation_id = 0x0c
+		current_idle_animation_id = idle_walk_animation_id
+		set_base_animation_ptr_id(current_idle_animation_id)
 
 func set_ability(new_ability_id: int) -> void:
 	ability_id = new_ability_id

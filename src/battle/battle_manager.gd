@@ -180,8 +180,15 @@ func add_units_to_map() -> void:
 	var new_unit3: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x11) # 0x11 is Gafgorian dark knight
 	new_unit3.set_primary_weapon(0x17) # blood sword
 	
-	# grenade, panther, juravis, black mage, white mage
-	for specific_job: int in [0x65, 0x67, 0x76, 0x50, 0x4f]:
+	var specific_jobs = [
+		#0x65, # grenade
+		#0x67, # panther
+		#0x76, # juravis
+		0x50, # black mage
+		0x4f,# white mage
+		]
+	
+	for specific_job: int in specific_jobs:
 		spawn_unit(get_random_stand_terrain_tile(), specific_job)
 	
 	#for random_unit: int in 15:

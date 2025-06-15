@@ -2,6 +2,9 @@ class_name VisualEffectData
 
 # https://ffhacktics.com/wiki/Effect_Files
 # https://ffhacktics.com/wiki/Effect_Data
+
+signal vfx_completed
+
 var is_initialized: bool = false
 var file_name: String = "effect file name"
 var vfx_id: int = 0
@@ -463,6 +466,7 @@ func display_vfx(location: Node3D) -> void:
 		await Engine.get_main_loop().process_frame
 	
 	location.queue_free()
+	vfx_completed.emit()
 
 
 func display_vfx_animation(emitter_data, emitter_node: Node3D) -> void:

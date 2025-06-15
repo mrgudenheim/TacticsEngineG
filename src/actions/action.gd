@@ -278,14 +278,11 @@ func apply_standard(action_instance: ActionInstance) -> void:
 		var effect_value: int = roundi(effect.base_power_formula.get_result(action_instance.user, action_instance.user, element))
 		effect.apply(action_instance.user, action_instance.user, effect_value)
 	
-	if action_instance.user.current_animation_id_fwd != action_instance.user.current_idle_animation_id:
-		await action_instance.user.animation_manager.animation_completed
-	
-	action_instance.user.animate_return_to_idle()
-	
-	for target_unit: UnitData in target_units:
-		target_unit.animate_return_to_idle()
-		# TODO return to original facing
+	# wait for applying effect animation
+	if vfx_data != null and target_units.size() > 0:
+		await vfx_data.vfx_completed
+	else:
+		await action_instance.user.get_tree().create_timer(1.0).timeout # TODO show based on vfx timing data? (attacks use vfx 0xFFFF?)
 	
 	action_instance.clear() # clear all highlighting and target data
 	

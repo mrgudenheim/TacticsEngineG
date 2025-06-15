@@ -445,28 +445,50 @@ func animate_start_action(animation_start_id: int, animation_charging_id: int) -
 	
 	if animation_charging_id != 0:
 		set_base_animation_ptr_id(animation_charging_id)
-		#await get_tree().create_timer(0.1 + (ability_data.ticks_charge_time * 0.1)).timeout # TODO allow looping until changed, ie. charging a spell
+		await get_tree().create_timer(0.1 + (ability_data.ticks_charge_time * 0.1)).timeout # TODO allow looping until changed, ie. charging a spell
 
 
 func animate_execute_action(animation_executing_id: int) -> void:
-	if animation_executing_id != 0:
-		var ability_animation_executing_id = animation_executing_id
-		if ["RUKA.SEQ", "ARUTE.SEQ", "KANZEN.SEQ"].has(RomReader.sprs[sprite_file_idx].seq_name):
-			ability_animation_executing_id = 0x2c * 2 # https://ffhacktics.com/wiki/Set_attack_animation_flags_and_facing_3
-		#debug_menu.anim_id_spin.value = ability_animation_executing_id + int(is_back_facing)
-		set_base_animation_ptr_id(ability_animation_executing_id)
+	if animation_executing_id < 0: # no animatione
+		return
+	
+	var ability_animation_executing_id = animation_executing_id
+	if ["RUKA.SEQ", "ARUTE.SEQ", "KANZEN.SEQ"].has(RomReader.sprs[sprite_file_idx].seq_name):
+		ability_animation_executing_id = 0x2c * 2 # https://ffhacktics.com/wiki/Set_attack_animation_flags_and_facing_3
+	#debug_menu.anim_id_spin.value = ability_animation_executing_id + int(is_back_facing)
+	set_base_animation_ptr_id(ability_animation_executing_id)
+	
+	await animation_manager.animation_completed # TODO change based on vfx timing data?
+	
+	if current_animation_id_fwd == animation_executing_id:
+		animate_return_to_idle()
 
 
 func animate_take_hit() -> void:
 	set_base_animation_ptr_id(taking_damage_animation_id)
+	
+	await get_tree().create_timer(1).timeout # TODO show based on vfx timing data?
+	
+	if current_animation_id_fwd == taking_damage_animation_id:
+		animate_return_to_idle()
 
 
 func animate_recieve_heal() -> void:
 	set_base_animation_ptr_id(heal_animation_id)
+	
+	await get_tree().create_timer(1).timeout # TODO show based on vfx timing data?
+	
+	if current_animation_id_fwd == heal_animation_id:
+		animate_return_to_idle()
 
 
 func animate_evade() -> void:
 	set_base_animation_ptr_id(evade_animation_id)
+	
+	await animation_manager.animation_completed
+	
+	if current_animation_id_fwd == evade_animation_id:
+		animate_return_to_idle()
 
 
 func animate_knock_out() -> void:

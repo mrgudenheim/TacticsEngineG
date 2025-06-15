@@ -219,7 +219,7 @@ func set_action() -> void:
 	ability_action.use_weapon_range = use_weapon_range
 	ability_action.use_weapon_targeting = use_weapon_range
 	ability_action.use_weapon_damage = false # weapon_strike?
-	ability_action.use_weapon_animation = weapon_strike # weapon_strike?
+	ability_action.use_weapon_animation = weapon_strike or animation_executing_id == 0 # weapon_strike?
 	ability_action.auto_target = auto_target
 	ability_action.cant_target_self = cant_hit_user
 	ability_action.cant_hit_enimies = cant_hit_enemies

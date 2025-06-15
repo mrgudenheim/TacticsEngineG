@@ -5,7 +5,7 @@ extends Resource
 var job_id = 0
 var job_name: String = "Job Name"
 var skillset_id: int = 0
-#var innate_abilities: PackedInt32Array = []
+var innate_abilities: PackedInt32Array = []
 # equippable items # 4 bytes of bitflags, 32 total
 var hp_growth: int = 1
 var mp_growth: int = 1
@@ -55,7 +55,12 @@ func _init(new_job_id: int, job_bytes: PackedByteArray) -> void:
 	elif job_id >= 0x5e: # generic and special monsters
 		sprite_id = monster_portrait_id
 	
-	# TODO job innate abilities and equippable types
+	for innate_slot: int in 4:
+		var innate_id: int = job_bytes.decode_u16(0x01 + (2 * innate_slot))
+		if innate_id != 0:
+			innate_abilities.append(innate_id) # TODO define non-action abilities
+	
+	# TODO job equippable types
 	
 	hp_growth = job_bytes.decode_u8(0x0d)
 	mp_growth = job_bytes.decode_u8(0x0f)

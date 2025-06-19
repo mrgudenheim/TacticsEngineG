@@ -220,8 +220,13 @@ func get_evade_values(target: UnitData, evade_direction: EvadeData.Directions) -
 	return evade_values
 
 
-func animate_evade(target_unit: UnitData, evade_direction: EvadeData.Directions):
-	# TODO face user
+func animate_evade(target_unit: UnitData, evade_direction: EvadeData.Directions, user_pos: Vector2i):
+	var target_original_facing = target_unit.facing_vector
+	
+	var dir_to_target: Vector2i = user_pos - target_unit.tile_position.location
+	var temp_facing: Vector3 = Vector3(dir_to_target.x, 0, dir_to_target.y).normalized()
+	target_unit.update_unit_facing(temp_facing)
+	
 	var evade_anim_id: int = -1
 	var sum_of_weight: int = 0
 	var evade_values: PackedInt32Array = get_evade_values(target_unit, evade_direction)
@@ -229,15 +234,17 @@ func animate_evade(target_unit: UnitData, evade_direction: EvadeData.Directions)
 		sum_of_weight += evade_source_value
 	
 	if sum_of_weight <= 0: # missed due to action base hit chance
-		target_unit.animate_evade(EvadeData.animation_ids[0])
+		await target_unit.animate_evade(EvadeData.animation_ids[0])
 	else:
 		var rnd: int = randi_range(0, sum_of_weight)
 		for evade_source_idx: int in evade_values.size():
 			var evade_source_value: int = evade_values[evade_source_idx]
 			if rnd < evade_source_value:
-				target_unit.animate_evade(EvadeData.animation_ids[evade_source_idx])
+				await target_unit.animate_evade(EvadeData.animation_ids[evade_source_idx])
 				break
 			rnd -= evade_source_value
+	
+	target_unit.update_unit_facing(target_original_facing)
 
 
 func apply_standard(action_instance: ActionInstance) -> void:
@@ -290,7 +297,7 @@ func apply_standard(action_instance: ActionInstance) -> void:
 					target_unit.animate_recieve_heal(vfx_data)
 				# TODO status change
 		else:
-			animate_evade(target_unit, evade_direction)
+			animate_evade(target_unit, evade_direction, action_instance.user.tile_position.location)
 			
 			target_unit.show_popup_text("Missed")
 			push_warning(action_name + " missed")

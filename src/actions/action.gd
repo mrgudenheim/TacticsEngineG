@@ -166,10 +166,28 @@ func use(action_instance: ActionInstance) -> void:
 		use_strategy.use(action_instance)
 
 
-func check_hit(user: UnitData, target: UnitData) -> bool:
-	var hit: bool = false
-	var hit_chance: float = base_hit_formula.get_result(user, target, element)
+func get_total_hit_chance(user: UnitData, target: UnitData, evade_direction: EvadeData.Directions) -> int:
+	var base_hit_chance: float = base_hit_formula.get_result(user, target, element)
+	#var evade_direction: EvadeData.EvadeDirections = get_evade_direction(user, target)
+	var evade_values: PackedInt32Array = get_evade_values(target, evade_direction)
 	
+	var target_total_evade_factor: float = 1.0
+	if applicable_evasion != EvadeData.EvadeType.NONE:
+		# TODO loop over all EvadeData.EvadeSource possibilites?
+		var job_evade_factor: float = max(0.0, 1 - (target.get_evade(EvadeData.EvadeSource.JOB, applicable_evasion, evade_direction) / 100.0)) # job/class evade factor - only front facing?
+		var shield_evade_factor: float = max(0.0, 1 - (target.get_evade(EvadeData.EvadeSource.SHIELD, applicable_evasion, evade_direction) / 100.0)) # shield evade factor - only front and side facing?
+		var accessory_factor: float = max(0.0, 1 - (target.get_evade(EvadeData.EvadeSource.ACCESSORY, applicable_evasion, evade_direction) / 100.0)) # accessory evade factor
+		var weapon_evade_factor: float = max(0.0, 1 - (target.get_evade(EvadeData.EvadeSource.WEAPON, applicable_evasion, evade_direction) / 100.0)) # TODO weapon evade factor - only front and side facing? and only with "Weapon Guard" ability
+	
+		target_total_evade_factor = job_evade_factor * shield_evade_factor * accessory_factor * weapon_evade_factor
+		target_total_evade_factor = max(0, target_total_evade_factor) # prevent negative evasion
+	
+	var total_hit_chance: int = roundi(base_hit_chance * target_total_evade_factor)
+	
+	return roundi(total_hit_chance)
+
+
+func get_evade_direction(user: UnitData, target: UnitData) -> EvadeData.Directions:
 	var relative_position: Vector2i = user.tile_position.location - target.tile_position.location
 	var relative_facing_position: Vector2i = relative_position
 	if target.facing == UnitData.Facings.NORTH:
@@ -190,37 +208,36 @@ func check_hit(user: UnitData, target: UnitData) -> bool:
 	elif abs(relative_facing_position.x) > abs(relative_facing_position.y):
 		evade_direction = EvadeData.Directions.SIDE
 	
-	var target_total_evade_factor: float = 1.0
-	if applicable_evasion != EvadeData.EvadeType.NONE:
-		# TODO loop over all EvadeData.EvadeSource possibilites?
-		var job_evade_factor: float = 1 - (target.get_evade(EvadeData.EvadeSource.JOB, applicable_evasion, evade_direction) / 100.0) # TODO job/class evade factor - only front facing?
-		var shield_evade_factor: float = 1 - (target.get_evade(EvadeData.EvadeSource.SHIELD, applicable_evasion, evade_direction) / 100.0) # TODO shield evade factor - only front and side facing?
-		var accessory_factor: float = 1 - (target.get_evade(EvadeData.EvadeSource.ACCESSORY, applicable_evasion, evade_direction) / 100.0) # TODO accessory evade factor
-		var weapon_evade_factor: float = 1 - (target.get_evade(EvadeData.EvadeSource.WEAPON, applicable_evasion, evade_direction) / 100.0) # TODO weapon evade factor - only front and side facing? and only with "Weapon Guard" ability
-
-		target_total_evade_factor = job_evade_factor * shield_evade_factor * accessory_factor * weapon_evade_factor
-		target_total_evade_factor = max(0, target_total_evade_factor) # prevent negative evasion
-	
-	var total_hit_chance: int = roundi(hit_chance * target_total_evade_factor)
-	
-	hit = randi_range(0, 99) < total_hit_chance
-	if not hit:
-		# TODO animate_evade, shield block, or weapon block
-		push_warning("miss")
-		return hit
-	
-	
-	
-	
-	return hit
+	return evade_direction
 
 
-func get_preview_total_hit_chance(user: UnitData, target: UnitData) -> int:
-	var hit_chance: float = base_hit_formula.get_result(user, target, element)
+func get_evade_values(target: UnitData, evade_direction: EvadeData.Directions) -> PackedInt32Array:
+	var evade_values: PackedInt32Array = []
+	for evade_source: EvadeData.EvadeSource in EvadeData.EvadeSource.keys().size():
+		var evade_value: int = target.get_evade(evade_source, applicable_evasion, evade_direction)
+		evade_values.append(evade_value)
 	
-	# TODO check evade
+	return evade_values
+
+
+func animate_evade(target_unit: UnitData, evade_direction: EvadeData.Directions):
+	# TODO face user
+	var evade_anim_id: int = -1
+	var sum_of_weight: int = 0
+	var evade_values: PackedInt32Array = get_evade_values(target_unit, evade_direction)
+	for evade_source_value: int in evade_values:
+		sum_of_weight += evade_source_value
 	
-	return roundi(hit_chance)
+	if sum_of_weight <= 0: # missed due to action base hit chance
+		target_unit.animate_evade(EvadeData.animation_ids[0])
+	else:
+		var rnd: int = randi_range(0, sum_of_weight)
+		for evade_source_idx: int in evade_values.size():
+			var evade_source_value: int = evade_values[evade_source_idx]
+			if rnd < evade_source_value:
+				target_unit.animate_evade(EvadeData.animation_ids[evade_source_idx])
+				break
+			rnd -= evade_source_value
 
 
 func apply_standard(action_instance: ActionInstance) -> void:
@@ -260,7 +277,8 @@ func apply_standard(action_instance: ActionInstance) -> void:
 	for target_unit: UnitData in target_units:
 		if vfx_data != null:
 			show_vfx(action_instance, target_unit.tile_position.get_world_position())
-		var hit_success: bool = check_hit(action_instance.user, target_unit)
+		var evade_direction: EvadeData.Directions = get_evade_direction(action_instance.user, target_unit)
+		var hit_success: bool = randi_range(0, 99) < get_total_hit_chance(action_instance.user, target_unit, evade_direction)
 		if hit_success:
 			for effect: ActionEffect in target_effects:
 				var effect_value: int = roundi(effect.base_power_formula.get_result(action_instance.user, target_unit, element))
@@ -272,9 +290,10 @@ func apply_standard(action_instance: ActionInstance) -> void:
 					target_unit.animate_recieve_heal(vfx_data)
 				# TODO status change
 		else:
-			# TODO face user
-			target_unit.animate_evade() # TODO or shield block?
+			animate_evade(target_unit, evade_direction)
+			
 			target_unit.show_popup_text("Missed")
+			push_warning(action_name + " missed")
 	
 	# apply effects to user
 	for effect: ActionEffect in user_effects:

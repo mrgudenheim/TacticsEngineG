@@ -101,7 +101,6 @@ var special_job_skillset_id: int = 0
 @export var elemental_weakness: Array[Action.ElementTypes] = []
 @export var elemental_strengthen: Array[Action.ElementTypes] = []
 
-
 var can_move: bool = true
 
 #var map_position: Vector2i
@@ -164,8 +163,16 @@ func _ready() -> void:
 	if not RomReader.is_ready:
 		RomReader.rom_loaded.connect(initialize_unit)
 	
-	equipped.resize(5)
-	equipped.fill(RomReader.items[0])
+	#equipped.resize(5)
+	#equipped.fill(RomReader.items[0])
+	var item_ids: PackedInt32Array = [
+		1, # dagger
+		0x85, # gold shield
+		0xe9, # dracula mantle
+		]
+	for item_id: int in item_ids:
+		equipped.append(RomReader.items[item_id])
+	
 	add_to_group("Units")
 
 
@@ -488,12 +495,12 @@ func animate_recieve_heal(vfx: VisualEffectData = null) -> void:
 		animate_return_to_idle()
 
 
-func animate_evade() -> void:
-	set_base_animation_ptr_id(evade_animation_id)
+func animate_evade(evade_animation_fwd_id: int) -> void:
+	set_base_animation_ptr_id(evade_animation_fwd_id)
 	
 	await animation_manager.animation_completed
 	
-	if current_animation_id_fwd == evade_animation_id:
+	if current_animation_id_fwd == evade_animation_fwd_id:
 		animate_return_to_idle()
 
 
@@ -676,7 +683,7 @@ func show_popup_text(text: String) -> void:
 
 func set_sprite_by_file_idx(new_sprite_file_idx: int) -> void:
 	sprite_file_idx = new_sprite_file_idx
-	var spr: Spr = RomReader.sprs[new_sprite_file_idx]	
+	var spr: Spr = RomReader.sprs[new_sprite_file_idx]
 	if RomReader.spr_file_name_to_id.has(spr.file_name):
 		sprite_id = RomReader.spr_file_name_to_id[spr.file_name]
 	debug_menu.sprite_options.select(new_sprite_file_idx)

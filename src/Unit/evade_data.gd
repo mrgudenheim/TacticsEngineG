@@ -5,6 +5,16 @@ var value: int = 0
 var source: EvadeSource
 var type: EvadeType = EvadeType.PHYSICAL
 var directions: Array[Directions] = [Directions.FRONT]
+var animation_id: int = -1:
+	get:
+		return animation_ids[source]
+
+static var animation_ids: Dictionary[EvadeSource, int] = {
+	EvadeSource.JOB : 0x30,
+	EvadeSource.SHIELD : 0xb2, # TODO shield block depends on relative height
+	EvadeSource.ACCESSORY : 0x30,
+	EvadeSource.WEAPON : 0xb2, # TODO is this the right animation for weapon guard? how to pass in right item id?
+	}
 
 enum EvadeType {
 	NONE,

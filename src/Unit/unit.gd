@@ -272,7 +272,7 @@ func update_actions(battle_manager: BattleManager) -> void:
 			if ability_id != 0:
 				var new_action: Action = RomReader.abilities[ability_id].ability_action
 				actions.append(new_action)
-	# TODO append all other potential actions, from jobs, wait, equipment, etc.
+	# TODO append all other potential actions, from jobs, equipment, etc.
 	
 	# remove any existing buttons
 	for child in battle_manager.action_button_list.get_children():
@@ -292,6 +292,11 @@ func update_actions(battle_manager: BattleManager) -> void:
 		
 		new_action_instance.action_completed.connect(update_actions)
 	
+	if battle_manager.controller.unit == self:
+		select_first_action()
+
+	
+func select_first_action() -> void:
 	# select first usable action by default (usually Move)
 	active_action = null
 	for action_instance: ActionInstance in actions_data.values():

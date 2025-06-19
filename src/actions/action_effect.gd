@@ -25,8 +25,8 @@ enum EffectType {
 	INVENTORY,
 	#BREAK_EQUIPMENT, # Break is Remove equipment + lower inventory?
 	REMOVE_EQUIPMENT, # Steal if transfer = true
-	#PE,
-	#ME,
+	#PHYSICAL_EVADE, 
+	#MAGIC_EVADE,
 	}
 
 

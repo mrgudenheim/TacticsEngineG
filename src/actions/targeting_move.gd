@@ -19,12 +19,27 @@ func get_potential_targets(action_instance: ActionInstance) -> Array[TerrainTile
 func start_targeting(action_instance: ActionInstance) -> void:
 	super.start_targeting(action_instance)
 	
-	action_instance.battle_manager.map_input_event.connect(on_map_input_event)
+	if not action_instance.battle_manager.map_input_event.is_connected(action_instance.on_map_input_event):
+		action_instance.battle_manager.map_input_event.connect(action_instance.on_map_input_event)
+	
+	for unit in action_instance.battle_manager.units:
+		if not unit.hovered.is_connected(action_instance.on_unit_hovered):
+			unit.hovered.connect(action_instance.on_unit_hovered)
+	
+	if not action_instance.tile_hovered.is_connected(target_tile):
+		action_instance.tile_hovered.connect(target_tile)
 
 
 func stop_targeting(action_instance: ActionInstance) -> void:
-	if action_instance.battle_manager.map_input_event.is_connected(on_map_input_event):
-		action_instance.battle_manager.map_input_event.disconnect(on_map_input_event)
+	if action_instance.battle_manager.map_input_event.is_connected(action_instance.on_map_input_event):
+		action_instance.battle_manager.map_input_event.disconnect(action_instance.on_map_input_event)
+	
+	for unit in action_instance.battle_manager.units:
+		if unit.hovered.is_connected(action_instance.on_unit_hovered):
+			unit.hovered.disconnect(action_instance.on_unit_hovered)
+	
+	if action_instance.tile_hovered.is_connected(target_tile):
+			action_instance.tile_hovered.disconnect(target_tile)
 
 
 func clear_path(path_highlight_containers: Array[Node3D]) -> void:
@@ -33,9 +48,10 @@ func clear_path(path_highlight_containers: Array[Node3D]) -> void:
 			container.queue_free()
 
 
-func on_map_input_event(action_instance: ActionInstance, camera: Camera3D, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
-	#push_warning(event_position)
-	var tile: TerrainTile = action_instance.battle_manager.get_tile(event_position)
+func target_tile(tile: TerrainTile, action_instance: ActionInstance, event: InputEvent) -> void:
+	if UnitControllerRT.unit != action_instance.user:
+		stop_targeting(action_instance)
+		return
 	
 	# don't update path if hovered tile has not changed or is not valid for moving
 	if tile == null or action_instance.user.map_paths.is_empty():
@@ -67,7 +83,6 @@ func on_map_input_event(action_instance: ActionInstance, camera: Camera3D, event
 				#action_instance.submitted_targets.append(tile)
 				action_instance.use()
 				return
-
 
 # TODO allow cost based on Unit Move value or action range value, allow vertical jumping or horizontal leapint to use a parameter or unit stat
 ## map_tiles is Dictionary[Vector2i, Array[TerrainTile]], returns path to every tile

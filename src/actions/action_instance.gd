@@ -1,6 +1,7 @@
 class_name ActionInstance
 
 signal action_completed(battle_manager: BattleManager)
+signal tile_hovered(tile: TerrainTile, action_instance: ActionInstance)
 
 var action: Action
 var user: UnitData
@@ -14,6 +15,7 @@ var submitted_targets: Array[TerrainTile]
 
 var current_tile_hovered: TerrainTile
 var potential_targets_are_set: bool = false
+
 
 func _init(new_action: Action, new_user: UnitData, new_battle_manager: BattleManager) -> void:
 	action = new_action
@@ -101,6 +103,25 @@ func stop_targeting() -> void:
 	show_targets_highlights(potential_targets_highlights, false)
 	show_targets_highlights(preview_targets_highlights, false)
 	action.targeting_strategy.stop_targeting(self)
+
+
+func on_map_input_event(camera: Camera3D, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
+	#push_warning(event_position)
+	var tile: TerrainTile = battle_manager.get_tile(event_position)
+	# TODO preview target highlighting
+	if tile == null:
+		return
+	
+	tile_hovered.emit(tile, self, event)
+
+
+func on_unit_hovered(unit: UnitData, event: InputEvent):
+	var tile: TerrainTile = unit.tile_position
+	# TODO preview target highlighting
+	if tile == null:
+		return
+	
+	tile_hovered.emit(tile, self, event)
 
 
 func use() -> void:

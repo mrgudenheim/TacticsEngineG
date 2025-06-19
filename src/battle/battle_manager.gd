@@ -401,7 +401,7 @@ func increment_counter(unit: UnitData) -> void:
 
 
 func on_map_input_event(camera: Camera3D, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
-	map_input_event.emit(controller.unit.active_action, camera, event, event_position, normal, shape_idx)
+	map_input_event.emit(camera, event, event_position, normal, shape_idx)
 
 
 func get_tile(input_position: Vector3) -> TerrainTile:

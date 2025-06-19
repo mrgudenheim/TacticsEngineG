@@ -13,6 +13,7 @@ signal spritesheet_changed(new_spritesheet: ImageTexture)
 signal reached_tile()
 signal completed_move()
 signal turn_ended()
+signal hovered(unit_data: UnitData, event: InputEvent)
 
 var is_player_controlled: bool = false
 var is_active: bool = false
@@ -295,10 +296,13 @@ func update_actions(battle_manager: BattleManager) -> void:
 	if battle_manager.controller.unit == self:
 		select_first_action()
 
-	
+
 func select_first_action() -> void:
 	# select first usable action by default (usually Move)
 	active_action = null
+	if UnitControllerRT.unit != self:
+		return
+	
 	for action_instance: ActionInstance in actions_data.values():
 		if action_instance.is_usable() and action_instance.action != wait_action:
 			active_action = action_instance
@@ -777,7 +781,10 @@ func update_map_paths(map_tiles: Dictionary[Vector2i, Array], units: Array[UnitD
 		map_paths = await move_action.targeting_strategy.get_map_paths(self, map_tiles, units)
 
 
-func _on_character_body_3d_input_event(_camera: Node, _event: InputEvent, _event_position: Vector3, _normal: Vector3, _shape_idx: int) -> void:
+func _on_character_body_3d_input_event(_camera: Node, event: InputEvent, _event_position: Vector3, _normal: Vector3, _shape_idx: int) -> void:
+	if event is InputEventMouseMotion:
+		hovered.emit(self, event)
+	
 	if Input.is_action_just_pressed("secondary_action") and UnitControllerRT.unit.char_body.is_on_floor():
 		UnitControllerRT.unit.use_ability(char_body.position)
 		process_targeted()

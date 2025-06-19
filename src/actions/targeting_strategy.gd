@@ -1,8 +1,6 @@
-# TODO make abstract in Godot 4.5 https://github.com/godotengine/godot-proposals/issues/5641
+# TODO make abstract? in Godot 4.5 https://github.com/godotengine/godot-proposals/issues/5641
 class_name TargetingStrategy
 extends Resource
-
-# TODO implement TargetingStrategy
 
 func get_potential_targets(action_instance: ActionInstance) -> Array[TerrainTile]:
 	push_error("Using base TargetingStrategy instead of specific targeting strategy")

@@ -215,6 +215,8 @@ func spawn_unit(tile_position: TerrainTile, job_id: int) -> UnitData:
 	new_unit.primary_weapon_assigned.connect(func(weapon_id: int): new_unit.update_actions(self))
 	new_unit.turn_ended.connect(process_next_event)
 	
+	new_unit.name = new_unit.job_nickname + "-" + new_unit.unit_nickname
+	
 	return new_unit
 
 

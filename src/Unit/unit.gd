@@ -13,7 +13,7 @@ signal spritesheet_changed(new_spritesheet: ImageTexture)
 signal reached_tile()
 signal completed_move()
 signal turn_ended()
-signal hovered(unit_data: UnitData, event: InputEvent)
+signal unit_input_event(unit_data: UnitData, event: InputEvent)
 
 var is_player_controlled: bool = false
 var is_active: bool = false
@@ -782,8 +782,7 @@ func update_map_paths(map_tiles: Dictionary[Vector2i, Array], units: Array[UnitD
 
 
 func _on_character_body_3d_input_event(_camera: Node, event: InputEvent, _event_position: Vector3, _normal: Vector3, _shape_idx: int) -> void:
-	if event is InputEventMouseMotion:
-		hovered.emit(self, event)
+	unit_input_event.emit(self, event)
 	
 	if Input.is_action_just_pressed("secondary_action") and UnitControllerRT.unit.char_body.is_on_floor():
 		UnitControllerRT.unit.use_ability(char_body.position)

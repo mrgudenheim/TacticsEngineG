@@ -311,7 +311,7 @@ func apply_standard(action_instance: ActionInstance) -> void:
 	if vfx_data != null and target_units.size() > 0:
 		await vfx_data.vfx_completed
 	else:
-		await action_instance.user.get_tree().create_timer(1.0).timeout # TODO show based on vfx timing data? (attacks use vfx 0xFFFF?)
+		await action_instance.user.get_tree().create_timer(0.5).timeout # TODO show based on vfx timing data? (attacks use vfx 0xFFFF?)
 	
 	action_instance.clear() # clear all highlighting and target data
 	

@@ -111,6 +111,17 @@ func target_tile(tile: TerrainTile, action_instance: ActionInstance, event: Inpu
 			action_instance.preview_targets_highlights = action_instance.get_tile_highlights(action_instance.preview_targets, action_instance.battle_manager.tile_highlights[Color.WHITE])
 		
 		action_instance.show_targets_highlights(action_instance.preview_targets_highlights)
+		
+		# show target previews
+		for preview: ActionPreview in action_instance.action_previews:
+			preview.queue_free()
+		action_instance.action_previews.clear()
+		
+		for preview_tile: TerrainTile in action_instance.preview_targets:
+			for unit: UnitData in action_instance.battle_manager.units:
+				if unit.tile_position == preview_tile:
+					action_instance.show_result_preview(unit)
+					break
 	
 	if not action_instance.potential_targets.has(tile):
 		return

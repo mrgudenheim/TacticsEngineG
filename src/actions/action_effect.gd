@@ -8,6 +8,7 @@ var show_ui: bool = true
 var transfer_to_user: bool = false # absorb, steal
 var apply_to_user: bool = false
 var set_value: bool = false # fales = add value, true = set value
+var label: String = ""
 
 enum EffectType {
 	UNIT_STAT,
@@ -26,6 +27,7 @@ func _init(new_type: EffectType = EffectType.UNIT_STAT, new_effect_stat: UnitDat
 	show_ui = new_show_ui
 	transfer_to_user = new_transfer_to_user
 	set_value = new_set_value
+	set_effect_label()
 
 
 func get_value(user: UnitData, target: UnitData, element: Action.ElementTypes) -> int:
@@ -51,18 +53,33 @@ func get_ai_value(user: UnitData, target: UnitData, element: Action.ElementTypes
 	return ai_value
 
 
-func apply_value(apply_unit: UnitData, value: int) -> int:
-	var type_name: String = EffectType.keys()[type]
+func set_effect_label() -> void:
+	label = EffectType.keys()[type]
 	
+	if type == EffectType.UNIT_STAT:
+		label = UnitData.StatType.keys()[effect_stat_type]
+	if type == EffectType.CURRENCY:
+		label = "Gold"
+
+
+func get_text(value: int) -> String:
+	var text: String = str(value) + " " + label
+	if set_value:
+		text = label + " = " + str(value)
+	elif value > 0:
+		text = "+" + text
+	
+	return text
+
+
+func apply_value(apply_unit: UnitData, value: int) -> int:
 	match type:
 		EffectType.UNIT_STAT:
-			type_name = UnitData.StatType.keys()[effect_stat_type]
 			if set_value:
 				apply_unit.stats[effect_stat_type].set_value(value)
 			else:
 				apply_unit.stats[effect_stat_type].add_value(value)
 		EffectType.CURRENCY:
-			type_name = "Gold"
 			if set_value:
 				apply_unit.team.currency = value
 			else:
@@ -75,14 +92,8 @@ func apply_value(apply_unit: UnitData, value: int) -> int:
 		EffectType.REMOVE_EQUIPMENT:
 			apply_unit.change_equipment(0, null) # TODO get equipment slot id to change
 	
-	var text: String = str(value) + " " + type_name
-	if value > 0:
-		text = "+" + text
-	
-	if set_value:
-		text = type_name + " = " + str(value)
-	
-	apply_unit.show_popup_text(text)
+	var effect_text: String = get_text(value)
+	apply_unit.show_popup_text(effect_text)
 	
 	return value
 

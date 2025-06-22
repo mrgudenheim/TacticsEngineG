@@ -91,9 +91,18 @@ var separate_status: bool = false
 
 var vfx_data: VisualEffectData
 
+class SecondaryAction:
+	var action: Action
+	var chance: int
+	
+	func _init(new_action: Action, new_chance: int) -> void:
+		action = new_action
+		chance = new_chance
+
 @export var secondary_actions: Array[Action] = [] # skip right to applying ActionEffects to targets, but can use new FormulaData
 @export var secondary_actions_chances: PackedInt32Array = [100]
 @export var secondary_action_list_type: StatusListType = StatusListType.EACH
+var secondary_actions2: Array[SecondaryAction] = []
 
 @export var set_target_animation_on_hit: bool = true
 @export var ends_turn: bool = false

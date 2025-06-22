@@ -16,6 +16,8 @@ var submitted_targets: Array[TerrainTile]
 var current_tile_hovered: TerrainTile
 var potential_targets_are_set: bool = false
 
+var action_preview_scene: PackedScene = preload("res://src/actions/action_preview.tscn")
+var action_previews: Array[ActionPreview] = []
 
 func _init(new_action: Action, new_user: UnitData, new_battle_manager: BattleManager) -> void:
 	action = new_action
@@ -103,7 +105,96 @@ func stop_targeting() -> void:
 	show_targets_highlights(potential_targets_highlights, false)
 	show_targets_highlights(preview_targets_highlights, false)
 	clear_targets(preview_targets_highlights)
+	
+	for preview: ActionPreview in action_previews:
+		preview.queue_free()
+	action_previews.clear()
+	
 	action.targeting_strategy.stop_targeting(self)
+
+
+func show_result_preview(target: UnitData) -> ActionPreview:
+	var hit_chance_text: String = get_hit_chance_text(target)
+	var effects_text: String = get_effects_text(target)
+	var statuses_text: String = get_statuses_text(target)
+	var secondary_actions_text: String = get_secondary_actions_text(target)
+	
+	var all_text: PackedStringArray = [hit_chance_text, effects_text, statuses_text, secondary_actions_text]
+	for text_idx: int in range(all_text.size() - 1, -1, -1):
+		if all_text[text_idx] == "":
+			all_text.remove_at(text_idx)
+	
+	var total_preview_text: String = "\n".join(all_text)
+	
+	var preview: ActionPreview = action_preview_scene.instantiate()
+	preview.label.text = total_preview_text
+	preview.unit = target
+	target.char_body.add_child(preview)
+	
+	action_previews.append(preview)
+	
+	return preview
+
+
+func get_hit_chance_text(target: UnitData) -> String:
+	# hit chance preview
+	var evade_direction: EvadeData.Directions = action.get_evade_direction(user, target)
+	var hit_chance_value: int = action.get_total_hit_chance(user, target, evade_direction)
+	var hit_chance_text: String = str(hit_chance_value) + "% Hit"
+	
+	return hit_chance_text
+
+
+func get_effects_text(target: UnitData) -> String:
+	# effect preview
+	var all_effects_text: PackedStringArray = []
+	for action_effect: ActionEffect in action.target_effects:
+		var effect_value: int = action_effect.get_value(user, target, action.element)
+		var effect_text: String = action_effect.get_text(effect_value)
+		all_effects_text.append(effect_text)
+	
+	var total_effect_text: String = "/n".join(all_effects_text)
+	return total_effect_text
+
+
+func get_statuses_text(target: UnitData) -> String:
+	# status preview
+	if action.status_list.is_empty():
+		return ""
+	
+	var status_chance: String = str(action.status_chance) + "%"
+	var remove_status: String = ""
+	if action.will_remove_status:
+		remove_status = "Remove "
+	var status_group_type: String = Action.StatusListType.keys()[action.status_list_type] + " "
+	if action.status_list.size() < 2:
+		status_group_type = "" # don't mention group type if 1 or less status
+	
+	var status_names: PackedStringArray = []
+	for status: StatusEffect in action.status_list:
+		status_names.append(status.status_effect_name)
+	
+	var total_status_text: String = status_chance + " " + remove_status + status_group_type + ", ".join(status_names)
+	return total_status_text
+
+
+func get_secondary_actions_text(target: UnitData) -> String:
+	# TODO show effects and statuses from secondary actions?
+	if action.secondary_actions2.is_empty():
+		return ""
+	
+	var total_secondary_action_text: String = Action.StatusListType.keys()[action.secondary_action_list_type] + "\n"
+	if action.secondary_actions2.size() < 2:
+		total_secondary_action_text = ""
+	
+	var all_secondary_action_text: PackedStringArray = []
+	for secondary_action: Action.SecondaryAction in action.secondary_actions2:
+		var secondary_action_chance: String = str(secondary_action.chance) + "%"
+		var secondary_action_text: String = secondary_action_chance + " " + secondary_action.action.action_name
+		all_secondary_action_text.append(secondary_action_text)
+	
+	total_secondary_action_text += "\n".join(all_secondary_action_text)
+	return total_secondary_action_text
 
 
 func on_map_input_event(camera: Camera3D, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:

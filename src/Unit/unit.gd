@@ -199,8 +199,8 @@ func _ready() -> void:
 	if not RomReader.is_ready:
 		RomReader.rom_loaded.connect(initialize_unit)
 	
-	stats[StatType.HP_MAX].changed.connect(stats[StatType.HP].update_max_from_stat)
-	stats[StatType.MP_MAX].changed.connect(stats[StatType.MP].update_max_from_stat)
+	stats[StatType.HP_MAX].changed.connect(stats[StatType.HP].update_max_from_clamped_value)
+	stats[StatType.MP_MAX].changed.connect(stats[StatType.MP].update_max_from_clamped_value)
 	
 	#equipped.resize(5)
 	#equipped.fill(RomReader.items[0])

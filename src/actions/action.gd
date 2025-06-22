@@ -291,9 +291,9 @@ func apply_standard(action_instance: ActionInstance) -> void:
 				var effect_value: int = roundi(effect.base_power_formula.get_result(action_instance.user, target_unit, element))
 				effect.apply(action_instance.user, target_unit, effect_value)
 			
-				if set_target_animation_on_hit and [ActionEffect.EffectType.HP, ActionEffect.EffectType.MP].has(effect.type) and effect_value < 0:
+				if set_target_animation_on_hit and [UnitData.StatType.HP, UnitData.StatType.MP].has(effect.effect_stat_type) and effect_value < 0:
 					target_unit.animate_take_hit(vfx_data)
-				elif set_target_animation_on_hit and [ActionEffect.EffectType.HP, ActionEffect.EffectType.MP].has(effect.type) and effect_value > 0:
+				elif set_target_animation_on_hit and [UnitData.StatType.HP, UnitData.StatType.MP].has(effect.effect_stat_type) and effect_value > 0:
 					target_unit.animate_recieve_heal(vfx_data)
 				# TODO status change
 		else:
@@ -377,17 +377,17 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			secondary_action_list_type = Action.StatusListType.RANDOM
 		6:
 			# TODO get weapon damage?
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].transfer_to_user = true # absorb hp
 		7:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			# TODO get weapon damage?
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.reverse_sign = false # heal
 		8:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MAxV1
 			target_effects[0].base_power_formula.value_01 = formula_y
 			target_effects[0].base_power_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
@@ -400,7 +400,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
 			target_effects[0].base_power_formula.value_01 = formula_y / 100.0
 		0x0a:
@@ -420,7 +420,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x0c:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MAxV1
 			target_effects[0].base_power_formula.value_01 = formula_y
 			target_effects[0].base_power_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
@@ -434,7 +434,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
 			target_effects[0].base_power_formula.value_01 = formula_y
 			target_effects[0].base_power_formula.reverse_sign = false
@@ -449,7 +449,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			status_chance = 100
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
 			target_effects[0].base_power_formula.value_01 = formula_y
 		0x0f:
@@ -460,7 +460,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.MP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.MP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
 			target_effects[0].base_power_formula.value_01 = formula_y
 			target_effects[0].transfer_to_user = true
@@ -472,7 +472,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
 			target_effects[0].base_power_formula.value_01 = formula_y
 			target_effects[0].transfer_to_user = true
@@ -486,7 +486,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.CT))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.CT))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
 			target_effects[0].base_power_formula.value_01 = 100
 			target_effects[0].set_value = true
@@ -507,7 +507,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.CT))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.CT))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
 			target_effects[0].base_power_formula.value_01 = 00
 			target_effects[0].set_value = true
@@ -519,7 +519,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.MP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.MP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_CURRENT_MP_minus_V1
 			target_effects[0].base_power_formula.value_01 = 0
 		0x17:
@@ -530,7 +530,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_CURRENT_HP_minus_V1
 			target_effects[0].base_power_formula.value_01 = 1
 		0x18, 0x19:
@@ -543,7 +543,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.PHYSICAL_ATTACK)) # TODO MAGICAL_ATTACK or SPEED dependent on ability ID?
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.PHYSICAL_ATTACK)) # TODO MAGICAL_ATTACK or SPEED dependent on ability ID?
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
 			target_effects[0].base_power_formula.value_01 = formula_x
 		0x1b:
@@ -554,7 +554,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.MP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.MP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_MPxV1
 			target_effects[0].base_power_formula.value_01 = formula_y
 		0x1c:
@@ -574,14 +574,14 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x1e:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MA_plus_V1xMA_div_2
 			target_effects[0].base_power_formula.value_01 = formula_y
 			# TODO random number of hits within AoE
 		0x1f:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MA_plus_V1xMA_div_2
 			target_effects[0].base_power_formula.value_01 = formula_y
 			target_effects[0].base_power_formula.user_faith_modifier = FormulaData.FaithModifier.UNFAITH
@@ -590,14 +590,14 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x20:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MAxV1
 			target_effects[0].base_power_formula.value_01 = formula_y
 			# TODO chance to decrease inventory
 		0x21:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.MP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.MP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MAxV1
 			target_effects[0].base_power_formula.value_01 = formula_y
 			# TODO chance to decrease inventory
@@ -610,7 +610,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x23:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MAxV1
 			target_effects[0].base_power_formula.value_01 = formula_y
 			target_effects[0].base_power_formula.reverse_sign = false # heal
@@ -618,7 +618,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x24:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PA_plus_V1xMA_div_2
 			target_effects[0].base_power_formula.value_01 = formula_y
 			# TODO usable based on terrain?
@@ -637,7 +637,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.formula = FormulaData.Formulas.SP_plus_V1
 			base_hit_formula.value_01 = formula_x
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.LVLxSPxV1
 			target_effects[0].base_power_formula.value_01 = 1
 			# TODO add to user currency? user_effects.append(ActionEffect.new(ActionEffect.EffectType.CURRENCY))
@@ -645,7 +645,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.formula = FormulaData.Formulas.SP_plus_V1
 			base_hit_formula.value_01 = formula_x
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.EXP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.EXP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MIN_TARGET_EXP_or_SP_plus_V1
 			target_effects[0].base_power_formula.value_01 = formula_y
 			target_effects[0].transfer_to_user = true
@@ -661,7 +661,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.value_01 = formula_x
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.BRAVE))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.BRAVE))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
 			target_effects[0].base_power_formula.value_01 = formula_y
 			target_effects[0].base_power_formula.reverse_sign = false
@@ -670,7 +670,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.formula = FormulaData.Formulas.PA_plus_V1
 			base_hit_formula.value_01 = formula_y
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.SPEED))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.SPEED))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
 			target_effects[0].base_power_formula.value_01 = formula_x
 			# TODO set effects based on ability id
@@ -678,11 +678,11 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.formula = FormulaData.Formulas.PA_plus_V1
 			base_hit_formula.value_01 = formula_y
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.MP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.MP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
 			target_effects[0].base_power_formula.value_01 = formula_y / 100.0
 		0x2d:
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PAxWP_plus_V1
 			target_effects[0].base_power_formula.value_01 = formula_y
 			
@@ -690,7 +690,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			status_chance = 25
 			status_list_type = StatusListType.RANDOM
 		0x2e:
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PAxWPxV1
 			target_effects[0].base_power_formula.value_01 = 1
 			
@@ -699,21 +699,21 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.value_01 = 1
 			# TODO set equipement slod id based on ability id?
 		0x2f:
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.MP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.MP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PAxWPxV1
 			target_effects[0].base_power_formula.value_01 = 1
 			target_effects[0].transfer_to_user = true
 		0x30:
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PAxWPxV1
 			target_effects[0].base_power_formula.value_01 = 1
 			target_effects[0].transfer_to_user = true
 		0x31:
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PAxPA_plus_V1_div_2
 			target_effects[0].base_power_formula.value_01 = formula_y
 		0x32:
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.RANDOM_V1xPAx3_plus_V2_div_2
 			target_effects[0].base_power_formula.value_01 = formula_x
 			target_effects[0].base_power_formula.value_02 = formula_y
@@ -725,12 +725,12 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x34:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PAxV1
 			target_effects[0].base_power_formula.value_01 = formula_y
 			target_effects[0].base_power_formula.reverse_sign = false
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.MP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.MP))
 			target_effects[1].base_power_formula.formula = FormulaData.Formulas.PAxV1
 			target_effects[1].base_power_formula.value_01 = formula_y / 2.0
 			target_effects[1].base_power_formula.reverse_sign = false
@@ -740,19 +740,19 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.formula = FormulaData.Formulas.PA_plus_V1
 			base_hit_formula.value_01 = formula_x
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
 			target_effects[0].base_power_formula.value_01 = formula_y
 			target_effects[0].base_power_formula.reverse_sign = false
 		0x36:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.PHYSICAL_ATTACK))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.PHYSICAL_ATTACK))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
 			target_effects[0].base_power_formula.value_01 = formula_y
 			target_effects[0].base_power_formula.reverse_sign = false
 		0x37:
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.RANDOM_V1xPA
 			target_effects[0].base_power_formula.value_01 = formula_y
 		0x38:
@@ -762,26 +762,26 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x39:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.SPEED))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.SPEED))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
 			target_effects[0].base_power_formula.value_01 = formula_y
 			target_effects[0].base_power_formula.reverse_sign = false
 		0x3a:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.BRAVE))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.BRAVE))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
 			target_effects[0].base_power_formula.value_01 = formula_y
 			target_effects[0].base_power_formula.reverse_sign = false
 		0x3b:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.BRAVE))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.BRAVE))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
 			target_effects[0].base_power_formula.value_01 = formula_x
 			target_effects[0].base_power_formula.reverse_sign = false
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.SPEED)) # TODO set type based on ability id
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.SPEED)) # TODO set type based on ability id
 			target_effects[1].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
 			target_effects[1].base_power_formula.value_01 = formula_y
 			target_effects[1].base_power_formula.reverse_sign = false
@@ -789,12 +789,12 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x3c:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
 			target_effects[0].base_power_formula.value_01 = 2.0 / 5.0
 			target_effects[0].base_power_formula.reverse_sign = false
 			
-			user_effects.append(ActionEffect.new(ActionEffect.EffectType.HP)) # TODO this should be per target
+			user_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP)) # TODO this should be per target
 			user_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
 			user_effects[0].base_power_formula.value_01 = 1.0 / 5.0
 		0x3d:
@@ -805,7 +805,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x3e:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_CURRENT_HP_minus_V1
 			target_effects[0].base_power_formula.value_01 = 1
 		0x3f:
@@ -827,29 +827,29 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x42:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PAxV1
 			target_effects[0].base_power_formula.value_01 = formula_y
 			
-			user_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			user_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			user_effects[0].base_power_formula.formula = FormulaData.Formulas.PAxV1
 			user_effects[0].base_power_formula.value_01 = formula_y / formula_x
 		0x43:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.USER_MISSING_HPxV1
 			target_effects[0].base_power_formula.value_01 = 1
 		0x44:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_CURRENT_MP_minus_V1
 			target_effects[0].base_power_formula.value_01 = 0
 		0x45:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MISSING_HPxV1
 			target_effects[0].base_power_formula.value_01 = 1
 		0x46:
@@ -859,37 +859,37 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			status_chance = 100
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
 			target_effects[0].base_power_formula.value_01 = formula_y / 100.0
 		0x48:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
 			target_effects[0].base_power_formula.value_01 = formula_x * 10 # maybe should be handled in Item initialization?
 			target_effects[0].base_power_formula.reverse_sign = false # heal
 		0x49:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.MP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.MP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
 			target_effects[0].base_power_formula.value_01 = formula_x * 10 # maybe should be handled in Item initialization?
 			target_effects[0].base_power_formula.reverse_sign = false # heal
 		0x4a:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
-			#target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			#target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			#target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
 			#target_effects[0].base_power_formula.value_01 = formula_x * 10 # maybe should be handled in Item initialization?
 			#target_effects[0].base_power_formula.reverse_sign = false # heal
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
 			target_effects[0].base_power_formula.value_01 = 1 # maybe should be handled in Item initialization?
 			target_effects[0].base_power_formula.reverse_sign = false # heal
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.MP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.MP))
 			target_effects[1].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_MPxV1
 			target_effects[1].base_power_formula.value_01 = 1 # maybe should be handled in Item initialization?
 			target_effects[1].base_power_formula.reverse_sign = false # heal
@@ -898,7 +898,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			status_chance = 100
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.RANDOM_V1_V2
 			target_effects[0].base_power_formula.value_01 = 1
 			target_effects[0].base_power_formula.value_02 = 9
@@ -906,7 +906,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x4c:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MAxV1
 			target_effects[0].base_power_formula.value_01 = formula_y
 			target_effects[0].base_power_formula.reverse_sign = false # heal
@@ -914,21 +914,21 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.value_01 = formula_x
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
 			target_effects[0].base_power_formula.value_01 = formula_y / 100.0
 			target_effects[0].transfer_to_user = true
 		0x4e:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MAxV1
 			target_effects[0].base_power_formula.value_01 = formula_y
 		0x4f:
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.value_01 = formula_x
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.USER_MISSING_HPxV1
 			target_effects[0].base_power_formula.value_01 = 1
 		0x50:
@@ -944,11 +944,11 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			status_chance = 100
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.USER_MISSING_HPxV1
 			target_effects[0].base_power_formula.value_01 = 1
 			
-			user_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			user_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			user_effects[0].base_power_formula.formula = FormulaData.Formulas.USER_CURRENT_HP_minus_V1
 			user_effects[0].base_power_formula.value_01 = 0
 		0x53:
@@ -957,13 +957,13 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.value_01 = formula_x
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
 			target_effects[0].base_power_formula.value_01 = formula_y
 		0x54:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.MP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.MP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MAxV1
 			target_effects[0].base_power_formula.value_01 = formula_y
 			target_effects[0].base_power_formula.reverse_sign = true
@@ -973,7 +973,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.value_01 = formula_x
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.PHYSICAL_ATTACK))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.PHYSICAL_ATTACK))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
 			target_effects[0].base_power_formula.value_01 = formula_y
 		0x56:
@@ -982,13 +982,13 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.value_01 = formula_x
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.MAGIC_ATTACK))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.MAGIC_ATTACK))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
 			target_effects[0].base_power_formula.value_01 = formula_y
 		0x57:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.LEVEL))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.LEVEL))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
 			target_effects[0].base_power_formula.value_01 = 1
 			target_effects[0].base_power_formula.reverse_sign = true # add
@@ -1005,7 +1005,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.value_01 = formula_x
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.LEVEL))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.LEVEL))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
 			target_effects[0].base_power_formula.value_01 = 1
 		0x5a:
@@ -1017,17 +1017,17 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			status_chance = 100
 			# TODO miss if target is not Dragon type
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
 			target_effects[0].base_power_formula.value_01 = formula_y
 		0x5c:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.BRAVE))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.BRAVE))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
 			target_effects[0].base_power_formula.value_01 = formula_x
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.SPEED)) # TODO set type based on ability id
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.SPEED)) # TODO set type based on ability id
 			target_effects[1].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
 			target_effects[1].base_power_formula.value_01 = formula_y
 			target_effects[1].base_power_formula.reverse_sign = false
@@ -1036,7 +1036,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x5d:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.CT))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.CT))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
 			target_effects[0].base_power_formula.value_01 = 100
 			target_effects[0].set_value = true
@@ -1045,7 +1045,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x5e:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MA_plus_V1xMA_div_2
 			target_effects[0].base_power_formula.value_01 = formula_y
 			
@@ -1053,13 +1053,13 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x5f:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MA_plus_V1xMA_div_2
 			target_effects[0].base_power_formula.value_01 = formula_y
 		0x60:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MA_plus_V1xMA_div_2
 			target_effects[0].base_power_formula.value_01 = formula_y
 		0x61:
@@ -1070,7 +1070,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.BRAVE))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.BRAVE))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
 			target_effects[0].base_power_formula.value_01 = formula_y
 		0x62:
@@ -1079,17 +1079,17 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.value_01 = formula_x
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.BRAVE))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.BRAVE))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
 			target_effects[0].base_power_formula.value_01 = formula_y
 		0x63:
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PAxWPxV1 # TODO SPxWP
 			target_effects[0].base_power_formula.value_01 = 1
 		0x64:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
-			target_effects.append(ActionEffect.new(ActionEffect.EffectType.HP))
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PAxWPxV1
 			target_effects[0].base_power_formula.value_01 = 1 # TODO 1.5 if spear, PAxBRAVE if unarmed, else 1
 

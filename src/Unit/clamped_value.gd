@@ -24,6 +24,7 @@ class Modifier:
 	var type: ModifierType = ModifierType.ADD
 	var value: float = 1.0
 	var priority: int = 1 # order to be applied
+	# TODO track modifier source?
 	
 	func _init(new_value: float = 1.0, new_type: ModifierType = ModifierType.ADD, new_priority: int = 1) -> void:
 		value = new_value
@@ -50,16 +51,16 @@ func _init(new_min_value: int = 0, new_max_value: int = 100, new_current_value: 
 	current_value = new_current_value
 
 
-func get_unclampped_modified_value() -> int:
-	var temp_modified_value: int = current_value
+func get_unclampped_modified_value(preview_value: int = current_value) -> int:
+	var temp_modified_value: int = preview_value
 	for modifier: Modifier in modifiers:
-		modifier.apply(temp_modified_value)
+		modifier.apply(temp_modified_value) # TODO sort by add, mult, set
 	
 	return temp_modified_value
 
 
-func get_modified_value() -> int:
-	var temp_modified_value = get_unclampped_modified_value()
+func get_modified_value(preview_value: int = current_value) -> int:
+	var temp_modified_value = get_unclampped_modified_value(preview_value)
 	temp_modified_value = clampi(temp_modified_value, min_value, max_value)
 	
 	return temp_modified_value
@@ -77,14 +78,12 @@ func set_value(new_value: int) -> int:
 func get_set_delta(new_value: int) -> int:
 	new_value = clampi(new_value, min_value, max_value)
 	var delta_value: int = new_value - current_value
-	current_value = new_value
 	
 	return delta_value
 
 
 func add_value(add_value: int) -> int:
 	add_value = get_add_delta(add_value)
-	
 	current_value += add_value
 	
 	changed.emit(self)
@@ -92,6 +91,7 @@ func add_value(add_value: int) -> int:
 
 
 func get_add_delta(add_value: int) -> int:
+	# clamp delta
 	if add_value + current_value > max_value:
 		add_value = max_value - current_value
 	elif add_value + current_value < min_value:

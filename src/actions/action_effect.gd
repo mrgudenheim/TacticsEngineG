@@ -44,30 +44,16 @@ func get_value(user: UnitData, target: UnitData, element: Action.ElementTypes) -
 	return roundi(base_power_formula.get_result(user, target, element))
 
 
-func get_ai_preview_value(user: UnitData, target: UnitData, element: Action.ElementTypes) -> int:
+func get_ai_value(user: UnitData, target: UnitData, element: Action.ElementTypes) -> int:
 	var nominal_value: int = roundi(base_power_formula.get_result(user, target, element))
 	var ai_value: int = nominal_value
-	if not set_value:
-		if type == EffectType.HP:
-			var uncapped_stat: int = target.hp_current + nominal_value
-			if uncapped_stat > target.hp_max:
-				ai_value = target.hp_max - target.hp_current
-			elif uncapped_stat < 0:
-				ai_value = target.hp_current
-		elif type == EffectType.MP:
-			var uncapped_stat: int = target.mp_current + nominal_value
-			if uncapped_stat > target.mp_max:
-				ai_value = target.mp_max - target.mp_current
-			elif uncapped_stat < 0:
-				ai_value = target.mp_current
-	elif set_value:
-		var delta_value: int = nominal_value - target.hp_current
-		var uncapped_stat: int = target.hp_current + delta_value
-		ai_value = delta_value
-		if uncapped_stat > target.hp_max:
-			ai_value = target.hp_max - target.hp_current
-		elif uncapped_stat < 0:
-			ai_value = target.hp_current
+	if type == EffectType.UNIT_STAT:
+		if set_value:
+			ai_value = target.stats[effect_stat_type].get_set_delta(nominal_value)
+		else:
+			ai_value = target.stats[effect_stat_type].get_add_delta(nominal_value)
+	else:
+		ai_value = 0 # TODO remove equipment should not be 0
 	
 	return ai_value
 
@@ -77,6 +63,7 @@ func apply_value(apply_unit: UnitData, value: int) -> int:
 	
 	match type:
 		EffectType.UNIT_STAT:
+			type_name = UnitData.StatType.keys()[effect_stat_type]
 			if set_value:
 				apply_unit.stats[effect_stat_type].set_value(value)
 			else:

@@ -46,6 +46,7 @@ var inflict_status_id: int = 0
 @export var aoe_targeting_linear: bool = false
 @export var aoe_targeting_los: bool = false # stop at obstacle
 
+var hit_requirements: Array = [] # TODO always miss if requirement is not met, ex. only hit undead, only hit dragon, etc.
 @export var target_effects: Array[ActionEffect] = []
 @export var user_effects: Array[ActionEffect] = []
 

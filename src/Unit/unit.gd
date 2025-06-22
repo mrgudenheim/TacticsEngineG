@@ -50,6 +50,21 @@ var movement_ability: Array = []
 
 var primary_weapon: ItemData
 var equipped: Array[ItemData] = []
+var equipment: Array[EquipmentSlot] = [
+	EquipmentSlot.new([ItemData.SlotType.WEAPON, ItemData.SlotType.SHIELD]),
+	EquipmentSlot.new([ItemData.SlotType.WEAPON, ItemData.SlotType.SHIELD]),
+	EquipmentSlot.new([ItemData.SlotType.HEADGEAR]),
+	EquipmentSlot.new([ItemData.SlotType.ARMOR]),
+	EquipmentSlot.new([ItemData.SlotType.ACCESSORY]),
+	]
+
+class EquipmentSlot:
+	var slot_types: Array[ItemData.SlotType] = []
+	var item: ItemData = RomReader.items[0]
+	
+	func _init(new_slot_types: Array[ItemData.SlotType] = [], new_item: ItemData = RomReader.items[0]) -> void:
+		slot_types = new_slot_types
+		item = new_item
 
 enum StatType {
 	HP,

@@ -101,34 +101,62 @@ var stats: Dictionary[StatType, ClampedValue] = {
 }
 
 
-var unit_exp: int = 0
-var level: int = 0
+var unit_exp: int = 0:
+	get:
+		return stats[UnitData.StatType.EXP].current_value
+var level: int = 0:
+	get:
+		return stats[UnitData.StatType.LEVEL].current_value
 
 var brave_base: int = 70
-var brave_current: int = 70 # min 0, max 100
+var brave_current: int = 70:
+	get:
+		return stats[UnitData.StatType.BRAVE].modified_value
 var faith_base: int = 70
-var faith_current: int = 70 # min 0, max 100
+var faith_current: int = 70:
+	get:
+		return stats[UnitData.StatType.FAITH].modified_value
 
-var ct_current: int = 0
+var ct_current: int = 0:
+	get:
+		return stats[UnitData.StatType.CT].current_value
 var ct_max: int = 100
 
 var hp_base: int = 100
-var hp_max: int = 100
-var hp_current: int = 70
+var hp_max: int = 100:
+	get:
+		return stats[UnitData.StatType.HP_MAX].modified_value
+var hp_current: int = 70:
+	get:
+		return stats[UnitData.StatType.HP].current_value
 var mp_base: int = 100
-var mp_max: int = 100
-var mp_current: int = 70
+var mp_max: int = 100:
+	get:
+		return stats[UnitData.StatType.MP_MAX].modified_value
+var mp_current: int = 70:
+	get:
+		return stats[UnitData.StatType.MP].current_value
 
 var physical_attack_base: int = 5
-var physical_attack_current: int = 5
+var physical_attack_current: int = 5:
+	get:
+		return stats[UnitData.StatType.PHYSICAL_ATTACK].modified_value
 var magical_attack_base: int = 5
-var magical_attack_current: int = 5
+var magical_attack_current: int = 5:
+	get:
+		return stats[UnitData.StatType.MAGIC_ATTACK].modified_value
 var speed_base: int = 5
-var speed_current: int = 5
+var speed_current: int = 5:
+	get:
+		return stats[UnitData.StatType.SPEED].modified_value
 var move_base: int = 5
-var move_current: int = 5
+var move_current: int = 5:
+	get:
+		return stats[UnitData.StatType.MOVE].modified_value
 var jump_base: int = 5
-var jump_current: int = 3
+var jump_current: int = 3:
+	get:
+		return stats[UnitData.StatType.JUMP].modified_value
 
 var innate_statuses: Array[StatusEffect] = []
 var immune_status_types: Array[StatusEffect] = []

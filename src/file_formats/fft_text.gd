@@ -25,7 +25,7 @@ class FftTextFile:
 enum WorldLzwSections {
 	JOB_NAMES = 6,
 	ITEM_NAMES = 7,
-	ROSTER_UNIT_NAMES = 8,
+	ROSTER_UNIT_NAMES = 8, # 0-255 special names, 256-511 generic male names, 512-767 generic female names, 768-1023 generic monster names
 	UNIT_NAMES2 = 9,
 	BATTLE_MENUS = 10,
 	HELP_TEXT = 11,

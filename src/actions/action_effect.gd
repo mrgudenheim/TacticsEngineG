@@ -11,18 +11,6 @@ var set_value: bool = false # fales = add value, true = set value
 
 enum EffectType {
 	UNIT_STAT,
-	#HP, # Absorb if transfer = true
-	#MP,
-	#CT,
-	#MOVE,
-	#JUMP,
-	#SPEED,
-	#PHYSICAL_ATTACK,
-	#MAGIC_ATTACK,
-	#BRAVE,
-	#FAITH,
-	#EXP,
-	#LEVEL,
 	CURRENCY,
 	INVENTORY,
 	#BREAK_EQUIPMENT, # Break is Remove equipment + lower inventory?
@@ -68,68 +56,6 @@ func apply_value(apply_unit: UnitData, value: int) -> int:
 				apply_unit.stats[effect_stat_type].set_value(value)
 			else:
 				apply_unit.stats[effect_stat_type].add_value(value)
-		#EffectType.HP: # TODO change_hp function on Unit? would return the actual changed hp based on capped hp values (0, max_hp)
-			#if set_value:
-				#apply_unit.hp_current = value
-			#else:
-				#apply_unit.hp_current += value
-		#EffectType.MP:
-			#if set_value:
-				#apply_unit.mp_current = value
-			#else:
-				#apply_unit.mp_current += value
-		#EffectType.CT:
-			#if set_value:
-				#apply_unit.ct_current = value
-			#else:
-				#apply_unit.ct_current += value
-		#EffectType.MOVE:
-			#if set_value:
-				#apply_unit.move_current = value
-			#else:
-				#apply_unit.move_current += value
-		#EffectType.JUMP:
-			#if set_value:
-				#apply_unit.jump_current = value
-			#else:
-				#apply_unit.jump_current += value
-		#EffectType.SPEED:
-			#if set_value:
-				#apply_unit.speed_current = value
-			#else:
-				#apply_unit.speed_current += value
-		#EffectType.PHYSICAL_ATTACK: # TODO way to modify MA
-			#type_name = "PA"
-			#if set_value:
-				#apply_unit.physical_attack_current = value
-			#else:
-				#apply_unit.physical_attack_current += value
-		#EffectType.MAGIC_ATTACK: # TODO way to modify MA
-			#type_name = "MA"
-			#if set_value:
-				#apply_unit.magical_attack_current = value
-			#else:
-				#apply_unit.magical_attack_current += value
-		#EffectType.BRAVE:
-			#if set_value:
-				#apply_unit.brave_current = value
-			#else:
-				#apply_unit.brave_current += value
-		#EffectType.FAITH:
-			#if set_value:
-				#apply_unit.faith_current = value
-			#else:
-				#apply_unit.faith_current += value
-		#EffectType.EXP:
-			#if set_value:
-				#apply_unit.unit_exp = value
-			#else:
-				#apply_unit.unit_exp += value
-		#EffectType.LEVEL:
-			#if set_value:
-				#apply_unit.level = value
-			#else:
-				#apply_unit.level += value
 		EffectType.CURRENCY:
 			type_name = "Gold"
 			if set_value:

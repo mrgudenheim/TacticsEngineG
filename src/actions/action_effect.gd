@@ -34,14 +34,19 @@ func get_value(user: UnitData, target: UnitData, element: Action.ElementTypes) -
 
 func get_ai_value(user: UnitData, target: UnitData, element: Action.ElementTypes) -> int:
 	var nominal_value: int = roundi(base_power_formula.get_result(user, target, element))
+	var is_friendly: bool = target.team == user.team
 	var ai_value: int = nominal_value
+	
 	if type == EffectType.UNIT_STAT:
 		if set_value:
 			ai_value = target.stats[effect_stat_type].get_set_delta(nominal_value)
 		else:
 			ai_value = target.stats[effect_stat_type].get_add_delta(nominal_value)
 	else:
-		ai_value = 0 # TODO remove equipment should not be 0
+		ai_value = 0 # TODO remove equipment should not be 0, check changes/modifiers for stats, statuses, element interactions
+	
+	if not is_friendly:
+		ai_value = -ai_value
 	
 	return ai_value
 

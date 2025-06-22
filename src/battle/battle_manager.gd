@@ -210,7 +210,10 @@ func spawn_unit(tile_position: TerrainTile, job_id: int) -> UnitData:
 	new_unit.initialize_unit()
 	new_unit.tile_position = tile_position
 	new_unit.char_body.global_position = Vector3(tile_position.location.x + 0.5, randi_range(15, 20), tile_position.location.y + 0.5)
+	new_unit.update_unit_facing([Vector3.FORWARD, Vector3.BACK, Vector3.LEFT, Vector3.RIGHT].pick_random())
 	new_unit.set_job_id(job_id)
+	if range(0x4a, 0x5e).has(job_id):
+		new_unit.set_sprite_palette(range(0,5).pick_random())
 	controller.camera_rotated.connect(new_unit.char_body.set_rotation_degrees) # have sprite update as camera rotates
 	
 	new_unit.primary_weapon_assigned.connect(func(weapon_id: int): new_unit.update_actions(self))

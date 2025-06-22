@@ -89,6 +89,7 @@ func stop_targeting(action_instance: ActionInstance) -> void:
 	if action_instance.tile_hovered.is_connected(target_tile):
 			action_instance.tile_hovered.disconnect(target_tile)
 
+
 func target_tile(tile: TerrainTile, action_instance: ActionInstance, event: InputEvent) -> void:
 	if UnitControllerRT.unit != action_instance.user:
 		stop_targeting(action_instance)

@@ -50,7 +50,7 @@ var movement_ability: Array = []
 
 var primary_weapon: ItemData
 var equipped: Array[ItemData] = []
-var equipment: Array[EquipmentSlot] = [
+var equip_slots: Array[EquipmentSlot] = [
 	EquipmentSlot.new([ItemData.SlotType.WEAPON, ItemData.SlotType.SHIELD]),
 	EquipmentSlot.new([ItemData.SlotType.WEAPON, ItemData.SlotType.SHIELD]),
 	EquipmentSlot.new([ItemData.SlotType.HEADGEAR]),
@@ -182,7 +182,7 @@ const FacingVectors: Dictionary[Facings, Vector3] = {
 var is_in_air: bool = false
 var is_traveling_path: bool = false
 
-var ability_id: int = 0
+var active_ability_id: int = 0
 var ability_data: FftAbilityData
 
 var active_action: ActionInstance
@@ -673,8 +673,8 @@ func hide_debug_menu() -> void:
 	debug_menu.visible = false
 
 
-func set_job_id(job_id: int) -> void:
-	job_id = job_id
+func set_job_id(new_job_id: int) -> void:
+	job_id = new_job_id
 	job_data = RomReader.scus_data.jobs_data[job_id]
 	set_sprite_by_id(job_data.sprite_id)
 	if job_id >= 0x5e: # monster
@@ -691,7 +691,7 @@ func set_job_id(job_id: int) -> void:
 		set_base_animation_ptr_id(current_idle_animation_id)
 
 func set_ability(new_ability_id: int) -> void:
-	ability_id = new_ability_id
+	active_ability_id = new_ability_id
 	ability_data = RomReader.abilities[new_ability_id]
 	
 	if not ability_data.vfx_data.is_initialized:

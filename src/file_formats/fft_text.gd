@@ -109,6 +109,8 @@ var status_names: PackedStringArray = []
 
 var map_names: PackedStringArray = []
 var location_names: PackedStringArray = []
+var unit_names_list: PackedStringArray = []
+var unit_names_list_filtered: PackedStringArray = []
 
 
 func init_text() -> void:
@@ -146,6 +148,12 @@ func init_text() -> void:
 	
 	map_names = world_text.text_arrays[WorldLzwSections.MAP_NAMES]
 	location_names = world_text.text_arrays[WorldLzwSections.LOCATION_NAMES]
+	
+	unit_names_list = world_text.text_arrays[WorldLzwSections.ROSTER_UNIT_NAMES]
+	unit_names_list_filtered = unit_names_list.duplicate()
+	for idx: int in range(unit_names_list_filtered.size() -1, -1, -1):
+		if unit_names_list_filtered[idx] == "":
+			unit_names_list_filtered.remove_at(idx)
 
 
 func init_text_from_file(file_name: String) -> void:

@@ -244,6 +244,9 @@ func initialize_unit() -> void:
 	#set_sprite_by_file_name("RAMUZA.SPR")
 	
 	update_unit_facing(FacingVectors[Facings.SOUTH])
+	
+	var random_name_idx: int = randi_range(0, RomReader.fft_text.unit_names_list_filtered.size() - 1)
+	unit_nickname = RomReader.fft_text.unit_names_list_filtered[random_name_idx]
 
 
 func _physics_process(delta: float) -> void:

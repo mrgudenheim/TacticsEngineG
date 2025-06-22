@@ -79,6 +79,11 @@ func start_targeting(action_instance: ActionInstance) -> void:
 
 
 func stop_targeting(action_instance: ActionInstance) -> void:
+	# clear old target previews
+	for preview: ActionPreview in action_instance.action_previews:
+		preview.queue_free()
+	action_instance.action_previews.clear()
+	
 	if action_instance.battle_manager.map_input_event.is_connected(action_instance.on_map_input_event):
 		action_instance.battle_manager.map_input_event.disconnect(action_instance.on_map_input_event)
 	
@@ -112,11 +117,12 @@ func target_tile(tile: TerrainTile, action_instance: ActionInstance, event: Inpu
 		
 		action_instance.show_targets_highlights(action_instance.preview_targets_highlights)
 		
-		# show target previews
+		# clear old target previews
 		for preview: ActionPreview in action_instance.action_previews:
 			preview.queue_free()
 		action_instance.action_previews.clear()
 		
+		# show target previews
 		for preview_tile: TerrainTile in action_instance.preview_targets:
 			for unit: UnitData in action_instance.battle_manager.units:
 				if unit.tile_position == preview_tile:
@@ -191,9 +197,9 @@ func get_aoe_targets(action_instance: ActionInstance, tile_target: TerrainTile) 
 					if action_instance.action.cant_hit_user and tile == action_instance.user.tile_position:
 						continue
 					elif distance_xy <= action_instance.action.area_of_effect_range:
-						if not action_instance.action.aoe_vertical_tolerance:
+						if not action_instance.action.aoe_has_vertical_tolerance:
 							aoe_targets.append(tile)
-						elif abs(distance_vert) <= action_instance.action.vertical_tolerance:
+						elif abs(distance_vert) <= action_instance.action.aoe_vertical_tolerance:
 							aoe_targets.append(tile)
 	
 	return aoe_targets

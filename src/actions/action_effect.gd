@@ -27,7 +27,6 @@ func _init(new_type: EffectType = EffectType.UNIT_STAT, new_effect_stat: UnitDat
 	show_ui = new_show_ui
 	transfer_to_user = new_transfer_to_user
 	set_value = new_set_value
-	set_effect_label()
 
 
 func get_value(user: UnitData, target: UnitData, element: Action.ElementTypes) -> int:
@@ -63,6 +62,9 @@ func set_effect_label() -> void:
 
 
 func get_text(value: int) -> String:
+	if label == "":
+		set_effect_label()
+	
 	var text: String = str(value) + " " + label
 	if set_value:
 		text = label + " = " + str(value)

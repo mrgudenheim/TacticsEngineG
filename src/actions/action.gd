@@ -416,14 +416,14 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x0a:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
-			base_hit_formula.formula = FormulaData.Formulas.MAxV1
+			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.value_01 = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 		0x0b:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
-			base_hit_formula.formula = FormulaData.Formulas.MAxV1
+			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.value_01 = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH

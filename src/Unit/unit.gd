@@ -51,6 +51,41 @@ var movement_ability: Array = []
 var primary_weapon: ItemData
 var equipped: Array[ItemData] = []
 
+enum StatType {
+	HP,
+	HP_MAX,
+	MP,
+	MP_MAX,
+	CT,
+	MOVE,
+	JUMP,
+	SPEED,
+	PHYSICAL_ATTACK,
+	MAGIC_ATTACK,
+	BRAVE,
+	FAITH,
+	EXP,
+	LEVEL,
+}
+
+var stats: Dictionary[StatType, ClampedValue] = {
+	StatType.HP_MAX : ClampedValue.new(0, 999, 100),
+	StatType.HP : ClampedValue.new(0, 100, 50),
+	StatType.MP_MAX : ClampedValue.new(0, 999, 75),
+	StatType.MP : ClampedValue.new(0, 100, 70),
+	StatType.CT : ClampedValue.new(0, 999, 25),
+	StatType.MOVE : ClampedValue.new(0, 100, 3),
+	StatType.JUMP : ClampedValue.new(0, 100, 3),
+	StatType.SPEED : ClampedValue.new(0, 100, 10),
+	StatType.PHYSICAL_ATTACK : ClampedValue.new(0, 100, 11),
+	StatType.MAGIC_ATTACK : ClampedValue.new(0, 100, 12),
+	StatType.BRAVE : ClampedValue.new(0, 100, 70),
+	StatType.FAITH : ClampedValue.new(0, 100, 65),
+	StatType.EXP : ClampedValue.new(0, 999, 99),
+	StatType.LEVEL : ClampedValue.new(0, 99, 20),
+}
+
+
 var unit_exp: int = 0
 var level: int = 0
 
@@ -163,6 +198,9 @@ var submerged_depth: int = 0
 func _ready() -> void:
 	if not RomReader.is_ready:
 		RomReader.rom_loaded.connect(initialize_unit)
+	
+	stats[StatType.HP_MAX].changed.connect(stats[StatType.HP].update_max_from_stat)
+	stats[StatType.MP_MAX].changed.connect(stats[StatType.MP].update_max_from_stat)
 	
 	#equipped.resize(5)
 	#equipped.fill(RomReader.items[0])
@@ -300,7 +338,7 @@ func update_actions(battle_manager: BattleManager) -> void:
 func select_first_action() -> void:
 	# select first usable action by default (usually Move)
 	active_action = null
-	if UnitControllerRT.unit != self:
+	if UnitControllerRT.unit != self: # TODO improve game flow to prevent this state from ever occuring
 		return
 	
 	for action_instance: ActionInstance in actions_data.values():

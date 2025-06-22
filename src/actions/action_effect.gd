@@ -2,25 +2,27 @@ class_name ActionEffect
 extends Resource
 
 @export var base_power_formula: FormulaData = FormulaData.new(FormulaData.Formulas.PAxV1, 5, 0, FormulaData.FaithModifier.NONE, FormulaData.FaithModifier.NONE, true)
-@export var type: EffectType = EffectType.HP
+@export var type: EffectType = EffectType.UNIT_STAT
+@export var effect_stat_type: UnitData.StatType = UnitData.StatType.HP
 var show_ui: bool = true
 var transfer_to_user: bool = false # absorb, steal
 var apply_to_user: bool = false
 var set_value: bool = false # fales = add value, true = set value
 
 enum EffectType {
-	HP, # Absorb if transfer = true
-	MP,
-	CT,
-	MOVE,
-	JUMP,
-	SPEED,
-	PHYSICAL_ATTACK,
-	MAGIC_ATTACK,
-	BRAVE,
-	FAITH,
-	EXP,
-	LEVEL,
+	UNIT_STAT,
+	#HP, # Absorb if transfer = true
+	#MP,
+	#CT,
+	#MOVE,
+	#JUMP,
+	#SPEED,
+	#PHYSICAL_ATTACK,
+	#MAGIC_ATTACK,
+	#BRAVE,
+	#FAITH,
+	#EXP,
+	#LEVEL,
 	CURRENCY,
 	INVENTORY,
 	#BREAK_EQUIPMENT, # Break is Remove equipment + lower inventory?
@@ -30,8 +32,9 @@ enum EffectType {
 	}
 
 
-func _init(new_type: EffectType = EffectType.HP, new_show_ui: bool = true, new_transfer_to_user: bool = false, new_set_value: bool = false) -> void:
+func _init(new_type: EffectType = EffectType.UNIT_STAT, new_effect_stat: UnitData.StatType = UnitData.StatType.HP, new_show_ui: bool = true, new_transfer_to_user: bool = false, new_set_value: bool = false) -> void:
 	type = new_type
+	effect_stat_type = new_effect_stat
 	show_ui = new_show_ui
 	transfer_to_user = new_transfer_to_user
 	set_value = new_set_value
@@ -41,72 +44,105 @@ func get_value(user: UnitData, target: UnitData, element: Action.ElementTypes) -
 	return roundi(base_power_formula.get_result(user, target, element))
 
 
+func get_ai_preview_value(user: UnitData, target: UnitData, element: Action.ElementTypes) -> int:
+	var nominal_value: int = roundi(base_power_formula.get_result(user, target, element))
+	var ai_value: int = nominal_value
+	if not set_value:
+		if type == EffectType.HP:
+			var uncapped_stat: int = target.hp_current + nominal_value
+			if uncapped_stat > target.hp_max:
+				ai_value = target.hp_max - target.hp_current
+			elif uncapped_stat < 0:
+				ai_value = target.hp_current
+		elif type == EffectType.MP:
+			var uncapped_stat: int = target.mp_current + nominal_value
+			if uncapped_stat > target.mp_max:
+				ai_value = target.mp_max - target.mp_current
+			elif uncapped_stat < 0:
+				ai_value = target.mp_current
+	elif set_value:
+		var delta_value: int = nominal_value - target.hp_current
+		var uncapped_stat: int = target.hp_current + delta_value
+		ai_value = delta_value
+		if uncapped_stat > target.hp_max:
+			ai_value = target.hp_max - target.hp_current
+		elif uncapped_stat < 0:
+			ai_value = target.hp_current
+	
+	return ai_value
+
+
 func apply_value(apply_unit: UnitData, value: int) -> int:
 	var type_name: String = EffectType.keys()[type]
 	
 	match type:
-		EffectType.HP: # TODO change_hp function on Unit? would return the actual changed hp based on capped hp values (0, max_hp)
+		EffectType.UNIT_STAT:
 			if set_value:
-				apply_unit.hp_current = value
+				apply_unit.stats[effect_stat_type].set_value(value)
 			else:
-				apply_unit.hp_current += value
-		EffectType.MP:
-			if set_value:
-				apply_unit.mp_current = value
-			else:
-				apply_unit.mp_current += value
-		EffectType.CT:
-			if set_value:
-				apply_unit.ct_current = value
-			else:
-				apply_unit.ct_current += value
-		EffectType.MOVE:
-			if set_value:
-				apply_unit.move_current = value
-			else:
-				apply_unit.move_current += value
-		EffectType.JUMP:
-			if set_value:
-				apply_unit.jump_current = value
-			else:
-				apply_unit.jump_current += value
-		EffectType.SPEED:
-			if set_value:
-				apply_unit.speed_current = value
-			else:
-				apply_unit.speed_current += value
-		EffectType.PHYSICAL_ATTACK: # TODO way to modify MA
-			type_name = "PA"
-			if set_value:
-				apply_unit.physical_attack_current = value
-			else:
-				apply_unit.physical_attack_current += value
-		EffectType.MAGIC_ATTACK: # TODO way to modify MA
-			type_name = "MA"
-			if set_value:
-				apply_unit.magical_attack_current = value
-			else:
-				apply_unit.magical_attack_current += value
-		EffectType.BRAVE:
-			if set_value:
-				apply_unit.brave_current = value
-			else:
-				apply_unit.brave_current += value
-		EffectType.FAITH:
-			if set_value:
-				apply_unit.faith_current = value
-			else:
-				apply_unit.faith_current += value
-		EffectType.EXP:
-			if set_value:
-				apply_unit.unit_exp = value
-			else:
-				apply_unit.unit_exp += value
-		EffectType.LEVEL:
-			if set_value:
-				apply_unit.level = value
-			else:
-				apply_unit.level += value
+				apply_unit.stats[effect_stat_type].add_value(value)
+		#EffectType.HP: # TODO change_hp function on Unit? would return the actual changed hp based on capped hp values (0, max_hp)
+			#if set_value:
+				#apply_unit.hp_current = value
+			#else:
+				#apply_unit.hp_current += value
+		#EffectType.MP:
+			#if set_value:
+				#apply_unit.mp_current = value
+			#else:
+				#apply_unit.mp_current += value
+		#EffectType.CT:
+			#if set_value:
+				#apply_unit.ct_current = value
+			#else:
+				#apply_unit.ct_current += value
+		#EffectType.MOVE:
+			#if set_value:
+				#apply_unit.move_current = value
+			#else:
+				#apply_unit.move_current += value
+		#EffectType.JUMP:
+			#if set_value:
+				#apply_unit.jump_current = value
+			#else:
+				#apply_unit.jump_current += value
+		#EffectType.SPEED:
+			#if set_value:
+				#apply_unit.speed_current = value
+			#else:
+				#apply_unit.speed_current += value
+		#EffectType.PHYSICAL_ATTACK: # TODO way to modify MA
+			#type_name = "PA"
+			#if set_value:
+				#apply_unit.physical_attack_current = value
+			#else:
+				#apply_unit.physical_attack_current += value
+		#EffectType.MAGIC_ATTACK: # TODO way to modify MA
+			#type_name = "MA"
+			#if set_value:
+				#apply_unit.magical_attack_current = value
+			#else:
+				#apply_unit.magical_attack_current += value
+		#EffectType.BRAVE:
+			#if set_value:
+				#apply_unit.brave_current = value
+			#else:
+				#apply_unit.brave_current += value
+		#EffectType.FAITH:
+			#if set_value:
+				#apply_unit.faith_current = value
+			#else:
+				#apply_unit.faith_current += value
+		#EffectType.EXP:
+			#if set_value:
+				#apply_unit.unit_exp = value
+			#else:
+				#apply_unit.unit_exp += value
+		#EffectType.LEVEL:
+			#if set_value:
+				#apply_unit.level = value
+			#else:
+				#apply_unit.level += value
 		EffectType.CURRENCY:
 			type_name = "Gold"
 			if set_value:

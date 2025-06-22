@@ -31,7 +31,8 @@ var current_tile_hover: TerrainTile
 @export var action_menu: Control
 @export var action_button_list: BoxContainer
 @export var units_container: Node3D
-@export var units: Array[UnitData]
+@export var units: Array[UnitData] = []
+@export var teams: Array[Team] = []
 @export var unit_tscn: PackedScene
 @export var controller: UnitControllerRT
 

@@ -36,7 +36,7 @@ func get_potential_targets(action_instance: ActionInstance) -> Array[TerrainTile
 					if action_instance.action.targeting_top_down and tile.height_mid < min_height:
 						continue
 					
-					var distance_vert: float = tile.height_mid - action_instance.user.tile_position.height_mid
+					var distance_vert: float = tile.height_mid - action_instance.user.tile_position.height_mid # TODO should vert tolerance count to top surface of water?
 					if action_instance.action.targeting_los:
 						var collider = Raycaster.raycast(action_instance.user.tile_position.get_world_position() + Vector3.UP, tile.get_world_position() + Vector3.UP) # TODO adjust for different height sprites: chicken, frog, Altima
 						if is_instance_valid(collider):
@@ -185,7 +185,7 @@ func get_aoe_targets(action_instance: ActionInstance, tile_target: TerrainTile) 
 					if action_instance.action.targeting_top_down and tile.height_mid < min_height:
 						continue
 					
-					var distance_vert: float = tile.height_mid - tile_target.height_mid
+					var distance_vert: float = tile.height_mid - tile_target.height_mid # TODO should vert tolerance count to top surface of water?
 					if action_instance.action.aoe_targeting_los:
 						var collider = Raycaster.raycast(tile_target.get_world_position() + Vector3.UP, tile.get_world_position() + Vector3.UP) # TODO adjust for different height sprites: chicken, frog, Altima
 						if is_instance_valid(collider):

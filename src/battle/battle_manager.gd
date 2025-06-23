@@ -193,7 +193,7 @@ func add_units_to_map() -> void:
 		spawn_unit(get_random_stand_terrain_tile(), specific_job)
 	
 	#for random_unit: int in 15:
-		#var rand_job: int = randi_range(0x01, 0x8e)
+		#var rand_job: int = randi_range(0x01, 0x8e) # job_id 0x2c (Alma2) and 0x31 (Ajora) do not have walking frames
 		#spawn_unit(get_random_stand_terrain_tile(), rand_job)
 	
 	await update_units_pathfinding()

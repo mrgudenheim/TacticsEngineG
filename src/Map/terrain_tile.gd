@@ -16,7 +16,7 @@ var no_cursor: int = 0 # Can't move cursor to this tile
 
 var default_camera_position_id: int = 0 # Controls which angles the camera will auto-rotate to when a unit enters this tile. 
 
-var height_mid: float = (height_bottom + slope_height) / 2.0
+var height_mid: float = height_bottom + (slope_height / 2.0)
 var tile_scale: Vector3 = Vector3.ONE
 
 func duplicate() -> TerrainTile:
@@ -37,7 +37,7 @@ func duplicate() -> TerrainTile:
 
 	new_terrain_tile.default_camera_position_id = 0 # Controls which angles the camera will auto-rotate to when a unit enters this tile. 
 
-	new_terrain_tile.height_mid = height_bottom + (slope_height / 2.0)
+	new_terrain_tile.height_mid = height_mid
 	
 	return new_terrain_tile
 

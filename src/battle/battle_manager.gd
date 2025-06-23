@@ -343,7 +343,7 @@ func initialize_map_tiles() -> void:
 			total_tile.tile_scale.x = map_chunk.mesh.scale.x
 			total_tile.tile_scale.z = map_chunk.mesh.scale.z
 			total_tile.height_bottom += map_chunk.position.y / MapData.HEIGHT_SCALE
-			total_tile.height_mid = total_tile.height_bottom + total_tile.slope_height
+			total_tile.height_mid = total_tile.height_bottom + (total_tile.slope_height / 2.0)
 			total_map_tiles[total_location].append(total_tile)
 
 

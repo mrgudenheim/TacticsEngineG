@@ -727,6 +727,8 @@ func get_terrain(terrain_bytes: PackedByteArray) -> Array[TerrainTile]:
 				
 				tile.default_camera_position_id = tile_data.decode_u8(7)
 				
+				tile.height_mid = tile.height_bottom + (tile.slope_height / 2.0)
+				
 				new_terrain_tiles.append(tile)
 	
 	return new_terrain_tiles

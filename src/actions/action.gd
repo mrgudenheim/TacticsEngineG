@@ -372,21 +372,23 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			# TODO get weapon damage?
 		4:
 			applicable_evasion = EvadeData.EvadeType.NONE
-			
 			var secondary_action_ids: PackedInt32Array = []
-			match element: # TODO get user.primary_weapon element?
-				Action.ElementTypes.FIRE:
+			match element:
+				ElementTypes.FIRE:
 					secondary_action_ids = [0x10, 0x11, 0x12]
-				Action.ElementTypes.LIGHTNING:
+				ElementTypes.LIGHTNING:
 					secondary_action_ids = [0x14, 0x15, 0x16]
-				Action.ElementTypes.ICE:
+				ElementTypes.ICE:
 					secondary_action_ids = [0x18, 0x19, 0x1a]
-			for id: int in secondary_action_ids:
-				var new_secondary_action: Action = RomReader.abilities[id].ability_action # abilities need to be initialized before items
-				secondary_actions.append(new_secondary_action)
 			
 			secondary_actions_chances = [60, 30, 10]
-			secondary_action_list_type = Action.StatusListType.RANDOM
+			secondary_action_list_type = StatusListType.RANDOM
+			
+			for secondary_action_idx: int in secondary_action_ids.size():
+				var new_secondary_action: Action = RomReader.abilities[secondary_action_ids[secondary_action_idx]].ability_action # abilities need to be initialized before items
+				var chance: int = secondary_actions_chances[secondary_action_idx]
+				secondary_actions.append(new_secondary_action)
+				secondary_actions2.append(SecondaryAction.new(new_secondary_action, chance))
 		6:
 			# TODO get weapon damage?
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))

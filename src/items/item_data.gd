@@ -233,12 +233,15 @@ func _init(idx: int = 0) -> void:
 						secondary_action_ids = [0x14, 0x15, 0x16]
 					Action.ElementTypes.ICE:
 						secondary_action_ids = [0x18, 0x19, 0x1a]
-				for id: int in secondary_action_ids:
-					var new_secondary_action: Action = RomReader.abilities[id].ability_action # abilities need to be initialized before items
-					weapon_attack_action.secondary_actions.append(new_secondary_action)
 				
 				weapon_attack_action.secondary_actions_chances = [60, 30, 10]
 				weapon_attack_action.secondary_action_list_type = Action.StatusListType.RANDOM
+				
+				for secondary_action_idx: int in secondary_action_ids.size():
+					var new_secondary_action: Action = RomReader.abilities[secondary_action_ids[secondary_action_idx]].ability_action # abilities need to be initialized before items
+					var chance: int = weapon_attack_action.secondary_actions_chances[secondary_action_idx]
+					weapon_attack_action.secondary_actions.append(new_secondary_action)
+					weapon_attack_action.secondary_actions2.append(Action.SecondaryAction.new(new_secondary_action, chance))
 			6:
 				weapon_attack_action.target_effects[0].transfer_to_user = true # absorb hp
 			7:

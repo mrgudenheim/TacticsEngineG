@@ -33,7 +33,7 @@ void fragment() {
 			}
 		}
 	}
-	
+
 	// palette animation/swap
 	if (COLOR.rgb != vec3(0.0, 0.0, 0.0)) {
 		vec4 new_color = palettes_colors[int(round(texture(albedo_texture_color_indicies, new_uv).r * 255.0))];

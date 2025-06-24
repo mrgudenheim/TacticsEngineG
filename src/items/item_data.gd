@@ -220,7 +220,7 @@ func _init(idx: int = 0) -> void:
 				weapon_attack_action.target_effects[0].base_power_formula.formula = FormulaData.Formulas.MAxV1
 		
 		weapon_attack_action.description = "Attack Base Damage = " + FormulaData.formula_descriptions[weapon_attack_action.target_effects[0].base_power_formula.formula]
-		
+		weapon_attack_action.status_chance = 19 # https://ffhacktics.com/wiki/Weapon_Damage_Calculation
 		
 		match weapon_formula_id:
 			4: # TODO proc ability for Formula 04 (magic gun)
@@ -247,6 +247,7 @@ func _init(idx: int = 0) -> void:
 		
 		if weapon_formula_id == 2: # proc ability for Formula 02
 			weapon_attack_action.secondary_actions.append(RomReader.abilities[weapon_inflict_status_spell_id].ability_action)
+			weapon_attack_action.status_chance = 19
 			weapon_attack_action.secondary_actions_chances = [19]
 		else: # inflict status data
 			weapon_attack_action.inflict_status_id = weapon_inflict_status_spell_id
@@ -260,7 +261,7 @@ func _init(idx: int = 0) -> void:
 				weapon_attack_action.status_list_type = Action.StatusListType.RANDOM
 			elif inflict_status.is_separate:
 				weapon_attack_action.status_list_type = Action.StatusListType.EACH
-				weapon_attack_action.status_chance = 25 # TODO 25% of the base chance, to max of 25%
+				weapon_attack_action.status_chance = roundi(weapon_attack_action.status_chance * 0.24)
 		
 		if weapon_is_striking:
 			weapon_attack_action.max_targeting_range = 1

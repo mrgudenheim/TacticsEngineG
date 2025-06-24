@@ -359,10 +359,12 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0, 1, 5:
 			# TODO get weapon damage?
 			use_weapon_damage = true
+			status_chance = 19
 		2:
 			# TODO get weapon damage?
 			use_weapon_damage = true
 			secondary_actions.append(RomReader.abilities[inflict_status_id].ability_action)
+			status_chance = 19
 			secondary_actions_chances = [19]
 		3: # weapon_power * weapon_power
 			applicable_evasion = EvadeData.EvadeType.NONE
@@ -397,6 +399,8 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		8:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
+			status_chance = 19
+			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MAxV1
 			target_effects[0].base_power_formula.value_01 = formula_y
@@ -404,6 +408,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 		9:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
+			status_chance = 19
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.value_01 = formula_x
@@ -1054,6 +1059,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			# TODO miss if target is not Dragon type
 		0x5e:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
+			status_chance = 19
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MA_plus_V1xMA_div_2

@@ -256,7 +256,7 @@ func set_action() -> void:
 	# inflict status data
 	var inflict_status_data: ScusData.InflictStatus = RomReader.scus_data.inflict_statuses[inflict_status_id]
 	ability_action.status_list = inflict_status_data.status_list
-	ability_action.status_chance = 19
+	ability_action.status_chance = 100
 	ability_action.will_remove_status = inflict_status_data.will_cancel
 	
 	ability_action.all_status = inflict_status_data.is_all
@@ -268,7 +268,6 @@ func set_action() -> void:
 		ability_action.status_list_type = Action.StatusListType.RANDOM
 	elif inflict_status_data.is_separate:
 		ability_action.status_list_type = Action.StatusListType.EACH
-		ability_action.status_chance = 25
 
 	if affected_by_silence:
 		ability_action.status_prevents_use_any = [RomReader.status_effects[12]] # silence, dont move, dont act, etc.
@@ -280,7 +279,10 @@ func set_action() -> void:
 	ability_action.set_data_from_formula_id(formula_id)
 	if not is_evadeable: # set after formula
 		ability_action.applicable_evasion = EvadeData.EvadeType.NONE
-
+	
+	if inflict_status_data.is_separate:
+		ability_action.status_chance = roundi(ability_action.status_chance * 0.24)
+	
 	# animation data
 	ability_action.animation_start_id = animation_start_id
 	ability_action.animation_charging_id = animation_charging_id

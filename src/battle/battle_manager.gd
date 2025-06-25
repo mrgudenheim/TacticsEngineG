@@ -200,9 +200,11 @@ func add_units_to_map() -> void:
 	
 	await update_units_pathfinding()
 	
-	new_unit.start_turn(self)
+	#new_unit.start_turn(self)
 	
 	hide_debug_ui()
+	
+	process_battle()
 
 
 func spawn_unit(tile_position: TerrainTile, job_id: int) -> UnitData:
@@ -219,7 +221,7 @@ func spawn_unit(tile_position: TerrainTile, job_id: int) -> UnitData:
 	controller.camera_rotated.connect(new_unit.char_body.set_rotation_degrees) # have sprite update as camera rotates
 	
 	new_unit.primary_weapon_assigned.connect(func(weapon_id: int): new_unit.update_actions(self))
-	new_unit.turn_ended.connect(process_next_event)
+	#new_unit.turn_ended.connect(process_next_event)
 	
 	new_unit.name = new_unit.job_nickname + "-" + new_unit.unit_nickname
 	
@@ -229,6 +231,39 @@ func spawn_unit(tile_position: TerrainTile, job_id: int) -> UnitData:
 func update_units_pathfinding() -> void:
 	for unit: UnitData in units:
 		await unit.update_map_paths(total_map_tiles, units)
+
+
+func process_battle() -> void:
+	while true:
+		await process_clock_tick()
+		
+		# TODO check end conditions, switching map, etc.
+
+
+func process_clock_tick() -> void:
+	# TODO increment status ticks, and process potential removal if ticks_left == 0
+	for unit: UnitData in units:
+		for status: StatusEffect in unit.current_statuses:
+			pass
+			#status.
+	# TODO increment delayed action ticks, ties decided by spawning unit index in units[], store actions to execute
+	# TODO execute stored delayed actions, including checks to null (no mp, silenced, etc.)
+	# increment each units ct by speed
+	for unit: UnitData in units:
+		unit.stats[UnitData.StatType.CT].add_value(unit.speed_current) # TODO check status that prevent ct gain (stop, sleep, etc.)
+	# TODO execute unit turns, ties decided by unit index in units[], store actions to execute
+	for unit: UnitData in units:
+		if unit.ct_current >= 100:
+			start_units_turn(unit)
+			await unit.turn_ended
+	# TODO increment status ticks, delayed action ticks, and unit ticks in the same step, then order resolution?
+
+
+func start_units_turn(unit: UnitData) -> void:
+	controller.unit = unit
+	phantom_camera.follow_target = unit.char_body
+	
+	unit.start_turn(self)
 
 
 # TODO handle event timeline

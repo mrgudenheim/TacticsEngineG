@@ -335,10 +335,8 @@ func _process(_delta: float) -> void:
 
 
 func start_turn(battle_manager: BattleManager) -> void:
-	# TODO focus camera on unit
-	
 	# set CT
-	ct_current = max(0, ct_current - 100)
+	stats[StatType.CT].add_value(-100)
 	
 	update_actions(battle_manager)
 

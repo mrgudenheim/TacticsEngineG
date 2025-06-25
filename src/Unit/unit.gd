@@ -161,6 +161,11 @@ var jump_current: int = 3:
 var innate_statuses: Array[StatusEffect] = []
 var immune_status_types: Array[StatusEffect] = []
 var current_statuses: Array[StatusEffect] = [] # Status may have a corresponding CT countdown?
+var current_statuses2: Dictionary[StatusEffect, int] = {}
+var current_statuses3: Array[CurrentStatusData] = [] # could allow for stacking statuses (2 poisons, 2 charging actions, etc.)
+class CurrentStatusData: 
+	var status: StatusEffect
+	var status_ct: int
 
 var learned_abilities: Array = []
 var job_levels

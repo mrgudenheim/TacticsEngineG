@@ -325,7 +325,7 @@ func apply_standard(action_instance: ActionInstance) -> void:
 		else:
 			animate_evade(target_unit, evade_direction, action_instance.user.tile_position.location)
 			
-			target_unit.show_popup_text("Missed")
+			target_unit.show_popup_text("Missed!") # TODO or "Guarded"
 			push_warning(action_name + " missed")
 	
 	# apply effects to user

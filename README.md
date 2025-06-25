@@ -47,6 +47,7 @@ Escape: Open/Close debug menus
 - Allow exporting gif of full ability animation chain
 - Clock ticks and phases
 - Statuses
+- Victory conditions
 - Turn order preview (aka action timeline) including when delayed actions execute and statuses wear off
 - Reaction/Support/Movement abilities
 - AI

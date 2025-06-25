@@ -225,6 +225,7 @@ func _init(idx: int = 0) -> void:
 		match weapon_formula_id:
 			4: # TODO proc ability for Formula 04 (magic gun)
 				weapon_attack_action.applicable_evasion = EvadeData.EvadeType.NONE
+				weapon_attack_action.target_effects.clear()
 				var secondary_action_ids: PackedInt32Array = []
 				match weapon_element:
 					Action.ElementTypes.FIRE:

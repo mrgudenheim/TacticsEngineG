@@ -300,12 +300,28 @@ func apply_standard(action_instance: ActionInstance) -> void:
 			for effect: ActionEffect in target_effects:
 				var effect_value: int = roundi(effect.base_power_formula.get_result(action_instance.user, target_unit, element))
 				effect.apply(action_instance.user, target_unit, effect_value)
-			
+				
 				if set_target_animation_on_hit and [UnitData.StatType.HP, UnitData.StatType.MP].has(effect.effect_stat_type) and effect_value < 0:
 					target_unit.animate_take_hit(vfx_data)
 				elif set_target_animation_on_hit and [UnitData.StatType.HP, UnitData.StatType.MP].has(effect.effect_stat_type) and effect_value > 0:
 					target_unit.animate_recieve_heal(vfx_data)
-				# TODO status change
+			
+			# TODO apply status
+			
+			# TODO apply secondary action
+			if secondary_action_list_type == StatusListType.RANDOM:
+				var sum_weights: int = 0
+				for secondary_action: SecondaryAction in secondary_actions2:
+					sum_weights += secondary_action.chance
+				var rng: int = randi_range(0, sum_weights)
+				for secondary_action: SecondaryAction in secondary_actions2:
+					if rng < secondary_action.chance:
+						var secondary_action_instance: ActionInstance = action_instance.duplicate()
+						secondary_action_instance.action = secondary_action.action
+						secondary_action_instance.use() # TODO do not use unit animations, don't check for hit again (when using magic gun)
+						break
+					else:
+						rng -= secondary_action.chance
 		else:
 			animate_evade(target_unit, evade_direction, action_instance.user.tile_position.location)
 			
@@ -389,6 +405,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 				var chance: int = secondary_actions_chances[secondary_action_idx]
 				secondary_actions.append(new_secondary_action)
 				secondary_actions2.append(SecondaryAction.new(new_secondary_action, chance))
+			
+			# TODO damage formula is WP (instead of MA) * ability Y
+			# TODO magic gun should probably use totally new Actions, with WP*V1 formula, EvadeType.NONE, animation_ids = 0, etc., but where V1 and vfx are from the original action
 		6:
 			# TODO get weapon damage?
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))

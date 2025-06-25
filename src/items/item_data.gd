@@ -243,6 +243,9 @@ func _init(idx: int = 0) -> void:
 					var chance: int = weapon_attack_action.secondary_actions_chances[secondary_action_idx]
 					weapon_attack_action.secondary_actions.append(new_secondary_action)
 					weapon_attack_action.secondary_actions2.append(Action.SecondaryAction.new(new_secondary_action, chance))
+				
+				# TODO damage formula is WP (instead of MA) * ability Y
+				# TODO magic gun should probably use totally new Actions, with WP*V1 formula, EvadeType.NONE, animation_ids = 0, etc., but where V1 and vfx are from the original action
 			6:
 				weapon_attack_action.target_effects[0].transfer_to_user = true # absorb hp
 			7:

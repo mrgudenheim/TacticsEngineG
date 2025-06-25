@@ -25,6 +25,16 @@ func _init(new_action: Action, new_user: UnitData, new_battle_manager: BattleMan
 	battle_manager = new_battle_manager
 
 
+func duplicate() -> ActionInstance:
+	var new_action_instance = ActionInstance.new(action, user, battle_manager)
+	new_action_instance.potential_targets = potential_targets.duplicate()
+	new_action_instance.preview_targets = preview_targets.duplicate()
+	new_action_instance.submitted_targets = submitted_targets.duplicate()
+	new_action_instance.current_tile_hovered = current_tile_hovered
+	
+	return new_action_instance
+
+
 func clear() -> void:
 	clear_targets(potential_targets_highlights)
 	potential_targets.clear()

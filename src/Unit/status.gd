@@ -9,7 +9,7 @@ extends Resource
 var byte_00: int = 0
 var byte_01: int = 0
 @export var order: int = 0
-@export var ct: int = 10
+@export var duration: int = 10
 @export_flags("Freeze CT", "(Crystal/Treasure)", "(Defend/Perform)", "(Poison/Regen)", "(Confusion/Transparent/Charm/Sleep)", "(Checks 3)", "(Checks 2)", "Counts as KO") var checks_01: int = 0
 @export_flags("Cant React", "Unknown", "Ignore Attcks", "(Checks 10)", "(Checks 9)", "(Checks 8)", "(Checks 7 - Cancelled by Immortal?)", "(Checks 6)") var checks_02: int = 0
 @export var status_cancels_flags: PackedByteArray = [] # 5 bytes of bitflags for up to 40 statuses 
@@ -18,18 +18,23 @@ var byte_01: int = 0
 @export var status_cancels: Array[StatusEffect] = [] 
 @export var status_cant_stack: Array[StatusEffect] = [] # TODO use bit index as index into StatusEffect array
 
+enum DurationType {
+	TICKS,
+	TURNS, # death sentance, dead -> crystal/treasure
+}
+var duration_type: DurationType = DurationType.TICKS
 @export var action_on_turn_start: Action
 @export var action_on_turn_end: Action
 @export var action_on_x_ticks: Action
-@export var x: int
-@export var action_on_complete: Action
+@export var x_ticks: int
+@export var action_on_complete: Action # charging, dead -> crystal/treasure
 var visual_effect # TODO speech bubbles, sprite coloring, animation (haste, dead, etc.), float, etc.
 
 func set_data(status_effect_bytes: PackedByteArray) -> void:
 	byte_00 = status_effect_bytes.decode_u8(0)
 	byte_01 = status_effect_bytes.decode_u8(1)
 	order = status_effect_bytes.decode_u8(2)
-	ct = status_effect_bytes.decode_u8(3)
+	duration = status_effect_bytes.decode_u8(3)
 	checks_01 = status_effect_bytes.decode_u8(4)
 	checks_02 = status_effect_bytes.decode_u8(5)
 	status_cancels_flags = get_status_array(status_effect_bytes.slice(6, 11))

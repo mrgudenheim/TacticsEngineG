@@ -123,7 +123,7 @@ func get_result(user: UnitData, target: UnitData, element: Action.ElementTypes) 
 
 func get_base_value(formula: Formulas, user: UnitData, target: UnitData) -> float:
 	var base_value: float = value_01
-	var wp = user.primary_weapon.weapon_attack_action.target_effects[0].base_power_formula.value_01
+	var wp = user.primary_weapon.weapon_power
 	
 	match formula:
 		Formulas.UNMODIFIED:

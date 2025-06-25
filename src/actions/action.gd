@@ -407,7 +407,8 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 				secondary_actions2.append(SecondaryAction.new(new_secondary_action, chance))
 			
 			# TODO damage formula is WP (instead of MA) * ability Y
-			# TODO magic gun should probably use totally new Actions, with WP*V1 formula, EvadeType.NONE, animation_ids = 0, etc., but where V1 and vfx are from the original action
+			# TODO magic gun should probably use totally new Actions?, with WP*V1 formula, EvadeType.NONE, no costs, animation_ids = 0, etc., but where V1 and vfx are from the original action
+			# TODO math skills, charge skills, etc. behave kind of similarly with using partial data from other actions
 		6:
 			# TODO get weapon damage?
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))

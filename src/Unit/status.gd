@@ -18,6 +18,13 @@ var byte_01: int = 0
 @export var status_cancels: Array[StatusEffect] = [] 
 @export var status_cant_stack: Array[StatusEffect] = [] # TODO use bit index as index into StatusEffect array
 
+@export var action_on_turn_start: Action
+@export var action_on_turn_end: Action
+@export var action_on_x_ticks: Action
+@export var x: int
+@export var action_on_complete: Action
+var visual_effect # TODO speech bubbles, sprite coloring, animation (haste, dead, etc.), float, etc.
+
 func set_data(status_effect_bytes: PackedByteArray) -> void:
 	byte_00 = status_effect_bytes.decode_u8(0)
 	byte_01 = status_effect_bytes.decode_u8(1)

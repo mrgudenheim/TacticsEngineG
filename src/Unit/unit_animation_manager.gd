@@ -179,7 +179,8 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 	# handle LoadFrameWait
 	if not seq_part.isOpcode:
 		var new_frame_id: int = seq_part.parameters[0]
-		var frame_id_offset: int = get_animation_frame_offset(unit_data.primary_weapon.item_type, fft_animation.shp, fft_animation.back_face_offset)
+		#var frame_id_offset: int = get_animation_frame_offset(unit_data.primary_weapon.item_type, fft_animation.shp, fft_animation.back_face_offset)
+		var frame_id_offset: int = get_animation_frame_offset(0, fft_animation.shp, fft_animation.back_face_offset) # Japan
 		new_frame_id = new_frame_id + frame_id_offset + opcode_frame_offset
 		frame_id_label = str(new_frame_id)
 		

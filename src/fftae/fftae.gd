@@ -360,7 +360,8 @@ func populate_frame_list(frame_list_parent: VBoxContainer, shp_local: Shp) -> vo
 		
 		var preview_image_size: Vector2i = Vector2i(120, 120)
 		var preview_image: Image = shp_local.create_blank_frame(Color.BLACK, preview_image_size)
-		var assembled_frame: Image = shp_local.get_assembled_frame(frame_index, spr.spritesheet, ui_manager.animation_id_spinbox.value, preview_manager.other_type_options.selected, preview_manager.unit.primary_weapon.wep_frame_v_offset, preview_manager.submerged_depth_options.selected, Vector2i(60, 60), 15)
+		#var assembled_frame: Image = shp_local.get_assembled_frame(frame_index, spr.spritesheet, ui_manager.animation_id_spinbox.value, preview_manager.other_type_options.selected, preview_manager.unit.primary_weapon.wep_frame_v_offset, preview_manager.submerged_depth_options.selected, Vector2i(60, 60), 15)
+		var assembled_frame: Image = shp_local.get_assembled_frame(frame_index, spr.spritesheet, ui_manager.animation_id_spinbox.value, preview_manager.other_type_options.selected, 0, preview_manager.submerged_depth_options.selected, Vector2i(60, 60), 15) # Japan
 		assembled_frame.resize(preview_image_size.x, preview_image_size.y, Image.INTERPOLATE_NEAREST)
 		preview_image.blend_rect(assembled_frame, Rect2i(Vector2i.ZERO, preview_image_size), Vector2i.ZERO)
 		row_ui.preview_rect.texture = ImageTexture.create_from_image(preview_image)

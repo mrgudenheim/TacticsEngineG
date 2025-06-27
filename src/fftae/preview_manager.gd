@@ -33,22 +33,22 @@ var wait_for_input_delay: int = 10
 func initialize() -> void:
 	add_unit()
 	
-	weapon_options.clear()
-	for weapon_index: int in 0x90: # weapons + throwables (shuriken, ball) +  shields
-		var equipment_type_name: String = ""
-		if RomReader.items[weapon_index].item_type < RomReader.fft_text.equipment_types.size():
-			equipment_type_name = " (" + RomReader.fft_text.equipment_types[RomReader.items[weapon_index].item_type] + ")"
-		weapon_options.add_item(str(weapon_index) + " - " + RomReader.items[weapon_index].name + equipment_type_name)
-	
-	weapon_options.select(unit.primary_weapon.id)
-	
-	item_options.clear()
-	for item_index: int in RomReader.NUM_ITEMS:
-		var type_name: String = ""
-		if RomReader.items[item_index].item_type < RomReader.fft_text.equipment_types.size():
-			type_name = " (" + RomReader.fft_text.equipment_types[RomReader.items[item_index].item_type] + ")"
-		item_options.add_item(str(item_index) + " - " + RomReader.items[item_index].name + type_name )
-	item_options.item_selected.connect(unit.animation_manager.set_item)
+	#weapon_options.clear()
+	#for weapon_index: int in 0x90: # weapons + throwables (shuriken, ball) +  shields
+		#var equipment_type_name: String = ""
+		#if RomReader.items[weapon_index].item_type < RomReader.fft_text.equipment_types.size():
+			#equipment_type_name = " (" + RomReader.fft_text.equipment_types[RomReader.items[weapon_index].item_type] + ")"
+		#weapon_options.add_item(str(weapon_index) + " - " + RomReader.items[weapon_index].name + equipment_type_name)
+	#
+	#weapon_options.select(unit.primary_weapon.id)
+	#
+	#item_options.clear()
+	#for item_index: int in RomReader.NUM_ITEMS:
+		#var type_name: String = ""
+		#if RomReader.items[item_index].item_type < RomReader.fft_text.equipment_types.size():
+			#type_name = " (" + RomReader.fft_text.equipment_types[RomReader.items[item_index].item_type] + ")"
+		#item_options.add_item(str(item_index) + " - " + RomReader.items[item_index].name + type_name )
+	#item_options.item_selected.connect(unit.animation_manager.set_item)
 	
 	is_playing_check.button_pressed = true
 	#unit.animation_manager.animation_frame_loaded.connect(update_preview_render)

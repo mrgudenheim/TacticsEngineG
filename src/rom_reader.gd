@@ -95,25 +95,61 @@ func process_rom() -> void:
 	
 	push_warning("Time to process ROM (ms): " + str(Time.get_ticks_msec() - start_time))
 	
-	fft_text.init_text()
-	scus_data.init_from_scus()
-	battle_bin_data.init_from_battle_bin()
+	#fft_text.init_text()
+	#scus_data.init_from_scus()
+	#battle_bin_data.init_from_battle_bin()
 	
-	cache_associated_files()
 	
-	for ability_id: int in NUM_ACTIVE_ABILITIES:
-		abilities.append(FftAbilityData.new(ability_id))
+	#func _load_battle_bin_sprite_data() -> void:
+	var battle_bytes: PackedByteArray = RomReader.get_file_data("BATTLE.BIN")
+	
+	# look up spr file_name based on LBA
+	var spritesheet_file_data_length: int = 8
+	for sprite_id: int in RomReader.NUM_SPRITESHEETS:
+		#var spritesheet_file_data_start: int = 0x2dcd4 + (sprite_id * spritesheet_file_data_length)
+		var spritesheet_file_data_start: int = 0x2dc78 + (sprite_id * spritesheet_file_data_length) # location in japan ROM 0x272c20
+		var spritesheet_file_data_bytes: PackedByteArray = battle_bytes.slice(spritesheet_file_data_start, spritesheet_file_data_start + spritesheet_file_data_length)
+		var spritesheet_lba: int = spritesheet_file_data_bytes.decode_u32(0)
+		
+		var spritesheet_file_name: String = str(sprite_id) + ".SPR"
+		
+		var new_spr_record: FileRecord = FileRecord.new()
+		new_spr_record.name = spritesheet_file_name
+		new_spr_record.sector_location = spritesheet_lba
+		new_spr_record.size = spritesheet_file_data_bytes.decode_u32(4)
+		file_records[spritesheet_file_name] = new_spr_record
+		
+		var new_spr = Spr.new(spritesheet_file_name)
+		new_spr.set_data()
+		
+		#if sprite_id == 1:
+		var new_spr_bmp: PackedByteArray = new_spr.create_paletted_bmp(new_spr.get_rgba8_image(), new_spr.color_palette)
+		
+		#DirAccess.make_dir_recursive_absolute(path.get_base_dir())
+		var save_file := FileAccess.open("user://" + str(sprite_id) + ".bmp", FileAccess.WRITE)
+		save_file.store_buffer(new_spr_bmp)
+			
+		
+		#if spritesheet_lba != 0:
+			#spritesheet_file_name = RomReader.lba_to_file_name[spritesheet_lba]
+		RomReader.spr_file_name_to_id[spritesheet_file_name] = sprite_id
+		RomReader.spr_id_file_idxs[sprite_id] = RomReader.file_records[spritesheet_file_name].type_index
+	
+	#cache_associated_files()
+	
+	#for ability_id: int in NUM_ACTIVE_ABILITIES:
+		#abilities.append(FftAbilityData.new(ability_id))
 	
 	# must be after abilities to set secondary actions
-	items.resize(NUM_ITEMS)
-	for id: int in NUM_ITEMS:
-		items[id] = (ItemData.new(id))
-	
-	status_effects = scus_data.status_effects
-	
-	# must be after items and status effects to reference requirements
-	for ability: FftAbilityData in abilities:
-		ability.set_action()
+	#items.resize(NUM_ITEMS)
+	#for id: int in NUM_ITEMS:
+		#items[id] = (ItemData.new(id))
+	#
+	#status_effects = scus_data.status_effects
+	#
+	## must be after items and status effects to reference requirements
+	#for ability: FftAbilityData in abilities:
+		#ability.set_action()
 	
 	
 	
@@ -132,8 +168,8 @@ func process_rom() -> void:
 		#seq.set_data_from_seq_bytes(get_file_data(seq.file_name))
 		#seq.write_wiki_table()
 	
-	is_ready = true
-	rom_loaded.emit()
+	#is_ready = true
+	#rom_loaded.emit()
 
 
 func process_file_records(sectors: PackedInt32Array, folder_name: String = "") -> void:

@@ -50,13 +50,13 @@ var movement_ability: Array = []
 
 var primary_weapon: ItemData
 var equipped: Array[ItemData] = []
-var equip_slots: Array[EquipmentSlot] = [
-	EquipmentSlot.new([ItemData.SlotType.WEAPON, ItemData.SlotType.SHIELD]),
-	EquipmentSlot.new([ItemData.SlotType.WEAPON, ItemData.SlotType.SHIELD]),
-	EquipmentSlot.new([ItemData.SlotType.HEADGEAR]),
-	EquipmentSlot.new([ItemData.SlotType.ARMOR]),
-	EquipmentSlot.new([ItemData.SlotType.ACCESSORY]),
-	]
+#var equip_slots: Array[EquipmentSlot] = [
+	#EquipmentSlot.new([ItemData.SlotType.WEAPON, ItemData.SlotType.SHIELD]),
+	#EquipmentSlot.new([ItemData.SlotType.WEAPON, ItemData.SlotType.SHIELD]),
+	#EquipmentSlot.new([ItemData.SlotType.HEADGEAR]),
+	#EquipmentSlot.new([ItemData.SlotType.ARMOR]),
+	#EquipmentSlot.new([ItemData.SlotType.ACCESSORY]),
+	#]
 
 class EquipmentSlot:
 	var slot_types: Array[ItemData.SlotType] = []
@@ -257,14 +257,14 @@ func _ready() -> void:
 		0x85, # gold shield
 		0xe9, # dracula mantle
 		]
-	for item_id: int in item_ids:
-		equipped.append(RomReader.items[item_id])
+	#for item_id: int in item_ids:
+		#equipped.append(RomReader.items[item_id])
 	
 	add_to_group("Units")
 
 
 func initialize_unit() -> void:
-	debug_menu.populate_options()
+	#debug_menu.populate_options()
 	
 	animation_manager.wep_spr = RomReader.sprs[RomReader.file_records["WEP.SPR"].type_index]
 	animation_manager.wep_shp = RomReader.shps[RomReader.file_records["WEP1.SHP"].type_index]
@@ -286,8 +286,8 @@ func initialize_unit() -> void:
 	# 1 cure
 	# 0xc8 blood suck
 	# 0x9b stasis sword
-	set_ability(0x9b)
-	set_primary_weapon(101) # 1 - dagger, 72 - mythril gun, 101 - mythril spear
+	#set_ability(0x9b)
+	#set_primary_weapon(101) # 1 - dagger, 72 - mythril gun, 101 - mythril spear
 	# TODO use equipment_slots
 	set_sprite_by_file_idx(98) # RAMUZA.SPR # TODO use sprite_id?
 	#set_sprite_by_file_name("RAMUZA.SPR")
@@ -295,7 +295,7 @@ func initialize_unit() -> void:
 	update_unit_facing(FacingVectors[Facings.SOUTH])
 	
 	var random_name_idx: int = randi_range(0, RomReader.fft_text.unit_names_list_filtered.size() - 1)
-	unit_nickname = RomReader.fft_text.unit_names_list_filtered[random_name_idx]
+	#unit_nickname = RomReader.fft_text.unit_names_list_filtered[random_name_idx]
 
 
 func _physics_process(delta: float) -> void:
@@ -845,7 +845,7 @@ func on_sprite_idx_selected(index: int) -> void:
 	if shp.file_name == "TYPE2.SHP":
 		if animation_manager.wep_shp.file_name != "WEP2.SHP":
 			animation_manager.wep_shp = RomReader.shps[RomReader.file_records["WEP2.SHP"].type_index]
-			set_primary_weapon(primary_weapon.id) # get new texture based on wep2.shp
+			#set_primary_weapon(primary_weapon.id) # get new texture based on wep2.shp
 			animation_changed = true
 		animation_manager.wep_seq = RomReader.seqs[RomReader.file_records["WEP2.SEQ"].type_index]
 	

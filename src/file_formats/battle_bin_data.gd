@@ -26,7 +26,8 @@ var weapon_frames_vertical_offsets: PackedInt32Array = [] # WEP.SHP vertical off
 var animation_layer_priorities_start: int = 0x2d548 # 4 uint32 per entry, 0x1b entries? maybe only 0x17?
 var animation_layer_priorities: PackedVector4Array = []
 
-var shp_subframe_sizes_start: int = 0x2d6c8 # 8 bytes each, two uint32 per entry, 16 entries
+#var shp_subframe_sizes_start: int = 0x2d6c8 # 8 bytes each, two uint32 per entry, 16 entries
+var shp_subframe_sizes_start: int = 0x2d66c # 8 bytes each, two uint32 per entry, 16 entries # Japan 0x2724e4 in full ROM
 var shp_subframe_sizes: PackedVector2Array = []
 
 var spritesheet_data_start: int = 0x2d748 # 4 bytes each
@@ -168,7 +169,8 @@ func _load_battle_bin_sprite_data() -> void:
 	# look up spr file_name based on LBA
 	var spritesheet_file_data_length: int = 8
 	for sprite_id: int in RomReader.NUM_SPRITESHEETS:
-		var spritesheet_file_data_start: int = 0x2dcd4 + (sprite_id * spritesheet_file_data_length)
+		#var spritesheet_file_data_start: int = 0x2dcd4 + (sprite_id * spritesheet_file_data_length)
+		var spritesheet_file_data_start: int = 0x2dc78 + (sprite_id * spritesheet_file_data_length) # location in japan ROM 0x272c20
 		var spritesheet_file_data_bytes: PackedByteArray = battle_bytes.slice(spritesheet_file_data_start, spritesheet_file_data_start + spritesheet_file_data_length)
 		var spritesheet_lba: int = spritesheet_file_data_bytes.decode_u32(0)
 		var spritesheet_file_name: String = ""

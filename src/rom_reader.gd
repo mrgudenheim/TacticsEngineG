@@ -50,7 +50,8 @@ var scus_data: ScusData = ScusData.new()
 
 # Images
 # https://github.com/Glain/FFTPatcher/blob/master/ShishiSpriteEditor/PSXImages.xml#L148
-
+var frame_bin: Bmp = Bmp.new()
+var frame_bin_texture: Texture2D
 
 # Text
 var fft_text: FftText = FftText.new()
@@ -94,6 +95,8 @@ func process_rom() -> void:
 	process_file_records(DIRECTORY_DATA_SECTORS_ROOT)
 	
 	push_warning("Time to process ROM (ms): " + str(Time.get_ticks_msec() - start_time))
+	
+	process_frame_bin()
 	
 	fft_text.init_text()
 	scus_data.init_from_scus()
@@ -280,3 +283,90 @@ func get_spr_file_idx(sprite_id: int) -> int:
 func init_abilities() -> void:
 	for ability_id: int in NUM_ABILITIES:
 		abilities[ability_id] = FftAbilityData.new(ability_id)
+
+
+func process_frame_bin() -> void:
+	var file_name: String = "FRAME.BIN"
+	frame_bin.file_name = file_name
+	var frame_bin_bytes: PackedByteArray = get_file_data(file_name)
+	
+	frame_bin.num_colors = 22 * 16
+	frame_bin.bits_per_pixel = 4
+	frame_bin.palette_data_start = frame_bin_bytes.size() - (frame_bin.num_colors * 2) # 2 bytes per color - 1 bit for alpha, followed by 5 bits per channel (B,G,R)
+	frame_bin.pixel_data_start = 0
+	frame_bin.width = 256 # pixels
+	frame_bin.height = 288
+	frame_bin.num_pixels = frame_bin.width * frame_bin.height
+	
+	var palette_bytes: PackedByteArray = frame_bin_bytes.slice(frame_bin.palette_data_start)
+	var pixel_bytes: PackedByteArray = frame_bin_bytes.slice(frame_bin.pixel_data_start, frame_bin.palette_data_start)
+	
+	# set palette data
+	frame_bin.color_palette.resize(frame_bin.num_colors)
+	for i: int in frame_bin.num_colors:
+		var color: Color = Color.BLACK
+		var color_bits: int = palette_bytes.decode_u16(i*2)
+		var alpha_bit: int = (color_bits & 0b1000_0000_0000_0000) >> 15 # first bit is alpha
+		#color.a8 = 1 - () # first bit is alpha (if bit is zero, color is opaque)
+		color.b8 = (color_bits & 0b0111_1100_0000_0000) >> 10 # then 5 bits each: blue, green, red
+		color.g8 = (color_bits & 0b0000_0011_1110_0000) >> 5
+		color.r8 = color_bits & 0b0000_0000_0001_1111
+		
+		# convert 5 bit channels to 8 bit
+		#color.a8 = 255 * color.a8 # first bit is alpha (if bit is zero, color is opaque)
+		color.a8 = 255 # TODO use alpha correctly
+		color.b8 = roundi(255 * (color.b8 / float(31))) # then 5 bits each: blue, green, red
+		color.g8 = roundi(255 * (color.g8 / float(31)))
+		color.r8 = roundi(255 * (color.r8 / float(31)))
+		
+		# psx transparency: https://www.psxdev.net/forum/viewtopic.php?t=953
+		# TODO use Material3D blend mode Add for mode 1 or 3, where brightness builds up from a dark background instead of normal "mix" transparency
+		if color == Color.BLACK:
+			color.a8 = 0
+		
+		# if first color in 16 color palette is black, treat it as transparent
+		if (i % 16 == 0
+			and color == Color.BLACK):
+				color.a8 = 0
+		frame_bin.color_palette[i] = color
+	
+	# set color indicies
+	var new_color_indicies: Array[int] = []
+	new_color_indicies.resize(pixel_bytes.size() * (8 / frame_bin.bits_per_pixel))
+	
+	for i: int in new_color_indicies.size():
+		var pixel_offset: int = (i * frame_bin.bits_per_pixel)/8
+		var byte: int = pixel_bytes.decode_u8(pixel_offset)
+		
+		if frame_bin.bits_per_pixel == 4:
+			if i % 2 == 1: # get 4 leftmost bits
+				new_color_indicies[i] = byte >> 4
+			else:
+				new_color_indicies[i] = byte & 0b0000_1111 # get 4 rightmost bits
+		elif frame_bin.bits_per_pixel == 8:
+			new_color_indicies[i] = byte
+	
+	frame_bin.color_indices = new_color_indicies
+	
+	# set_pixel_colors()
+	var palette_id: int = 5
+	var new_pixel_colors: PackedColorArray = []
+	var new_size: int = frame_bin.color_indices.size()
+	var err: int = new_pixel_colors.resize(new_size)
+	#pixel_colors.resize(color_indices.size())
+	new_pixel_colors.fill(Color.BLACK)
+	for i: int in frame_bin.color_indices.size():
+		new_pixel_colors[i] = frame_bin.color_palette[frame_bin.color_indices[i] + (16 * palette_id)]
+	
+	frame_bin.pixel_colors = new_pixel_colors
+	
+	# get_rgba8_image() -> Image:
+	frame_bin.height = frame_bin.color_indices.size() / frame_bin.width
+	var image:Image = Image.create_empty(frame_bin.width, frame_bin.height, false, Image.FORMAT_RGBA8)
+	for x in frame_bin.width:
+		for y in frame_bin.height:
+			var color: Color = frame_bin.pixel_colors[x + (y * frame_bin.width)]
+			var color8: Color = Color8(color.r8, color.g8, color.b8, color.a8) # use Color8 function to prevent issues with format conversion changing color by 1/255
+			image.set_pixel(x,y, color8) # spr stores pixel data left to right, top to bottm
+	
+	frame_bin_texture = ImageTexture.create_from_image(image)

@@ -28,7 +28,13 @@ var duration_type: DurationType = DurationType.TICKS
 @export var action_on_x_ticks: Action
 @export var x_ticks: int
 @export var action_on_complete: Action # charging, dead -> crystal/treasure
+
 var visual_effect # TODO speech bubbles, sprite coloring, animation (haste, dead, etc.), float, etc.
+@export var unit_shading_color: Color
+@export var unit_shading_type: int
+@export var status_bubble_texture: Texture2D # from Frame.bin
+@export var unit_idle_animation_id: int
+
 
 func set_data(status_effect_bytes: PackedByteArray) -> void:
 	byte_00 = status_effect_bytes.decode_u8(0)

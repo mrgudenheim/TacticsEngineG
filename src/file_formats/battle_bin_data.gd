@@ -46,10 +46,49 @@ var ability_vfx_header_offsets: PackedInt32Array = []
 var ability_vfx_ids_start: int = 0x14f3f0 # 2 bytes each - uint16
 var ability_vfx_ids: PackedInt32Array = [] 
 
-var status_image_rects_start: int = 0x14cf68 - 0x67000 # 4 bytes each, 49 entries
+var status_image_rects_start: int = 0x14cf68 - 0x67000 # 4 bytes each, 49 entries, mostly text + sword and rod icon
 var status_image_rects: Array[Rect2i] = []
 
+var status_bubble_locations_x_start: int = 0x949dc - 0x67000 # 22 bytes long
+var status_bubble_locations_y_start: int = 0x949f4 - 0x67000 # 22 bytes long
+var status_death_counter_locations_x_start: int = 0x94a0c - 0x67000 # 22 bytes long
+var status_death_counter_locations_y_start: int = 0x94a24 - 0x67000 # 22 bytes long
 
+var ai_status_priority_start: int = 0x19f308 - 0x67000 # 40 entries, 2 bytes each, signed int16s
+var ai_status_priorities: PackedInt32Array = []
+
+# https://ffhacktics.com/wiki/Palette_mod_by_status
+var status_colors_start: int = 0x822bc - 0x67000 # color RGBs per status are littered throughout routine
+var status_colors: Dictionary[int, PackedInt32Array] = { # status_id :  [R, G, B, Shade type]
+	8 : [0, 0, 0, 6], # petrify
+	13 : [3, -1, 8, 6], # blood suck
+	20 : [8, 0, 0, 4], # berserk
+	24 : [0, 8, 0, 5], # poison
+	25 : [0, 0, 8, 4], # regen
+	16 : [-4, -4, -4, 5], # oil
+	14 : [-8, -8, -8, 5], # cursed
+	3 : [4, 0, 5, 5], # undead
+}
+
+# https://ffhacktics.com/wiki/Set_Idle_Animation_based_on_status_(not_MON)
+# https://ffhacktics.com/wiki/More_animation_based_on_status,_death_sound_effects
+# https://ffhacktics.com/wiki/Set_Animation_Based_On_Unit_Status
+var status_idle_animations: Dictionary[int, int] = { # status_id :  animation_id
+	1 : 18, # crystal
+	15: 42, # treasure
+	2 : 52, # dead
+	32 : 4, # stop
+	35 : 72, # sleep
+	8 : 4, # petrify
+	11 : 74, # confusion
+	7 : 0x50, # performing - use ability ID (0x50 singing or 0x52 dancing)
+	4 : 0x54, # charging - use ability ID (0x54)
+	6 : 46, # defending
+	28 : 0x08, # haste - useHeight1 (14 for flying sprites)
+	29 : 0x0a, # slow - useHeight2 (16 for flying sprites)
+	14 : 4, # cursed
+	0 : 66, # blank
+}
 
 func init_from_battle_bin() -> void:
 	var battle_bytes: PackedByteArray = RomReader.get_file_data("BATTLE.BIN")

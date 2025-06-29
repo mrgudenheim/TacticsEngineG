@@ -719,8 +719,7 @@ func set_job_id(new_job_id: int) -> void:
 	
 	if animation_manager.global_spr.flying_flag:
 		idle_walk_animation_id = 0x0c
-		current_idle_animation_id = idle_walk_animation_id
-		set_base_animation_ptr_id(current_idle_animation_id)
+		set_base_animation_ptr_id(idle_walk_animation_id)
 
 func set_ability(new_ability_id: int) -> void:
 	active_ability_id = new_ability_id

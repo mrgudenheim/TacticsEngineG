@@ -197,7 +197,18 @@ func init_from_battle_bin() -> void:
 	
 	_load_battle_bin_sprite_data()
 	
+	# ai status prioity table
+	entry_size = 2
+	num_entries = 40
+	ai_status_priorities.resize(num_entries)
+	data_bytes = battle_bytes.slice(ai_status_priority_start, ai_status_priority_start + (num_entries * entry_size))
+	for idx: int in num_entries:
+		ai_status_priorities[idx] = data_bytes.decode_s16(idx * entry_size)
+	
+	
 	# TODO all the other battle.bin data
+	
+	
 
 
 # https://ffhacktics.com/wiki/BATTLE.BIN_Data_Tables#Animation_.26_Display_Related_Data

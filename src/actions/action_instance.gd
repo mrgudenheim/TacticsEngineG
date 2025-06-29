@@ -199,11 +199,12 @@ func get_secondary_actions_text(target: UnitData) -> String:
 	
 	var total_secondary_action_text: String = Action.StatusListType.keys()[action.secondary_action_list_type] + "\n"
 	if action.secondary_actions2.size() < 2:
-		total_secondary_action_text = ""
+		total_secondary_action_text = "" # don't show list type if only 1 entry in list
 	
 	var all_secondary_action_text: PackedStringArray = []
 	for secondary_action: Action.SecondaryAction in action.secondary_actions2:
 		var secondary_action_chance: String = str(secondary_action.chance) + "%"
+		#var secondary_action_effect_text: String = secondary_action.ac # TODO get effect text of secondary action?
 		var secondary_action_text: String = secondary_action_chance + " " + secondary_action.action.action_name
 		all_secondary_action_text.append(secondary_action_text)
 	

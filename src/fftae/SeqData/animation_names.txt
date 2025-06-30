@@ -837,18 +837,18 @@ Lucavi/ruka,2,Face DownLeft
 Lucavi/ruka,3,Face Left
 Lucavi/ruka,4,Face UpLeft
 Lucavi/ruka,5,Face Up
-Lucavi/ruka,6,Walk Front
-Lucavi/ruka,7,Walk Back
-Lucavi/ruka,8,Walk Fast Front
-Lucavi/ruka,9,Walk Fast Back
-Lucavi/ruka,10,Walk Slow Front
-Lucavi/ruka,11,Walk Slow Back
-Lucavi/ruka,12,
-Lucavi/ruka,13,
-Lucavi/ruka,14,
-Lucavi/ruka,15,
-Lucavi/ruka,16,
-Lucavi/ruka,17,
+Lucavi/ruka,6,Idle Walk Front
+Lucavi/ruka,7,Idle Walk Back
+Lucavi/ruka,8,Idle Walk Fast Front
+Lucavi/ruka,9,Idle Walk Fast Back
+Lucavi/ruka,10,Idle Walk Slow Front
+Lucavi/ruka,11,Idle Walk Slow Back
+Lucavi/ruka,12,Idle Walk Front; flying
+Lucavi/ruka,13,Idle Walk Back; flying
+Lucavi/ruka,14,Idle Walk Fast Front; flying
+Lucavi/ruka,15,Idle Walk Fast Back; flying
+Lucavi/ruka,16,Idle Walk Slow Front; flying
+Lucavi/ruka,17,Idle Walk Slow Back; flying
 Lucavi/ruka,18,Buffer?
 Lucavi/ruka,19,Buffer?
 Lucavi/ruka,20,Buffer?
@@ -877,8 +877,8 @@ Lucavi/ruka,42,Spin Front
 Lucavi/ruka,43,Spin Back
 Lucavi/ruka,44,Frozen?
 Lucavi/ruka,45,Frozen?
-Lucavi/ruka,46,Frozen?
-Lucavi/ruka,47,Frozen?
+Lucavi/ruka,46,Defend Front
+Lucavi/ruka,47,Defend Back
 Lucavi/ruka,48,
 Lucavi/ruka,49,
 Lucavi/ruka,50,Take Damage Front?

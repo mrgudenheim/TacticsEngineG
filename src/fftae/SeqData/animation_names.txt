@@ -1063,8 +1063,8 @@ type1,50,Taking Damage Front
 type1,51,Taking Damage Back
 type1,52,KnockedOut Front
 type1,53,KnockedOut Back
-type1,54,Mid Jump Front
-type1,55,Mid Jump Back
+type1,54,Receive Heal; Blade Grasp; Catch Front
+type1,55,Receive Heal; Blade Grasp; Catch Back
 type1,56,Jump Up Front
 type1,57,Jump Up Back
 type1,58,Jump Down Front
@@ -1567,8 +1567,8 @@ type3,50,Taking Damage Front
 type3,51,Taking Damage Back
 type3,52,KnockedOut Front
 type3,53,KnockedOut Back
-type3,54,Mid Jump Front
-type3,55,Mid Jump Back
+type3,54,Receive Heal; Blade Grasp; Catch Front
+type3,55,Receive Heal; Blade Grasp; Catch Back
 type3,56,Jump Up Front
 type3,57,Jump Up Back
 type3,58,Jump Down Front

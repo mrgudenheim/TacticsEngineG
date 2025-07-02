@@ -724,7 +724,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.value_01 = formula_y
 			
 			
-			status_chance = 25
+			status_chance = 100
 			status_list_type = StatusListType.RANDOM
 		0x2e:
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))

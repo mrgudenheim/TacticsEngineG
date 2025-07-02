@@ -49,8 +49,9 @@ var ability_vfx_ids: PackedInt32Array = []
 var status_image_rects_start: int = 0x14cf68 - 0x67000 # 4 bytes each, 49 entries, mostly text + sword and rod icon
 var status_image_rects: Array[Rect2i] = []
 
-var status_bubble_locations_x_start: int = 0x949dc - 0x67000 # 22 bytes long
-var status_bubble_locations_y_start: int = 0x949f4 - 0x67000 # 22 bytes long
+var status_bubble_locations_x_start: int = 0x949dc - 0x67000 # 22 bytes long, 1 byte each
+var status_bubble_locations_y_start: int = 0x949f4 - 0x67000 # 22 bytes long, 1 byte each
+var status_icon_locations: Array[Vector2i] = []
 var status_death_counter_locations_x_start: int = 0x94a0c - 0x67000 # 22 bytes long
 var status_death_counter_locations_y_start: int = 0x94a24 - 0x67000 # 22 bytes long
 
@@ -205,9 +206,18 @@ func init_from_battle_bin() -> void:
 	for idx: int in num_entries:
 		ai_status_priorities[idx] = data_bytes.decode_s16(idx * entry_size)
 	
+	# status icon locations
+	entry_size = 1
+	num_entries = 22
+	status_icon_locations.resize(num_entries)
+	var data_bytes_x = battle_bytes.slice(status_bubble_locations_x_start, status_bubble_locations_x_start + (num_entries * entry_size))
+	var data_bytes_y = battle_bytes.slice(status_bubble_locations_y_start, status_bubble_locations_y_start + (num_entries * entry_size))
+	for idx: int in num_entries:
+		var x: int = data_bytes_x.decode_u8(idx * entry_size)
+		var y: int = data_bytes_y.decode_u8(idx * entry_size)
+		status_icon_locations[idx] = Vector2i(x, y)
 	
 	# TODO all the other battle.bin data
-	
 	
 
 

@@ -22,6 +22,8 @@ var team: Team
 @export var char_body: CharacterBody3D
 @export var animation_manager: UnitAnimationManager
 @export var popup_texts: PopupTextContainer
+@export var icon: UnitIcon
+@export var icon2: Sprite3D
 @export var debug_menu: UnitDebugMenu
 
 @export var unit_nickname: String = "Unit Nickname"
@@ -743,6 +745,11 @@ func set_primary_weapon(new_weapon_id: int) -> void:
 	
 	attack_action = primary_weapon.weapon_attack_action
 	primary_weapon_assigned.emit(new_weapon_id)
+
+
+func set_icon(icon_id: int) -> void:
+	icon2.region_rect.position.x = RomReader.battle_bin_data.status_icon_locations[icon_id].x
+	icon2.region_rect.position.y = RomReader.battle_bin_data.status_icon_locations[icon_id].y + 32
 
 
 func change_equipment(slot_id: int, new_equipment: ItemData) -> void:

@@ -220,6 +220,9 @@ func spawn_unit(tile_position: TerrainTile, job_id: int) -> UnitData:
 		new_unit.set_sprite_palette(range(0,5).pick_random())
 	controller.camera_rotated.connect(new_unit.char_body.set_rotation_degrees) # have sprite update as camera rotates
 	
+	new_unit.icon.texture = RomReader.frame_bin_texture
+	new_unit.icon2.texture = RomReader.frame_bin_texture
+	
 	new_unit.primary_weapon_assigned.connect(func(weapon_id: int): new_unit.update_actions(self))
 	#new_unit.turn_ended.connect(process_next_event)
 	

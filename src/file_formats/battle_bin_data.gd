@@ -52,8 +52,31 @@ var status_image_rects: Array[Rect2i] = []
 var status_bubble_locations_x_start: int = 0x949dc - 0x67000 # 22 bytes long, 1 byte each
 var status_bubble_locations_y_start: int = 0x949f4 - 0x67000 # 22 bytes long, 1 byte each
 var status_icon_locations: Array[Vector2i] = []
-var status_death_counter_locations_x_start: int = 0x94a0c - 0x67000 # 22 bytes long
-var status_death_counter_locations_y_start: int = 0x94a24 - 0x67000 # 22 bytes long
+var status_icon_rects: Array[Rect2i] = []
+var status_icon_ids: Dictionary[int, int] = {
+	3: 18, # undead? is this used?
+	4 : 9, # charging - second frame is 12 pixels lower
+	10 : 2, # darkness
+	11 : 12, # confuse
+	12 : 3, # silence
+	13 : 13, # blood suck
+	16 : 19, # oil
+	18 : 10, # reraise - second frame is 12 pixels lower
+	20 : 5, # berserk
+	26 : 16, # protect
+	27 : 17, # shell
+	32 : 6, # faith
+	33 : 7, # innocent
+	34 : 4, # charm
+	35 : 1, # sleep
+	36 : 14, # don't move
+	37 : 15, # don't act
+	} # active turn is icon 8 + second frame, ko stars are icons 0, 11
+
+var status_counter_locations_x_start: int = 0x94a0c - 0x67000 # 4 bytes long, 1 byte each
+var status_counter_locations_y_start: int = 0x94a24 - 0x67000 # 4 bytes long, 1 byte each
+var status_counter_locations: Array[Vector2i] = []
+var status_counter_rects: Array[Rect2i] = []
 
 var ai_status_priority_start: int = 0x19f308 - 0x67000 # 40 entries, 2 bytes each, signed int16s
 var ai_status_priorities: PackedInt32Array = []
@@ -210,12 +233,32 @@ func init_from_battle_bin() -> void:
 	entry_size = 1
 	num_entries = 22
 	status_icon_locations.resize(num_entries)
+	status_icon_rects.resize(num_entries)
 	var data_bytes_x = battle_bytes.slice(status_bubble_locations_x_start, status_bubble_locations_x_start + (num_entries * entry_size))
 	var data_bytes_y = battle_bytes.slice(status_bubble_locations_y_start, status_bubble_locations_y_start + (num_entries * entry_size))
 	for idx: int in num_entries:
 		var x: int = data_bytes_x.decode_u8(idx * entry_size)
 		var y: int = data_bytes_y.decode_u8(idx * entry_size)
 		status_icon_locations[idx] = Vector2i(x, y)
+		status_icon_rects[idx] = Rect2i(Vector2i(x, y + 32), Vector2i(14, 12)) # y + 32 because image is 288 pixels tall (288-256 = 32), TODO KO stars are 16 wide
+	
+	for status_id: int in RomReader.scus_data.status_effects.size():
+		if status_icon_ids.keys().has(status_id):
+			var rect: Rect2i = status_icon_rects[status_icon_ids[status_id]]
+			RomReader.scus_data.status_effects[status_id].status_icon_rects.append(rect) # TODO get second frame of status icons
+	
+	# status counter locations
+	entry_size = 1
+	num_entries = 4
+	status_counter_locations.resize(num_entries)
+	status_counter_rects.resize(num_entries)
+	data_bytes_x = battle_bytes.slice(status_counter_locations_x_start, status_counter_locations_x_start + (num_entries * entry_size))
+	data_bytes_y = battle_bytes.slice(status_counter_locations_y_start, status_counter_locations_y_start + (num_entries * entry_size))
+	for idx: int in num_entries:
+		var x: int = data_bytes_x.decode_u8(idx * entry_size)
+		var y: int = data_bytes_y.decode_u8(idx * entry_size)
+		status_counter_locations[idx] = Vector2i(x, y)
+		status_counter_rects[idx] = Rect2i(Vector2i(x, y + 32), Vector2i(14, 12)) # y + 32 because image is 288 pixels tall (288-256 = 32)
 	
 	# TODO all the other battle.bin data
 	

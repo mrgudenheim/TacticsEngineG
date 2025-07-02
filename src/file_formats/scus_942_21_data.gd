@@ -141,7 +141,6 @@ var status_effect_entries: int = 40
 var status_effect_entry_length: int = 0x10
 var status_effects: Array[StatusEffect] = []
 
-
 class InflictStatus:
 	var is_all: bool = false
 	var is_random: bool = false

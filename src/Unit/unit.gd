@@ -24,6 +24,12 @@ var team: Team
 @export var popup_texts: PopupTextContainer
 @export var icon: UnitIcon
 @export var icon2: Sprite3D
+@export var icon_id: int = 0:
+	get:
+		return icon_id
+	set(value):
+		icon_id = value
+		set_icon(icon_id)
 @export var debug_menu: UnitDebugMenu
 
 @export var unit_nickname: String = "Unit Nickname"
@@ -747,9 +753,10 @@ func set_primary_weapon(new_weapon_id: int) -> void:
 	primary_weapon_assigned.emit(new_weapon_id)
 
 
+# https://ffhacktics.com/wiki/Determine_Status_Bubble_Parameters
+# https://ffhacktics.com/wiki/Display_Status_Bubble
 func set_icon(icon_id: int) -> void:
-	icon2.region_rect.position.x = RomReader.battle_bin_data.status_icon_locations[icon_id].x
-	icon2.region_rect.position.y = RomReader.battle_bin_data.status_icon_locations[icon_id].y + 32
+	icon2.region_rect = RomReader.battle_bin_data.status_icon_rects[icon_id]
 
 
 func change_equipment(slot_id: int, new_equipment: ItemData) -> void:

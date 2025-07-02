@@ -33,6 +33,7 @@ var visual_effect # TODO speech bubbles, sprite coloring, animation (haste, dead
 @export var unit_shading_color: Color
 @export var unit_shading_type: int
 @export var status_bubble_texture: Texture2D # from Frame.bin
+@export var status_icon_rects: Array[Rect2i] = []
 @export var unit_idle_animation_id: int
 
 

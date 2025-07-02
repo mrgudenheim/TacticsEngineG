@@ -185,7 +185,7 @@ func init_from_scus() -> void:
 			new_status_effect.unit_shading_type = RomReader.battle_bin_data.status_colors[id][3]
 		
 		if RomReader.battle_bin_data.status_idle_animations.has(id):
-			new_status_effect.unit_idle_animation_id = RomReader.battle_bin_data.status_idle_animations[id]
+			new_status_effect.idle_animation_id = RomReader.battle_bin_data.status_idle_animations[id]
 	
 	for status_effect: StatusEffect in status_effects:
 		status_effect.status_flags_to_status_array() # called after all StatusEffects have already been initialized since this indexes into the complete array

@@ -41,7 +41,7 @@ char_body = NodePath("CharacterBody3D")
 animation_manager = NodePath("CharacterBody3D/UnitAnimationManager")
 popup_texts = NodePath("CharacterBody3D/Control/ActionPopups")
 icon = NodePath("CharacterBody3D/Control2/StatusBubble")
-icon2 = NodePath("CharacterBody3D/StatusBubble")
+icon2 = NodePath("CharacterBody3D/StatusIcon")
 debug_menu = NodePath("CharacterBody3D/UnitDebugMenu")
 tile_highlights = NodePath("TileHighlights")
 move_action = ExtResource("3_wg4to")
@@ -242,14 +242,14 @@ offset_bottom = -40.0
 grow_vertical = 0
 script = ExtResource("9_0prau")
 
-[node name="StatusBubble" type="Sprite3D" parent="CharacterBody3D"]
+[node name="StatusIcon" type="Sprite3D" parent="CharacterBody3D"]
 transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, 0.25, 1.05, 0)
 pixel_size = 0.0357
 billboard = 1
 texture_filter = 0
 render_priority = 1
 region_enabled = true
-region_rect = Rect2(16, 208, 14, 12)
+region_rect = Rect2(0, 0, 1, 1)
 
 [node name="TileHighlights" type="Node3D" parent="."]
 

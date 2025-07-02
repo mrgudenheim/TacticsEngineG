@@ -307,6 +307,31 @@ func apply_standard(action_instance: ActionInstance) -> void:
 					target_unit.animate_recieve_heal(vfx_data)
 			
 			# TODO apply status
+			if status_list_type == StatusListType.ALL:
+				var status_success: bool = randi_range(0, 99) < status_chance
+				if status_success:
+					for status: StatusEffect in status_list:
+						if will_remove_status:
+							target_unit.remove_status(status)
+						else:
+							target_unit.add_status(status)
+			elif status_list_type == StatusListType.EACH:
+				for status: StatusEffect in status_list:
+					var status_success: bool = randi_range(0, 99) < status_chance
+					if status_success:
+						if will_remove_status:
+							target_unit.remove_status(status)
+						else:
+							target_unit.add_status(status)
+			elif status_list_type == StatusListType.RANDOM:
+				var status_success: bool = randi_range(0, 99) < status_chance
+				if status_success:
+					var status: StatusEffect = status_list.pick_random()
+					if will_remove_status:
+						target_unit.remove_status(status)
+					else:
+						target_unit.add_status(status)
+			
 			
 			# TODO apply secondary action
 			if secondary_action_list_type == StatusListType.RANDOM:

@@ -427,6 +427,41 @@ func end_turn():
 		turn_ended.emit()
 
 
+func add_status(status: StatusEffect) -> void:
+	current_statuses2[status] = status.duration
+	update_status_visuals()
+
+
+func remove_status(status: StatusEffect) -> void:
+	current_statuses2.erase(status)
+	update_status_visuals()
+
+
+func update_status_visuals() -> void:
+	var priority: int = 0
+	if current_statuses2.is_empty():
+		if current_animation_id_fwd == current_idle_animation_id:
+			current_idle_animation_id = idle_walk_animation_id
+			set_base_animation_ptr_id(current_idle_animation_id)
+		else:
+			current_idle_animation_id = idle_walk_animation_id
+		
+		icon2.region_rect = Rect2i(Vector2i.ZERO, Vector2i.ONE)
+		# TODO reset color shading
+	else:
+		for status: StatusEffect in current_statuses2.keys():
+			if status.order >= priority:
+				priority = status.order
+				if status.idle_animation_id == -1:
+					continue
+				if current_animation_id_fwd == current_idle_animation_id:
+					current_idle_animation_id = status.idle_animation_id
+					set_base_animation_ptr_id(status.idle_animation_id)
+				else:
+					current_idle_animation_id = status.idle_animation_id
+				# TODO status color shading
+
+
 func use_attack() -> void:
 	can_move = false
 	push_warning("using attack: " + primary_weapon.name)

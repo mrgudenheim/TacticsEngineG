@@ -54,7 +54,7 @@ var status_bubble_locations_y_start: int = 0x949f4 - 0x67000 # 22 bytes long, 1 
 var status_icon_locations: Array[Vector2i] = []
 var status_icon_rects: Array[Rect2i] = []
 var status_icon_ids: Dictionary[int, int] = {
-	3: 18, # undead? is this used?
+	24 : 18, # poison
 	4 : 9, # charging - second frame is 12 pixels lower
 	10 : 2, # darkness
 	11 : 12, # confuse

@@ -32,9 +32,9 @@ var duration_type: DurationType = DurationType.TICKS
 var visual_effect # TODO speech bubbles, sprite coloring, animation (haste, dead, etc.), float, etc.
 @export var unit_shading_color: Color
 @export var unit_shading_type: int
-@export var status_bubble_texture: Texture2D # from Frame.bin
+#@export var status_bubble_texture: Texture2D # from Frame.bin
 @export var status_icon_rects: Array[Rect2i] = []
-@export var unit_idle_animation_id: int
+@export var idle_animation_id: int = -1
 
 
 func set_data(status_effect_bytes: PackedByteArray) -> void:

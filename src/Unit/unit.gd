@@ -813,7 +813,12 @@ func cycle_status_icons() -> void:
 			set_status_icon_rect(rect)
 			await get_tree().create_timer(icon_cycle_time).timeout
 			
-			if current_statuses2.keys()[status_idx].status_icon_rects.size() > 0:
+			if current_statuses2.keys().size() > 0:
+				status_idx = (status_idx + 1) % current_statuses2.keys().size()
+			else:
+				status_idx = 0
+		else:
+			if current_statuses2.keys().size() > 0:
 				status_idx = (status_idx + 1) % current_statuses2.keys().size()
 			else:
 				status_idx = 0

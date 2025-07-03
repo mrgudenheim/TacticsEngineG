@@ -24,6 +24,7 @@ var team: Team
 @export var popup_texts: PopupTextContainer
 @export var icon: UnitIcon
 @export var icon2: Sprite3D
+@export var icon_cycle_time: float = 1.25
 @export var icon_id: int = 0:
 	get:
 		return icon_id
@@ -267,6 +268,8 @@ func _ready() -> void:
 		]
 	for item_id: int in item_ids:
 		equipped.append(RomReader.items[item_id])
+	
+	cycle_status_icons()
 	
 	add_to_group("Units")
 
@@ -792,6 +795,24 @@ func set_primary_weapon(new_weapon_id: int) -> void:
 # https://ffhacktics.com/wiki/Display_Status_Bubble
 func set_icon(icon_id: int) -> void:
 	icon2.region_rect = RomReader.battle_bin_data.status_icon_rects[icon_id]
+
+
+func set_status_icon_rect(rect: Rect2i) -> void:
+	icon2.region_rect = rect
+
+
+func cycle_status_icons() -> void:
+	var status_idx: int = 0
+	while true:
+		if current_statuses2.keys().all(func(status: StatusEffect): return status.status_icon_rects.is_empty()):
+			set_status_icon_rect(Rect2i(Vector2i.ZERO, Vector2i.ONE))
+			await get_tree().create_timer(icon_cycle_time).timeout
+		elif current_statuses2.keys()[status_idx].status_icon_rects.size() > 0:
+			var rect: Rect2i = current_statuses2.keys()[status_idx].status_icon_rects[0]
+			set_status_icon_rect(rect)
+			await get_tree().create_timer(icon_cycle_time).timeout
+			
+			status_idx = (status_idx + 1) % current_statuses2.keys().size()
 
 
 func change_equipment(slot_id: int, new_equipment: ItemData) -> void:

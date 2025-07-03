@@ -441,7 +441,7 @@ func remove_status(status: StatusEffect) -> void:
 
 
 func update_status_visuals() -> void:
-	var priority: int = 0
+	var anim_priority: int = 0
 	if current_statuses2.is_empty():
 		if current_animation_id_fwd == current_idle_animation_id:
 			current_idle_animation_id = idle_walk_animation_id
@@ -453,10 +453,11 @@ func update_status_visuals() -> void:
 		# TODO reset color shading
 	else:
 		for status: StatusEffect in current_statuses2.keys():
-			if status.order >= priority:
-				priority = status.order
+			if status.order >= anim_priority:
 				if status.idle_animation_id == -1:
 					continue
+				
+				anim_priority = status.order
 				if current_animation_id_fwd == current_idle_animation_id:
 					current_idle_animation_id = status.idle_animation_id
 					set_base_animation_ptr_id(status.idle_animation_id)

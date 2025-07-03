@@ -314,7 +314,7 @@ func apply_standard(action_instance: ActionInstance) -> void:
 						if will_remove_status and target_unit.current_statuses2.keys().has(status):
 							target_unit.remove_status(status)
 							target_unit.show_popup_text(status.status_effect_name) # TODO different text for removing status
-						else:
+						elif not will_remove_status:
 							target_unit.add_status(status)
 							target_unit.show_popup_text(status.status_effect_name)
 			elif status_list_type == StatusListType.EACH:
@@ -324,7 +324,7 @@ func apply_standard(action_instance: ActionInstance) -> void:
 						if will_remove_status and target_unit.current_statuses2.keys().has(status):
 							target_unit.remove_status(status)
 							target_unit.show_popup_text(status.status_effect_name) # TODO different text for removing status
-						else:
+						elif not will_remove_status:
 							target_unit.add_status(status)
 							target_unit.show_popup_text(status.status_effect_name)
 			elif status_list_type == StatusListType.RANDOM:
@@ -336,7 +336,7 @@ func apply_standard(action_instance: ActionInstance) -> void:
 							var status: StatusEffect = removable_status_list.pick_random()
 							target_unit.remove_status(status)
 							target_unit.show_popup_text(status.status_effect_name) # TODO different text for removing status
-					else:
+					elif not will_remove_status:
 						var addable_status_list: Array[StatusEffect] = status_list.filter(func(status: StatusEffect): return not target_unit.current_statuses2.keys().has(status))
 						if not addable_status_list.is_empty():
 							var status: StatusEffect = addable_status_list.pick_random()

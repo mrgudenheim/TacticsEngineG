@@ -182,7 +182,7 @@ func get_statuses_text(target: UnitData) -> String:
 	
 	var status_names: PackedStringArray = []
 	for status: StatusEffect in action.status_list:
-		if not action.will_remove_status or target.current_statuses.has(status): # don't show removing status the target does not have TODO don't show remove Always statuses
+		if not action.will_remove_status or target.current_statuses2.keys().has(status): # don't show removing status the target does not have TODO don't show remove Always statuses
 			status_names.append(status.status_effect_name)
 	
 	if status_names.is_empty() and action.will_remove_status:

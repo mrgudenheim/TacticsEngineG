@@ -306,31 +306,42 @@ func apply_standard(action_instance: ActionInstance) -> void:
 				elif set_target_animation_on_hit and [UnitData.StatType.HP, UnitData.StatType.MP].has(effect.effect_stat_type) and effect_value > 0:
 					target_unit.animate_recieve_heal(vfx_data)
 			
-			# TODO apply status
+			# apply status
 			if status_list_type == StatusListType.ALL:
 				var status_success: bool = randi_range(0, 99) < status_chance
 				if status_success:
 					for status: StatusEffect in status_list:
-						if will_remove_status:
+						if will_remove_status and target_unit.current_statuses2.keys().has(status):
 							target_unit.remove_status(status)
+							target_unit.show_popup_text(status.status_effect_name) # TODO different text for removing status
 						else:
 							target_unit.add_status(status)
+							target_unit.show_popup_text(status.status_effect_name)
 			elif status_list_type == StatusListType.EACH:
 				for status: StatusEffect in status_list:
 					var status_success: bool = randi_range(0, 99) < status_chance
 					if status_success:
-						if will_remove_status:
+						if will_remove_status and target_unit.current_statuses2.keys().has(status):
 							target_unit.remove_status(status)
+							target_unit.show_popup_text(status.status_effect_name) # TODO different text for removing status
 						else:
 							target_unit.add_status(status)
+							target_unit.show_popup_text(status.status_effect_name)
 			elif status_list_type == StatusListType.RANDOM:
 				var status_success: bool = randi_range(0, 99) < status_chance
 				if status_success:
-					var status: StatusEffect = status_list.pick_random()
 					if will_remove_status:
-						target_unit.remove_status(status)
+						var removable_status_list: Array[StatusEffect] = status_list.filter(func(status: StatusEffect): return target_unit.current_statuses2.keys().has(status))
+						if not removable_status_list.is_empty():
+							var status: StatusEffect = removable_status_list.pick_random()
+							target_unit.remove_status(status)
+							target_unit.show_popup_text(status.status_effect_name) # TODO different text for removing status
 					else:
-						target_unit.add_status(status)
+						var addable_status_list: Array[StatusEffect] = status_list.filter(func(status: StatusEffect): return not target_unit.current_statuses2.keys().has(status))
+						if not addable_status_list.is_empty():
+							var status: StatusEffect = addable_status_list.pick_random()
+							target_unit.add_status(status)
+							target_unit.show_popup_text(status.status_effect_name)
 			
 			
 			# TODO apply secondary action

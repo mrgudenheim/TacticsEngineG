@@ -255,7 +255,7 @@ func set_action() -> void:
 	
 	# inflict status data
 	var inflict_status_data: ScusData.InflictStatus = RomReader.scus_data.inflict_statuses[inflict_status_id]
-	ability_action.status_list = inflict_status_data.status_list
+	ability_action.taregt_status_list = inflict_status_data.status_list
 	ability_action.status_chance = 100
 	ability_action.will_remove_status = inflict_status_data.will_cancel
 	
@@ -263,11 +263,11 @@ func set_action() -> void:
 	ability_action.random_status = inflict_status_data.is_random
 	ability_action.separate_status = inflict_status_data.is_separate
 	if inflict_status_data.is_all:
-		ability_action.status_list_type = Action.StatusListType.ALL
+		ability_action.target_status_list_type = Action.StatusListType.ALL
 	elif inflict_status_data.is_random:
-		ability_action.status_list_type = Action.StatusListType.RANDOM
+		ability_action.target_status_list_type = Action.StatusListType.RANDOM
 	elif inflict_status_data.is_separate:
-		ability_action.status_list_type = Action.StatusListType.EACH
+		ability_action.target_status_list_type = Action.StatusListType.EACH
 
 	if affected_by_silence:
 		ability_action.status_prevents_use_any = [RomReader.status_effects[12]] # silence, dont move, dont act, etc.

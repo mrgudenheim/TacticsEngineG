@@ -72,10 +72,10 @@ var hit_requirements: Array = [] # TODO always miss if requirement is not met, e
 @export var healing_damages_undead: bool = false
 
 # inflict status data
-@export var status_list: Array[StatusEffect] = []
+@export var taregt_status_list: Array[StatusEffect] = []
 @export var status_chance: int = 100
 @export var will_remove_status: bool = false
-@export var status_list_type: StatusListType = StatusListType.EACH
+@export var target_status_list_type: StatusListType = StatusListType.EACH
 var all_status: bool = false
 var random_status: bool = false
 var separate_status: bool = false
@@ -137,7 +137,7 @@ func _to_string() -> String:
 
 
 func is_usable(action_instance: ActionInstance) -> bool:
-	var is_usable: bool = false
+	var action_is_usable: bool = false
 	if useable_strategy == null: # default usable check
 		var user_has_enough_move_points: bool = action_instance.user.move_points_remaining >= action_instance.action.move_points_cost
 		var user_has_enough_action_points: bool = action_instance.user.action_points_remaining >= action_instance.action.action_points_cost
@@ -147,16 +147,16 @@ func is_usable(action_instance: ActionInstance) -> bool:
 		
 		var action_not_prevented_by_status: bool = not action_instance.action.status_prevents_use_any.any(func(status: StatusEffect): return action_instance.user.current_statuses.has(status))
 		
-		is_usable = (user_has_enough_move_points 
+		action_is_usable = (user_has_enough_move_points 
 				and user_has_enough_action_points 
 				and user_has_enough_mp
 				and action_not_prevented_by_status
 				and user_has_equipment_type
 				and user_has_equipment)
 	else: # custom usable check
-		is_usable = useable_strategy.is_usable(action_instance)
+		action_is_usable = useable_strategy.is_usable(action_instance)
 		
-	return is_usable
+	return action_is_usable
 
 
 func start_targeting(action_instance: ActionInstance) -> void:
@@ -307,41 +307,7 @@ func apply_standard(action_instance: ActionInstance) -> void:
 					target_unit.animate_recieve_heal(vfx_data)
 			
 			# apply status
-			if status_list_type == StatusListType.ALL:
-				var status_success: bool = randi_range(0, 99) < status_chance
-				if status_success:
-					for status: StatusEffect in status_list:
-						if will_remove_status and target_unit.current_statuses2.keys().has(status):
-							target_unit.remove_status(status)
-							target_unit.show_popup_text(status.status_effect_name) # TODO different text for removing status
-						elif not will_remove_status:
-							target_unit.add_status(status)
-							target_unit.show_popup_text(status.status_effect_name)
-			elif status_list_type == StatusListType.EACH:
-				for status: StatusEffect in status_list:
-					var status_success: bool = randi_range(0, 99) < status_chance
-					if status_success:
-						if will_remove_status and target_unit.current_statuses2.keys().has(status):
-							target_unit.remove_status(status)
-							target_unit.show_popup_text(status.status_effect_name) # TODO different text for removing status
-						elif not will_remove_status:
-							target_unit.add_status(status)
-							target_unit.show_popup_text(status.status_effect_name)
-			elif status_list_type == StatusListType.RANDOM:
-				var status_success: bool = randi_range(0, 99) < status_chance
-				if status_success:
-					if will_remove_status:
-						var removable_status_list: Array[StatusEffect] = status_list.filter(func(status: StatusEffect): return target_unit.current_statuses2.keys().has(status))
-						if not removable_status_list.is_empty():
-							var status: StatusEffect = removable_status_list.pick_random()
-							target_unit.remove_status(status)
-							target_unit.show_popup_text(status.status_effect_name) # TODO different text for removing status
-					elif not will_remove_status:
-						var addable_status_list: Array[StatusEffect] = status_list.filter(func(status: StatusEffect): return not target_unit.current_statuses2.keys().has(status))
-						if not addable_status_list.is_empty():
-							var status: StatusEffect = addable_status_list.pick_random()
-							target_unit.add_status(status)
-							target_unit.show_popup_text(status.status_effect_name)
+			apply_status(target_unit, taregt_status_list, target_status_list_type)
 			
 			
 			# TODO apply secondary action
@@ -386,6 +352,44 @@ func apply_standard(action_instance: ActionInstance) -> void:
 	
 	if ends_turn:
 		action_instance.user.end_turn()
+
+
+func apply_status(unit: UnitData, status_list: Array[StatusEffect], status_list_type: StatusListType) -> void:
+	if status_list_type == StatusListType.ALL:
+		var status_success: bool = randi_range(0, 99) < status_chance
+		if status_success:
+			for status: StatusEffect in status_list:
+				if will_remove_status and unit.current_statuses2.keys().has(status):
+					unit.remove_status(status)
+					unit.show_popup_text(status.status_effect_name) # TODO different text for removing status
+				elif not will_remove_status:
+					unit.add_status(status)
+					unit.show_popup_text(status.status_effect_name)
+	elif status_list_type == StatusListType.EACH:
+		for status: StatusEffect in status_list:
+			var status_success: bool = randi_range(0, 99) < status_chance
+			if status_success:
+				if will_remove_status and unit.current_statuses2.keys().has(status):
+					unit.remove_status(status)
+					unit.show_popup_text(status.status_effect_name) # TODO different text for removing status
+				elif not will_remove_status:
+					unit.add_status(status)
+					unit.show_popup_text(status.status_effect_name)
+	elif status_list_type == StatusListType.RANDOM:
+		var status_success: bool = randi_range(0, 99) < status_chance
+		if status_success:
+			if will_remove_status:
+				var removable_status_list: Array[StatusEffect] = status_list.filter(func(status: StatusEffect): return unit.current_statuses2.keys().has(status))
+				if not removable_status_list.is_empty():
+					var status: StatusEffect = removable_status_list.pick_random()
+					unit.remove_status(status)
+					unit.show_popup_text(status.status_effect_name) # TODO different text for removing status
+			elif not will_remove_status:
+				var addable_status_list: Array[StatusEffect] = status_list.filter(func(status: StatusEffect): return not unit.current_statuses2.keys().has(status))
+				if not addable_status_list.is_empty():
+					var status: StatusEffect = addable_status_list.pick_random()
+					unit.add_status(status)
+					unit.show_popup_text(status.status_effect_name)
 
 
 func show_vfx(action_instance: ActionInstance, position: Vector3) -> void:
@@ -761,7 +765,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			
 			status_chance = 100
-			status_list_type = StatusListType.RANDOM
+			target_status_list_type = StatusListType.RANDOM
 		0x2e:
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PAxWPxV1

@@ -1,4 +1,5 @@
 class_name ActionInstance
+extends RefCounted
 
 signal action_completed(battle_manager: BattleManager)
 signal tile_hovered(tile: TerrainTile, action_instance: ActionInstance)
@@ -169,19 +170,19 @@ func get_effects_text(target: UnitData) -> String:
 
 func get_statuses_text(target: UnitData) -> String:
 	# status preview
-	if action.status_list.is_empty():
+	if action.taregt_status_list.is_empty():
 		return ""
 	
 	var status_chance: String = str(action.status_chance) + "%"
 	var remove_status: String = ""
 	if action.will_remove_status:
 		remove_status = "Remove "
-	var status_group_type: String = Action.StatusListType.keys()[action.status_list_type] + " "
-	if action.status_list.size() < 2:
+	var status_group_type: String = Action.StatusListType.keys()[action.target_status_list_type] + " "
+	if action.taregt_status_list.size() < 2:
 		status_group_type = "" # don't mention group type if 1 or less status
 	
 	var status_names: PackedStringArray = []
-	for status: StatusEffect in action.status_list:
+	for status: StatusEffect in action.taregt_status_list:
 		if not action.will_remove_status or target.current_statuses2.keys().has(status): # don't show removing status the target does not have TODO don't show remove Always statuses
 			status_names.append(status.status_effect_name)
 	

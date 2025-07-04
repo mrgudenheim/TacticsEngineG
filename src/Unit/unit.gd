@@ -464,6 +464,13 @@ func update_status_visuals() -> void:
 				else:
 					current_idle_animation_id = status.idle_animation_id
 				# TODO status color shading
+		
+		if anim_priority == 0: # no statuses set the idle animation
+			if current_animation_id_fwd == current_idle_animation_id:
+				current_idle_animation_id = idle_walk_animation_id
+				set_base_animation_ptr_id(current_idle_animation_id)
+			else:
+				current_idle_animation_id = idle_walk_animation_id
 
 
 func use_attack() -> void:

@@ -167,8 +167,8 @@ var jump_current: int = 3:
 	get:
 		return stats[UnitData.StatType.JUMP].modified_value
 
-var innate_statuses: Array[StatusEffect] = []
-var immune_status_types: Array[StatusEffect] = []
+var always_statuses: Array[StatusEffect] = []
+var immune_statuses: Array[StatusEffect] = []
 var current_statuses: Array[StatusEffect] = [] # Status may have a corresponding CT countdown?
 var current_statuses2: Dictionary[StatusEffect, int] = {}
 var current_statuses3: Array[CurrentStatusData] = [] # could allow for stacking statuses (2 poisons, 2 charging actions, etc.)
@@ -443,6 +443,10 @@ func hp_changed(clamped_value: ClampedValue) -> void:
 
 
 func add_status(status: StatusEffect) -> void:
+	for status_immune: StatusEffect in immune_statuses: # prevent application based on immune statuses
+		if current_statuses2.keys().has(status_immune):
+			return
+	
 	for status_prevents: StatusEffect in status.status_cant_stack: # prevent application based on flags
 		if current_statuses2.keys().has(status_prevents):
 			return
@@ -457,6 +461,9 @@ func add_status(status: StatusEffect) -> void:
 
 
 func remove_status(status: StatusEffect) -> void:
+	if always_statuses.has(status): # check always_statuses?
+		return
+	
 	if current_statuses2.keys().has(status):
 		current_statuses2.erase(status)
 	update_status_visuals()

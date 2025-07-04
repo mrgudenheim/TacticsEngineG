@@ -443,8 +443,16 @@ func hp_changed(clamped_value: ClampedValue) -> void:
 
 
 func add_status(status: StatusEffect) -> void:
+	for status_prevents: StatusEffect in status.status_cant_stack: # prevent application based on flags
+		if current_statuses2.keys().has(status_prevents):
+			return
+	
 	current_statuses2[status] = status.duration # TODO check if other statuses prevent
-	# TODO check if new status removes existing
+	
+	for status_cancelled: StatusEffect in status.status_cancels:
+		if current_statuses2.keys().has(status_cancelled):
+			remove_status(status_cancelled)
+	
 	update_status_visuals()
 
 

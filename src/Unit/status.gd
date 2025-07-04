@@ -28,6 +28,7 @@ var duration_type: DurationType = DurationType.TICKS
 @export var action_on_turn_end: Action
 @export var action_on_x_ticks: Action
 @export var x_ticks: int
+@export var action_on_apply: Action # dead sets current_hp = 0
 @export var action_on_complete: Action # dead -> crystal/treasure, death sentence, charging?
 var delayed_action: ActionInstance # charging
 

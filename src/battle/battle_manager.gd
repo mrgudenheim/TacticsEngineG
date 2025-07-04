@@ -224,7 +224,6 @@ func spawn_unit(tile_position: TerrainTile, job_id: int) -> UnitData:
 	new_unit.icon2.texture = RomReader.frame_bin_texture
 	
 	new_unit.primary_weapon_assigned.connect(func(weapon_id: int): new_unit.update_actions(self))
-	#new_unit.turn_ended.connect(process_next_event)
 	
 	new_unit.name = new_unit.job_nickname + "-" + new_unit.unit_nickname
 	
@@ -243,6 +242,7 @@ func process_battle() -> void:
 		# TODO check end conditions, switching map, etc.
 
 
+# TODO implement action timeline
 func process_clock_tick() -> void:
 	# increment status ticks
 	for unit: UnitData in units:
@@ -284,14 +284,13 @@ func start_units_turn(unit: UnitData) -> void:
 
 
 # TODO handle event timeline
-func process_next_event() -> void:
-	# TODO implement action timeline
-	event_num = (event_num + 1) % units.size()
-	var new_unit: UnitData = units[event_num]
-	controller.unit = new_unit
-	phantom_camera.follow_target = new_unit.char_body
-	
-	new_unit.start_turn(self)
+#func process_next_event() -> void:
+	#event_num = (event_num + 1) % units.size()
+	#var new_unit: UnitData = units[event_num]
+	#controller.unit = new_unit
+	#phantom_camera.follow_target = new_unit.char_body
+	#
+	#new_unit.start_turn(self)
 
 
 func get_map(new_map_data: MapData, map_position: Vector3, map_scale: Vector3) -> Map:

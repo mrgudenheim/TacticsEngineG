@@ -258,6 +258,7 @@ func _ready() -> void:
 	
 	stats[StatType.HP_MAX].changed.connect(stats[StatType.HP].update_max_from_clamped_value)
 	stats[StatType.MP_MAX].changed.connect(stats[StatType.MP].update_max_from_clamped_value)
+	stats[StatType.HP].changed.connect(hp_changed)
 	
 	#equipped.resize(5)
 	#equipped.fill(RomReader.items[0])
@@ -430,13 +431,26 @@ func end_turn():
 		turn_ended.emit()
 
 
+func hp_changed(clamped_value: ClampedValue) -> void:
+	if stats[StatType.HP].current_value == 0:
+		add_status(RomReader.status_effects[2]) # add dead
+	#elif stats[StatType.HP].current_value != 0:
+		#remove_status(RomReader.status_effects[2]) # remove dead?
+	elif stats[StatType.HP].current_value < stats[StatType.HP].max_value / 5: # critical
+		add_status(RomReader.status_effects[23]) # add critical
+	elif stats[StatType.HP].current_value >= stats[StatType.HP].max_value / 5: # critical
+		remove_status(RomReader.status_effects[23]) # remove critical
+
+
 func add_status(status: StatusEffect) -> void:
-	current_statuses2[status] = status.duration
+	current_statuses2[status] = status.duration # TODO check if other statuses prevent
+	# TODO check if new status removes existing
 	update_status_visuals()
 
 
 func remove_status(status: StatusEffect) -> void:
-	current_statuses2.erase(status)
+	if current_statuses2.keys().has(status):
+		current_statuses2.erase(status)
 	update_status_visuals()
 
 

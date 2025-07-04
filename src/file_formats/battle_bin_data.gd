@@ -112,6 +112,7 @@ var status_idle_animations: Dictionary[int, int] = { # status_id :  animation_id
 	29 : 0x0a, # slow - TODO useHeight2 (16 for flying sprites)
 	14 : 4, # cursed TODO facing frames (ptr_id <= 5) need to be handled differently from other animations
 	0 : 66, # blank
+	23: 72, # critical
 }
 
 func init_from_battle_bin() -> void:

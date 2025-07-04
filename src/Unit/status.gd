@@ -39,6 +39,15 @@ var visual_effect # TODO speech bubbles, sprite coloring, animation (haste, dead
 @export var idle_animation_id: int = -1
 
 
+var counts_as_ko: bool = false:
+	get:
+		counts_as_ko = checks_01 & 0x01 == 0x01
+		return counts_as_ko
+var freezes_ct: bool = false:
+	get:
+		freezes_ct = checks_01 & 0x80 == 0x80
+		return freezes_ct
+
 func set_data(status_effect_bytes: PackedByteArray) -> void:
 	byte_00 = status_effect_bytes.decode_u8(0)
 	byte_01 = status_effect_bytes.decode_u8(1)

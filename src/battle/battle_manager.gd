@@ -263,13 +263,13 @@ func process_clock_tick() -> void:
 	# TODO execute stored delayed actions, including checks to null (no mp, silenced, etc.)
 	# increment each units ct by speed
 	for unit: UnitData in units:
-		if not unit.current_statuses2.keys().any(func(status: StatusEffect): return status.checks_01 & 0x80 == 0x80): # check status that prevent ct gain (stop, sleep, etc.)
+		if not unit.current_statuses2.keys().any(func(status: StatusEffect): return status.freezes_ct): # check status that prevent ct gain (stop, sleep, etc.)
 			unit.stats[UnitData.StatType.CT].add_value(unit.speed_current) 
 	# TODO execute unit turns, ties decided by unit index in units[]
 	for unit: UnitData in units:
 		if unit.ct_current >= 100:
 			start_units_turn(unit)
-			if unit.current_statuses2.keys().any(func(status: StatusEffect): return status.checks_01 & 0x01 == 0x01): # check status that counts as KO, aka prevents turn (dead, petrify, etc.)
+			if unit.current_statuses2.keys().any(func(status: StatusEffect): return status.counts_as_ko): # check status that counts as KO, aka prevents turn (dead, petrify, etc.)
 				unit.end_turn()
 			else:
 				await unit.turn_ended

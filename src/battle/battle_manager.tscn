@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://card26cltbba1"]
+[gd_scene load_steps=28 format=3 uid="uid://card26cltbba1"]
 
 [ext_resource type="Script" uid="uid://cd31vmh881wm5" path="res://src/battle/battle_manager.gd" id="1_hnd0w"]
 [ext_resource type="PackedScene" uid="uid://buljw4afjva1d" path="res://src/Map/map.tscn" id="2_1os5c"]
@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" uid="uid://26tg32417lfm" path="res://src/load_rom.tscn" id="9_pbg35"]
 [ext_resource type="Script" uid="uid://cl143w048iago" path="res://src/Unit/character_controller_realtime.gd" id="10_d5yoq"]
 [ext_resource type="Material" uid="uid://emgoiswtrorw" path="res://src/Map/tile_highlight_blue.material" id="11_1os5c"]
+[ext_resource type="Script" uid="uid://cectjl7guvpqa" path="res://src/actions/action_button.gd" id="16_l2dig"]
 
 [sub_resource type="Environment" id="Environment_njvnp"]
 background_mode = 3
@@ -259,3 +260,8 @@ grow_vertical = 0
 
 [node name="ActionButtonsList" type="VBoxContainer" parent="ActionMenu"]
 layout_mode = 2
+
+[node name="ActionButton" type="Button" parent="ActionMenu/ActionButtonsList"]
+layout_mode = 2
+script = ExtResource("16_l2dig")
+metadata/_custom_type_script = "uid://cectjl7guvpqa"

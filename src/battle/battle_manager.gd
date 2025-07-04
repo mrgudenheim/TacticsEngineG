@@ -269,7 +269,10 @@ func process_clock_tick() -> void:
 	for unit: UnitData in units:
 		if unit.ct_current >= 100:
 			start_units_turn(unit)
-			await unit.turn_ended
+			if unit.current_statuses2.keys().any(func(status: StatusEffect): return status.checks_01 & 0x01 == 0x01): # check status that counts as KO, aka prevents turn (dead, petrify, etc.)
+				unit.end_turn()
+			else:
+				await unit.turn_ended
 	
 	# TODO increment status ticks, delayed action ticks, and unit ticks in the same step, then order resolution?
 

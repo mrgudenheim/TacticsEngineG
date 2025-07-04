@@ -81,7 +81,7 @@ func target_tile(tile: TerrainTile, action_instance: ActionInstance, event: Inpu
 			if action_instance.user.path_costs[tile] <= action_instance.user.move_current: # TODO allow parameter instead of move_current
 				action_instance.submitted_targets = get_map_path(action_instance.user.tile_position, tile, action_instance.user.map_paths)
 				#action_instance.submitted_targets.append(tile)
-				action_instance.use()
+				action_instance.queue_use()
 				return
 
 # TODO allow cost based on Unit Move value or action range value, allow vertical jumping or horizontal leapint to use a parameter or unit stat

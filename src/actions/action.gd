@@ -257,12 +257,7 @@ func animate_evade(target_unit: UnitData, evade_direction: EvadeData.Directions,
 	target_unit.update_unit_facing(target_original_facing)
 
 
-func apply_standard(action_instance: ActionInstance) -> void:
-	# face target
-	if action_instance.submitted_targets[0] != action_instance.user.tile_position:
-		var direction_to_target: Vector2i = action_instance.submitted_targets[0].location - action_instance.user.tile_position.location
-		action_instance.user.update_unit_facing(Vector3(direction_to_target.x, 0, direction_to_target.y))
-	
+func apply_standard(action_instance: ActionInstance) -> void:	
 	var target_units: Array[UnitData] = []
 	for target_tile: TerrainTile in action_instance.submitted_targets:
 		var unit_index: int = action_instance.battle_manager.units.find_custom(func(unit: UnitData): return unit.tile_position == target_tile)
@@ -309,7 +304,6 @@ func apply_standard(action_instance: ActionInstance) -> void:
 			# apply status
 			apply_status(target_unit, taregt_status_list, target_status_list_type)
 			
-			
 			# TODO apply secondary action
 			if secondary_action_list_type == StatusListType.RANDOM:
 				var sum_weights: int = 0
@@ -344,8 +338,6 @@ func apply_standard(action_instance: ActionInstance) -> void:
 	action_instance.clear() # clear all highlighting and target data
 	
 	# pay costs
-	action_instance.user.move_points_remaining -= action_instance.action.move_points_cost
-	action_instance.user.action_points_remaining -= action_instance.action.action_points_cost
 	action_instance.user.mp_current -= action_instance.action.mp_cost
 	
 	action_instance.action_completed.emit(action_instance.battle_manager)

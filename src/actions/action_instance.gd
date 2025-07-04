@@ -230,7 +230,35 @@ func on_unit_hovered(unit: UnitData, event: InputEvent):
 	tile_hovered.emit(tile, self, event)
 
 
+func queue_use() -> void:
+	pay_action_point_costs()
+	face_target()
+	if action.ticks_charge_time > 0:
+		var charging_status: StatusEffect = RomReader.status_effects[4].duplicate() # charging
+		charging_status.delayed_action = self.duplicate()
+		charging_status.duration = action.ticks_charge_time
+		if charging_status.delayed_action.action_completed.is_connected(charging_status.delayed_action.user.update_actions):
+			charging_status.delayed_action.action_completed.disconnect(charging_status.delayed_action.user.update_actions)
+		user.add_status(charging_status)
+		
+		stop_targeting()
+		action_completed.emit(battle_manager)
+	else:
+		use()
+
+
 func use() -> void:
 	stop_targeting()
 	
 	action.use(self)
+
+
+func pay_action_point_costs() -> void:
+	user.move_points_remaining -= action.move_points_cost
+	user.action_points_remaining -= action.action_points_cost
+
+
+func face_target() -> void:
+	if submitted_targets[0] != user.tile_position:
+		var direction_to_target: Vector2i = submitted_targets[0].location - user.tile_position.location
+		user.update_unit_facing(Vector3(direction_to_target.x, 0, direction_to_target.y))

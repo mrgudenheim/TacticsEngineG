@@ -246,19 +246,30 @@ func process_battle() -> void:
 func process_clock_tick() -> void:
 	# TODO increment status ticks, and process potential removal if ticks_left == 0
 	for unit: UnitData in units:
-		for status: StatusEffect in unit.current_statuses:
-			pass
-			#status.
+		for status: StatusEffect in unit.current_statuses2.keys():
+			if status.duration_type == StatusEffect.DurationType.TICKS:
+				unit.current_statuses2[status] -= 1
+				if unit.current_statuses2[status] <= 0:
+					unit.remove_status(status)
+					if status.action_on_complete != null:
+						var status_action_instance: ActionInstance = ActionInstance.new(status.action_on_complete, unit, self)
+						status_action_instance.submitted_targets.append(unit.tile_position) # TODO get targets for status action
+						status.action_on_complete.use(status_action_instance)
+						await status_action_instance.action_completed
+					if status.delayed_action != null:
+						status.delayed_action.use()
+						await status.delayed_action.action_completed
 	# TODO increment delayed action ticks, ties decided by spawning unit index in units[], store actions to execute
 	# TODO execute stored delayed actions, including checks to null (no mp, silenced, etc.)
 	# increment each units ct by speed
 	for unit: UnitData in units:
 		unit.stats[UnitData.StatType.CT].add_value(unit.speed_current) # TODO check status that prevent ct gain (stop, sleep, etc.)
-	# TODO execute unit turns, ties decided by unit index in units[], store actions to execute
+	# TODO execute unit turns, ties decided by unit index in units[]
 	for unit: UnitData in units:
 		if unit.ct_current >= 100:
 			start_units_turn(unit)
 			await unit.turn_ended
+	
 	# TODO increment status ticks, delayed action ticks, and unit ticks in the same step, then order resolution?
 
 

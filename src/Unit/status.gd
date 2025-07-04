@@ -21,13 +21,15 @@ var byte_01: int = 0
 enum DurationType {
 	TICKS,
 	TURNS, # death sentance, dead -> crystal/treasure
+	PERMANENT,
 }
 var duration_type: DurationType = DurationType.TICKS
 @export var action_on_turn_start: Action
 @export var action_on_turn_end: Action
 @export var action_on_x_ticks: Action
 @export var x_ticks: int
-@export var action_on_complete: Action # charging, dead -> crystal/treasure
+@export var action_on_complete: Action # dead -> crystal/treasure, death sentence, charging?
+var delayed_action: ActionInstance # charging
 
 var visual_effect # TODO speech bubbles, sprite coloring, animation (haste, dead, etc.), float, etc.
 @export var unit_shading_color: Color
@@ -46,6 +48,9 @@ func set_data(status_effect_bytes: PackedByteArray) -> void:
 	checks_02 = status_effect_bytes.decode_u8(5)
 	status_cancels_flags = get_status_array(status_effect_bytes.slice(6, 11))
 	status_cant_stack_flags = get_status_array(status_effect_bytes.slice(11, 16))
+	
+	if duration == 0:
+		duration_type = DurationType.PERMANENT
 
 
 # called after all StatusEffects have already been initialized since this indexes into the complete array

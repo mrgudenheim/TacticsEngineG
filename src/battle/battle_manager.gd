@@ -20,6 +20,7 @@ static var main_camera: Camera3D
 @export var orthographic_check: CheckBox
 @export var menu_reminder: Label
 @export var map_size_label: Label
+@export var expand_map_check: CheckBox
 
 @export var maps: Node3D
 var total_map_tiles: Dictionary[Vector2i, Array] = {} # Array[TerrainTile]
@@ -36,6 +37,9 @@ var current_tile_hover: TerrainTile
 @export var unit_tscn: PackedScene
 @export var controller: UnitControllerRT
 var battle_is_running: bool = true
+@export var battle_end_panel: Control
+@export var post_battle_messages: Control
+@export var start_new_battle_button: Button
 
 var event_num: int = 0 # TODO handle event timeline
 
@@ -87,6 +91,9 @@ func _ready() -> void:
 	RomReader.rom_loaded.connect(on_rom_loaded)
 	map_dropdown.item_selected.connect(on_map_selected)
 	orthographic_check.toggled.connect(on_orthographic_check_toggled)
+	expand_map_check.toggled.connect(func(toggled_on: bool): allow_mirror = toggled_on)
+	
+	start_new_battle_button.pressed.connect(load_random_map)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -124,6 +131,10 @@ func on_rom_loaded() -> void:
 
 func on_map_selected(index: int) -> void:
 	battle_is_running = false
+	battle_end_panel.visible = false
+	var message_nodes: Array[Node] = post_battle_messages.get_children()
+	for child: Node in message_nodes:
+		child.queue_free()
 	var map_file_name: String = map_dropdown.get_item_text(index)
 	
 	var start_time: int = Time.get_ticks_msec()
@@ -188,7 +199,7 @@ func add_units_to_map() -> void:
 	new_unit2.set_primary_weapon(0x4e) # crossbow
 	
 	# set up what to do when target unit is knocked out
-	new_unit2.knocked_out.connect(load_random_map)
+	new_unit2.knocked_out.connect(load_random_map_delay)
 	new_unit2.knocked_out.connect(increment_counter)
 	
 	#var new_unit3: UnitData = spawn_unit(random_tile, rand_job)
@@ -258,7 +269,16 @@ func process_battle() -> void:
 	
 	for team: Team in teams:
 		if team.state == Team.State.WON:
-			push_warning(team.team_name + " WON!")
+			battle_end_panel.visible = true
+			var end_condition_title: Label = Label.new()
+			end_condition_title.text = team.team_name + " Won!"
+			end_condition_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			post_battle_messages.add_child(end_condition_title)
+			for end_condition: EndCondition in team.end_conditions.keys():
+				if team.end_conditions[end_condition] == true and end_condition.end_type == EndCondition.EndType.WIN:
+					var end_condition_message: Label = Label.new()
+					end_condition_message.text = end_condition.post_battle_message
+					post_battle_messages.add_child(end_condition_message)
 
 
 # TODO implement action timeline
@@ -478,9 +498,13 @@ func clear_units() -> void:
 		#child.queue_free()
 
 
-func load_random_map(_unit: UnitData) -> void:
+func load_random_map_delay(_unit: UnitData) -> void:
 	await get_tree().create_timer(3).timeout
 	
+	load_random_map()
+
+
+func load_random_map() -> void:
 	var new_map_idx: int = randi_range(1, map_dropdown.item_count - 1)
 	map_dropdown.select(new_map_idx)
 	map_dropdown.item_selected.emit(new_map_idx)

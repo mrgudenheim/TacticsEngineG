@@ -33,6 +33,10 @@ var team: Team
 		set_icon(icon_id)
 @export var debug_menu: UnitDebugMenu
 
+var is_defeated: bool:
+	get:
+		return current_statuses2.keys().any(func(status: StatusEffect): return status.counts_as_ko) # returns false when no statuses
+
 @export var unit_nickname: String = "Unit Nickname"
 @export var job_nickname: String = "Job Nickname"
 

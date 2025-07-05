@@ -35,6 +35,7 @@ var current_tile_hover: TerrainTile
 @export var teams: Array[Team] = []
 @export var unit_tscn: PackedScene
 @export var controller: UnitControllerRT
+var battle_is_running: bool = true
 
 var event_num: int = 0 # TODO handle event timeline
 
@@ -122,6 +123,7 @@ func on_rom_loaded() -> void:
 
 
 func on_map_selected(index: int) -> void:
+	battle_is_running = false
 	var map_file_name: String = map_dropdown.get_item_text(index)
 	
 	var start_time: int = Time.get_ticks_msec()
@@ -138,6 +140,7 @@ func on_map_selected(index: int) -> void:
 	
 	clear_maps()
 	clear_units()
+	teams.clear()
 	
 	maps.add_child(instantiate_map(index, not walled_maps.has(index)))
 	#maps.add_child(instantiate_map(0x09, not walled_maps.has(index), Vector3(30, 0 * MapData.HEIGHT_SCALE, 0))) # 0x09 = Igros Citadel
@@ -153,12 +156,23 @@ func on_map_selected(index: int) -> void:
 	push_warning("Map_created")
 	
 	add_units_to_map()
+	
+	battle_is_running = true
+	process_battle()
 
 
 func add_units_to_map() -> void:
+	var team1: Team = Team.new()
+	teams.append(team1)
+	team1.team_name = "Team 1"
+	
+	var team2: Team = Team.new()
+	teams.append(team2)
+	team2.team_name = "Team 2"
+	
 	# add player unit
 	var random_tile: TerrainTile = get_random_stand_terrain_tile()
-	var new_unit: UnitData = spawn_unit(random_tile, 0x05) # 0x05 is Delita holy knight
+	var new_unit: UnitData = spawn_unit(random_tile, 0x05, team1) # 0x05 is Delita holy knight
 	new_unit.is_player_controlled = true
 	new_unit.set_primary_weapon(0x1d) # ice brand
 	
@@ -170,7 +184,7 @@ func add_units_to_map() -> void:
 	#controller.rotate_phantom_camera(Vector3(-26.54, 45, 0))
 	
 	# add non-player unit
-	var new_unit2: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x07) # 0x07 is Algus
+	var new_unit2: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x07, team2) # 0x07 is Algus
 	new_unit2.set_primary_weapon(0x4e) # crossbow
 	
 	# set up what to do when target unit is knocked out
@@ -178,7 +192,7 @@ func add_units_to_map() -> void:
 	new_unit2.knocked_out.connect(increment_counter)
 	
 	#var new_unit3: UnitData = spawn_unit(random_tile, rand_job)
-	var new_unit3: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x11) # 0x11 is Gafgorian dark knight
+	var new_unit3: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x11, team2) # 0x11 is Gafgorian dark knight
 	new_unit3.set_primary_weapon(0x17) # blood sword
 	
 	var specific_jobs = [
@@ -190,7 +204,7 @@ func add_units_to_map() -> void:
 		]
 	
 	for specific_job: int in specific_jobs:
-		spawn_unit(get_random_stand_terrain_tile(), specific_job)
+		spawn_unit(get_random_stand_terrain_tile(), specific_job, team1)
 	
 	units[3].set_primary_weapon(0x4a) # blaze gun
 	
@@ -203,11 +217,9 @@ func add_units_to_map() -> void:
 	#new_unit.start_turn(self)
 	
 	hide_debug_ui()
-	
-	process_battle()
 
 
-func spawn_unit(tile_position: TerrainTile, job_id: int) -> UnitData:
+func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData:
 	var new_unit: UnitData = unit_tscn.instantiate()
 	units_container.add_child(new_unit)
 	units.append(new_unit)
@@ -227,6 +239,9 @@ func spawn_unit(tile_position: TerrainTile, job_id: int) -> UnitData:
 	
 	new_unit.name = new_unit.job_nickname + "-" + new_unit.unit_nickname
 	
+	new_unit.team = team
+	team.units.append(new_unit)
+	
 	return new_unit
 
 
@@ -236,10 +251,14 @@ func update_units_pathfinding() -> void:
 
 
 func process_battle() -> void:
-	while true:
+	while battle_is_running:
 		await process_clock_tick()
 		
 		# TODO check end conditions, switching map, etc.
+	
+	for team: Team in teams:
+		if team.state == Team.State.WON:
+			push_warning(team.team_name + " WON!")
 
 
 # TODO implement action timeline
@@ -256,9 +275,13 @@ func process_clock_tick() -> void:
 						status_action_instance.submitted_targets.append(unit.tile_position) # TODO get targets for status action
 						status.action_on_complete.use(status_action_instance)
 						await status_action_instance.action_completed
+						if check_end_conditions():
+							return
 					if status.delayed_action != null: # execute stored delayed actions, TODO checks to null (no mp, silenced, etc.)
 						status.delayed_action.use()
 						await status.delayed_action.action_completed
+						if check_end_conditions():
+							return
 	
 	for unit: UnitData in units: # increment each units ct by speed
 		if not unit.current_statuses2.keys().any(func(status: StatusEffect): return status.freezes_ct): # check status that prevent ct gain (stop, sleep, etc.)
@@ -272,8 +295,21 @@ func process_clock_tick() -> void:
 				unit.end_turn()
 			else:
 				await unit.turn_ended
+				if check_end_conditions():
+					return
 	
 	# TODO increment status ticks, delayed action ticks, and unit ticks in the same step, then order resolution?
+
+
+func check_end_conditions() -> bool:
+	for team: Team in teams:
+		team.check_end_conditions(self)
+	
+	if teams.any(func(team: Team): return team.state == Team.State.WON):
+		battle_is_running = false
+		return true
+	
+	return false
 
 
 func start_units_turn(unit: UnitData) -> void:

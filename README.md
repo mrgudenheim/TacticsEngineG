@@ -45,7 +45,6 @@ Escape: Open/Close debug menus
 - Alternate palettes for weapons and items in animations
 - Accurately handle transparency in unit animations
 - Allow exporting gif of full ability animation chain
-- Clock ticks and phases
 - Statuses
 - Victory conditions (KO all enemies, KO specific targets, special conditions, ...)
 - Turn order preview (aka action timeline) including when delayed actions execute and statuses wear off

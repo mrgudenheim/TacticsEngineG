@@ -145,6 +145,9 @@ func get_map_paths(user: UnitData, map_tiles: Dictionary[Vector2i, Array], units
 		if Time.get_ticks_msec() - start_time > max_frame_time_ms:
 			await user.get_tree().process_frame
 			start_time = Time.get_ticks_msec()
+			
+			if user == null:
+				return {}
 	
 	user.path_costs = cost_so_far
 	return came_from

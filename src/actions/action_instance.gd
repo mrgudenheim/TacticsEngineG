@@ -250,7 +250,7 @@ func queue_use() -> void:
 func use() -> void:
 	stop_targeting()
 	
-	action.use(self)
+	await action.use(self)
 
 
 func pay_action_point_costs() -> void:

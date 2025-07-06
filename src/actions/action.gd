@@ -170,10 +170,10 @@ func stop_targeting(action_instance: ActionInstance) -> void:
 
 
 func use(action_instance: ActionInstance) -> void:
-	if use_strategy == null: # default usable check
-		apply_standard(action_instance)
+	if use_strategy == null: # default use
+		await apply_standard(action_instance)
 	else:
-		use_strategy.use(action_instance)
+		await use_strategy.use(action_instance)
 
 
 func get_total_hit_chance(user: UnitData, target: UnitData, evade_direction: EvadeData.Directions) -> int:

@@ -303,8 +303,10 @@ func process_clock_tick() -> void:
 						if check_end_conditions():
 							return
 					if status.delayed_action != null: # execute stored delayed actions, TODO checks to null (no mp, silenced, etc.)
-						status.delayed_action.use()
-						await status.delayed_action.action_completed
+						#status.delayed_action.show_targets_highlights(status.delayed_action.preview_targets_highlights) # show submitted targets TODO retain preview highlight nodes?
+						#await unit.get_tree().create_timer(0.5).timeout
+						await status.delayed_action.use()
+						#await status.delayed_action.action_completed
 						if check_end_conditions():
 							return
 	

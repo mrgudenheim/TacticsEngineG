@@ -425,7 +425,7 @@ func select_first_action() -> void:
 			break
 	
 	# end turn when no actions left
-	if active_action == null:
+	if active_action == null or is_defeated:
 		end_turn()
 	else:
 		if is_ai_controlled:

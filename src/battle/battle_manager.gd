@@ -316,9 +316,9 @@ func process_clock_tick() -> void:
 	for unit: UnitData in units:
 		if unit.ct_current >= 100:
 			start_units_turn(unit)
-			if unit.is_defeated: # check status that counts as KO, aka prevents turn (dead, petrify, etc.)
-				unit.end_turn()
-			else:
+			#if unit.is_defeated: # check status that counts as KO, aka prevents turn (dead, petrify, etc.)
+				#unit.end_turn()
+			if not unit.is_defeated:
 				await unit.turn_ended
 				if check_end_conditions():
 					return

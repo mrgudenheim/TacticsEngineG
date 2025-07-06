@@ -249,7 +249,7 @@ var actions_data: Dictionary[Action, ActionInstance] = {}
 @export var current_idle_animation_id: int = 6 # set based on status (critical, knocked out, etc.)
 # constants?
 @export var idle_walk_animation_id: int = 6 # 0x0c for flying sprites
-@export var walk_to_animation_id: int = 0x18
+@export var walk_to_animation_id: int = 0x18 # 0x1e (30) for flying sprites
 @export var evade_animation_id: int = 0x30
 @export var taking_damage_animation_id: int = 0x32
 @export var knocked_out_animation_id: int = 0x34
@@ -830,6 +830,7 @@ func set_job_id(new_job_id: int) -> void:
 	
 	if animation_manager.global_spr.flying_flag:
 		idle_walk_animation_id = 0x0c
+		walk_to_animation_id = 0x1e
 		current_idle_animation_id = idle_walk_animation_id
 		set_base_animation_ptr_id(idle_walk_animation_id)
 

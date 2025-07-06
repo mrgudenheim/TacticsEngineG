@@ -17,6 +17,9 @@ signal unit_input_event(unit_data: UnitData, event: InputEvent)
 
 var global_battle_manager: BattleManager
 var team: Team
+var is_controlled_by_me: bool = false # for multiplayer games
+var is_ai_controlled: bool = false
+var ai_controller: UnitAi = UnitAi.new()
 
 @export var char_body: CharacterBody3D
 @export var animation_manager: UnitAnimationManager
@@ -380,26 +383,35 @@ func update_actions(battle_manager: BattleManager) -> void:
 	
 	actions.append(wait_action)
 	
+	# show list UI for selecting an action TODO should action list be toggle/button group?
+	for action: Action in actions:
+		var new_action_instance: ActionInstance = ActionInstance.new(action, self, battle_manager)
+		actions_data[action] = new_action_instance
+		new_action_instance.action_completed.connect(update_actions)
+	
+	if battle_manager.active_unit == self:
+		update_action_buttons(battle_manager)
+		
+		if is_ai_controlled:
+			if not is_defeated:
+				ai_controller.choose_action(self)
+		else:
+			select_first_action()
+
+
+func update_action_buttons(battle_manager: BattleManager) -> void:
 	# remove any existing buttons
 	for child in battle_manager.action_button_list.get_children():
 		child.queue_free()
 	
 	# show list UI for selecting an action TODO should action list be toggle/button group?
-	for action: Action in actions:
-		var new_action_instance: ActionInstance = ActionInstance.new(action, self, battle_manager)
-		actions_data[action] = new_action_instance
-		var new_action_button: ActionButton = ActionButton.new(new_action_instance)
-		
+	for action_instance: ActionInstance in actions_data.values():
+		var new_action_button: ActionButton = ActionButton.new(action_instance)
 		battle_manager.action_button_list.add_child(new_action_button)
 		
 		# disable buttons for actions that are not usable - TODO provide hints why action is not usable - not enough mp, already moved, etc.
-		if not new_action_instance.is_usable():
+		if not action_instance.is_usable():
 			new_action_button.disabled = true
-		
-		new_action_instance.action_completed.connect(update_actions)
-	
-	if battle_manager.controller.unit == self:
-		select_first_action()
 
 
 func select_first_action() -> void:

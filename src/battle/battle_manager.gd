@@ -185,7 +185,7 @@ func add_units_to_map() -> void:
 	# add player unit
 	var random_tile: TerrainTile = get_random_stand_terrain_tile()
 	var new_unit: UnitData = spawn_unit(random_tile, 0x05, team1) # 0x05 is Delita holy knight
-	new_unit.is_player_controlled = true
+	new_unit.is_ai_controlled = false
 	new_unit.set_primary_weapon(0x1d) # ice brand
 	
 	# set up character controller
@@ -255,6 +255,8 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData
 	new_unit.team = team
 	team.units.append(new_unit)
 	
+	new_unit.is_ai_controlled = true
+	
 	return new_unit
 
 
@@ -313,7 +315,7 @@ func process_clock_tick() -> void:
 	for unit: UnitData in units:
 		if unit.ct_current >= 100:
 			start_units_turn(unit)
-			if unit.current_statuses2.keys().any(func(status: StatusEffect): return status.counts_as_ko): # check status that counts as KO, aka prevents turn (dead, petrify, etc.)
+			if unit.is_defeated: # check status that counts as KO, aka prevents turn (dead, petrify, etc.)
 				unit.end_turn()
 			else:
 				await unit.turn_ended

@@ -3,7 +3,11 @@ extends Button
 
 var action_instance: ActionInstance
 
-func _init(new_action_instance: ActionInstance) -> void:
+func _init(new_action_instance: ActionInstance = null) -> void:
+	if new_action_instance == null:
+		push_warning("Creating ActionButton without action instance")
+		return
+	
 	action_instance = new_action_instance
 	
 	text = action_instance.action.action_name

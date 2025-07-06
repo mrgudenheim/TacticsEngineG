@@ -387,16 +387,13 @@ func update_actions(battle_manager: BattleManager) -> void:
 	for action: Action in actions:
 		var new_action_instance: ActionInstance = ActionInstance.new(action, self, battle_manager)
 		actions_data[action] = new_action_instance
+		new_action_instance.update_potential_targets()
 		new_action_instance.action_completed.connect(update_actions)
 	
 	if battle_manager.active_unit == self:
 		update_action_buttons(battle_manager)
 		
-		if is_ai_controlled:
-			if not is_defeated:
-				ai_controller.choose_action(self)
-		else:
-			select_first_action()
+		select_first_action()
 
 
 func update_action_buttons(battle_manager: BattleManager) -> void:
@@ -430,6 +427,10 @@ func select_first_action() -> void:
 	# end turn when no actions left
 	if active_action == null:
 		end_turn()
+	else:
+		if is_ai_controlled:
+			if not is_defeated:
+				await ai_controller.choose_action(self)
 
 
 func end_turn():
@@ -474,6 +475,15 @@ func add_status(status: StatusEffect) -> void:
 	for status_cancelled: StatusEffect in status.status_cancels:
 		if current_statuses2.keys().has(status_cancelled):
 			remove_status(status_cancelled)
+		if status_cancelled == RomReader.status_effects[4]: # charging, TODO correctly cancel charging and performing status
+			var charging_statuses: Array[StatusEffect] = current_statuses2.keys().filter(func(status: StatusEffect): return status.delayed_action != null)
+			for charging_status: StatusEffect in charging_statuses:
+				remove_status(charging_status)
+		if status_cancelled == RomReader.status_effects[7]: # performing, TODO correctly cancel charging and performing status
+			var performing_statuses: Array[StatusEffect] = current_statuses2.keys().filter(func(status: StatusEffect): return status.action_on_x_ticks != null)
+			for performing_status: StatusEffect in performing_statuses:
+				remove_status(performing_status)
+		
 	
 	update_status_visuals()
 

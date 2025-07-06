@@ -124,8 +124,8 @@ func on_rom_loaded() -> void:
 			map_dropdown.add_item(file_record.name + map_name)
 	
 	var default_map_index: int = 56 # Orbonne
-	default_map_index = 22 # Gariland
-	default_map_index = 83 # zirekile falls
+	#default_map_index = 22 # Gariland
+	#default_map_index = 83 # zirekile falls
 	map_dropdown.select(default_map_index)
 	map_dropdown.item_selected.emit(default_map_index)
 
@@ -256,6 +256,7 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData
 	team.units.append(new_unit)
 	
 	new_unit.is_ai_controlled = true
+	new_unit.ai_controller.strategy = UnitAi.Strategy.RANDOM
 	
 	return new_unit
 

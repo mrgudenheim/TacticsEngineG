@@ -4,6 +4,7 @@ extends Node3D
 signal map_input_event(action_instance: ActionInstance, camera: Camera3D, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int)
 
 # debug vars
+@export var use_test_teams: bool = false
 @export var texture_viewer: Sprite3D # for debugging
 @export var reference_quad: MeshInstance3D # for debugging
 @export var highlights_container: Node3D
@@ -40,7 +41,14 @@ var battle_is_running: bool = true
 @export var battle_end_panel: Control
 @export var post_battle_messages: Control
 @export var start_new_battle_button: Button
-var active_unit: UnitData
+@export var active_unit: UnitData
+@export var units_per_team_spinbox: SpinBox
+@export var units_per_team: int = 5:
+	get:
+		return units_per_team_spinbox.value
+	set(value):
+		units_per_team_spinbox.value = value
+		units_per_team_spinbox.value_changed.emit(value)
 
 var event_num: int = 0 # TODO handle event timeline
 
@@ -182,47 +190,52 @@ func add_units_to_map() -> void:
 	teams.append(team2)
 	team2.team_name = "Team 2"
 	
-	# add player unit
-	var random_tile: TerrainTile = get_random_stand_terrain_tile()
-	var new_unit: UnitData = spawn_unit(random_tile, 0x05, team1) # 0x05 is Delita holy knight
-	new_unit.is_ai_controlled = false
-	new_unit.set_primary_weapon(0x1d) # ice brand
-	
-	# set up character controller
-	controller.unit = new_unit
-	#controller.velocity_set.connect(controller.unit.update_unit_facing)
-	phantom_camera.follow_target = new_unit.char_body
-	controller.rotate_camera(1) # HACK workaround for bug where controls are off until camera is rotated
-	#controller.rotate_phantom_camera(Vector3(-26.54, 45, 0))
-	
-	# add non-player unit
-	var new_unit2: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x07, team2) # 0x07 is Algus
-	new_unit2.set_primary_weapon(0x4e) # crossbow
-	
-	# set up what to do when target unit is knocked out
-	new_unit2.knocked_out.connect(load_random_map_delay)
-	new_unit2.knocked_out.connect(increment_counter)
-	
-	#var new_unit3: UnitData = spawn_unit(random_tile, rand_job)
-	var new_unit3: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x11, team2) # 0x11 is Gafgorian dark knight
-	new_unit3.set_primary_weapon(0x17) # blood sword
-	
-	var specific_jobs = [
-		#0x65, # grenade
-		#0x67, # panther
-		#0x76, # juravis
-		0x50, # black mage
-		0x4f,# white mage
-		]
-	
-	for specific_job: int in specific_jobs:
-		spawn_unit(get_random_stand_terrain_tile(), specific_job, team1)
-	
-	units[3].set_primary_weapon(0x4a) # blaze gun
-	
-	#for random_unit: int in 15:
-		#var rand_job: int = randi_range(0x01, 0x8e) # job_id 0x2c (Alma2) and 0x31 (Ajora) do not have walking frames
-		#spawn_unit(get_random_stand_terrain_tile(), rand_job)
+	if use_test_teams:
+		# add player unit
+		var random_tile: TerrainTile = get_random_stand_terrain_tile()
+		var new_unit: UnitData = spawn_unit(random_tile, 0x05, team1) # 0x05 is Delita holy knight
+		#new_unit.is_ai_controlled = false
+		new_unit.set_primary_weapon(0x1d) # ice brand
+		
+		# set up character controller
+		controller.unit = new_unit
+		#controller.velocity_set.connect(controller.unit.update_unit_facing)
+		phantom_camera.follow_target = new_unit.char_body
+		controller.rotate_camera(1) # HACK workaround for bug where controls are off until camera is rotated
+		#controller.rotate_phantom_camera(Vector3(-26.54, 45, 0))
+		
+		# add non-player unit
+		var new_unit2: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x07, team2) # 0x07 is Algus
+		new_unit2.set_primary_weapon(0x4e) # crossbow
+		
+		## set up what to do when target unit is knocked out
+		#new_unit2.knocked_out.connect(load_random_map_delay)
+		#new_unit2.knocked_out.connect(increment_counter)
+		
+		var new_unit3: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x11, team2) # 0x11 is Gafgorian dark knight
+		new_unit3.set_primary_weapon(0x17) # blood sword
+		
+		var specific_jobs = [
+			#0x65, # grenade
+			#0x67, # panther
+			#0x76, # juravis
+			0x50, # black mage
+			0x4f,# white mage
+			]
+		
+		for specific_job: int in specific_jobs:
+			spawn_unit(get_random_stand_terrain_tile(), specific_job, team1)
+		
+		units[3].set_primary_weapon(0x4a) # blaze gun
+	else: # use random teams
+		for random_unit: int in units_per_team:
+			var rand_job: int = randi_range(0x01, 0x8e) # job_id 0x2c (Alma2) and 0x31 (Ajora) do not have walking frames
+			var new_unit: UnitData = spawn_unit(get_random_stand_terrain_tile(), rand_job, team1)
+			new_unit.is_ai_controlled = false
+		
+		for random_unit: int in units_per_team:
+			var rand_job: int = randi_range(0x01, 0x8e) # job_id 0x2c (Alma2) and 0x31 (Ajora) do not have walking frames
+			var new_unit: UnitData = spawn_unit(get_random_stand_terrain_tile(), rand_job, team2)
 	
 	await update_units_pathfinding()
 	

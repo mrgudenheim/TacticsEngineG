@@ -10,4 +10,6 @@ func show_popup_text(text: String) -> void:
 	new_text.text = text
 	add_child(new_text)
 	
-	await get_tree().create_timer(fade_time).timeout.connect(func(): new_text.queue_free())
+	await get_tree().create_timer(fade_time).timeout.connect(func(): 
+			if new_text != null:
+				new_text.queue_free())

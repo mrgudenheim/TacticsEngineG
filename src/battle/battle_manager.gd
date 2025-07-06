@@ -2,6 +2,7 @@ class_name BattleManager
 extends Node3D
 
 signal map_input_event(action_instance: ActionInstance, camera: Camera3D, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int)
+signal clock_tick_step_finished()
 
 # debug vars
 @export var use_test_teams: bool = false
@@ -37,7 +38,7 @@ var current_tile_hover: TerrainTile
 @export var teams: Array[Team] = []
 @export var unit_tscn: PackedScene
 @export var controller: UnitControllerRT
-var battle_is_running: bool = true
+@export var battle_is_running: bool = false
 @export var battle_end_panel: Control
 @export var post_battle_messages: Control
 @export var start_new_battle_button: Button
@@ -98,7 +99,7 @@ func _ready() -> void:
 	
 	load_rom_button.file_selected.connect(RomReader.on_load_rom_dialog_file_selected)
 	RomReader.rom_loaded.connect(on_rom_loaded)
-	map_dropdown.item_selected.connect(on_map_selected)
+	map_dropdown.item_selected.connect(queue_load_map)
 	orthographic_check.toggled.connect(on_orthographic_check_toggled)
 	expand_map_check.toggled.connect(func(toggled_on: bool): allow_mirror = toggled_on)
 	
@@ -136,6 +137,12 @@ func on_rom_loaded() -> void:
 	#default_map_index = 83 # zirekile falls
 	map_dropdown.select(default_map_index)
 	map_dropdown.item_selected.emit(default_map_index)
+
+
+func queue_load_map(index: int) -> void:
+	if battle_is_running:
+		await clock_tick_step_finished
+	on_map_selected(index)
 
 
 func on_map_selected(index: int) -> void:
@@ -184,54 +191,19 @@ func on_map_selected(index: int) -> void:
 func add_units_to_map() -> void:
 	var team1: Team = Team.new()
 	teams.append(team1)
-	team1.team_name = "Team 1"
+	team1.team_name = "Team 1 (Player)"
 	
 	var team2: Team = Team.new()
 	teams.append(team2)
-	team2.team_name = "Team 2"
+	team2.team_name = "Team 2 (Computer)"
 	
 	if use_test_teams:
-		# add player unit
-		var random_tile: TerrainTile = get_random_stand_terrain_tile()
-		var new_unit: UnitData = spawn_unit(random_tile, 0x05, team1) # 0x05 is Delita holy knight
-		#new_unit.is_ai_controlled = false
-		new_unit.set_primary_weapon(0x1d) # ice brand
-		
-		# set up character controller
-		controller.unit = new_unit
-		#controller.velocity_set.connect(controller.unit.update_unit_facing)
-		phantom_camera.follow_target = new_unit.char_body
-		controller.rotate_camera(1) # HACK workaround for bug where controls are off until camera is rotated
-		#controller.rotate_phantom_camera(Vector3(-26.54, 45, 0))
-		
-		# add non-player unit
-		var new_unit2: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x07, team2) # 0x07 is Algus
-		new_unit2.set_primary_weapon(0x4e) # crossbow
-		
-		## set up what to do when target unit is knocked out
-		#new_unit2.knocked_out.connect(load_random_map_delay)
-		#new_unit2.knocked_out.connect(increment_counter)
-		
-		var new_unit3: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x11, team2) # 0x11 is Gafgorian dark knight
-		new_unit3.set_primary_weapon(0x17) # blood sword
-		
-		var specific_jobs = [
-			#0x65, # grenade
-			#0x67, # panther
-			#0x76, # juravis
-			0x50, # black mage
-			0x4f,# white mage
-			]
-		
-		for specific_job: int in specific_jobs:
-			spawn_unit(get_random_stand_terrain_tile(), specific_job, team1)
-		
-		units[3].set_primary_weapon(0x4a) # blaze gun
+		add_test_teams_to_map()
 	else: # use random teams
 		for random_unit: int in units_per_team:
 			var rand_job: int = randi_range(0x01, 0x8e) # job_id 0x2c (Alma2) and 0x31 (Ajora) do not have walking frames
 			var new_unit: UnitData = spawn_unit(get_random_stand_terrain_tile(), rand_job, team1)
-			new_unit.is_ai_controlled = false
+			#new_unit.is_ai_controlled = false
 		
 		for random_unit: int in units_per_team:
 			var rand_job: int = randi_range(0x01, 0x8e) # job_id 0x2c (Alma2) and 0x31 (Ajora) do not have walking frames
@@ -242,6 +214,45 @@ func add_units_to_map() -> void:
 	#new_unit.start_turn(self)
 	
 	hide_debug_ui()
+
+
+func add_test_teams_to_map() -> void:
+	# add player unit
+	var random_tile: TerrainTile = get_random_stand_terrain_tile()
+	var new_unit: UnitData = spawn_unit(random_tile, 0x05, teams[0]) # 0x05 is Delita holy knight
+	#new_unit.is_ai_controlled = false
+	new_unit.set_primary_weapon(0x1d) # ice brand
+	
+	# set up character controller
+	controller.unit = new_unit
+	#controller.velocity_set.connect(controller.unit.update_unit_facing)
+	phantom_camera.follow_target = new_unit.char_body
+	controller.rotate_camera(1) # HACK workaround for bug where controls are off until camera is rotated
+	#controller.rotate_phantom_camera(Vector3(-26.54, 45, 0))
+	
+	# add non-player unit
+	var new_unit2: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x07, teams[1]) # 0x07 is Algus
+	new_unit2.set_primary_weapon(0x4e) # crossbow
+	
+	## set up what to do when target unit is knocked out
+	#new_unit2.knocked_out.connect(load_random_map_delay)
+	#new_unit2.knocked_out.connect(increment_counter)
+	
+	var new_unit3: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x11, teams[1]) # 0x11 is Gafgorian dark knight
+	new_unit3.set_primary_weapon(0x17) # blood sword
+	
+	var specific_jobs = [
+		#0x65, # grenade
+		#0x67, # panther
+		#0x76, # juravis
+		0x50, # black mage
+		0x4f,# white mage
+		]
+	
+	for specific_job: int in specific_jobs:
+		spawn_unit(get_random_stand_terrain_tile(), specific_job, teams[0])
+	
+	units[3].set_primary_weapon(0x4a) # blaze gun
 
 
 func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData:
@@ -318,12 +329,14 @@ func process_clock_tick() -> void:
 						status_action_instance.submitted_targets.append(unit.tile_position) # TODO get targets for status action
 						status.action_on_complete.use(status_action_instance)
 						await status_action_instance.action_completed
+						clock_tick_step_finished.emit()
 						if check_end_conditions():
 							return
 					if status.delayed_action != null: # execute stored delayed actions, TODO checks to null (no mp, silenced, etc.)
 						#status.delayed_action.show_targets_highlights(status.delayed_action.preview_targets_highlights) # show submitted targets TODO retain preview highlight nodes?
 						#await unit.get_tree().create_timer(0.5).timeout
 						await status.delayed_action.use()
+						clock_tick_step_finished.emit()
 						#await status.delayed_action.action_completed
 						if check_end_conditions():
 							return
@@ -340,6 +353,7 @@ func process_clock_tick() -> void:
 				#unit.end_turn()
 			if not unit.is_defeated:
 				await unit.turn_ended
+				clock_tick_step_finished.emit()
 				if check_end_conditions():
 					return
 	

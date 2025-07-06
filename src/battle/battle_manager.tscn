@@ -187,7 +187,7 @@ min_value = 1.0
 max_value = 20.0
 value = 5.0
 rounded = true
-allow_lesser = true
+allow_greater = true
 
 [node name="MenuReminder" type="Label" parent="DebugOptions/MarginContainer/VBoxContainer2"]
 layout_mode = 2

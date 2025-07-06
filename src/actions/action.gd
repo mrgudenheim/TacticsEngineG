@@ -340,10 +340,10 @@ func apply_standard(action_instance: ActionInstance) -> void:
 	# pay costs
 	action_instance.user.mp_current -= action_instance.action.mp_cost
 	
-	action_instance.action_completed.emit(action_instance.battle_manager)
-	
 	if ends_turn:
 		action_instance.user.end_turn()
+	
+	action_instance.action_completed.emit(action_instance.battle_manager)
 
 
 func apply_status(unit: UnitData, status_list: Array[StatusEffect], status_list_type: StatusListType) -> void:

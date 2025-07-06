@@ -53,10 +53,14 @@ func choose_action(unit: UnitData) -> void:
 			var simulated_input: InputEvent = InputEventMouseMotion.new()
 			chosen_action.tile_hovered.emit(random_target, chosen_action, simulated_input)
 			await wait_for_delay(unit)
-			var simulated_input_action: InputEventAction = InputEventAction.new()
-			simulated_input_action.action = "primary_action"
-			simulated_input_action.pressed = true
-			chosen_action.tile_hovered.emit(random_target, chosen_action, simulated_input_action)
+			if not chosen_action.preview_targets.is_empty(): # TODO fix why move does not have targets sometimes
+				var simulated_input_action: InputEventAction = InputEventAction.new()
+				simulated_input_action.action = "primary_action"
+				simulated_input_action.pressed = true
+				chosen_action.tile_hovered.emit(random_target, chosen_action, simulated_input_action)
+			else: # wait if no targets
+				wait_action_instance.start_targeting()
+				await wait_action_instance.action_completed
 		
 		
 		pass # TODO implement ai choosing random action

@@ -102,7 +102,7 @@ func get_map_paths(user: UnitData, map_tiles: Dictionary[Vector2i, Array], units
 	cost_so_far[start_tile] = 0
 	
 	var start_time: int = Time.get_ticks_msec()
-	var max_frame_time_ms: float = 1000.0 / 60.0
+	var max_frame_time_ms: float = 1000.0 / 240.0
 	
 	var current: TerrainTile
 	while not frontier.is_empty():
@@ -111,7 +111,6 @@ func get_map_paths(user: UnitData, map_tiles: Dictionary[Vector2i, Array], units
 		# break early
 		#if current == goal:
 			#break 
-		
 		
 		for next: TerrainTile in get_map_path_neighbors(user, current, map_tiles, units):
 			var new_cost: float = cost_so_far[current] + get_move_cost(current, next)

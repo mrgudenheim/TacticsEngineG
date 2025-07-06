@@ -477,12 +477,12 @@ Monster/mon,8,Walk Fast Front
 Monster/mon,9,Walk Fast Back
 Monster/mon,10,Walk Slow Front
 Monster/mon,11,Walk Slow Back
-Monster/mon,12,Walk Short? Front
-Monster/mon,13,Walk Short? Back
-Monster/mon,14,Walk Short? Fast Front
-Monster/mon,15,Walk Short? Fast Back
-Monster/mon,16,Walk Short? Slow Front
-Monster/mon,17,Walk Short? Slow Back
+Monster/mon,12,Idle Walk Fly Front
+Monster/mon,13,Idle Walk Fly Back
+Monster/mon,14,Idle Walk Fly Fast Front
+Monster/mon,15,Idle Walk Fly Fast Back
+Monster/mon,16,Idle Walk Fly Slow Front
+Monster/mon,17,Idle Walk Fly Slow Back
 Monster/mon,18,Buffer?
 Monster/mon,19,Buffer?
 Monster/mon,20,Buffer?
@@ -495,18 +495,18 @@ Monster/mon,26,
 Monster/mon,27,
 Monster/mon,28,
 Monster/mon,29,
-Monster/mon,30,
-Monster/mon,31,
-Monster/mon,32,
-Monster/mon,33,
-Monster/mon,34,
-Monster/mon,35,
-Monster/mon,36,
-Monster/mon,37,
-Monster/mon,38,
-Monster/mon,39,
-Monster/mon,40,
-Monster/mon,41,
+Monster/mon,30,WalkTo Fly Front
+Monster/mon,31,WalkTo Fly Back
+Monster/mon,32,WalkTo Fly Fast Front
+Monster/mon,33,WalkTo Fly Fast Back
+Monster/mon,34,WalkTo Fly Slow Front
+Monster/mon,35,WalkTo Fly Slow Back
+Monster/mon,36,Fly Front
+Monster/mon,37,Fly Back
+Monster/mon,38,Fly Fast Front
+Monster/mon,39,Fly Fast Back
+Monster/mon,40,Fly Slow Front
+Monster/mon,41,Fly Slow Back
 Monster/mon,42,Spin Front
 Monster/mon,43,Spin Back
 Monster/mon,44,Charge? Front

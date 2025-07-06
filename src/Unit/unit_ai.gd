@@ -46,7 +46,7 @@ func choose_action(unit: UnitData) -> void:
 	
 	if strategy == Strategy.RANDOM:
 		var chosen_action: ActionInstance = eligible_actions.pick_random()
-		chosen_action.show_potential_targets() # TODO fix move targeting when updating paths/pathfinding is takes longer than delay (large maps with 10+ units)
+		#chosen_action.show_potential_targets() # TODO fix move targeting when updating paths/pathfinding is takes longer than delay (large maps with 10+ units)
 		chosen_action.start_targeting()
 		if chosen_action.action.auto_target:
 			await chosen_action.action_completed
@@ -62,6 +62,7 @@ func choose_action(unit: UnitData) -> void:
 				simulated_input_action.pressed = true
 				chosen_action.tile_hovered.emit(random_target, chosen_action, simulated_input_action)
 			else: # wait if no targets
+				chosen_action.stop_targeting()
 				wait_action_instance.start_targeting()
 				await wait_action_instance.action_completed
 		

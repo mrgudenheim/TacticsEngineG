@@ -202,11 +202,15 @@ func add_units_to_map() -> void:
 	else: # use random teams
 		for random_unit: int in units_per_team:
 			var rand_job: int = randi_range(0x01, 0x8e) # job_id 0x2c (Alma2) and 0x31 (Ajora) do not have walking frames
+			while [0x2c, 0x31].has(rand_job): # prevent jobs without idle frames
+				rand_job = randi_range(0x01, 0x8e)
 			var new_unit: UnitData = spawn_unit(get_random_stand_terrain_tile(), rand_job, team1)
 			#new_unit.is_ai_controlled = false
 		
 		for random_unit: int in units_per_team:
 			var rand_job: int = randi_range(0x01, 0x8e) # job_id 0x2c (Alma2) and 0x31 (Ajora) do not have walking frames
+			while [0x2c, 0x31].has(rand_job): # prevent jobs without idle frames
+				rand_job = randi_range(0x01, 0x8e)
 			var new_unit: UnitData = spawn_unit(get_random_stand_terrain_tile(), rand_job, team2)
 	
 	await update_units_pathfinding()

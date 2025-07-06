@@ -96,7 +96,7 @@ func stop_targeting(action_instance: ActionInstance) -> void:
 
 
 func target_tile(tile: TerrainTile, action_instance: ActionInstance, event: InputEvent) -> void:
-	if UnitControllerRT.unit != action_instance.user:
+	if action_instance.battle_manager.active_unit != action_instance.user:
 		stop_targeting(action_instance)
 		return
 	

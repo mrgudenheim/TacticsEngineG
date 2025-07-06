@@ -40,6 +40,7 @@ var battle_is_running: bool = true
 @export var battle_end_panel: Control
 @export var post_battle_messages: Control
 @export var start_new_battle_button: Button
+var active_unit: UnitData
 
 var event_num: int = 0 # TODO handle event timeline
 
@@ -233,6 +234,7 @@ func add_units_to_map() -> void:
 func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData:
 	var new_unit: UnitData = unit_tscn.instantiate()
 	units_container.add_child(new_unit)
+	new_unit.global_battle_manager = self
 	units.append(new_unit)
 	new_unit.initialize_unit()
 	new_unit.tile_position = tile_position
@@ -334,6 +336,7 @@ func check_end_conditions() -> bool:
 
 func start_units_turn(unit: UnitData) -> void:
 	controller.unit = unit
+	active_unit = unit
 	phantom_camera.follow_target = unit.char_body
 	
 	unit.start_turn(self)

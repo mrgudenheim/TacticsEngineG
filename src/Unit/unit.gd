@@ -15,8 +15,7 @@ signal completed_move()
 signal turn_ended()
 signal unit_input_event(unit_data: UnitData, event: InputEvent)
 
-var is_player_controlled: bool = false
-var is_active: bool = false
+var global_battle_manager: BattleManager
 var team: Team
 
 @export var char_body: CharacterBody3D
@@ -406,7 +405,7 @@ func update_actions(battle_manager: BattleManager) -> void:
 func select_first_action() -> void:
 	# select first usable action by default (usually Move)
 	active_action = null
-	if UnitControllerRT.unit != self: # TODO improve game flow to prevent this state from ever occuring
+	if global_battle_manager.active_unit != self: # TODO improve game flow to prevent this state from ever occuring
 		return
 	
 	for action_instance: ActionInstance in actions_data.values():
@@ -433,7 +432,8 @@ func end_turn():
 	move_points_remaining = move_points_start
 	action_points_remaining = action_points_start
 	
-	if UnitControllerRT.unit == self: # prevent accidentally ending a different units turn TODO what if the next turn is also this unit?
+	if global_battle_manager.active_unit == self: # prevent accidentally ending a different units turn TODO what if the next turn is also this unit?
+		global_battle_manager.active_unit = null
 		turn_ended.emit()
 
 
@@ -595,7 +595,7 @@ func use_ability(pos: Vector3) -> void:
 
 
 func process_targeted() -> void:
-	if UnitControllerRT.unit == self:
+	if global_battle_manager.active_unit == self:
 		return
 	
 	# set being targeted frame
@@ -620,7 +620,7 @@ func process_targeted() -> void:
 	# show result / damage numbers
 	
 	# TODO await ability.vfx_completed? Or does ability_completed just need to wait to post numbers? aka WaitWeaponSheathe1/2 opcode?
-	await UnitControllerRT.unit.ability_completed
+	await global_battle_manager.active_unit.ability_completed
 	# show death animation
 	#animation_manager.global_animation_ptr_id = knocked_out_animation_id
 	#debug_menu.anim_id_spin.value = knocked_out_animation_id

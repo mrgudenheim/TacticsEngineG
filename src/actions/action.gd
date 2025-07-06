@@ -257,7 +257,7 @@ func animate_evade(target_unit: UnitData, evade_direction: EvadeData.Directions,
 	target_unit.update_unit_facing(target_original_facing)
 
 
-func apply_standard(action_instance: ActionInstance) -> void:	
+func apply_standard(action_instance: ActionInstance) -> void:
 	var target_units: Array[UnitData] = []
 	for target_tile: TerrainTile in action_instance.submitted_targets:
 		var unit_index: int = action_instance.battle_manager.units.find_custom(func(unit: UnitData): return unit.tile_position == target_tile)
@@ -268,14 +268,15 @@ func apply_standard(action_instance: ActionInstance) -> void:
 	
 	# look up animation based on weapon type and vertical angle to target
 	var mod_animation_executing_id: int = animation_executing_id
-	if animation_executing_id == 0 and use_weapon_animation:
-		mod_animation_executing_id = RomReader.battle_bin_data.weapon_animation_ids[action_instance.user.primary_weapon.item_type].y * 2
-		var angle_to_target: float = ((action_instance.submitted_targets[0].height_mid - action_instance.user.tile_position.height_mid) 
-				/ (action_instance.submitted_targets[0].location - action_instance.user.tile_position.location).length())
-		if angle_to_target > 0.51:
-			mod_animation_executing_id += -2
-		elif angle_to_target < -0.51:
-			mod_animation_executing_id += 2
+	if not action_instance.submitted_targets.is_empty():
+		if animation_executing_id == 0 and use_weapon_animation:
+			mod_animation_executing_id = RomReader.battle_bin_data.weapon_animation_ids[action_instance.user.primary_weapon.item_type].y * 2
+			var angle_to_target: float = ((action_instance.submitted_targets[0].height_mid - action_instance.user.tile_position.height_mid) 
+					/ (action_instance.submitted_targets[0].location - action_instance.user.tile_position.location).length())
+			if angle_to_target > 0.51:
+				mod_animation_executing_id += -2
+			elif angle_to_target < -0.51:
+				mod_animation_executing_id += 2
 	
 	await action_instance.user.animate_start_action(animation_start_id, animation_charging_id)
 	

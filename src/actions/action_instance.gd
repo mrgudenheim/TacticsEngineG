@@ -259,6 +259,10 @@ func pay_action_point_costs() -> void:
 
 
 func face_target() -> void:
+	if submitted_targets.is_empty():
+		push_warning(action.action_name + ": no submitted targets")
+		return
+	
 	if submitted_targets[0] != user.tile_position:
 		var direction_to_target: Vector2i = submitted_targets[0].location - user.tile_position.location
 		user.update_unit_facing(Vector3(direction_to_target.x, 0, direction_to_target.y))

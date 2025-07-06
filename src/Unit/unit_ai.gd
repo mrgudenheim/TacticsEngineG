@@ -32,6 +32,9 @@ func choose_action(unit: UnitData) -> void:
 		await wait_action_instance.action_completed
 		return
 	
+	if not unit.paths_set:
+		await unit.paths_updated
+	
 	var eligible_actions: Array[ActionInstance] = unit.actions_data.values().filter(func(action_instance: ActionInstance): return action_instance.is_usable() and not action_instance.potential_targets.is_empty())
 	if eligible_actions.size() > 1:
 		eligible_actions.erase(wait_action_instance) # don't choose to wait if another action is eligible
@@ -63,7 +66,6 @@ func choose_action(unit: UnitData) -> void:
 				await wait_action_instance.action_completed
 		
 		
-		pass # TODO implement ai choosing random action
 	elif strategy == Strategy.BEST:
 		pass # TODO implement ai choosing 'best' action
 

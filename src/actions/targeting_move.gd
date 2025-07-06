@@ -4,7 +4,8 @@ extends TargetingStrategy
 
 func get_potential_targets(action_instance: ActionInstance) -> Array[TerrainTile]:
 	var potential_targets: Array[TerrainTile] = []
-	#action_instance.user.get_map_paths(action_instance.battle_manager.total_map_tiles, action_instance.battle_manager.units)
+	action_instance.user.update_map_paths(action_instance.battle_manager.total_map_tiles, action_instance.battle_manager.units, action_instance.user.move_current)
+	await action_instance.user.paths_updated
 	
 	for tile: TerrainTile in action_instance.user.path_costs.keys():
 		if tile == action_instance.user.tile_position:
@@ -102,7 +103,7 @@ func get_map_paths(user: UnitData, map_tiles: Dictionary[Vector2i, Array], units
 	cost_so_far[start_tile] = 0
 	
 	var start_time: int = Time.get_ticks_msec()
-	var max_frame_time_ms: float = 1000.0 / 240.0
+	var max_frame_time_ms: float = 1000.0 / (units.size() * 60.0)
 	
 	var current: TerrainTile
 	while not frontier.is_empty():

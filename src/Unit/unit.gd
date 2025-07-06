@@ -14,6 +14,7 @@ signal reached_tile()
 signal completed_move()
 signal turn_ended()
 signal unit_input_event(unit_data: UnitData, event: InputEvent)
+signal paths_updated()
 
 var global_battle_manager: BattleManager
 var team: Team
@@ -206,6 +207,7 @@ var can_move: bool = true
 var tile_position: TerrainTile
 var map_paths: Dictionary[TerrainTile, TerrainTile]
 var path_costs: Dictionary[TerrainTile, float]
+var paths_set: bool = false
 @export var tile_highlights: Node3D
 var facing: Facings = Facings.NORTH
 var is_back_facing: bool = false
@@ -1009,8 +1011,12 @@ func on_sprite_idx_selected(index: int) -> void:
 
 
 func update_map_paths(map_tiles: Dictionary[Vector2i, Array], units: Array[UnitData], max_cost: int = 9999) -> void:
+	paths_set = false
+	
 	if move_action.targeting_strategy.has_method("get_map_paths"):
-		map_paths = await move_action.targeting_strategy.get_map_paths(self, map_tiles, units)
+		map_paths = await move_action.targeting_strategy.get_map_paths(self, map_tiles, units, max_cost)
+		paths_set = true
+		paths_updated.emit()
 
 
 func _on_character_body_3d_input_event(_camera: Node, event: InputEvent, _event_position: Vector3, _normal: Vector3, _shape_idx: int) -> void:

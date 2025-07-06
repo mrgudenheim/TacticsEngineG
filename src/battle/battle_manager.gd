@@ -295,8 +295,13 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData
 
 
 func update_units_pathfinding() -> void:
-	for unit: UnitData in units:
-		await unit.update_map_paths(total_map_tiles, units)
+	#for unit: UnitData in units:
+		#var max_move_cost: int = 9999
+		#if unit != active_unit:
+			#max_move_cost = unit.move_current # stop pathfinding early for non-active units, only need potential move targets, not path to every possible tile
+		#
+		#await unit.update_map_paths(total_map_tiles, units, max_move_cost)
+	pass
 
 
 func process_battle() -> void:

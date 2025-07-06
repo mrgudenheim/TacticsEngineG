@@ -61,7 +61,7 @@ func update_potential_targets() -> void:
 	clear_targets(potential_targets_highlights)
 	potential_targets.clear()
 	
-	potential_targets = action.targeting_strategy.get_potential_targets(self)
+	potential_targets = await action.targeting_strategy.get_potential_targets(self)
 	update_potential_targets_highlights()
 	
 	potential_targets_are_set = true

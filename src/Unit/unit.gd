@@ -245,16 +245,16 @@ var actions_data: Dictionary[Action, ActionInstance] = {}
 @export var action_points_start: int = 1
 @export var action_points_remaining: int = 1
 
-var current_idle_animation_id: int = 6 # set based on status (critical, knocked out, etc.)
-var current_animation_id_fwd: int = 6 # set based on current action
+@export var current_animation_id_fwd: int = 6 # set based on current action
+@export var current_idle_animation_id: int = 6 # set based on status (critical, knocked out, etc.)
 # constants?
-var idle_walk_animation_id: int = 6
-var walk_to_animation_id: int = 0x18
-var evade_animation_id: int = 0x30
-var taking_damage_animation_id: int = 0x32
-var knocked_out_animation_id: int = 0x34
-var heal_animation_id: int = 0x36
-var mid_jump_animation: int = 0x3e
+@export var idle_walk_animation_id: int = 6 # 0x0c for flying sprites
+@export var walk_to_animation_id: int = 0x18
+@export var evade_animation_id: int = 0x30
+@export var taking_damage_animation_id: int = 0x32
+@export var knocked_out_animation_id: int = 0x34
+@export var heal_animation_id: int = 0x36
+@export var mid_jump_animation: int = 0x3e
 
 var submerged_depth: int = 0
 
@@ -830,6 +830,7 @@ func set_job_id(new_job_id: int) -> void:
 	
 	if animation_manager.global_spr.flying_flag:
 		idle_walk_animation_id = 0x0c
+		current_idle_animation_id = idle_walk_animation_id
 		set_base_animation_ptr_id(idle_walk_animation_id)
 
 func set_ability(new_ability_id: int) -> void:

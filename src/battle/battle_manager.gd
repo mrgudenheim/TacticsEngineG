@@ -262,6 +262,11 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData
 	new_unit.icon2.texture = RomReader.frame_bin_texture
 	
 	new_unit.primary_weapon_assigned.connect(func(weapon_id: int): new_unit.update_actions(self))
+	if not ["TYPE1.SEQ", "TYPE3.SEQ"].has(new_unit.animation_manager.global_seq.file_name):
+		new_unit.set_primary_weapon(0) # prevent animation index out of bounds error from trying to animate weapon on non-humanoid
+	else:
+		new_unit.set_primary_weapon(randi_range(0, 0x79)) # random weapon
+	
 	
 	new_unit.name = new_unit.job_nickname + "-" + new_unit.unit_nickname
 	

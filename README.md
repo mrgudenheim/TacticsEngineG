@@ -46,7 +46,7 @@ Escape: Open/Close debug menus
 - Accurately handle transparency in unit animations
 - Allow exporting gif of full ability animation chain
 - Statuses
-- Victory conditions (KO all enemies, KO specific targets, special conditions, ...)
+- Victory conditions (defeat all enemies, defeat specific targets, special conditions, ...)
 - Turn order preview (aka action timeline) including when delayed actions execute and statuses wear off
 - Reaction/Support/Movement abilities
 - AI

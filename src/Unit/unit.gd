@@ -371,13 +371,15 @@ func update_actions(battle_manager: BattleManager) -> void:
 	actions_data.clear()
 	actions.append(move_action)
 	actions.append(attack_action)
-	actions.append(wait_action)
+	
 	for skillset: ScusData.SkillsetData in skillsets:
 		for ability_id: int in skillset.action_ability_ids:
 			if ability_id != 0:
 				var new_action: Action = RomReader.abilities[ability_id].ability_action
 				actions.append(new_action)
 	# TODO append all other potential actions, from jobs, equipment, etc.
+	
+	actions.append(wait_action)
 	
 	# remove any existing buttons
 	for child in battle_manager.action_button_list.get_children():

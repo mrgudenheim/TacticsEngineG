@@ -1,4 +1,5 @@
 class_name TerrainTile
+extends RefCounted
 
 # https://ffhacktics.com/wiki/Maps/Mesh#Terrain
 var layer: int = 0

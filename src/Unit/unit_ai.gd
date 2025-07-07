@@ -50,11 +50,7 @@ func choose_action(unit: UnitData) -> void:
 	elif strategy == Strategy.BEST: # TODO implement better ai choosing 'best' action
 		var non_move_actions: Array[ActionInstance] = eligible_actions.duplicate()
 		non_move_actions.remove_at(0) # TODO evaluate move separately
-		
 		var move_action_instance: ActionInstance = unit.actions_data[unit.move_action]
-		if move_action_instance.is_usable() and not move_action_instance.potential_targets.is_empty():
-			await action_random_target(unit, move_action_instance)
-			return
 		
 		var best_action: ActionInstance
 		var best_target: TerrainTile
@@ -83,6 +79,45 @@ func choose_action(unit: UnitData) -> void:
 					action_scores[action_instance] = potential_ai_score
 			
 			action_instance.stop_targeting()
+		
+		var best_move: TerrainTile
+		if move_action_instance.is_usable() and not move_action_instance.potential_targets.is_empty():
+			var original_tile: TerrainTile = unit.tile_position
+			for potential_move: TerrainTile in move_action_instance.potential_targets: # TODO handle ai score for auto targeting
+				unit.tile_position = potential_move
+				
+				for action_instance: ActionInstance in non_move_actions:
+					for potential_target: TerrainTile in action_instance.potential_targets: # TODO handle ai score for auto targeting
+						#action_instance.tile_hovered.emit(potential_target, action_instance, simulated_input) # set preview targets
+						action_instance.action.targeting_strategy.target_tile(potential_target, action_instance, simulated_input)
+						var potential_ai_score: int = action_instance.get_ai_score()
+						
+						if potential_ai_score > best_ai_score:
+							best_ai_score = potential_ai_score
+							best_action = action_instance
+							best_target = potential_target
+							best_move = potential_move
+					
+					action_instance.stop_targeting()
+			
+			unit.tile_position = original_tile
+		
+		if best_move != null:
+			move_action_instance.start_targeting() # TODO refactor using actions with specific target
+			await wait_for_delay(unit)
+			move_action_instance.tile_hovered.emit(best_move, move_action_instance, simulated_input)
+			await wait_for_delay(unit)
+			#if not move_action_instance.preview_targets.is_empty(): # TODO fix why move does not have targets sometimes
+			var simulated_input_action: InputEventAction = InputEventAction.new()
+			simulated_input_action.action = "primary_action"
+			simulated_input_action.pressed = true
+			move_action_instance.tile_hovered.emit(best_move, move_action_instance, simulated_input_action)
+			return
+		#elif best_action == null: # TODO if no best action, move randomly
+		
+		if move_action_instance.is_usable() and not move_action_instance.potential_targets.is_empty():
+			await action_random_target(unit, move_action_instance)
+			return
 		
 		if best_action == null:
 			wait_action_instance.start_targeting()

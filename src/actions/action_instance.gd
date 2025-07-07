@@ -151,6 +151,7 @@ func get_ai_score() -> int:
 		#target_score = target_score * (hit_chance_value / 100.0)
 		
 		# TODO status scores
+		RomReader.battle_bin_data.ai_status_priorities
 		
 		ai_score += target_score
 		#push_warning(action.action_name + " " + str(preview_targets) + " " + str(ai_score))

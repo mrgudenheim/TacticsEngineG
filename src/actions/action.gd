@@ -258,13 +258,7 @@ func animate_evade(target_unit: UnitData, evade_direction: EvadeData.Directions,
 
 
 func apply_standard(action_instance: ActionInstance) -> void:
-	var target_units: Array[UnitData] = []
-	for target_tile: TerrainTile in action_instance.submitted_targets:
-		var unit_index: int = action_instance.battle_manager.units.find_custom(func(unit: UnitData): return unit.tile_position == target_tile)
-		if unit_index == -1:
-			continue
-		var target_unit: UnitData = action_instance.battle_manager.units[unit_index]
-		target_units.append(target_unit)
+	var target_units: Array[UnitData] = action_instance.get_target_units(action_instance.submitted_targets)
 	
 	# look up animation based on weapon type and vertical angle to target
 	var mod_animation_executing_id: int = animation_executing_id

@@ -124,6 +124,40 @@ func stop_targeting() -> void:
 	action.targeting_strategy.stop_targeting(self)
 
 
+func get_target_units(target_tiles: Array[TerrainTile]) -> Array[UnitData]:
+	var target_units: Array[UnitData] = []
+	for target_tile: TerrainTile in target_tiles:
+		var unit_index: int = battle_manager.units.find_custom(func(unit: UnitData): return unit.tile_position == target_tile)
+		if unit_index == -1:
+			continue
+		var target_unit: UnitData = battle_manager.units[unit_index]
+		target_units.append(target_unit)
+	
+	return target_units
+
+
+func get_ai_score() -> int:
+	var ai_score: int = 0
+	var target_units: Array[UnitData] = get_target_units(preview_targets)
+	
+	for target: UnitData in target_units:
+		var target_score: float = 0.0
+		for action_effect: ActionEffect in action.target_effects:
+			var effect_value: int = action_effect.get_ai_value(user, target, action.element)
+			target_score += effect_value
+		
+		var evade_direction: EvadeData.Directions = action.get_evade_direction(user, target)
+		var hit_chance_value: int = action.get_total_hit_chance(user, target, evade_direction)
+		#target_score = target_score * (hit_chance_value / 100.0)
+		
+		# TODO status scores
+		
+		ai_score += target_score
+		#push_warning(action.action_name + " " + str(preview_targets) + " " + str(ai_score))
+	
+	return ai_score
+
+
 func show_result_preview(target: UnitData) -> ActionPreview:
 	var hit_chance_text: String = get_hit_chance_text(target)
 	var effects_text: String = get_effects_text(target)

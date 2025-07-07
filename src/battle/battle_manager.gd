@@ -289,7 +289,7 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData
 	team.units.append(new_unit)
 	
 	new_unit.is_ai_controlled = true
-	new_unit.ai_controller.strategy = UnitAi.Strategy.RANDOM
+	new_unit.ai_controller.strategy = UnitAi.Strategy.BEST
 	
 	return new_unit
 

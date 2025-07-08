@@ -62,7 +62,7 @@ func choose_action(unit: UnitData) -> void:
 		for action_instance: ActionInstance in non_move_actions:
 			for potential_target: TerrainTile in action_instance.potential_targets: # TODO handle ai score for auto targeting
 				#action_instance.tile_hovered.emit(potential_target, action_instance, simulated_input) # set preview targets
-				action_instance.action.targeting_strategy.target_tile(potential_target, action_instance, simulated_input)
+				action_instance.preview_targets = action_instance.action.targeting_strategy.get_aoe_targets(action_instance, potential_target)
 				var potential_ai_score: int = action_instance.get_ai_score()
 				
 				if potential_ai_score > best_ai_score:
@@ -89,7 +89,8 @@ func choose_action(unit: UnitData) -> void:
 				for action_instance: ActionInstance in non_move_actions:
 					for potential_target: TerrainTile in action_instance.potential_targets: # TODO handle ai score for auto targeting
 						#action_instance.tile_hovered.emit(potential_target, action_instance, simulated_input) # set preview targets
-						action_instance.action.targeting_strategy.target_tile(potential_target, action_instance, simulated_input)
+						#action_instance.action.targeting_strategy.target_tile(potential_target, action_instance, simulated_input)
+						action_instance.preview_targets = action_instance.action.targeting_strategy.get_aoe_targets(action_instance, potential_target)
 						var potential_ai_score: int = action_instance.get_ai_score()
 						
 						if potential_ai_score > best_ai_score:
@@ -116,6 +117,7 @@ func choose_action(unit: UnitData) -> void:
 		#elif best_action == null: # TODO if no best action, move randomly
 		
 		if move_action_instance.is_usable() and not move_action_instance.potential_targets.is_empty():
+			# TODO move toward enemy
 			await action_random_target(unit, move_action_instance)
 			return
 		

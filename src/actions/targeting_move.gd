@@ -4,7 +4,7 @@ extends TargetingStrategy
 
 func get_potential_targets(action_instance: ActionInstance) -> Array[TerrainTile]:
 	var potential_targets: Array[TerrainTile] = []
-	action_instance.user.update_map_paths(action_instance.battle_manager.total_map_tiles, action_instance.battle_manager.units, action_instance.user.move_current)
+	action_instance.user.update_map_paths(action_instance.battle_manager.total_map_tiles, action_instance.battle_manager.units)
 	await action_instance.user.paths_updated
 	
 	for tile: TerrainTile in action_instance.user.path_costs.keys():

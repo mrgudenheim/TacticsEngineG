@@ -201,24 +201,38 @@ func add_units_to_map() -> void:
 	if use_test_teams:
 		add_test_teams_to_map()
 	else: # use random teams
+		var generic_job_ids: Array[int] = range(0x4a, 0x5a) # generics
+		var special_characters: Array[int] = [0x01, 0x04, 0x05, 0x34] # ramzas, delita, agrias
+		var monster_jobs: Array[int] = range(0x5e, 0x8e) # generic monsters
+		var special_monsters: Array[int] = [0x41, 0x49] # holy angel, arch angel
+		
+		var team_1_job_ids: Array[int] = generic_job_ids
+		team_1_job_ids.append_array(special_characters)
+		
+		var team_2_job_ids: Array[int] = monster_jobs
+		team_2_job_ids.append_array(special_monsters)
+		
 		for random_unit: int in units_per_team:
-			#var rand_job: int = randi_range(0x01, 0x8e) # job_id 0x2c (Alma2) and 0x31 (Ajora) do not have walking frames
-			var rand_job: int = randi_range(0x4a, 0x59) # generics, squire to ninja (not calculator, bard, dancer, mime)
-			while [0x2c, 0x31].has(rand_job): # prevent jobs without idle frames
+			var rand_job: int = team_1_job_ids.pick_random()
+			#var rand_job: int = randi_range(0x4a, 0x59) # generics, squire to ninja (not calculator, bard, dancer, mime)
+			#var rand_job: int = randi_range(0x01, 0x59) # special and generics, squire to ninja (not calculator, bard, dancer, mime)
+			while [0x2c, 0x31].has(rand_job): # prevent jobs without idle frames - 0x2c (Alma2) and 0x31 (Ajora) do not have walking frames
 				rand_job = randi_range(0x01, 0x8d)
 			var new_unit: UnitData = spawn_unit(get_random_stand_terrain_tile(), rand_job, team1)
 			#new_unit.is_ai_controlled = false
 		
 		for random_unit: int in units_per_team:
-			#var rand_job: int = randi_range(0x01, 0x8e) # job_id 0x2c (Alma2) and 0x31 (Ajora) do not have walking frames
-			var rand_job: int = randi_range(0x5e, 0x8d) # monsters
-			while [0x2c, 0x31].has(rand_job): # prevent jobs without idle frames
+			var rand_job: int = team_2_job_ids.pick_random()
+			#var rand_job: int = randi_range(0x5e, 0x8d) # monsters
+			while [0x2c, 0x31].has(rand_job): # prevent jobs without idle frames - 0x2c (Alma2) and 0x31 (Ajora) do not have walking frames
 				rand_job = randi_range(0x01, 0x8d)
 			var new_unit: UnitData = spawn_unit(get_random_stand_terrain_tile(), rand_job, team2)
 	
 	await update_units_pathfinding()
 	
 	#new_unit.start_turn(self)
+	
+	units.shuffle()
 	
 	hide_debug_ui()
 
@@ -227,7 +241,7 @@ func add_test_teams_to_map() -> void:
 	# add player unit
 	var random_tile: TerrainTile = get_random_stand_terrain_tile()
 	var new_unit: UnitData = spawn_unit(random_tile, 0x05, teams[0]) # 0x05 is Delita holy knight
-	#new_unit.is_ai_controlled = false
+	new_unit.is_ai_controlled = false
 	new_unit.set_primary_weapon(0x1d) # ice brand
 	
 	# set up character controller

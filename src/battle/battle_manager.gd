@@ -201,9 +201,11 @@ func add_units_to_map() -> void:
 	if use_test_teams:
 		add_test_teams_to_map()
 	else: # use random teams
-		var generic_job_ids: Array[int] = range(0x4a, 0x5a) # generics
+		var generic_job_ids: Array[int] = []
+		generic_job_ids.assign(range(0x4a, 0x5a)) # generics
 		var special_characters: Array[int] = [0x01, 0x04, 0x05, 0x34] # ramzas, delita, agrias
-		var monster_jobs: Array[int] = range(0x5e, 0x8e) # generic monsters
+		var monster_jobs: Array[int] = []
+		monster_jobs.assign(range(0x5e, 0x8e)) # generic monsters
 		var special_monsters: Array[int] = [0x41, 0x49] # holy angel, arch angel
 		
 		var team_1_job_ids: Array[int] = generic_job_ids

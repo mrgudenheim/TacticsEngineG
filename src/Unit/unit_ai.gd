@@ -123,7 +123,7 @@ func choose_action(unit: UnitData) -> void:
 		
 		if move_action_instance.is_usable() and not move_action_instance.potential_targets.is_empty():
 			# find closest enemy and move towards
-			var shortest_path_cost: int = 0
+			var shortest_path_cost: int = -1
 			var shortest_path_target: TerrainTile
 			for other_unit: UnitData in unit.global_battle_manager.units:
 				if other_unit.team != unit.team and not other_unit.is_defeated: # if enemy
@@ -140,9 +140,13 @@ func choose_action(unit: UnitData) -> void:
 						if unit.global_battle_manager.total_map_tiles.keys().has(adjacent_xy):
 							adjacent_tiles.append_array(unit.global_battle_manager.total_map_tiles[adjacent_xy])
 					
+					if adjacent_tiles.has(unit.tile_position): # if already next to enemy, wait
+						await action_targeted(unit, wait_action_instance)
+						return
+					
 					for adjacent_tile: TerrainTile in adjacent_tiles:
 						if unit.path_costs.keys().has(adjacent_tile):
-							if shortest_path_cost == 0:
+							if shortest_path_cost == -1:
 								shortest_path_cost = unit.path_costs[adjacent_tile]
 								shortest_path_target = adjacent_tile
 							elif unit.path_costs[adjacent_tile] < shortest_path_cost:

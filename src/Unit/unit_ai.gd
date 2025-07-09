@@ -46,7 +46,7 @@ func choose_action(unit: UnitData) -> void:
 	
 	if strategy == Strategy.RANDOM:
 		var chosen_action: ActionInstance = eligible_actions.pick_random()
-		await action_random_target(unit, chosen_action)
+		await action_targeted(unit, chosen_action) # random target
 	elif strategy == Strategy.BEST: # TODO implement better ai choosing 'best' action
 		var move_action_instance: ActionInstance = unit.actions_data[unit.move_action]
 		var non_move_actions: Array[ActionInstance] = eligible_actions.duplicate()
@@ -117,15 +117,7 @@ func choose_action(unit: UnitData) -> void:
 			return
 		#elif best_action == null: # TODO if no best action, move randomly
 		
-		if move_action_instance.is_usable() and not move_action_instance.potential_targets.is_empty():
-			# TODO move toward enemy
-			await action_random_target(unit, move_action_instance)
-			return
-		
-		if best_action == null:
-			wait_action_instance.start_targeting()
-			await wait_action_instance.action_completed
-		else:
+		if best_action != null:
 			var chosen_action: ActionInstance = best_action
 			#chosen_action.show_potential_targets() # TODO fix move targeting when updating paths/pathfinding is takes longer than delay (large maps with 10+ units)
 			chosen_action.start_targeting()
@@ -144,24 +136,75 @@ func choose_action(unit: UnitData) -> void:
 					chosen_action.stop_targeting()
 					wait_action_instance.start_targeting()
 					await wait_action_instance.action_completed
+			return
+		
+		if move_action_instance.is_usable() and not move_action_instance.potential_targets.is_empty():
+			# TODO move toward enemy
+			# find closest enemy and move towards
+			var shortest_path_cost: int = 0
+			var shortest_path_target: TerrainTile
+			for other_unit: UnitData in unit.global_battle_manager.units:
+				if other_unit.team != unit.team and not other_unit.is_defeated: # if enemy
+					var other_unit_xy: Vector2i = other_unit.tile_position.location
+					var adjacent_tiles: Array[TerrainTile] = []
+					var adjacent_directions: Array[Vector2i] = [
+						Vector2i.LEFT,
+						Vector2i.RIGHT,
+						Vector2i.UP,
+						Vector2i.DOWN,
+					]
+					for adjacent_vector: Vector2i in adjacent_directions:
+						var adjacent_xy: Vector2i = other_unit_xy + adjacent_vector
+						if unit.global_battle_manager.total_map_tiles.keys().has(adjacent_xy):
+							adjacent_tiles.append_array(unit.global_battle_manager.total_map_tiles[adjacent_xy])
+					
+					for adjacent_tile: TerrainTile in adjacent_tiles:
+						if unit.path_costs.keys().has(adjacent_tile):
+							if shortest_path_cost == 0:
+								shortest_path_cost = unit.path_costs[adjacent_tile]
+								shortest_path_target = adjacent_tile
+							elif unit.path_costs[adjacent_tile] < shortest_path_cost:
+								shortest_path_cost = unit.path_costs[adjacent_tile]
+								shortest_path_target = adjacent_tile
+			
+			var move_target: TerrainTile = shortest_path_target
+			var move_cost: int = shortest_path_cost
+			if move_target != null:
+				while move_cost > unit.move_current:
+					#if unit.path_costs[move_target] > unit.move_current:
+						#break
+					move_target = unit.map_paths[move_target]
+					move_cost = unit.path_costs[move_target]
+			
+			# move to target or else move randomly
+			await action_targeted(unit, move_action_instance, move_target, shortest_path_target)
+			return
+		
+		if best_action == null:
+			wait_action_instance.start_targeting()
+			await wait_action_instance.action_completed
 
 
-func action_random_target(unit: UnitData, chosen_action: ActionInstance) -> void:
+func action_targeted(unit: UnitData, chosen_action: ActionInstance, target: TerrainTile = null, hover_target = null) -> void:
 	#chosen_action.show_potential_targets() # TODO fix move targeting when updating paths/pathfinding is takes longer than delay (large maps with 10+ units)
+	chosen_action.potential_targets = await chosen_action.action.targeting_strategy.get_potential_targets(chosen_action)
 	chosen_action.start_targeting()
 	if chosen_action.action.auto_target:
 		await chosen_action.action_completed
 	else:
 		await wait_for_delay(unit)
-		var random_target: TerrainTile = chosen_action.potential_targets.pick_random()
+		if target == null:
+			target = chosen_action.potential_targets.pick_random() # random target
+		if hover_target == null:
+			hover_target = target
 		var simulated_input: InputEvent = InputEventMouseMotion.new()
-		chosen_action.tile_hovered.emit(random_target, chosen_action, simulated_input)
+		chosen_action.tile_hovered.emit(hover_target, chosen_action, simulated_input)
 		await wait_for_delay(unit)
 		if not chosen_action.preview_targets.is_empty(): # TODO fix why move does not have targets sometimes
 			var simulated_input_action: InputEventAction = InputEventAction.new()
 			simulated_input_action.action = "primary_action"
 			simulated_input_action.pressed = true
-			chosen_action.tile_hovered.emit(random_target, chosen_action, simulated_input_action)
+			chosen_action.tile_hovered.emit(target, chosen_action, simulated_input_action)
 		else: # wait if no targets
 			chosen_action.stop_targeting()
 			wait_action_instance.start_targeting()

@@ -52,6 +52,9 @@ func choose_action(unit: UnitData) -> void:
 		var non_move_actions: Array[ActionInstance] = eligible_actions.duplicate()
 		non_move_actions.erase(move_action_instance) # TODO evaluate move separately
 		
+		var start_time: int = Time.get_ticks_msec()
+		var max_frame_time_ms: float = 1000.0 / 240.0
+		
 		var best_action: ActionInstance
 		var best_target: TerrainTile
 		var best_ai_score: int = 0
@@ -77,6 +80,10 @@ func choose_action(unit: UnitData) -> void:
 				else:
 					action_best_targets[action_instance] = potential_target
 					action_scores[action_instance] = potential_ai_score
+				
+				if Time.get_ticks_msec() - start_time > max_frame_time_ms: # prevent freezing/lag
+					await action_instance.user.get_tree().process_frame
+					start_time = Time.get_ticks_msec()
 			
 			action_instance.stop_targeting()
 		
@@ -99,6 +106,10 @@ func choose_action(unit: UnitData) -> void:
 							best_action = action_instance
 							best_target = potential_target
 							best_move = potential_move
+						
+						if Time.get_ticks_msec() - start_time > max_frame_time_ms: # prevent freezing/lag
+							await action_instance.user.get_tree().process_frame
+							start_time = Time.get_ticks_msec()
 					
 					action_instance.stop_targeting()
 			

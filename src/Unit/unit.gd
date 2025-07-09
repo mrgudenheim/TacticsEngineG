@@ -100,9 +100,9 @@ enum StatType {
 }
 
 var stats: Dictionary[StatType, ClampedValue] = {
-	StatType.HP_MAX : ClampedValue.new(0, 999, 100),
-	StatType.HP : ClampedValue.new(0, 100, 50),
-	StatType.MP_MAX : ClampedValue.new(0, 999, 75),
+	StatType.HP_MAX : ClampedValue.new(0, 999, 150),
+	StatType.HP : ClampedValue.new(0, 150, 100),
+	StatType.MP_MAX : ClampedValue.new(0, 999, 100),
 	StatType.MP : ClampedValue.new(0, 100, 70),
 	StatType.CT : ClampedValue.new(0, 999, 25),
 	StatType.MOVE : ClampedValue.new(0, 100, 3),

@@ -135,6 +135,7 @@ func on_rom_loaded() -> void:
 	var default_map_index: int = 56 # Orbonne
 	#default_map_index = 22 # Gariland
 	#default_map_index = 83 # zirekile falls
+	default_map_index = 85 # mandalia plains
 	map_dropdown.select(default_map_index)
 	map_dropdown.item_selected.emit(default_map_index)
 
@@ -281,6 +282,7 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData
 	new_unit.primary_weapon_assigned.connect(func(weapon_id: int): new_unit.update_actions(self))
 	if not ["TYPE1.SEQ", "TYPE3.SEQ"].has(new_unit.animation_manager.global_seq.file_name):
 		new_unit.set_primary_weapon(0) # prevent animation index out of bounds error from trying to animate weapon on non-humanoid
+		new_unit.equipped.clear() # prevent animation index out of bounds error from trying to animate shield evade on non-humanoid
 	else:
 		new_unit.set_primary_weapon(randi_range(0, 0x79)) # random weapon
 	

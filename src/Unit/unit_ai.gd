@@ -115,31 +115,13 @@ func choose_action(unit: UnitData) -> void:
 			simulated_input_action.pressed = true
 			move_action_instance.tile_hovered.emit(best_move, move_action_instance, simulated_input_action)
 			return
-		#elif best_action == null: # TODO if no best action, move randomly
 		
 		if best_action != null:
 			var chosen_action: ActionInstance = best_action
-			#chosen_action.show_potential_targets() # TODO fix move targeting when updating paths/pathfinding is takes longer than delay (large maps with 10+ units)
-			chosen_action.start_targeting()
-			if chosen_action.action.auto_target:
-				await chosen_action.action_completed
-			else:
-				await wait_for_delay(unit)
-				chosen_action.tile_hovered.emit(best_target, chosen_action, simulated_input)
-				await wait_for_delay(unit)
-				if not chosen_action.preview_targets.is_empty(): # TODO fix why move does not have targets sometimes
-					var simulated_input_action: InputEventAction = InputEventAction.new()
-					simulated_input_action.action = "primary_action"
-					simulated_input_action.pressed = true
-					chosen_action.tile_hovered.emit(best_target, chosen_action, simulated_input_action)
-				else: # wait if no targets
-					chosen_action.stop_targeting()
-					wait_action_instance.start_targeting()
-					await wait_action_instance.action_completed
+			action_targeted(unit, chosen_action, best_target)
 			return
 		
 		if move_action_instance.is_usable() and not move_action_instance.potential_targets.is_empty():
-			# TODO move toward enemy
 			# find closest enemy and move towards
 			var shortest_path_cost: int = 0
 			var shortest_path_target: TerrainTile

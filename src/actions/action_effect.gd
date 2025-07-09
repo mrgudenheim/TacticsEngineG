@@ -39,6 +39,9 @@ func get_ai_value(user: UnitData, target: UnitData, element: Action.ElementTypes
 	var ai_value: int = nominal_value
 	
 	if type == EffectType.UNIT_STAT:
+		if target.is_defeated:
+			ai_value = 0 # prevent ai from focusing defeated units with non-status changes
+		
 		if set_value:
 			ai_value = target.stats[effect_stat_type].get_set_delta(nominal_value)
 		else:

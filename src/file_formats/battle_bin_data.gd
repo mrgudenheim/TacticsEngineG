@@ -46,6 +46,10 @@ var ability_vfx_header_offsets: PackedInt32Array = []
 var ability_vfx_ids_start: int = 0x14f3f0 # 2 bytes each - uint16
 var ability_vfx_ids: PackedInt32Array = [] 
 
+# https://ffhacktics.com/wiki/Secondary_effects_by_Charge_Animation
+var charging_vfx_ids_start: int = 0x1b84ac - 0x67000 # 1 byte each?, 0x13 total
+var charging_vfx_ids: PackedInt32Array = [] # TODO get this data
+
 var status_image_rects_start: int = 0x14cf68 - 0x67000 # 4 bytes each, 49 entries, mostly text + sword and rod icon
 var status_image_rects: Array[Rect2i] = []
 

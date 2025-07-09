@@ -470,7 +470,7 @@ func display_vfx(location: Node3D) -> void:
 
 
 func display_vfx_animation(emitter_data, emitter_node: Node3D) -> void:
-	var vfx_animation := animations[emitter_data.anim_index]
+	var vfx_animation := animations[emitter_data.anim_index] # TODO fix steal exp vfx?
 	var anim_location: Node3D = Node3D.new()
 	# handle initial anim_location position as screen_space movement instead of world space
 	var camera_right: Vector3 = BattleManager.main_camera.basis * Vector3.RIGHT

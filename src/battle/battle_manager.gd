@@ -2,7 +2,6 @@ class_name BattleManager
 extends Node3D
 
 signal map_input_event(action_instance: ActionInstance, camera: Camera3D, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int)
-signal clock_tick_step_finished()
 
 # debug vars
 @export var use_test_teams: bool = false
@@ -39,6 +38,7 @@ var current_tile_hover: TerrainTile
 @export var unit_tscn: PackedScene
 @export var controller: UnitControllerRT
 @export var battle_is_running: bool = false
+@export var safe_to_load_map: bool = true
 @export var battle_end_panel: Control
 @export var post_battle_messages: Control
 @export var start_new_battle_button: Button
@@ -142,7 +142,8 @@ func on_rom_loaded() -> void:
 
 func queue_load_map(index: int) -> void:
 	if battle_is_running:
-		await clock_tick_step_finished
+		while not safe_to_load_map:
+			await get_tree().process_frame # TODO loop over safe_to_load_new_map, set false while awaiting processing
 	on_map_selected(index)
 
 
@@ -350,6 +351,7 @@ func process_clock_tick() -> void:
 	# increment status ticks
 	for unit: UnitData in units:
 		for status: StatusEffect in unit.current_statuses2.keys():
+			safe_to_load_map = false
 			if status.duration_type == StatusEffect.DurationType.TICKS:
 				unit.current_statuses2[status] -= 1
 				if unit.current_statuses2[status] <= 0:
@@ -359,17 +361,18 @@ func process_clock_tick() -> void:
 						status_action_instance.submitted_targets.append(unit.tile_position) # TODO get targets for status action
 						status.action_on_complete.use(status_action_instance)
 						await status_action_instance.action_completed
-						clock_tick_step_finished.emit()
 						if check_end_conditions():
+							safe_to_load_map = true
 							return
 					if status.delayed_action != null: # execute stored delayed actions, TODO checks to null (no mp, silenced, etc.)
 						#status.delayed_action.show_targets_highlights(status.delayed_action.preview_targets_highlights) # show submitted targets TODO retain preview highlight nodes?
 						#await unit.get_tree().create_timer(0.5).timeout
 						await status.delayed_action.use()
-						clock_tick_step_finished.emit()
 						#await status.delayed_action.action_completed
 						if check_end_conditions():
+							safe_to_load_map = true
 							return
+			safe_to_load_map = true
 	
 	for unit: UnitData in units: # increment each units ct by speed
 		if not unit.current_statuses2.keys().any(func(status: StatusEffect): return status.freezes_ct): # check status that prevent ct gain (stop, sleep, etc.)
@@ -378,14 +381,18 @@ func process_clock_tick() -> void:
 	# execute unit turns, ties decided by unit index in units[]
 	for unit: UnitData in units:
 		if unit.ct_current >= 100:
-			start_units_turn(unit)
+			safe_to_load_map = false
+			await start_units_turn(unit)
 			#if unit.is_defeated: # check status that counts as KO, aka prevents turn (dead, petrify, etc.)
 				#unit.end_turn()
 			if not unit.is_defeated:
+				if not unit.is_ai_controlled:
+					safe_to_load_map = true
 				await unit.turn_ended
-				clock_tick_step_finished.emit()
 				if check_end_conditions():
+					safe_to_load_map = true
 					return
+			safe_to_load_map = true
 	
 	# TODO increment status ticks, delayed action ticks, and unit ticks in the same step, then order resolution?
 
@@ -406,7 +413,7 @@ func start_units_turn(unit: UnitData) -> void:
 	active_unit = unit
 	phantom_camera.follow_target = unit.char_body
 	
-	unit.start_turn(self)
+	await unit.start_turn(self)
 
 
 # TODO handle event timeline

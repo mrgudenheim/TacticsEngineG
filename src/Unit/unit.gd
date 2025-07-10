@@ -363,7 +363,7 @@ func start_turn(battle_manager: BattleManager) -> void:
 	# set CT
 	stats[StatType.CT].add_value(-100)
 	
-	update_actions(battle_manager)
+	await update_actions(battle_manager)
 
 
 func update_actions(battle_manager: BattleManager) -> void:
@@ -389,13 +389,13 @@ func update_actions(battle_manager: BattleManager) -> void:
 	for action: Action in actions:
 		var new_action_instance: ActionInstance = ActionInstance.new(action, self, battle_manager)
 		actions_data[action] = new_action_instance
-		new_action_instance.update_potential_targets()
+		await new_action_instance.update_potential_targets()
 		new_action_instance.action_completed.connect(update_actions)
 	
 	if battle_manager.active_unit == self:
 		update_action_buttons(battle_manager)
 		
-		select_first_action()
+		await select_first_action()
 
 
 func update_action_buttons(battle_manager: BattleManager) -> void:
@@ -422,8 +422,9 @@ func select_first_action() -> void:
 	for action_instance: ActionInstance in actions_data.values():
 		if action_instance.is_usable() and action_instance.action != wait_action:
 			active_action = action_instance
-			active_action.update_potential_targets()
-			active_action.start_targeting()
+			await active_action.update_potential_targets()
+			if not is_ai_controlled:
+				active_action.start_targeting()
 			break
 	
 	# end turn when no actions left
@@ -431,8 +432,8 @@ func select_first_action() -> void:
 		end_turn()
 	else:
 		if is_ai_controlled:
-			if not is_defeated:
-				await ai_controller.choose_action(self)
+			#await get_tree().process_frame
+			await ai_controller.choose_action(self)
 
 
 func end_turn():

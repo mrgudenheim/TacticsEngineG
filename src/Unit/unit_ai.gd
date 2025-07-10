@@ -32,8 +32,8 @@ func choose_action(unit: UnitData) -> void:
 		await wait_action_instance.action_completed
 		return
 	
-	if not unit.paths_set:
-		await unit.paths_updated
+	#if not unit.paths_set:
+		#await unit.paths_updated
 	
 	var eligible_actions: Array[ActionInstance] = unit.actions_data.values().filter(func(action_instance: ActionInstance): return action_instance.is_usable() and not action_instance.potential_targets.is_empty())
 	if eligible_actions.size() > 1:
@@ -88,8 +88,9 @@ func choose_action(unit: UnitData) -> void:
 			action_instance.stop_targeting()
 		
 		var best_move: TerrainTile
-		if move_action_instance.is_usable() and not move_action_instance.potential_targets.is_empty():
+		if move_action_instance.is_usable() and not move_action_instance.potential_targets.is_empty() and not non_move_actions.is_empty():
 			var original_tile: TerrainTile = unit.tile_position
+			var original_tile_location: Vector2i = original_tile.location
 			for potential_move: TerrainTile in move_action_instance.potential_targets: # TODO handle ai score for auto targeting
 				unit.tile_position = potential_move
 				
@@ -114,6 +115,8 @@ func choose_action(unit: UnitData) -> void:
 					action_instance.stop_targeting()
 			
 			unit.tile_position = original_tile
+			if unit.tile_position.location != original_tile_location:
+				push_warning("Unit position not reset during ai consideration")
 		
 		if best_move != null:
 			move_action_instance.start_targeting() # TODO refactor using actions with specific target
@@ -129,7 +132,7 @@ func choose_action(unit: UnitData) -> void:
 		
 		if best_action != null:
 			var chosen_action: ActionInstance = best_action
-			action_targeted(unit, chosen_action, best_target)
+			await action_targeted(unit, chosen_action, best_target)
 			return
 		
 		if move_action_instance.is_usable() and not move_action_instance.potential_targets.is_empty():
@@ -173,7 +176,7 @@ func choose_action(unit: UnitData) -> void:
 					move_target = unit.map_paths[move_target]
 					move_cost = unit.path_costs[move_target]
 			
-			# move to target or else move randomly
+			# move to target or else move randomly is no path to any target
 			await action_targeted(unit, move_action_instance, move_target, shortest_path_target)
 			return
 		

@@ -273,7 +273,7 @@ func _ready() -> void:
 	var item_ids: PackedInt32Array = [
 		1, # dagger
 		0x85, # gold shield
-		0xe9, # dracula mantle
+		#0xe9, # dracula mantle
 		]
 	for item_id: int in item_ids:
 		equipped.append(RomReader.items[item_id])

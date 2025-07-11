@@ -863,8 +863,8 @@ func set_primary_weapon(new_weapon_id: int) -> void:
 
 # https://ffhacktics.com/wiki/Determine_Status_Bubble_Parameters
 # https://ffhacktics.com/wiki/Display_Status_Bubble
-func set_icon(icon_id: int) -> void:
-	icon2.region_rect = RomReader.battle_bin_data.status_icon_rects[icon_id]
+func set_icon(new_icon_id: int) -> void:
+	icon2.region_rect = RomReader.battle_bin_data.status_icon_rects[new_icon_id]
 
 
 func set_status_icon_rect(rect: Rect2i) -> void:

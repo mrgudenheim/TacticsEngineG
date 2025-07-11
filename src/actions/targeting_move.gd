@@ -187,7 +187,7 @@ func get_map_path_neighbors(user: UnitData, current_tile: TerrainTile, map_tiles
 					continue
 				elif abs(tile.height_mid - current_tile.height_mid) > user.jump_current: # restrict movement based on current jomp, TODO allow jump height as parameter?
 					continue
-				elif units.any(func(unit: UnitData): return unit.tile_position == tile): # prevent moving on top or through other units
+				elif units.any(func(unit: UnitData): return unit.tile_position == tile and not unit.is_defeated): # prevent moving on top or through other units
 					continue # TODO allow moving through knocked out units
 				# TODO prevent trying to move vertically through floors/ceilings
 				else:

@@ -470,7 +470,12 @@ func display_vfx(location: Node3D) -> void:
 
 
 func display_vfx_animation(emitter_data, emitter_node: Node3D) -> void:
-	var vfx_animation := animations[emitter_data.anim_index] # TODO fix steal exp vfx?
+	if emitter_data.anim_index >= animations.size(): # TODO fix steal exp vfx?
+		push_error(file_name + " trying to access animation " + str(emitter_data.anim_index) + ", but there are only " + str(animations.size()) + " animations")
+		emitter_node.queue_free()
+		return
+	
+	var vfx_animation := animations[emitter_data.anim_index]
 	var anim_location: Node3D = Node3D.new()
 	# handle initial anim_location position as screen_space movement instead of world space
 	var camera_right: Vector3 = BattleManager.main_camera.basis * Vector3.RIGHT

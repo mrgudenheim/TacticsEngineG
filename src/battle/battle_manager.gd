@@ -422,7 +422,9 @@ func check_end_conditions() -> bool:
 func start_units_turn(unit: UnitData) -> void:
 	controller.unit = unit
 	active_unit = unit
-	phantom_camera.follow_target = unit.char_body
+	
+	if not unit.is_defeated:
+		phantom_camera.follow_target = unit.char_body
 	
 	await unit.start_turn(self)
 

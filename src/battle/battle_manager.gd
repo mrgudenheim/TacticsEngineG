@@ -13,7 +13,7 @@ static var main_camera: Camera3D
 @export var phantom_camera: PhantomCamera3D
 @export var load_rom_button: LoadRomButton
 
-#@export var camera_controller: CameraController
+@export var camera_controller: CameraController
 @export var background_gradient: TextureRect
 
 @export var menu_list: Control
@@ -101,6 +101,7 @@ func _ready() -> void:
 	RomReader.rom_loaded.connect(on_rom_loaded)
 	map_dropdown.item_selected.connect(queue_load_map)
 	orthographic_check.toggled.connect(on_orthographic_check_toggled)
+	camera_controller.zoom_changed.connect(update_phantom_camera_spring)
 	expand_map_check.toggled.connect(func(toggled_on: bool): allow_mirror = toggled_on)
 	
 	start_new_battle_button.pressed.connect(load_random_map)
@@ -469,12 +470,18 @@ func get_scaled_collision_shape(mesh: Mesh, collision_scale: Vector3) -> Concave
 func on_orthographic_check_toggled(toggled_on: bool) -> void:
 	if toggled_on:
 		main_camera.projection = Camera3D.PROJECTION_ORTHOGONAL
+		main_camera.size = phantom_camera.spring_length * 12.0 / 8.0
 		phantom_camera.set_spring_length(200)
 		phantom_camera.set_collision_mask(0)
 	else:
 		main_camera.projection = Camera3D.PROJECTION_PERSPECTIVE
-		phantom_camera.set_spring_length(7)
+		phantom_camera.set_spring_length(main_camera.size * 8.0 / 12.0)
 		#phantom_camera.set_collision_mask(1)
+
+
+func update_phantom_camera_spring() -> void:
+	if main_camera.projection == Camera3D.PROJECTION_PERSPECTIVE:
+		phantom_camera.set_spring_length(main_camera.size * 8.0 / 12.0)
 
 
 func instantiate_map(map_idx: int, mirror_chunks: bool, offset: Vector3 = Vector3.ZERO) -> Node3D:

@@ -380,6 +380,7 @@ func process_clock_tick() -> void:
 							safe_to_load_map = true
 							return
 			safe_to_load_map = true
+			await get_tree().process_frame
 	
 	for unit: UnitData in units: # increment each units ct by speed
 		if not unit.current_statuses2.keys().any(func(status: StatusEffect): return status.freezes_ct): # check status that prevent ct gain (stop, sleep, etc.)
@@ -400,6 +401,7 @@ func process_clock_tick() -> void:
 					safe_to_load_map = true
 					return
 			safe_to_load_map = true
+			await get_tree().process_frame
 	
 	# TODO increment status ticks, delayed action ticks, and unit ticks in the same step, then order resolution?
 

@@ -148,12 +148,13 @@ func get_ai_score() -> int:
 		
 		var evade_direction: EvadeData.Directions = action.get_evade_direction(user, target)
 		var hit_chance_value: int = action.get_total_hit_chance(user, target, evade_direction)
-		#target_score = target_score * (hit_chance_value / 100.0)
+		hit_chance_value = clamp(hit_chance_value, 0, 100)
+		target_score = target_score * (hit_chance_value / 100.0)
 		
 		# TODO status scores
 		RomReader.battle_bin_data.ai_status_priorities
 		
-		ai_score += target_score
+		ai_score += roundi(target_score)
 		#push_warning(action.action_name + " " + str(preview_targets) + " " + str(ai_score))
 	
 	return ai_score

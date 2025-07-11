@@ -205,7 +205,7 @@ func add_units_to_map() -> void:
 	else: # use random teams
 		var generic_job_ids: Array[int] = []
 		generic_job_ids.assign(range(0x4a, 0x5a)) # generics
-		var special_characters: Array[int] = [0x01, 0x04, 0x05, 0x34] # ramzas, delita, agrias
+		var special_characters: Array[int] = [0x01, 0x04, 0x05, 0x34, 0x11] # ramzas, delita, agrias, gafgorian
 		var monster_jobs: Array[int] = []
 		monster_jobs.assign(range(0x5e, 0x8e)) # generic monsters
 		var special_monsters: Array[int] = [0x41, 0x49] # holy angel, arch angel
@@ -304,6 +304,12 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData
 		new_unit.equipped.clear() # prevent animation index out of bounds error from trying to animate shield evade on non-humanoid
 	else:
 		new_unit.set_primary_weapon(randi_range(0, 0x79)) # random weapon
+		
+		# units will start with the weapon type required for their skills
+		var unit_actions: Array[Action] = new_unit.get_skillset_actions()
+		if unit_actions.any(func(action: Action): return not action.required_equipment_type.is_empty()):
+			while not unit_actions.any(func(action: Action): return action.required_equipment_type.has(new_unit.primary_weapon.item_type)):
+				new_unit.set_primary_weapon(randi_range(0, 0x79)) # random weapon
 	
 	
 	new_unit.name = new_unit.job_nickname + "-" + new_unit.unit_nickname

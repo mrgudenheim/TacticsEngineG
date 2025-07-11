@@ -59,7 +59,7 @@ var death_counter: int = 3
 var zodiac = "Ares"
 
 var innate_ability_ids: PackedInt32Array = []
-var skillsets: Array = [ScusData.SkillsetData]
+var skillsets: Array[ScusData.SkillsetData] = []
 var reaction_abilities: Array = []
 var support_ability: Array = []
 var movement_ability: Array = []
@@ -376,11 +376,7 @@ func update_actions(battle_manager: BattleManager) -> void:
 	actions.append(move_action)
 	actions.append(attack_action)
 	
-	for skillset: ScusData.SkillsetData in skillsets:
-		for ability_id: int in skillset.action_ability_ids:
-			if ability_id != 0:
-				var new_action: Action = RomReader.abilities[ability_id].ability_action
-				actions.append(new_action)
+	actions.append_array(get_skillset_actions())
 	# TODO append all other potential actions, from jobs, equipment, etc.
 	
 	actions.append(wait_action)
@@ -396,6 +392,16 @@ func update_actions(battle_manager: BattleManager) -> void:
 		update_action_buttons(battle_manager)
 		
 		await select_first_action()
+
+
+func get_skillset_actions() -> Array[Action]:
+	var action_list: Array[Action] = []
+	for skillset: ScusData.SkillsetData in skillsets:
+		for ability_id: int in skillset.action_ability_ids:
+			if ability_id != 0:
+				var new_action: Action = RomReader.abilities[ability_id].ability_action
+				action_list.append(new_action)
+	return action_list
 
 
 func update_action_buttons(battle_manager: BattleManager) -> void:

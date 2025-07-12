@@ -24,6 +24,8 @@ enum Strategy {
 }
 
 func choose_action(unit: UnitData) -> void:
+	unit.global_battle_manager.game_state_label.text = unit.job_nickname + "-" + unit.unit_nickname + " AI choosing action"
+	
 	if Vector2i(floori(unit.char_body.position.x), floori(unit.char_body.position.z)) != unit.tile_position.location:
 		push_error("Unit position not equal to char body position")
 	

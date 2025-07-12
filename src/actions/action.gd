@@ -317,7 +317,7 @@ func apply_standard(action_instance: ActionInstance) -> void:
 			animate_evade(target_unit, evade_direction, action_instance.user.tile_position.location)
 			
 			target_unit.show_popup_text("Missed!") # TODO or "Guarded"
-			push_warning(action_name + " missed")
+			#push_warning(action_name + " missed")
 	
 	# apply effects to user
 	for effect: ActionEffect in user_effects:
@@ -539,7 +539,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.value_01 = formula_y / 100.0
 			target_effects[0].transfer_to_user = true
 		0x11:
 			pass

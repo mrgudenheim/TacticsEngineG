@@ -535,8 +535,8 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.MP))
-			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_MPxV1
+			target_effects[0].base_power_formula.value_01 = formula_y / 100.0
 			target_effects[0].transfer_to_user = true
 		0x10:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL

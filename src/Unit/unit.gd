@@ -468,9 +468,11 @@ func end_turn():
 	move_points_remaining = move_points_start
 	action_points_remaining = action_points_start
 	
-	if global_battle_manager.active_unit == self: # prevent accidentally ending a different units turn TODO what if the next turn is also this unit?
-		global_battle_manager.active_unit = null
-		turn_ended.emit()
+	if global_battle_manager.active_unit != self: # prevent accidentally ending a different units turn TODO what if the next turn is also this unit?
+		push_error(job_nickname + "-" + unit_nickname + " trying to end turn, but active unit is: " + global_battle_manager.active_unit.name)
+	global_battle_manager.active_unit = null
+	is_ending_turn = true
+	turn_ended.emit()
 
 
 func hp_changed(clamped_value: ClampedValue) -> void:

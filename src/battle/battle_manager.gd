@@ -359,6 +359,8 @@ func process_battle() -> void:
 
 # TODO implement action timeline
 func process_clock_tick() -> void:
+	game_state_label.text = "processing new clock tick"
+	
 	# increment status ticks
 	for unit: UnitData in units:
 		for status: StatusEffect in unit.current_statuses2.keys():
@@ -372,6 +374,7 @@ func process_clock_tick() -> void:
 						status_action_instance.submitted_targets.append(unit.tile_position) # TODO get targets for status action
 						status.action_on_complete.use(status_action_instance)
 						phantom_camera.follow_target = unit.char_body
+						game_state_label.text = unit.job_nickname + "-" + unit.unit_nickname + " processing " + status.status_effect_name + " ending"
 						await status_action_instance.action_completed
 						if check_end_conditions():
 							safe_to_load_map = true
@@ -380,6 +383,7 @@ func process_clock_tick() -> void:
 						#status.delayed_action.show_targets_highlights(status.delayed_action.preview_targets_highlights) # show submitted targets TODO retain preview highlight nodes?
 						#await unit.get_tree().create_timer(0.5).timeout
 						phantom_camera.follow_target = unit.char_body
+						game_state_label.text = unit.job_nickname + "-" + unit.unit_nickname + " processing delayed " + status.delayed_action.action.action_name
 						await status.delayed_action.use()
 						#await status.delayed_action.action_completed
 						if check_end_conditions():
@@ -402,7 +406,8 @@ func process_clock_tick() -> void:
 			if not unit.is_defeated:
 				if not unit.is_ai_controlled:
 					safe_to_load_map = true
-				await unit.turn_ended
+				while not unit.is_ending_turn:
+					await get_tree().process_frame
 				if check_end_conditions():
 					safe_to_load_map = true
 					return

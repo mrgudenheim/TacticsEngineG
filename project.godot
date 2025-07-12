@@ -21,6 +21,7 @@ PhantomCameraManager="*res://addons/phantom_camera/scripts/managers/phantom_came
 RomReader="*res://src/rom_reader.gd"
 Raycaster="*res://src/utilities/raycaster.gd"
 Utilities="*res://src/utilities/utilities.gd"
+SaveNodeAsScene="*res://src/utilities/scene_saver.gd"
 
 [display]
 

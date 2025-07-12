@@ -530,7 +530,25 @@ func instantiate_map(map_idx: int, mirror_chunks: bool, offset: Vector3 = Vector
 	if not map_data.is_initialized:
 		map_data.init_map()
 	
-	map_holder.add_child(get_map(map_data, offset, Vector3(1, 1, 1)))
+	var new_map: Map = get_map(map_data, offset, Vector3(1, 1, 1))
+	var map_name: String = map_data.file_name.trim_suffix(".GNS")
+	new_map.name = map_name
+	new_map.mesh.name = map_name
+	
+	
+	var imported_mesh = SaveNodeAsScene.import_gltf(new_map.mesh.name)
+	if imported_mesh != null:
+		new_map.mesh.queue_free()
+		new_map.add_child(imported_mesh)
+		#imported_mesh.scale.y = -1
+		imported_mesh.scale = imported_mesh.scale * 0.001
+		#new_map.mesh = imported_mesh
+		push_warning("Loaded external map: " + new_map.mesh.name + ".glb")
+	else:
+		SaveNodeAsScene.node_to_save = new_map.mesh
+		SaveNodeAsScene.save_scene()
+	
+	map_holder.add_child(new_map)
 	
 	if mirror_chunks and allow_mirror:
 		map_holder.add_child(get_map(map_data, offset, Vector3(1, 1, -1)))

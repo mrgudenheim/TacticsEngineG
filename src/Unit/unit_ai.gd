@@ -95,7 +95,7 @@ func choose_action(unit: UnitData) -> void:
 				unit.tile_position = potential_move
 				
 				for action_instance: ActionInstance in non_move_actions:
-					action_instance.potential_targets = action_instance.action.targeting_strategy.get_potential_targets(action_instance)
+					action_instance.potential_targets = await action_instance.action.targeting_strategy.get_potential_targets(action_instance)
 					for potential_target: TerrainTile in action_instance.potential_targets: # TODO handle ai score for auto targeting
 						#action_instance.tile_hovered.emit(potential_target, action_instance, simulated_input) # set preview targets
 						#action_instance.action.targeting_strategy.target_tile(potential_target, action_instance, simulated_input)

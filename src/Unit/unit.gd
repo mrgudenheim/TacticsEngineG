@@ -387,7 +387,9 @@ func update_actions(battle_manager: BattleManager) -> void:
 	for action: Action in actions:
 		var new_action_instance: ActionInstance = ActionInstance.new(action, self, battle_manager)
 		actions_data[action] = new_action_instance
-		await new_action_instance.update_potential_targets()
+		
+		if new_action_instance.is_usable():
+			await new_action_instance.update_potential_targets()
 		new_action_instance.action_completed.connect(update_actions)
 	
 	update_action_buttons(battle_manager)
@@ -470,9 +472,11 @@ func end_turn():
 	
 	if global_battle_manager.active_unit != self: # prevent accidentally ending a different units turn TODO what if the next turn is also this unit?
 		push_error(job_nickname + "-" + unit_nickname + " trying to end turn, but active unit is: " + global_battle_manager.active_unit.name)
-	global_battle_manager.active_unit = null
-	is_ending_turn = true
-	turn_ended.emit()
+		is_ending_turn = true
+	else:
+		global_battle_manager.active_unit = null
+		is_ending_turn = true
+		turn_ended.emit()
 
 
 func hp_changed(clamped_value: ClampedValue) -> void:

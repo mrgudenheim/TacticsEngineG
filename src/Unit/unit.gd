@@ -704,24 +704,29 @@ func animate_execute_action(animation_executing_id: int, vfx: VisualEffectData =
 func animate_take_hit(vfx: VisualEffectData = null) -> void:
 	set_base_animation_ptr_id(taking_damage_animation_id)
 	
-	if vfx != null:
-		await vfx.vfx_completed
-	else:
-		await get_tree().create_timer(0.5).timeout # TODO show based on vfx timing data?
-	
-	if current_animation_id_fwd == taking_damage_animation_id:
-		animate_return_to_idle()
+	#if vfx != null:
+		#await vfx.vfx_completed
+	#else:
+		#await get_tree().create_timer(0.5).timeout # TODO show based on vfx timing data?
+	#
+	#if current_animation_id_fwd == taking_damage_animation_id:
+		#animate_return_to_idle()
 
 
 func animate_recieve_heal(vfx: VisualEffectData = null) -> void:
 	set_base_animation_ptr_id(heal_animation_id)
 	
-	if vfx != null:
-		await vfx.vfx_completed
-	else:
-		await get_tree().create_timer(1).timeout # TODO show based on vfx timing data?
-	
-	if current_animation_id_fwd == heal_animation_id:
+	#if vfx != null:
+		#await vfx.vfx_completed
+	#else:
+		#await get_tree().create_timer(1).timeout # TODO show based on vfx timing data?
+	#
+	#if current_animation_id_fwd == heal_animation_id:
+		#animate_return_to_idle()
+
+
+func return_to_idle_from_hit() -> void:
+	if [taking_damage_animation_id, heal_animation_id].has(current_animation_id_fwd):
 		animate_return_to_idle()
 
 

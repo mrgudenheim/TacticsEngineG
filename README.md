@@ -1,4 +1,4 @@
-# [Click here for newest release](https://github.com/mrgudenheim/FFT-like-engine/releases)
+# [Click here for newest release](https://github.com/mrgudenheim/TacticsEngineG/releases)
 
 # About
 This engine is intended to create a game similar to Final Fantasy Tactics (FFT), including reading data from an FFT ROM
@@ -6,15 +6,13 @@ This engine is intended to create a game similar to Final Fantasy Tactics (FFT),
 
 Controls:
 
+Selection: Mouse
+
 WASD: Move
 
 Q/E: Rotate camera
 
 Space: Jump
-
-Right Click: Use ability (only Stasis Sword vfx work)
-
-Left Click: Attack (not implemented)
 
 Scroll Wheel: Zoom in/out
 

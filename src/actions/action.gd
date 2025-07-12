@@ -280,10 +280,13 @@ func apply_standard(action_instance: ActionInstance) -> void:
 	
 	# TODO show vfx, including rock, arrow, bolt...
 	
+	var vfx_completed: bool = true
 	# apply effects to targets
 	for target_unit: UnitData in target_units:
 		if vfx_data != null:
 			show_vfx(action_instance, target_unit.tile_position.get_world_position())
+			vfx_completed = false
+			vfx_data.vfx_completed.connect(func(): vfx_completed = true)
 		var evade_direction: EvadeData.Directions = get_evade_direction(action_instance.user, target_unit)
 		var hit_success: bool = randi_range(0, 99) < get_total_hit_chance(action_instance.user, target_unit, evade_direction)
 		if hit_success:
@@ -326,7 +329,9 @@ func apply_standard(action_instance: ActionInstance) -> void:
 	
 	# wait for applying effect animation
 	if vfx_data != null and target_units.size() > 0:
-		await vfx_data.vfx_completed
+		action_instance.user.global_battle_manager.game_state_label.text = "Waiting for " + action_name + " vfx" 
+		while not vfx_completed:
+			await action_instance.user.get_tree().process_frame
 	else:
 		await action_instance.user.get_tree().create_timer(0.5).timeout # TODO show based on vfx timing data? (attacks use vfx 0xFFFF?)
 	

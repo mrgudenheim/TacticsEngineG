@@ -374,19 +374,14 @@ func update_actions(battle_manager: BattleManager) -> void:
 		end_turn()
 		return
 	
+	if battle_manager.active_unit != self:
+		return
+	
 	# get possible actions
 	for action_instance: ActionInstance in actions_data.values():
 		action_instance.clear()
 	
-	actions.clear()
 	actions_data.clear()
-	actions.append(move_action)
-	actions.append(attack_action)
-	
-	actions.append_array(get_skillset_actions())
-	# TODO append all other potential actions, from jobs, equipment, etc.
-	
-	actions.append(wait_action)
 	
 	# show list UI for selecting an action TODO should action list be toggle/button group?
 	for action: Action in actions:
@@ -395,10 +390,20 @@ func update_actions(battle_manager: BattleManager) -> void:
 		await new_action_instance.update_potential_targets()
 		new_action_instance.action_completed.connect(update_actions)
 	
-	if battle_manager.active_unit == self:
-		update_action_buttons(battle_manager)
-		
-		await select_first_action()
+	update_action_buttons(battle_manager)
+	
+	await select_first_action()
+
+
+func set_available_actions() -> void:
+	actions.clear()
+	actions.append(move_action)
+	actions.append(attack_action)
+	
+	actions.append_array(get_skillset_actions())
+	# TODO append all other potential actions, from jobs, equipment, etc.
+	
+	actions.append(wait_action)
 
 
 func get_skillset_actions() -> Array[Action]:
@@ -870,6 +875,7 @@ func set_primary_weapon(new_weapon_id: int) -> void:
 		primary_weapon.wep_frame_palette, 0, 0, primary_weapon.wep_frame_v_offset, 0, animation_manager.wep_shp.file_name)
 	
 	attack_action = primary_weapon.weapon_attack_action
+	set_available_actions()
 	primary_weapon_assigned.emit(new_weapon_id)
 
 

@@ -24,6 +24,9 @@ enum Strategy {
 }
 
 func choose_action(unit: UnitData) -> void:
+	if Vector2i(floori(unit.char_body.position.x), floori(unit.char_body.position.z)) != unit.tile_position.location:
+		push_error("Unit position not equal to char body position")
+	
 	wait_action_instance = unit.actions_data[unit.wait_action]
 	
 	if strategy == Strategy.END_TURN:
@@ -116,7 +119,9 @@ func choose_action(unit: UnitData) -> void:
 			
 			unit.tile_position = original_tile
 			if unit.tile_position.location != original_tile_location:
-				push_warning("Unit position not reset during ai consideration")
+				push_error("Unit position not reset during ai consideration")
+			if Vector2i(floori(unit.char_body.position.x), floori(unit.char_body.position.z)) != unit.tile_position.location:
+				push_error("Unit position not equal to char body position")
 		
 		if best_move != null:
 			move_action_instance.start_targeting() # TODO refactor using actions with specific target

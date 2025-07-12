@@ -209,7 +209,7 @@ func add_units_to_map() -> void:
 		var special_characters: Array[int] = [0x01, 0x04, 0x05, 0x34, 0x11] # ramzas, delita, agrias, gafgorian
 		var monster_jobs: Array[int] = []
 		monster_jobs.assign(range(0x5e, 0x8e)) # generic monsters
-		var special_monsters: Array[int] = [0x41, 0x49] # holy angel, arch angel
+		var special_monsters: Array[int] = [0x41, 0x49, 0x3c, 0x3e, 0x40, 0x43, 0x45, 0x97] # holy angel, arch angel, gigas/warlock (Belias), angel of death, regulator (Hashmal), impure king (quakelin), ghost of fury (adremelk), serpentarious
 		
 		var team_1_job_ids: Array[int] = generic_job_ids
 		team_1_job_ids.append_array(special_characters)
@@ -219,12 +219,10 @@ func add_units_to_map() -> void:
 		
 		for random_unit: int in units_per_team:
 			var rand_job: int = team_1_job_ids.pick_random()
-			#var rand_job: int = randi_range(0x4a, 0x59) # generics, squire to ninja (not calculator, bard, dancer, mime)
-			#var rand_job: int = randi_range(0x01, 0x59) # special and generics, squire to ninja (not calculator, bard, dancer, mime)
 			while [0x2c, 0x31].has(rand_job): # prevent jobs without idle frames - 0x2c (Alma2) and 0x31 (Ajora) do not have walking frames
 				rand_job = randi_range(0x01, 0x8d)
 			var new_unit: UnitData = spawn_unit(get_random_stand_terrain_tile(), rand_job, team1)
-			#new_unit.is_ai_controlled = false
+			new_unit.is_ai_controlled = false
 		
 		for random_unit: int in units_per_team:
 			var rand_job: int = team_2_job_ids.pick_random()
@@ -232,6 +230,7 @@ func add_units_to_map() -> void:
 			while [0x2c, 0x31].has(rand_job): # prevent jobs without idle frames - 0x2c (Alma2) and 0x31 (Ajora) do not have walking frames
 				rand_job = randi_range(0x01, 0x8d)
 			var new_unit: UnitData = spawn_unit(get_random_stand_terrain_tile(), rand_job, team2)
+			#new_unit.is_ai_controlled = false
 	
 	await update_units_pathfinding()
 	

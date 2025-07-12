@@ -493,7 +493,7 @@ func display_vfx_animation(emitter_data, emitter_node: Node3D) -> void:
 			anim_location.position += (screen_space_offset_x + screen_space_offset_y) * MapData.SCALE # byte01 is actually the X movement in function 0x83, not the duration
 			continue
 		elif vfx_anim_frame.frameset_id >= frame_sets.size():
-			push_warning(file_name + " frameset_id: " + str(vfx_anim_frame.frameset_id))
+			push_warning(file_name + " frameset_id: " + str(vfx_anim_frame.frameset_id)) # TODO fix special frame_id codes, >= 0x80 (128)
 			continue
 		
 		# get composite frame

@@ -43,6 +43,7 @@ var current_tile_hover: TerrainTile
 @export var post_battle_messages: Control
 @export var start_new_battle_button: Button
 @export var active_unit: UnitData
+@export var game_state_label: Label
 @export var units_per_team_spinbox: SpinBox
 @export var units_per_team: int = 5:
 	get:
@@ -279,6 +280,9 @@ func add_test_teams_to_map() -> void:
 		spawn_unit(get_random_stand_terrain_tile(), specific_job, teams[0])
 	
 	units[3].set_primary_weapon(0x4a) # blaze gun
+	
+	for unit in units:
+		unit.is_ai_controlled = false
 
 
 func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData:

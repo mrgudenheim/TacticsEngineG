@@ -105,6 +105,8 @@ func get_tile_highlights(tiles: Array[TerrainTile], highlight_material: Material
 
 
 func start_targeting() -> void:
+	user.global_battle_manager.game_state_label.text = user.job_nickname + "-" + user.unit_nickname + " targeting " + action.action_name
+	
 	# cancel any current targeting
 	if is_instance_valid(user.active_action):
 		user.active_action.stop_targeting()

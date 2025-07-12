@@ -453,6 +453,8 @@ func end_turn():
 	#if UnitControllerRT.unit != self: # prevent accidentally ending a different units turn TODO what if the next turn is also this unit?
 		#return
 	
+	global_battle_manager.game_state_label.text = job_nickname + "-" + unit_nickname + " ending turn"
+	
 	if active_action != null:
 		active_action.clear()
 		active_action.stop_targeting()
@@ -477,8 +479,7 @@ func hp_changed(clamped_value: ClampedValue) -> void:
 
 func add_status(status: StatusEffect) -> void:
 	for status_immune: StatusEffect in immune_statuses: # prevent application based on immune statuses
-		if current_statuses2.keys().has(status_immune):
-			return
+		return
 	
 	for status_prevents: StatusEffect in status.status_cant_stack: # prevent application based on flags
 		if current_statuses2.keys().has(status_prevents):

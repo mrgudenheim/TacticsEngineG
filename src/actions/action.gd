@@ -284,9 +284,9 @@ func apply_standard(action_instance: ActionInstance) -> void:
 	# apply effects to targets
 	for target_unit: UnitData in target_units:
 		if vfx_data != null:
-			show_vfx(action_instance, target_unit.tile_position.get_world_position())
 			vfx_completed = false
-			vfx_data.vfx_completed.connect(func(): vfx_completed = true)
+			vfx_data.vfx_completed.connect(func(): vfx_completed = true, CONNECT_ONE_SHOT)
+			show_vfx(action_instance, target_unit.tile_position.get_world_position())
 		var evade_direction: EvadeData.Directions = get_evade_direction(action_instance.user, target_unit)
 		var hit_success: bool = randi_range(0, 99) < get_total_hit_chance(action_instance.user, target_unit, evade_direction)
 		if hit_success:

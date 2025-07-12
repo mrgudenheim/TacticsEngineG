@@ -377,6 +377,10 @@ func update_actions(battle_manager: BattleManager) -> void:
 	if battle_manager.active_unit != self:
 		return
 	
+	battle_manager.game_state_label.text = job_nickname + "-" + unit_nickname + " updating available actions"
+	
+	clear_action_buttons(battle_manager)
+	
 	# get possible actions
 	for action_instance: ActionInstance in actions_data.values():
 		action_instance.clear()
@@ -418,11 +422,12 @@ func get_skillset_actions() -> Array[Action]:
 	return action_list
 
 
-func update_action_buttons(battle_manager: BattleManager) -> void:
-	# remove any existing buttons
+func clear_action_buttons(battle_manager: BattleManager) -> void:
 	for child in battle_manager.action_button_list.get_children():
 		child.queue_free()
-	
+
+
+func update_action_buttons(battle_manager: BattleManager) -> void:
 	# show list UI for selecting an action TODO should action list be toggle/button group?
 	for action_instance: ActionInstance in actions_data.values():
 		var new_action_button: ActionButton = ActionButton.new(action_instance)
@@ -442,7 +447,7 @@ func select_first_action() -> void:
 	for action_instance: ActionInstance in actions_data.values():
 		if action_instance.is_usable() and action_instance.action != wait_action:
 			active_action = action_instance
-			await active_action.update_potential_targets()
+			#await active_action.update_potential_targets() # already initialized in update_actions
 			if not is_ai_controlled:
 				active_action.start_targeting()
 			break
@@ -474,6 +479,7 @@ func end_turn():
 	if global_battle_manager.active_unit != self: # prevent accidentally ending a different units turn TODO what if the next turn is also this unit?
 		push_error(job_nickname + "-" + unit_nickname + " trying to end turn, but active unit is: " + global_battle_manager.active_unit.name)
 	else:
+		clear_action_buttons(global_battle_manager)
 		global_battle_manager.active_unit = null
 		turn_ended.emit()
 

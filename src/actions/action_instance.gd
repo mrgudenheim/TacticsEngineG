@@ -270,7 +270,8 @@ func on_unit_hovered(unit: UnitData, event: InputEvent):
 
 
 func queue_use() -> void:
-	user.global_battle_manager.game_state_label.text = user.job_nickname + "-" + user.unit_nickname + " using " + action.action_name
+	battle_manager.game_state_label.text = user.job_nickname + "-" + user.unit_nickname + " using " + action.action_name
+	user.clear_action_buttons(battle_manager)
 	pay_action_point_costs()
 	face_target()
 	if action.ticks_charge_time > 0:

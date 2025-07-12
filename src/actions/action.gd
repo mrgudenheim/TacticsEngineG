@@ -336,7 +336,8 @@ func apply_standard(action_instance: ActionInstance) -> void:
 	action_instance.user.mp_current -= action_instance.action.mp_cost
 	
 	if ends_turn:
-		action_instance.user.end_turn()
+		action_instance.user.is_ending_turn = true
+		#action_instance.user.end_turn()
 	
 	action_instance.action_completed.emit(action_instance.battle_manager)
 

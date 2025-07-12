@@ -246,6 +246,7 @@ var actions_data: Dictionary[Action, ActionInstance] = {}
 @export var move_points_remaining: int = 1
 @export var action_points_start: int = 1
 @export var action_points_remaining: int = 1
+@export var is_ending_turn: bool = false
 
 @export var current_animation_id_fwd: int = 6 # set based on current action
 @export var current_idle_animation_id: int = 6 # set based on status (critical, knocked out, etc.)
@@ -360,6 +361,8 @@ func _process(_delta: float) -> void:
 
 
 func start_turn(battle_manager: BattleManager) -> void:
+	battle_manager.game_state_label.text = job_nickname + "-" + unit_nickname + " starting turn"
+	is_ending_turn = false
 	# set CT
 	stats[StatType.CT].add_value(-100)
 	
@@ -367,6 +370,10 @@ func start_turn(battle_manager: BattleManager) -> void:
 
 
 func update_actions(battle_manager: BattleManager) -> void:
+	if is_ending_turn:
+		end_turn()
+		return
+	
 	# get possible actions
 	for action_instance: ActionInstance in actions_data.values():
 		action_instance.clear()
@@ -462,8 +469,6 @@ func end_turn():
 func hp_changed(clamped_value: ClampedValue) -> void:
 	if stats[StatType.HP].current_value == 0:
 		add_status(RomReader.status_effects[2]) # add dead
-	#elif stats[StatType.HP].current_value != 0:
-		#remove_status(RomReader.status_effects[2]) # remove dead?
 	elif stats[StatType.HP].current_value < stats[StatType.HP].max_value / 5: # critical
 		add_status(RomReader.status_effects[23]) # add critical
 	elif stats[StatType.HP].current_value >= stats[StatType.HP].max_value / 5: # critical
@@ -479,7 +484,7 @@ func add_status(status: StatusEffect) -> void:
 		if current_statuses2.keys().has(status_prevents):
 			return
 	
-	current_statuses2[status] = status.duration # TODO check if other statuses prevent
+	current_statuses2[status] = status.duration
 	
 	for status_cancelled: StatusEffect in status.status_cancels:
 		if current_statuses2.keys().has(status_cancelled):

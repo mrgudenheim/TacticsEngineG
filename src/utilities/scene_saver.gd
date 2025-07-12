@@ -1,14 +1,7 @@
-@tool
 class_name SceneSaver
 extends Node3D
 
 @export var node_to_save: MeshInstance3D
-
-@export_tool_button("Save Node as Scene") var button: Callable
-
-
-func _ready() -> void:
-	button = save_scene
 
 
 func save_scene() -> void:

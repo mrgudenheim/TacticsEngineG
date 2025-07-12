@@ -129,11 +129,12 @@ func stop_targeting() -> void:
 func get_target_units(target_tiles: Array[TerrainTile]) -> Array[UnitData]:
 	var target_units: Array[UnitData] = []
 	for target_tile: TerrainTile in target_tiles:
-		var unit_index: int = battle_manager.units.find_custom(func(unit: UnitData): return unit.tile_position == target_tile)
-		if unit_index == -1:
-			continue
-		var target_unit: UnitData = battle_manager.units[unit_index]
-		target_units.append(target_unit)
+		var units_on_tile: Array[UnitData] = battle_manager.units.filter(func(unit: UnitData): return unit.tile_position == target_tile)
+		target_units.append_array(units_on_tile)
+		#if unit_index == -1:
+			#continue
+		#var target_unit: UnitData = battle_manager.units[unit_index]
+		#target_units.append(target_unit)
 	
 	return target_units
 
@@ -269,6 +270,7 @@ func on_unit_hovered(unit: UnitData, event: InputEvent):
 
 
 func queue_use() -> void:
+	user.global_battle_manager.game_state_label.text = user.job_nickname + "-" + user.unit_nickname + " using " + action.action_name
 	pay_action_point_costs()
 	face_target()
 	if action.ticks_charge_time > 0:

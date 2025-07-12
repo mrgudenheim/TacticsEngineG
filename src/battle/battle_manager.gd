@@ -408,6 +408,8 @@ func process_clock_tick() -> void:
 					safe_to_load_map = true
 				while not unit.is_ending_turn:
 					await get_tree().process_frame
+					if unit == null: # prevent error when loading map
+						return
 				if check_end_conditions():
 					safe_to_load_map = true
 					return

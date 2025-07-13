@@ -282,6 +282,7 @@ func add_test_teams_to_map() -> void:
 		#0x65, # grenade
 		#0x67, # panther
 		#0x76, # juravis
+		#0x4a, # squire
 		0x50, # black mage
 		0x4f, # white mage
 		0x52, # summoner
@@ -308,9 +309,15 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData
 	new_unit.set_job_id(job_id)
 	if range(0x4a, 0x5e).has(job_id):
 		new_unit.set_sprite_palette(range(0,5).pick_random())
+	new_unit.generate_raw_stats(new_unit.stat_basis)
+	var level: int = 40
+	new_unit.level = level
+	new_unit.generate_leveled_stats(level, new_unit.job_data)
+	new_unit.generate_battle_stats(new_unit.job_data)
+	
 	controller.camera_rotated.connect(new_unit.char_body.set_rotation_degrees) # have sprite update as camera rotates
 	
-	new_unit.icon.texture = RomReader.frame_bin_texture
+	new_unit.icon.texture = RomReader.frame_bin_texture # TODO clean up status icon stuff
 	new_unit.icon2.texture = RomReader.frame_bin_texture
 	
 	new_unit.primary_weapon_assigned.connect(func(weapon_id: int): new_unit.update_actions(self))

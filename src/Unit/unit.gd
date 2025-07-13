@@ -45,6 +45,7 @@ var is_defeated: bool:
 
 var character_id: int = 0
 var unit_index_formation: int = 0
+var stat_basis: StatBasis = StatBasis.MALE
 var job_id: int = 0
 var job_data: JobData
 var sprite_palette_id: int = 0
@@ -82,6 +83,13 @@ class EquipmentSlot:
 		slot_types = new_slot_types
 		item = new_item
 
+enum StatBasis {
+	MALE,
+	FEMALE,
+	OTHER,
+	MONSTER,
+}
+
 enum StatType {
 	HP,
 	HP_MAX,
@@ -116,70 +124,92 @@ var stats: Dictionary[StatType, ClampedValue] = {
 	StatType.LEVEL : ClampedValue.new(0, 99, 20),
 }
 
+var stats_raw: Dictionary[StatType, float] = {
+	StatType.HP_MAX : 0.0, 
+	StatType.MP_MAX : 0.0, 
+	StatType.SPEED : 0.0, 
+	StatType.PHYSICAL_ATTACK : 0.0, 
+	StatType.MAGIC_ATTACK : 0.0, 
+}
+
 
 var unit_exp: int = 0:
 	get:
-		return stats[UnitData.StatType.EXP].current_value
+		return stats[StatType.EXP].current_value
 var level: int = 0:
 	get:
-		return stats[UnitData.StatType.LEVEL].current_value
+		return stats[StatType.LEVEL].current_value
 
 var brave_base: int = 70
 var brave_current: int = 70:
 	get:
-		return stats[UnitData.StatType.BRAVE].modified_value
+		return stats[StatType.BRAVE].modified_value
 var faith_base: int = 70
 var faith_current: int = 70:
 	get:
-		return stats[UnitData.StatType.FAITH].modified_value
+		return stats[StatType.FAITH].modified_value
 
 var ct_current: int = 0:
 	get:
-		return stats[UnitData.StatType.CT].current_value
+		return stats[StatType.CT].current_value
 var ct_max: int = 100
 
-var hp_base: int = 100
+var hp_max_base: int = 100:
+	get:
+		return stats[StatType.HP_MAX].base_value
 var hp_max: int = 100:
 	get:
-		return stats[UnitData.StatType.HP_MAX].modified_value
+		return stats[StatType.HP_MAX].modified_value
 var hp_current: int = 70:
 	get:
-		return stats[UnitData.StatType.HP].current_value
-var mp_base: int = 100
+		return stats[StatType.HP].current_value
+var mp_max_base: int = 100:
+	get:
+		return stats[StatType.MP_MAX].base_value
 var mp_max: int = 100:
 	get:
-		return stats[UnitData.StatType.MP_MAX].modified_value
+		return stats[StatType.MP_MAX].modified_value
 var mp_current: int = 70:
 	get:
-		return stats[UnitData.StatType.MP].current_value
+		return stats[StatType.MP].current_value
 
-var physical_attack_base: int = 5
+var physical_attack_base: int = 5:
+	get:
+		return stats[StatType.PHYSICAL_ATTACK].base_value
 var physical_attack_current: int = 5:
 	get:
-		return stats[UnitData.StatType.PHYSICAL_ATTACK].modified_value
-var magical_attack_base: int = 5
+		return stats[StatType.PHYSICAL_ATTACK].modified_value
+var magical_attack_base: int = 5:
+	get:
+		return stats[StatType.MAGIC_ATTACK].base_value
 var magical_attack_current: int = 5:
 	get:
-		return stats[UnitData.StatType.MAGIC_ATTACK].modified_value
-var speed_base: int = 5
+		return stats[StatType.MAGIC_ATTACK].modified_value
+var speed_base: int = 5:
+	get:
+		return stats[StatType.SPEED].base_value
 var speed_current: int = 5:
 	get:
-		return stats[UnitData.StatType.SPEED].modified_value
-var move_base: int = 5
+		return stats[StatType.SPEED].modified_value
+var move_base: int = 5:
+	get:
+		return stats[StatType.MOVE].base_value
 var move_current: int = 5:
 	get:
-		return stats[UnitData.StatType.MOVE].modified_value
-var jump_base: int = 5
+		return stats[StatType.MOVE].modified_value
+var jump_base: int = 5:
+	get:
+		return stats[StatType.JUMP].base_value
 var jump_current: int = 3:
 	get:
-		return stats[UnitData.StatType.JUMP].modified_value
+		return stats[StatType.JUMP].modified_value
 
 var always_statuses: Array[StatusEffect] = []
 var immune_statuses: Array[StatusEffect] = []
 var current_statuses: Array[StatusEffect] = [] # Status may have a corresponding CT countdown?
 var current_statuses2: Dictionary[StatusEffect, int] = {}
 var current_statuses3: Array[CurrentStatusData] = [] # could allow for stacking statuses (2 poisons, 2 charging actions, etc.)
-class CurrentStatusData: 
+class CurrentStatusData: # TODO clean up unit status stuff
 	var status: StatusEffect
 	var status_ct: int
 
@@ -358,6 +388,56 @@ func _process(_delta: float) -> void:
 		#debug_menu.anim_id_spin.value = idle_animation
 	
 	set_base_animation_ptr_id(current_animation_id_fwd)
+
+
+func generate_leveled_stats(final_level: int, job: JobData) -> void:
+	for curent_level: int in range(1, final_level + 1):
+		grow_raw_stats(curent_level, job)
+
+
+func generate_raw_stats(stat_basis_to_use: StatBasis) -> void:
+	stats_raw[StatType.HP_MAX] = generate_raw_stat(0, stat_basis_to_use)
+	stats_raw[StatType.MP_MAX] = generate_raw_stat(1, stat_basis_to_use)
+	stats_raw[StatType.SPEED] = generate_raw_stat(2, stat_basis_to_use)
+	stats_raw[StatType.PHYSICAL_ATTACK] = generate_raw_stat(3, stat_basis_to_use)
+	stats_raw[StatType.MAGIC_ATTACK] = generate_raw_stat(4, stat_basis_to_use)
+
+# TODO is this correct for MONSTERs?
+func generate_raw_stat(stat_idx: int, stat_basis_to_use: StatBasis) -> int:
+	var raw_stat: int = RomReader.scus_data.unit_base_datas[stat_basis_to_use][stat_idx] * 16384
+	raw_stat += randi_range(0, RomReader.scus_data.unit_base_stats_mods[stat_basis_to_use][stat_idx] * 16384)
+	return raw_stat
+
+
+func grow_raw_stats(current_level: int, current_job: JobData) -> void:
+	stats_raw[StatType.HP_MAX] += stats_raw[StatType.HP_MAX] / (current_job.hp_growth + current_level)
+	stats_raw[StatType.MP_MAX] += stats_raw[StatType.MP_MAX] / (current_job.mp_growth + current_level)
+	stats_raw[StatType.SPEED] += stats_raw[StatType.SPEED] / (current_job.speed_growth + current_level)
+	stats_raw[StatType.PHYSICAL_ATTACK] += stats_raw[StatType.PHYSICAL_ATTACK] / (current_job.pa_growth + current_level)
+	stats_raw[StatType.MAGIC_ATTACK] += stats_raw[StatType.MAGIC_ATTACK] / (current_job.ma_growth + current_level)
+
+# TODO is this correct for MONSTERs?
+func generate_battle_stats(current_job: JobData) -> void:
+	stats[StatType.HP_MAX].base_value = stats_raw[StatType.HP_MAX] * current_job.hp_multiplier / 0x190000
+	stats[StatType.HP_MAX].set_value(stats[StatType.HP_MAX].base_value)
+	
+	stats[StatType.MP_MAX].base_value = stats_raw[StatType.MP_MAX] * current_job.mp_multiplier / 0x190000
+	stats[StatType.MP_MAX].set_value(stats[StatType.MP_MAX].base_value)
+	
+	stats[StatType.SPEED].base_value = stats_raw[StatType.SPEED] * current_job.speed_multiplier / 0x190000
+	stats[StatType.SPEED].set_value(stats[StatType.SPEED].base_value)
+	
+	stats[StatType.PHYSICAL_ATTACK].base_value = stats_raw[StatType.PHYSICAL_ATTACK] * current_job.pa_multiplier / 0x190000
+	stats[StatType.PHYSICAL_ATTACK].set_value(stats[StatType.PHYSICAL_ATTACK].base_value)
+	
+	stats[StatType.MAGIC_ATTACK].base_value = stats_raw[StatType.MAGIC_ATTACK] * current_job.ma_multiplier / 0x190000
+	stats[StatType.MAGIC_ATTACK].set_value(stats[StatType.MAGIC_ATTACK].base_value)
+	
+	stats[StatType.MOVE].base_value = current_job.move
+	stats[StatType.MOVE].set_value(stats[StatType.MOVE].base_value)
+	
+	stats[StatType.JUMP].base_value = current_job.jump
+	stats[StatType.JUMP].set_value(stats[StatType.JUMP].base_value)
 
 
 func start_turn(battle_manager: BattleManager) -> void:
@@ -858,6 +938,11 @@ func set_job_id(new_job_id: int) -> void:
 	set_sprite_by_id(job_data.sprite_id)
 	if job_id >= 0x5e: # monster
 		set_sprite_palette(job_data.monster_palette_id)
+		stat_basis = StatBasis.MONSTER
+	else:
+		stat_basis = [StatBasis.MALE, StatBasis.FEMALE].pick_random()
+		if job_id >= 0x4a and job_id <= 0x5a and stat_basis == StatBasis.FEMALE:
+			set_sprite_palette(job_data.monster_palette_id + 1)
 	
 	skillsets.clear()
 	skillsets.append(RomReader.scus_data.skillsets_data[job_data.skillset_id])

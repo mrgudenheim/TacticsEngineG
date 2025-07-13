@@ -68,20 +68,25 @@ var movement_ability: Array = []
 var primary_weapon: ItemData
 var equipped: Array[ItemData] = []
 var equip_slots: Array[EquipmentSlot] = [
-	EquipmentSlot.new([ItemData.SlotType.WEAPON, ItemData.SlotType.SHIELD]),
-	EquipmentSlot.new([ItemData.SlotType.WEAPON, ItemData.SlotType.SHIELD]),
-	EquipmentSlot.new([ItemData.SlotType.HEADGEAR]),
-	EquipmentSlot.new([ItemData.SlotType.ARMOR]),
-	EquipmentSlot.new([ItemData.SlotType.ACCESSORY]),
+	EquipmentSlot.new("RH", [ItemData.SlotType.WEAPON, ItemData.SlotType.SHIELD]),
+	EquipmentSlot.new("LH", [ItemData.SlotType.WEAPON, ItemData.SlotType.SHIELD]),
+	EquipmentSlot.new("Head", [ItemData.SlotType.HEADGEAR]),
+	EquipmentSlot.new("Body", [ItemData.SlotType.ARMOR]),
+	EquipmentSlot.new("Accesory", [ItemData.SlotType.ACCESSORY]),
 ]
 
 class EquipmentSlot:
+	var equipment_slot_name: String = "[Equipment Slot]"
 	var slot_types: Array[ItemData.SlotType] = []
 	var item: ItemData = RomReader.items[0]
 	
-	func _init(new_slot_types: Array[ItemData.SlotType] = [], new_item: ItemData = RomReader.items[0]) -> void:
+	func _init(new_name: String = "", new_slot_types: Array[ItemData.SlotType] = [], new_item: ItemData = RomReader.items[0]) -> void:
+		equipment_slot_name = new_name
 		slot_types = new_slot_types
 		item = new_item
+	
+	func _to_string() -> String:
+		return equipment_slot_name + ": " + item.name
 
 enum StatBasis {
 	MALE,

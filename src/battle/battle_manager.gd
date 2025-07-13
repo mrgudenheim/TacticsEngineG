@@ -186,6 +186,9 @@ func on_map_selected(index: int) -> void:
 	push_warning("Map_created")
 	
 	add_units_to_map()
+	phantom_camera.follow_target = units[0].char_body
+	controller.unit = units[0]
+	controller.rotate_camera(1) # HACK workaround for bug where controls are off until camera is rotated
 	
 	battle_is_running = true
 	process_battle()
@@ -263,13 +266,6 @@ func add_test_teams_to_map() -> void:
 	var new_unit: UnitData = spawn_unit(random_tile, 0x05, teams[0]) # 0x05 is Delita holy knight
 	new_unit.is_ai_controlled = false
 	new_unit.set_primary_weapon(0x1d) # ice brand
-	
-	# set up character controller
-	controller.unit = new_unit
-	#controller.velocity_set.connect(controller.unit.update_unit_facing)
-	phantom_camera.follow_target = new_unit.char_body
-	controller.rotate_camera(1) # HACK workaround for bug where controls are off until camera is rotated
-	#controller.rotate_phantom_camera(Vector3(-26.54, 45, 0))
 	
 	# add non-player unit
 	var new_unit2: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x07, teams[1]) # 0x07 is Algus

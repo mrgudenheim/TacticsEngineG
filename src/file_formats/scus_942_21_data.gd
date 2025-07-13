@@ -163,6 +163,17 @@ var inflict_status_entries: int = 0x80
 var inflict_status_entry_length: int = 0x06
 var inflict_statuses: Array[InflictStatus] = []
 
+# unit base data https://ffhacktics.com/wiki/Out_of_Battle_Unit_Generation
+var unit_base_data_start: int = 0x5e90c - 0xf800
+var unit_base_data_entries: int = 4 # male, female, Ramza, monster
+var unit_base_data_length: int = 0x0b # hp, mp, sp, pa, ma, helmet, armor, accessory, RH weapon, RH shield, LH weapon, LH shield
+var unit_base_datas: Array[PackedInt32Array] = []
+# unit base stat random mod
+var unit_base_stats_mod_start: int = 0x5e93c - 0xf800
+var unit_base_stats_mod_entries: int = 4
+var unit_base_stats_mod_length: int = 0x05 # hp, mp, sp, pa, ma
+var unit_base_stats_mods: Array[PackedInt32Array] = []
+
 func init_from_scus() -> void:
 	var scus_bytes: PackedByteArray = RomReader.get_file_data("SCUS_942.21")
 	
@@ -388,3 +399,23 @@ func init_from_scus() -> void:
 		var new_item_attribute: ItemAttribute = ItemAttribute.new()
 		new_item_attribute.set_data(new_item_attribute_bytes)
 		item_attributes[id] = new_item_attribute
+	
+	# unit base data https://ffhacktics.com/wiki/Out_of_Battle_Unit_Generation
+	# https://ffhacktics.com/wiki/Generate_Unit%27s_Base_Raw_Stats
+	var unit_base_data_bytes: PackedByteArray = scus_bytes.slice(unit_base_data_start, unit_base_data_start + (unit_base_data_entries * unit_base_data_length))
+	unit_base_datas.resize(unit_base_data_entries)
+	for idx: int in unit_base_data_entries:
+		var unit_base_data: PackedInt32Array = []
+		unit_base_data.resize(unit_base_data_length)
+		for byte_idx: int in unit_base_data_length:
+			unit_base_data[byte_idx] = unit_base_data_bytes.decode_u8(byte_idx)
+		unit_base_datas[idx] = unit_base_data
+	
+	var unit_base_stats_mod_bytes: PackedByteArray = scus_bytes.slice(unit_base_stats_mod_start, unit_base_stats_mod_start + (unit_base_stats_mod_entries * unit_base_stats_mod_length))
+	unit_base_stats_mods.resize(unit_base_stats_mod_entries)
+	for idx: int in unit_base_stats_mod_entries:
+		var unit_stat_mods_data: PackedInt32Array = []
+		unit_stat_mods_data.resize(unit_base_stats_mod_length)
+		for byte_idx: int in unit_base_stats_mod_length:
+			unit_stat_mods_data[byte_idx] = unit_base_stats_mod_bytes.decode_u8(byte_idx)
+		unit_base_stats_mods[idx] = unit_stat_mods_data

@@ -50,6 +50,13 @@ var current_tile_hover: TerrainTile
 	set(value):
 		units_per_team_spinbox.value = value
 		units_per_team_spinbox.value_changed.emit(value)
+@export var units_level_spinbox: SpinBox
+@export var units_level: int = 40:
+	get:
+		return units_level_spinbox.value
+	set(value):
+		units_level_spinbox.value = value
+		units_level_spinbox.value_changed.emit(value)
 
 var event_num: int = 0 # TODO handle event timeline
 
@@ -310,7 +317,7 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData
 	if range(0x4a, 0x5e).has(job_id):
 		new_unit.set_sprite_palette(range(0,5).pick_random())
 	new_unit.generate_raw_stats(new_unit.stat_basis)
-	var level: int = 40
+	var level: int = units_level
 	new_unit.stats[UnitData.StatType.LEVEL].set_value(level)
 	new_unit.generate_leveled_stats(level, new_unit.job_data)
 	new_unit.generate_battle_stats(new_unit.job_data)

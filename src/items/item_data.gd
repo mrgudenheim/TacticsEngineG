@@ -56,6 +56,7 @@ var weapon_is_arc: bool = false
 @export var mp_modifier: int = 0
 
 # attribute data
+var stat_modifiers: Dictionary[UnitData.StatType, Modifier] = {}
 @export var pa_modifier: int = 0
 @export var ma_modifier: int = 0
 @export var sp_modifier: int = 0
@@ -297,6 +298,9 @@ func _init(idx: int = 0) -> void:
 		sub_index = idx - 0x90
 		hp_modifier = RomReader.scus_data.armour_hp_modifier[sub_index]
 		mp_modifier = RomReader.scus_data.armour_mp_modifier[sub_index]
+		stat_modifiers[UnitData.StatType.HP_MAX] = Modifier.new(hp_modifier)
+		stat_modifiers[UnitData.StatType.MP_MAX] = Modifier.new(mp_modifier)
+		
 	elif idx < 0xf0: # accessory data
 		sub_index = idx - 0xd0
 		accessory_physical_evade = RomReader.scus_data.accessory_physical_evade[sub_index]
@@ -309,6 +313,11 @@ func _init(idx: int = 0) -> void:
 		consumable_formula_id = RomReader.scus_data.chem_item_formula_id[sub_index]
 		consumable_item_z = RomReader.scus_data.chem_item_z[sub_index]
 		consumable_inflict_status_id = RomReader.scus_data.chem_item_inflict_status_id[sub_index]
+	
+	# remove empty modifiers
+	for key: UnitData.StatType in stat_modifiers.keys():
+		if stat_modifiers[key].value == 0:
+			stat_modifiers.erase(key)
 
 
 func set_item_attributes(item_attribute: ScusData.ItemAttribute) -> void:
@@ -317,6 +326,13 @@ func set_item_attributes(item_attribute: ScusData.ItemAttribute) -> void:
 	sp_modifier = item_attribute.sp_modifier
 	move_modifier = item_attribute.move_modifier
 	jump_modifier = item_attribute.jump_modifier
+	
+	stat_modifiers[UnitData.StatType.PHYSICAL_ATTACK] = Modifier.new(item_attribute.pa_modifier)
+	stat_modifiers[UnitData.StatType.MAGIC_ATTACK] = Modifier.new(item_attribute.ma_modifier)
+	stat_modifiers[UnitData.StatType.SPEED] = Modifier.new(item_attribute.sp_modifier)
+	stat_modifiers[UnitData.StatType.MOVE] = Modifier.new(item_attribute.move_modifier)
+	stat_modifiers[UnitData.StatType.JUMP] = Modifier.new(item_attribute.jump_modifier)
+	
 	status_always = item_attribute.status_always
 	status_immune = item_attribute.status_immune
 	status_start = item_attribute.status_start

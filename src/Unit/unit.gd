@@ -464,6 +464,15 @@ func generate_equipment() -> void:
 	equip_slots[4].item = get_slot_item(ItemData.SlotType.ACCESSORY, level) # accessory
 	
 	set_primary_weapon(equip_slots[0].item.id)
+	
+	update_equipment_modifiers()
+
+
+func update_equipment_modifiers() -> void:
+	for slot: EquipmentSlot in equip_slots:
+		for stat_type: StatType in slot.item.stat_modifiers.keys():
+			stats[stat_type].modifiers.append(slot.item.stat_modifiers[stat_type])
+	
 
 
 func get_slot_item(slot_type: ItemData.SlotType, item_level: int) -> ItemData:

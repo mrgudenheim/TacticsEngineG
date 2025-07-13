@@ -13,37 +13,6 @@ var modified_value: int: # typically used for stats that are modified from other
 
 var modifiers: Array[Modifier] = []
 
-enum ModifierType {
-	ADD,
-	MULT,
-	SET,
-}
-
-
-class Modifier:
-	var type: ModifierType = ModifierType.ADD
-	var value: float = 1.0
-	var priority: int = 1 # order to be applied
-	# TODO track modifier source?
-	
-	func _init(new_value: float = 1.0, new_type: ModifierType = ModifierType.ADD, new_priority: int = 1) -> void:
-		value = new_value
-		type = new_type
-		priority = new_priority
-	
-	
-	func apply(to_value: int) -> int:
-		match type:
-			ModifierType.ADD:
-				return roundi(to_value + value)
-			ModifierType.MULT:
-				return roundi(to_value * value)
-			ModifierType.SET:
-				return roundi(value)
-			_:
-				push_warning("Modifier type unknown: " + str(type))
-				return -1
-
 
 func _init(new_min_value: int = 0, new_max_value: int = 100, new_current_value: int = 50) -> void:
 	min_value = new_min_value
@@ -54,7 +23,7 @@ func _init(new_min_value: int = 0, new_max_value: int = 100, new_current_value: 
 func get_unclampped_modified_value(preview_value: int = current_value) -> int:
 	var temp_modified_value: int = preview_value
 	for modifier: Modifier in modifiers:
-		modifier.apply(temp_modified_value) # TODO sort by add, mult, set
+		temp_modified_value = modifier.apply(temp_modified_value) # TODO sort by add, mult, set
 	
 	return temp_modified_value
 

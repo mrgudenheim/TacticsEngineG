@@ -471,11 +471,13 @@ func get_slot_item(slot_type: ItemData.SlotType, item_level: int) -> ItemData:
 	valid_items.assign(RomReader.items.filter(func(item: ItemData): 
 		var slot_type_is_valid: bool = item.slot_type == slot_type
 		var level_is_valid: bool = item.min_level <= item_level
-		var type_is_valid: bool = job_data.equippable_item_types.has(item.item_type)
+		var type_is_valid: bool = job_data.equippable_item_types.has(item.item_type) # TODO allow forcing specifc type based on ability requirements
 		return slot_type_is_valid and level_is_valid and type_is_valid))
 	var item: ItemData = RomReader.items[0]
 	if not valid_items.is_empty():
-		item = valid_items.pick_random()
+		valid_items.sort_custom(func(item_a: ItemData, item_b: ItemData): return item_a.min_level > item_b.min_level)
+		item = valid_items[0] # pick highest level item
+		#item = valid_items.pick_random()
 	return item
 
 

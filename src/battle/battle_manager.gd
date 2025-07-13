@@ -311,7 +311,7 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData
 		new_unit.set_sprite_palette(range(0,5).pick_random())
 	new_unit.generate_raw_stats(new_unit.stat_basis)
 	var level: int = 40
-	new_unit.level = level
+	new_unit.stats[UnitData.StatType.LEVEL].set_value(level)
 	new_unit.generate_leveled_stats(level, new_unit.job_data)
 	new_unit.generate_battle_stats(new_unit.job_data)
 	new_unit.generate_equipment()

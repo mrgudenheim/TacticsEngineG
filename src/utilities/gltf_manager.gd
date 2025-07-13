@@ -1,10 +1,8 @@
 class_name GltfManager
 extends Node3D
 
-@export var node_to_save: MeshInstance3D
 
-
-func save_scene() -> void:
+func save_node(node_to_save: Node) -> void:
 	node_to_save.material_override = null
 	
 	var directory: String = "user://overrides/MAP/"

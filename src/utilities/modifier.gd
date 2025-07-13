@@ -1,4 +1,5 @@
 class_name Modifier
+extends RefCounted
 
 enum ModifierType {
 	ADD,

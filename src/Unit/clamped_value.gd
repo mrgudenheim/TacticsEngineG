@@ -91,5 +91,10 @@ func set_min_value(new_min_value: int) -> int:
 	return delta_current
 
 
+func add_modifier(new_modifier: Modifier) -> void:
+	modifiers.append(new_modifier)
+	changed.emit(self)
+
+
 func update_max_from_clamped_value(max_value: ClampedValue):
 	set_max_value(max_value.get_modified_value())

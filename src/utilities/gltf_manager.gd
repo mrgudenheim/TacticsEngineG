@@ -1,4 +1,4 @@
-class_name SceneSaver
+class_name GltfManager
 extends Node3D
 
 @export var node_to_save: MeshInstance3D

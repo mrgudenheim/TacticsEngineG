@@ -6,7 +6,7 @@ var job_id = 0
 var job_name: String = "Job Name"
 var skillset_id: int = 0
 var innate_abilities: PackedInt32Array = []
-# equippable items # 4 bytes of bitflags, 32 total
+var equippable_item_types: Array[ItemData.ItemType] # 4 bytes of bitflags, 32 total
 var hp_growth: int = 1
 var mp_growth: int = 1
 var speed_growth: int = 1
@@ -60,7 +60,14 @@ func _init(new_job_id: int, job_bytes: PackedByteArray) -> void:
 		if innate_id != 0:
 			innate_abilities.append(innate_id) # TODO define non-action abilities
 	
-	# TODO job equippable types
+	# equippable item types
+	var equipable_bytes: PackedByteArray = job_bytes.slice(0x09, 0x0d)
+	for byte_idx: int in equipable_bytes.size():
+		var equipable_byte: int = equipable_bytes.decode_u8(byte_idx)
+		for bit_idx: int in 8:
+			var reverse_idx: int = 7 - bit_idx
+			if equipable_byte & (2 ** reverse_idx) == (2 ** reverse_idx):
+				equippable_item_types.append((byte_idx * 8) + bit_idx)
 	
 	hp_growth = job_bytes.decode_u8(0x0d)
 	mp_growth = job_bytes.decode_u8(0x0f)

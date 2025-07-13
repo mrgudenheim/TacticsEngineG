@@ -314,6 +314,7 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData
 	new_unit.level = level
 	new_unit.generate_leveled_stats(level, new_unit.job_data)
 	new_unit.generate_battle_stats(new_unit.job_data)
+	new_unit.generate_equipment()
 	
 	controller.camera_rotated.connect(new_unit.char_body.set_rotation_degrees) # have sprite update as camera rotates
 	

@@ -73,7 +73,7 @@ var equip_slots: Array[EquipmentSlot] = [
 	EquipmentSlot.new([ItemData.SlotType.HEADGEAR]),
 	EquipmentSlot.new([ItemData.SlotType.ARMOR]),
 	EquipmentSlot.new([ItemData.SlotType.ACCESSORY]),
-	]
+]
 
 class EquipmentSlot:
 	var slot_types: Array[ItemData.SlotType] = []
@@ -214,8 +214,8 @@ class CurrentStatusData: # TODO clean up unit status stuff
 	var status_ct: int
 
 var learned_abilities: Array = []
-var job_levels
-var job_jp
+var job_levels: Dictionary[JobData, int] = {}
+var job_jp: Dictionary[JobData, int] = {}
 
 var charging_abilities_ids: PackedInt32Array = []
 var charging_abilities_remaining_ct: PackedInt32Array = [] # TODO this should be tracked per ability?
@@ -446,6 +446,32 @@ func generate_battle_stats(current_job: JobData) -> void:
 	
 	stats[StatType.JUMP].base_value = current_job.jump
 	stats[StatType.JUMP].set_value(stats[StatType.JUMP].base_value)
+
+# TODO generate equipment https://ffhacktics.com/wiki/Calculate/Store_ENTD_Unit_Equipment
+func generate_equipment() -> void:
+	#if not ["TYPE1.SEQ", "TYPE3.SEQ"].has(animation_manager.global_seq.file_name): # monsters don't have equipment
+		#return
+	
+	equip_slots[0].item = get_slot_item(ItemData.SlotType.WEAPON, level) # RH
+	equip_slots[1].item = get_slot_item(ItemData.SlotType.SHIELD, level) # LH
+	equip_slots[2].item = get_slot_item(ItemData.SlotType.HEADGEAR, level) # headgear
+	equip_slots[3].item = get_slot_item(ItemData.SlotType.ARMOR, level) # armor
+	equip_slots[4].item = get_slot_item(ItemData.SlotType.ACCESSORY, level) # accessory
+	
+	set_primary_weapon(equip_slots[0].item.id)
+
+
+func get_slot_item(slot_type: ItemData.SlotType, item_level: int) -> ItemData:
+	var valid_items: Array[ItemData] = []
+	valid_items.assign(RomReader.items.filter(func(item: ItemData): 
+		var slot_type_is_valid: bool = item.slot_type == slot_type
+		var level_is_valid: bool = item.min_level <= item_level
+		var type_is_valid: bool = job_data.equippable_item_types.has(item.item_type)
+		return slot_type_is_valid and level_is_valid and type_is_valid))
+	var item: ItemData = RomReader.items[0]
+	if not valid_items.is_empty():
+		item = valid_items.pick_random()
+	return item
 
 
 func start_turn(battle_manager: BattleManager) -> void:

@@ -5,26 +5,15 @@ extends Node3D
 
 
 func save_scene() -> void:
-	var scene = PackedScene.new()
-	scene.pack(node_to_save)
-	
 	node_to_save.material_override = null
 	
 	var directory: String = "user://overrides/MAP/"
 	DirAccess.make_dir_recursive_absolute(directory)
-	
 	var file_name: String = node_to_save.name
-	
-	#ResourceSaver.save(scene, directory + "MyScene.tscn")
-	
 	var gltf_state: GLTFState = GLTFState.new()
 	var gltf_document: GLTFDocument = GLTFDocument.new()
 	
 	gltf_document.append_from_scene(node_to_save, gltf_state)
-	
-	#var extension: String = ".gltf"
-	#gltf_document.write_to_filesystem(gltf_state, directory + file_name + extension)
-	
 	var extension: String = ".glb"
 	gltf_document.write_to_filesystem(gltf_state, directory + file_name + extension)
 	
@@ -33,12 +22,7 @@ func save_scene() -> void:
 
 func import_gltf(file_name: String) -> Node:
 	var directory: String = "user://overrides/MAP/"
-	
 	var gltf_state: GLTFState = GLTFState.new()
-	#gltf_state.base_path = directory
-	#gltf_state.scene_name = node_to_save.name
-	#gltf_state.append_gltf_node(
-	
 	var gltf_document: GLTFDocument = GLTFDocument.new()
 	var import_path: String = directory + file_name + ".glb"
 	var error = gltf_document.append_from_file(import_path, gltf_state, 0, directory)

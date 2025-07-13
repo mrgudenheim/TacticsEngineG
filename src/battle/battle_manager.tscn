@@ -1,8 +1,7 @@
-[gd_scene load_steps=28 format=3 uid="uid://card26cltbba1"]
+[gd_scene load_steps=27 format=3 uid="uid://card26cltbba1"]
 
 [ext_resource type="Script" uid="uid://cd31vmh881wm5" path="res://src/battle/battle_manager.gd" id="1_hnd0w"]
 [ext_resource type="PackedScene" uid="uid://buljw4afjva1d" path="res://src/Map/map.tscn" id="2_1os5c"]
-[ext_resource type="Shader" uid="uid://cq4x76xn7qnvi" path="res://src/Map/map_shader.gdshader" id="3_d26o3"]
 [ext_resource type="Material" uid="uid://u6jhtav4x31l" path="res://src/Map/tile_highlight_red.material" id="4_f2r6p"]
 [ext_resource type="PackedScene" uid="uid://dkudrb304m7t1" path="res://src/Unit/unit.tscn" id="4_wfrm2"]
 [ext_resource type="Script" uid="uid://dkngme7toaf3g" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="5_f2r6p"]
@@ -75,7 +74,6 @@ map_size_label = NodePath("DebugOptions/MarginContainer/VBoxContainer2/VBoxConta
 expand_map_check = NodePath("DebugOptions/MarginContainer/VBoxContainer2/VBoxContainer/ExpandMap")
 maps = NodePath("Maps")
 map_tscn = ExtResource("2_1os5c")
-map_shader = ExtResource("3_d26o3")
 tile_highlights = Dictionary[Color, Material]({
 Color(1, 0, 0, 1): ExtResource("4_f2r6p"),
 Color(0, 0, 1, 1): ExtResource("11_1os5c"),

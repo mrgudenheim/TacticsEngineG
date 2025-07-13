@@ -26,7 +26,6 @@ static var main_camera: Camera3D
 @export var maps: Node3D
 var total_map_tiles: Dictionary[Vector2i, Array] = {} # Array[TerrainTile]
 @export var map_tscn: PackedScene
-@export var map_shader: Shader
 var current_tile_hover: TerrainTile
 @export var tile_highlights: Dictionary[Color, Material] = {}
 
@@ -466,27 +465,30 @@ func start_units_turn(unit: UnitData) -> void:
 	#new_unit.start_turn(self)
 
 
-func get_map(new_map_data: MapData, map_position: Vector3, map_scale: Vector3) -> Map:
-	var godot_scale: Vector3 = map_scale * Vector3(1, -1, 1) # vanilla used -y as up
-	#var godot_scale: Vector3 = map_scale
+func get_map(new_map_data: MapData, map_position: Vector3, map_scale: Vector3, gltf_map_mesh: MeshInstance3D = null) -> Map:
+	map_scale.y = -1 # vanilla used -y as up
 	var new_map_instance: Map = map_tscn.instantiate()
 	new_map_instance.map_data = new_map_data
-	new_map_instance.mesh.mesh = new_map_data.mesh
-	new_map_instance.mesh.scale = godot_scale
-	new_map_instance.position = map_position
-	#new_map_instance.rotation_degrees = Vector3(0, 0, 0)
 	
-	var new_mesh_material: ShaderMaterial = ShaderMaterial.new()
-	new_mesh_material.shader = map_shader
-	new_mesh_material.set_shader_parameter("albedo_texture_color_indicies", new_map_data.albedo_texture_indexed)
-	new_mesh_material.set_shader_parameter("palettes_colors", new_map_data.texture_palettes)
-	new_map_instance.mesh.material_override = new_mesh_material
-	
-	var shape_mesh: ConcavePolygonShape3D = new_map_data.mesh.create_trimesh_shape()
-	if godot_scale == Vector3.ONE:
-		new_map_instance.collision_shape.shape = new_map_data.mesh.create_trimesh_shape()
+	if gltf_map_mesh != null:
+		new_map_instance.mesh.queue_free()
+		var new_gltf_mesh: MeshInstance3D = gltf_map_mesh.duplicate()
+		new_map_instance.add_child(new_gltf_mesh)
+		new_map_instance.mesh = new_gltf_mesh
+		new_map_instance.mesh.rotation_degrees = Vector3.ZERO
 	else:
-		new_map_instance.collision_shape.shape = get_scaled_collision_shape(new_map_data.mesh, godot_scale)
+		new_map_instance.mesh.mesh = new_map_data.mesh
+	new_map_instance.mesh.scale = map_scale
+	new_map_instance.position = map_position
+	#new_map_instance.global_rotation_degrees = Vector3(0, 0, 0)
+	
+	new_map_instance.set_mesh_shader(new_map_data.albedo_texture_indexed, new_map_data.texture_palettes)
+	
+	#var shape_mesh: ConcavePolygonShape3D = new_map_data.mesh.create_trimesh_shape()
+	if map_scale == Vector3.ONE:
+		new_map_instance.collision_shape.shape = new_map_instance.mesh.mesh.create_trimesh_shape()
+	else:
+		new_map_instance.collision_shape.shape = get_scaled_collision_shape(new_map_instance.mesh.mesh, map_scale)
 	
 	new_map_instance.play_animations(new_map_data)
 	new_map_instance.input_event.connect(on_map_input_event)
@@ -540,9 +542,10 @@ func instantiate_map(map_idx: int, mirror_chunks: bool, offset: Vector3 = Vector
 	if imported_mesh != null:
 		new_map.mesh.queue_free()
 		new_map.add_child(imported_mesh)
-		#imported_mesh.scale.y = -1
-		imported_mesh.scale = imported_mesh.scale * 0.001
-		#new_map.mesh = imported_mesh
+		new_map.mesh = imported_mesh
+		new_map.mesh.name = map_name
+		new_map.mesh.scale.y = -1
+		#imported_mesh.scale = imported_mesh.scale * 0.001 # only needed if Blender scale is set to non-default
 		push_warning("Loaded external map: " + new_map.mesh.name + ".glb")
 	else:
 		SaveNodeAsScene.node_to_save = new_map.mesh
@@ -551,14 +554,14 @@ func instantiate_map(map_idx: int, mirror_chunks: bool, offset: Vector3 = Vector
 	map_holder.add_child(new_map)
 	
 	if mirror_chunks and allow_mirror:
-		map_holder.add_child(get_map(map_data, offset, Vector3(1, 1, -1)))
-		map_holder.add_child(get_map(map_data, offset + (Vector3.FORWARD * map_data.map_length * -2), Vector3(1, 1, -1)))
-		map_holder.add_child(get_map(map_data, offset, Vector3(-1, 1, -1)))
-		map_holder.add_child(get_map(map_data, offset + (Vector3.RIGHT * map_data.map_width * 2), Vector3(-1, 1, -1)))
-		map_holder.add_child(get_map(map_data, offset, Vector3(-1, 1, 1)))
-		map_holder.add_child(get_map(map_data, offset + (Vector3.FORWARD * map_data.map_length * -2), Vector3(-1, 1, -1)))
-		map_holder.add_child(get_map(map_data, offset + (Vector3.RIGHT * map_data.map_width * 2), Vector3(-1, 1, 1)))
-		map_holder.add_child(get_map(map_data, offset + (Vector3.RIGHT * map_data.map_width * 2) + (Vector3.FORWARD * map_data.map_length * -2), Vector3(-1, 1, -1)))
+		map_holder.add_child(get_map(map_data, offset, Vector3(1, 1, -1), imported_mesh))
+		map_holder.add_child(get_map(map_data, offset + (Vector3.FORWARD * map_data.map_length * -2), Vector3(1, 1, -1), imported_mesh))
+		map_holder.add_child(get_map(map_data, offset, Vector3(-1, 1, -1), imported_mesh))
+		map_holder.add_child(get_map(map_data, offset + (Vector3.RIGHT * map_data.map_width * 2), Vector3(-1, 1, -1), imported_mesh))
+		map_holder.add_child(get_map(map_data, offset, Vector3(-1, 1, 1), imported_mesh))
+		map_holder.add_child(get_map(map_data, offset + (Vector3.FORWARD * map_data.map_length * -2), Vector3(-1, 1, -1), imported_mesh))
+		map_holder.add_child(get_map(map_data, offset + (Vector3.RIGHT * map_data.map_width * 2), Vector3(-1, 1, 1), imported_mesh))
+		map_holder.add_child(get_map(map_data, offset + (Vector3.RIGHT * map_data.map_width * 2) + (Vector3.FORWARD * map_data.map_length * -2), Vector3(-1, 1, -1), imported_mesh))
 	
 	return map_holder
 

@@ -418,10 +418,18 @@ func grow_raw_stats(current_level: int, current_job: JobData) -> void:
 
 # TODO is this correct for MONSTERs?
 func generate_battle_stats(current_job: JobData) -> void:
-	stats[StatType.HP_MAX].base_value = stats_raw[StatType.HP_MAX] * current_job.hp_multiplier / 0x190000
+	var base_hp: int = stats_raw[StatType.HP_MAX] * current_job.hp_multiplier / 0x190000
+	if ["RUKA.SEQ", "KANZEN.SEQ", "ARUTE.SEQ"].has(animation_manager.global_seq.file_name): # lucavi
+		stats[StatType.HP_MAX].max_value = 99999
+		base_hp = base_hp * 100
+	stats[StatType.HP_MAX].base_value = base_hp
 	stats[StatType.HP_MAX].set_value(stats[StatType.HP_MAX].base_value)
 	
-	stats[StatType.MP_MAX].base_value = stats_raw[StatType.MP_MAX] * current_job.mp_multiplier / 0x190000
+	var base_mp: int = stats_raw[StatType.MP_MAX] * current_job.mp_multiplier / 0x190000
+	if ["RUKA.SEQ", "KANZEN.SEQ", "ARUTE.SEQ"].has(animation_manager.global_seq.file_name): # lucavi
+		stats[StatType.MP_MAX].max_value = 99999
+		base_mp = base_mp * 100
+	stats[StatType.MP_MAX].base_value = base_mp
 	stats[StatType.MP_MAX].set_value(stats[StatType.MP_MAX].base_value)
 	
 	stats[StatType.SPEED].base_value = stats_raw[StatType.SPEED] * current_job.speed_multiplier / 0x190000

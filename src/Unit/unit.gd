@@ -941,8 +941,8 @@ func set_job_id(new_job_id: int) -> void:
 		stat_basis = StatBasis.MONSTER
 	else:
 		stat_basis = [StatBasis.MALE, StatBasis.FEMALE].pick_random()
-		if job_id >= 0x4a and job_id <= 0x5a and stat_basis == StatBasis.FEMALE:
-			set_sprite_palette(job_data.monster_palette_id + 1)
+		if job_id >= 0x4a and job_id <= 0x5d and stat_basis == StatBasis.FEMALE:
+			set_sprite_by_id(job_data.sprite_id + 1)
 	
 	skillsets.clear()
 	skillsets.append(RomReader.scus_data.skillsets_data[job_data.skillset_id])

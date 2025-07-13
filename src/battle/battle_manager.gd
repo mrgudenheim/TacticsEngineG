@@ -321,7 +321,6 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData
 	new_unit.stats[UnitData.StatType.LEVEL].set_value(level)
 	new_unit.generate_leveled_stats(level, new_unit.job_data)
 	new_unit.generate_battle_stats(new_unit.job_data)
-	new_unit.generate_equipment()
 	
 	controller.camera_rotated.connect(new_unit.char_body.set_rotation_degrees) # have sprite update as camera rotates
 	
@@ -329,18 +328,11 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData
 	new_unit.icon2.texture = RomReader.frame_bin_texture
 	
 	new_unit.primary_weapon_assigned.connect(func(weapon_id: int): new_unit.update_actions(self))
-	if not ["TYPE1.SEQ", "TYPE3.SEQ"].has(new_unit.animation_manager.global_seq.file_name):
-		new_unit.set_primary_weapon(0) # prevent animation index out of bounds error from trying to animate weapon on non-humanoid
-		new_unit.equipped.clear() # prevent animation index out of bounds error from trying to animate shield evade on non-humanoid
-	else:
-		new_unit.set_primary_weapon(randi_range(0, 0x79)) # random weapon
-		
-		# units will start with the weapon type required for their skills
-		var unit_actions: Array[Action] = new_unit.get_skillset_actions()
-		if unit_actions.any(func(action: Action): return not action.required_equipment_type.is_empty()):
-			while not unit_actions.any(func(action: Action): return action.required_equipment_type.has(new_unit.primary_weapon.item_type)):
-				new_unit.set_primary_weapon(randi_range(0, 0x79)) # random weapon
-	
+	new_unit.generate_equipment()
+	#var unit_actions: Array[Action] = new_unit.get_skillset_actions()
+	#if unit_actions.any(func(action: Action): return not action.required_equipment_type.is_empty()):
+		#while not unit_actions.any(func(action: Action): return action.required_equipment_type.has(new_unit.primary_weapon.item_type)):
+			#new_unit.set_primary_weapon(randi_range(0, 0x79)) # random weapon
 	
 	new_unit.name = new_unit.job_nickname + "-" + new_unit.unit_nickname
 	

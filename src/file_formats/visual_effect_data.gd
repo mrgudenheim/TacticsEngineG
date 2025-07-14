@@ -478,7 +478,7 @@ func display_vfx_animation(emitter_data, emitter_node: Node3D) -> void:
 	var vfx_animation := animations[emitter_data.anim_index]
 	var anim_location: Node3D = Node3D.new()
 	# handle initial anim_location position as screen_space movement instead of world space
-	var camera_right: Vector3 = BattleManager.main_camera.basis * Vector3.RIGHT
+	var camera_right: Vector3 = emitter_node.get_viewport().get_camera_3d().basis * Vector3.RIGHT
 	var screen_space_x: Vector3 = (vfx_animation.screen_offset.x * camera_right)
 	var screen_space_y: Vector3 = Vector3(0, -vfx_animation.screen_offset.y, 0)
 	anim_location.position = (screen_space_x + screen_space_y) * MapData.SCALE 

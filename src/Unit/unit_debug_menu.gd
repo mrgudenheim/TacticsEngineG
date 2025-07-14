@@ -18,9 +18,12 @@ signal spritesheet_changed(new_image: ImageTexture)
 @export var ability_name_line: LineEdit
 
 #@export var sprite_viewer: Sprite3D
+var camera: Camera3D
 
 
 func _ready() -> void:
+	camera = get_viewport().get_camera_3d()
+	
 	sprite_options.item_selected.connect(_on_sprite_option_selected)
 	anim_id_spin.value_changed.connect(_on_anim_id_spin_value_changed)
 	weapon_options.item_selected.connect(unit.set_primary_weapon)
@@ -31,9 +34,9 @@ func _ready() -> void:
 	unit.primary_weapon_assigned.connect(weapon_options.select)
 
 func _process(delta: float) -> void:
-	if is_instance_valid(BattleManager.main_camera):
-		var camera_right: Vector3 = BattleManager.main_camera.basis * Vector3.RIGHT
-		position = BattleManager.main_camera.unproject_position(unit_char_body.position + (Vector3.UP * 1.0) + (camera_right * 0.35))
+	if camera != null:
+		var camera_right: Vector3 = camera.basis * Vector3.RIGHT
+		position = camera.unproject_position(unit_char_body.position + (Vector3.UP * 1.0) + (camera_right * 0.35))
 
 
 func populate_options() -> void:

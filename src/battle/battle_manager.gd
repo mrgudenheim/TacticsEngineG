@@ -9,7 +9,7 @@ signal map_input_event(action_instance: ActionInstance, camera: Camera3D, event:
 @export var reference_quad: MeshInstance3D # for debugging
 @export var highlights_container: Node3D
 
-static var main_camera: Camera3D
+#static var main_camera: Camera3D
 @export var phantom_camera: PhantomCamera3D
 @export var load_rom_button: LoadRomButton
 

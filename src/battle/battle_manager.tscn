@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://card26cltbba1"]
+[gd_scene load_steps=25 format=3 uid="uid://card26cltbba1"]
 
 [ext_resource type="Script" uid="uid://cd31vmh881wm5" path="res://src/battle/battle_manager.gd" id="1_hnd0w"]
 [ext_resource type="PackedScene" uid="uid://buljw4afjva1d" path="res://src/Map/map.tscn" id="2_1os5c"]
@@ -9,11 +9,11 @@
 [ext_resource type="Material" uid="uid://cejj0yxtkspad" path="res://src/Map/tile_highlight_black.material" id="6_l2dig"]
 [ext_resource type="Material" uid="uid://bfoayeqxxbv0f" path="res://src/Map/tile_highlight_yellow.material" id="7_f2r6p"]
 [ext_resource type="Script" uid="uid://bd046eokvcnu2" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="7_l2dig"]
-[ext_resource type="Script" uid="uid://bg3no6nu8phv0" path="res://src/camera_control.gd" id="8_bp08t"]
 [ext_resource type="Material" uid="uid://bmwuufa37jci2" path="res://src/Map/tile_highlight_white.material" id="8_kb1q2"]
 [ext_resource type="PackedScene" uid="uid://26tg32417lfm" path="res://src/load_rom.tscn" id="9_pbg35"]
 [ext_resource type="Script" uid="uid://cl143w048iago" path="res://src/Unit/character_controller_realtime.gd" id="10_d5yoq"]
 [ext_resource type="Material" uid="uid://emgoiswtrorw" path="res://src/Map/tile_highlight_blue.material" id="11_1os5c"]
+[ext_resource type="PackedScene" uid="uid://7tn6b6eup5na" path="res://src/camera_controller.tscn" id="12_l2dig"]
 [ext_resource type="Script" uid="uid://cectjl7guvpqa" path="res://src/actions/action_button.gd" id="16_l2dig"]
 
 [sub_resource type="Environment" id="Environment_njvnp"]
@@ -25,11 +25,6 @@ script = ExtResource("6_kb1q2")
 duration = 1.0
 transition = 0
 ease = 2
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_owd5a"]
-
-[sub_resource type="SphereMesh" id="SphereMesh_qc6ji"]
-material = SubResource("StandardMaterial3D_owd5a")
 
 [sub_resource type="Gradient" id="Gradient_h7qnf"]
 colors = PackedColorArray(0.1332, 0.14724, 0.18, 1, 0.39, 0.695, 1, 1)
@@ -60,6 +55,7 @@ material = SubResource("StandardMaterial3D_tjj5r")
 
 [node name="BattleManager" type="Node3D" node_paths=PackedStringArray("texture_viewer", "reference_quad", "phantom_camera", "load_rom_button", "camera_controller", "background_gradient", "menu_list", "map_dropdown", "orthographic_check", "menu_reminder", "map_size_label", "expand_map_check", "maps", "action_menu", "action_button_list", "units_container", "controller", "battle_end_panel", "post_battle_messages", "start_new_battle_button", "game_state_label", "units_per_team_spinbox", "units_level_spinbox", "icon_counter")]
 script = ExtResource("1_hnd0w")
+use_test_teams = null
 texture_viewer = NodePath("SpriteViewer")
 reference_quad = NodePath("ReferenceQuad")
 phantom_camera = NodePath("PhantomCamera3D")
@@ -84,14 +80,19 @@ Color(1, 1, 1, 1): ExtResource("8_kb1q2")
 action_menu = NodePath("ActionMenu")
 action_button_list = NodePath("ActionMenu/ActionButtonsList")
 units_container = NodePath("Units")
+teams = null
 unit_tscn = ExtResource("4_wfrm2")
 controller = NodePath("CharacterController")
+battle_is_running = null
+safe_to_load_map = null
 battle_end_panel = NodePath("BattleEnd")
 post_battle_messages = NodePath("BattleEnd/VBoxContainer/Messages")
 start_new_battle_button = NodePath("BattleEnd/VBoxContainer/StartNewBattle")
 game_state_label = NodePath("PanelContainer/GameState")
 units_per_team_spinbox = NodePath("DebugOptions/MarginContainer/VBoxContainer2/VBoxContainer/GridContainer/UnitsPerTeam")
+units_per_team = null
 units_level_spinbox = NodePath("DebugOptions/MarginContainer/VBoxContainer2/VBoxContainer/GridContainer/UnitsLevel")
+units_level = null
 icon_counter = NodePath("IconGridContainer")
 allow_mirror = false
 
@@ -120,23 +121,16 @@ process_priority = 300
 process_physics_priority = 300
 script = ExtResource("7_l2dig")
 
-[node name="CameraPivot" type="Node3D" parent="."]
-
-[node name="CameraController" type="Node3D" parent="." node_paths=PackedStringArray("sprite", "camera", "camera_pivot")]
-transform = Transform3D(1, 0, 0, 0, 0.999999, 0, 0, 0, 1, 0, 0, 0)
-visible = false
-script = ExtResource("8_bp08t")
-sprite = NodePath("../SpriteViewer")
-camera = NodePath("../Camera3D")
-camera_pivot = NodePath("CameraPivot")
-zoom_in_max = 0.5
-
-[node name="CameraPivot" type="Node3D" parent="CameraController"]
-transform = Transform3D(0.707107, -0.315509, 0.632814, 0, 0.894935, 0.446197, -0.707107, -0.315509, 0.632814, 0, 0, 0)
-
-[node name="ReferenceSphere" type="MeshInstance3D" parent="CameraController"]
-transform = Transform3D(0.5, 0, 0, 0, 0.500001, -1.49012e-08, 0, -1.49012e-08, 0.5, 0, 0, 0)
-mesh = SubResource("SphereMesh_qc6ji")
+[node name="CameraController" parent="." instance=ExtResource("12_l2dig")]
+pan_speed_max = null
+pan_accel = null
+rotate_speed_max = null
+rotate_accel = null
+low_angle = null
+high_angle = null
+zoom_out_max = null
+zoom_in_max = null
+time_to_transition = null
 
 [node name="DebugOptions" type="PanelContainer" parent="."]
 offset_right = 124.0

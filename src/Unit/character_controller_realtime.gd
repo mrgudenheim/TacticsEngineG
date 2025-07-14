@@ -80,12 +80,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not RomReader.is_ready:
 		return
 	
-	if event.is_action_pressed(&"camera_rotate_left", true):
-		rotate_camera(-1)
-	elif event.is_action_pressed(&"camera_rotate_right", true):
-		rotate_camera(1)
 	# Handle jump
-	elif Input.is_action_just_pressed("ui_accept") and unit.char_body.is_on_floor() and unit.can_move:
+	if Input.is_action_just_pressed("ui_accept") and unit.char_body.is_on_floor() and unit.can_move:
 		unit.char_body.velocity.y = JUMP_VELOCITY
 	#elif Input.is_action_just_pressed("primary_action") and is_on_floor() and unit.can_move:
 		#push_warning("primary_action_clicked")

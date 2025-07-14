@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://7tn6b6eup5na"]
+
+[ext_resource type="Script" uid="uid://bg3no6nu8phv0" path="res://src/camera_control.gd" id="1_dliso"]
+
+[sub_resource type="Curve" id="Curve_dliso"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[node name="CameraController" type="Node3D" node_paths=PackedStringArray("camera")]
+transform = Transform3D(1, 0, 0, 0, 0.894934, 0.446198, 0, -0.446198, 0.894934, 0, 0, 0)
+script = ExtResource("1_dliso")
+camera = NodePath("Camera3D")
+transition_curve = SubResource("Curve_dliso")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 100)
+projection = 1
+current = true

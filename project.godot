@@ -17,7 +17,6 @@ run/max_fps=240
 
 [autoload]
 
-PhantomCameraManager="*res://addons/phantom_camera/scripts/managers/phantom_camera_manager.gd"
 RomReader="*res://src/rom_reader.gd"
 Raycaster="*res://src/utilities/raycaster.gd"
 Utilities="*res://src/utilities/utilities.gd"
@@ -30,7 +29,7 @@ window/size/viewport_height=864
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/Todo_Manager/plugin.cfg", "res://addons/phantom_camera/plugin.cfg", "res://addons/script-ide/plugin.cfg")
+enabled=PackedStringArray("res://addons/Todo_Manager/plugin.cfg", "res://addons/script-ide/plugin.cfg")
 
 [input]
 

@@ -1,5 +1,5 @@
 class_name GltfManager
-extends Node3D
+extends Node
 
 
 func save_node(node_to_save: Node) -> void:

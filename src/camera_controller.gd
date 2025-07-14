@@ -12,7 +12,7 @@ signal camera_facing_changed
 @export var rotate_speed_max: float = 5
 @export var rotate_accel: float = 5
 @export var rotate_increment: float = 90.0 # degrees
-@export var time_to_rotate: float = 2.0 # seconds
+@export var time_to_rotate: float = 0.5 # seconds
 
 # https://ffhacktics.com/wiki/Camera
 @export var low_angle: float = 26.54
@@ -27,7 +27,7 @@ var zoom: float = 12:
 @export var zoom_out_max: float = 100
 @export var zoom_in_max: float = 0.01
 
-@export var follow_node: Node3D:
+@export var follow_node: Node3D = null:
 	get:
 		return follow_node
 	set(value):
@@ -139,7 +139,7 @@ func start_rotating_camera(dir: int) -> void:
 	
 	is_rotating = true
 	var new_rotation: Vector3 = rotation_degrees
-	var offset: float = dir * rotate_speed_max # * delta
+	var offset: float = dir * rotate_increment # * delta
 	new_rotation.y = new_rotation.y + offset
 	
 	var tween := create_tween().set_parallel()
@@ -152,7 +152,6 @@ func start_rotating_camera(dir: int) -> void:
 
 func rotate_camera(new_rotation_degress: Vector3) -> void:
 	rotation_degrees = new_rotation_degress
-	#unit.char_body.rotation_degrees = Vector3(0, new_rotation_degress.y, 0)
 	rotated.emit(Vector3(0, new_rotation_degress.y, 0))
 	
 	var camera_angle: float = rotation_degrees.y

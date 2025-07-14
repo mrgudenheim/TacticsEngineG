@@ -111,9 +111,10 @@ func zoom_camera(dir: int) -> void:
 	var zoom_margin := zoom * (-dir) / 5
 	var new_zoom := zoom + zoom_margin
 	if new_zoom < zoom_out_max and new_zoom > zoom_in_max:
-		var tween := create_tween().set_parallel()
+		var tween := create_tween().set_parallel() # TODO use curve for camera zoom smoothing, similar to node following
 		tween.set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_IN)
 		tween.tween_property(camera, "size", new_zoom, 0.05)
+		await tween.finished
 		update_distance()
 		zoom = new_zoom
 		

@@ -930,7 +930,7 @@ func update_unit_facing(dir: Vector3) -> void:
 	if new_facing != facing:
 		var temp_facing = facing
 		facing = new_facing
-		update_animation_facing(UnitControllerRT.CameraFacingVectors[UnitControllerRT.camera_facing])
+		update_animation_facing(global_battle_manager.camera_controller.CameraFacingVectors[global_battle_manager.camera_controller.camera_facing])
 
 
 func update_animation_facing(camera_facing_vector: Vector3) -> void:

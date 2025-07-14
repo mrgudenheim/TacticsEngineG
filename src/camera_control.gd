@@ -114,7 +114,9 @@ func zoom_camera(dir: int) -> void:
 		var tween := create_tween().set_parallel()
 		tween.set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_IN)
 		tween.tween_property(camera, "size", new_zoom, 0.05)
+		update_distance()
 		zoom = new_zoom
+		
 
 
 func pan_camera(dir: Vector2) -> void:
@@ -171,3 +173,18 @@ func rotate_camera(new_rotation_degress: Vector3) -> void:
 		camera_facing = new_camera_facing
 		camera_facing_changed.emit()
 		get_tree().call_group("Units", "update_animation_facing", CameraFacingVectors[camera_facing])
+
+
+func on_orthographic_toggled(toggled_on: bool) -> void:
+	if toggled_on:
+		camera.projection = Camera3D.PROJECTION_ORTHOGONAL
+		camera.size = camera.position.z * 12.0 / 8.0
+		camera.position.z = 200
+	else:
+		camera.projection = Camera3D.PROJECTION_PERSPECTIVE
+		camera.position.z = camera.size * 8.0 / 12.0
+
+
+func update_distance() -> void:
+	if camera.projection == Camera3D.PROJECTION_PERSPECTIVE:
+		camera.position.z = camera.size * 8.0 / 12.0

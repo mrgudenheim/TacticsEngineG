@@ -10,10 +10,11 @@ signal map_input_event(action_instance: ActionInstance, camera: Camera3D, event:
 @export var highlights_container: Node3D
 
 #static var main_camera: Camera3D
-@export var phantom_camera: PhantomCamera3D
+#@export var phantom_camera: PhantomCamera3D
 @export var load_rom_button: LoadRomButton
 
 @export var camera_controller: CameraController
+var main_camera: Camera3D
 @export var background_gradient: TextureRect
 
 @export var menu_list: Control
@@ -102,13 +103,13 @@ const SCALED_UNITS_PER_HEIGHT: float = SCALE * MapData.UNITS_PER_HEIGHT
 
 
 func _ready() -> void:
-	main_camera = get_viewport().get_camera_3d()
+	main_camera = camera_controller.camera
 	
 	load_rom_button.file_selected.connect(RomReader.on_load_rom_dialog_file_selected)
 	RomReader.rom_loaded.connect(on_rom_loaded)
 	map_dropdown.item_selected.connect(queue_load_map)
-	orthographic_check.toggled.connect(on_orthographic_check_toggled)
-	camera_controller.zoom_changed.connect(update_phantom_camera_spring)
+	orthographic_check.toggled.connect(camera_controller.on_orthographic_toggled)
+	#camera_controller.zoom_changed.connect(update_phantom_camera_spring)
 	expand_map_check.toggled.connect(func(toggled_on: bool): allow_mirror = toggled_on)
 	
 	start_new_battle_button.pressed.connect(load_random_map)
@@ -193,9 +194,9 @@ func on_map_selected(index: int) -> void:
 	push_warning("Map_created")
 	
 	add_units_to_map()
-	phantom_camera.follow_target = units[0].char_body
+	camera_controller.follow_node = units[0].char_body
 	controller.unit = units[0]
-	controller.rotate_camera(1) # HACK workaround for bug where controls are off until camera is rotated
+	#controller.rotate_camera(1) # HACK workaround for bug where controls are off until camera is rotated
 	
 	battle_is_running = true
 	process_battle()
@@ -322,7 +323,7 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData
 	new_unit.generate_leveled_stats(level, new_unit.job_data)
 	new_unit.generate_battle_stats(new_unit.job_data)
 	
-	controller.camera_rotated.connect(new_unit.char_body.set_rotation_degrees) # have sprite update as camera rotates
+	camera_controller.rotated.connect(new_unit.char_body.set_rotation_degrees) # have sprite update as camera rotates
 	
 	new_unit.icon.texture = RomReader.frame_bin_texture # TODO clean up status icon stuff
 	new_unit.icon2.texture = RomReader.frame_bin_texture
@@ -391,7 +392,7 @@ func process_clock_tick() -> void:
 						var status_action_instance: ActionInstance = ActionInstance.new(status.action_on_complete, unit, self)
 						status_action_instance.submitted_targets.append(unit.tile_position) # TODO get targets for status action
 						status.action_on_complete.use(status_action_instance)
-						phantom_camera.follow_target = unit.char_body
+						camera_controller.follow_node = unit.char_body
 						game_state_label.text = unit.job_nickname + "-" + unit.unit_nickname + " processing " + status.status_effect_name + " ending"
 						await status_action_instance.action_completed
 						if check_end_conditions():
@@ -400,7 +401,7 @@ func process_clock_tick() -> void:
 					if status.delayed_action != null: # execute stored delayed actions, TODO checks to null (no mp, silenced, etc.)
 						#status.delayed_action.show_targets_highlights(status.delayed_action.preview_targets_highlights) # show submitted targets TODO retain preview highlight nodes?
 						#await unit.get_tree().create_timer(0.5).timeout
-						phantom_camera.follow_target = unit.char_body
+						camera_controller.follow_node = unit.char_body
 						game_state_label.text = unit.job_nickname + "-" + unit.unit_nickname + " processing delayed " + status.delayed_action.action.action_name
 						await status.delayed_action.use()
 						#await status.delayed_action.action_completed
@@ -453,7 +454,7 @@ func start_units_turn(unit: UnitData) -> void:
 	active_unit = unit
 	
 	if not unit.is_defeated:
-		phantom_camera.follow_target = unit.char_body
+		camera_controller.follow_node = unit.char_body
 	
 	await unit.start_turn(self)
 
@@ -509,23 +510,6 @@ func get_scaled_collision_shape(mesh: Mesh, collision_scale: Vector3) -> Concave
 	new_collision_shape.set_faces(faces)
 	new_collision_shape.backface_collision = true
 	return new_collision_shape
-
-
-func on_orthographic_check_toggled(toggled_on: bool) -> void:
-	if toggled_on:
-		main_camera.projection = Camera3D.PROJECTION_ORTHOGONAL
-		main_camera.size = phantom_camera.spring_length * 12.0 / 8.0
-		phantom_camera.set_spring_length(200)
-		phantom_camera.set_collision_mask(0)
-	else:
-		main_camera.projection = Camera3D.PROJECTION_PERSPECTIVE
-		phantom_camera.set_spring_length(main_camera.size * 8.0 / 12.0)
-		#phantom_camera.set_collision_mask(1)
-
-
-func update_phantom_camera_spring() -> void:
-	if main_camera.projection == Camera3D.PROJECTION_PERSPECTIVE:
-		phantom_camera.set_spring_length(main_camera.size * 8.0 / 12.0)
 
 
 func instantiate_map(map_idx: int, mirror_chunks: bool, offset: Vector3 = Vector3.ZERO) -> Node3D:

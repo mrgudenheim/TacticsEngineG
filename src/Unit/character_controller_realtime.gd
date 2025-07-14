@@ -1,14 +1,8 @@
 class_name UnitControllerRT
 extends Node3D
 
-signal camera_facing_changed()
-signal camera_rotated(new_rotation: Vector3)
 
 const SPEED: float = 5.0
-
-const ROTATE_INTERVAL: float = 90.0 # degrees
-const ROTATE_SPEED: float = 300.0 # degrees / sec
-#const ROTATION_DURATION: float = 0.1 # seconds
 const JUMP_VELOCITY: float = 4.5
 
 enum Directions {
@@ -26,11 +20,7 @@ const CameraFacingVectors: Dictionary[Directions, Vector3] = {
 	}
 
 
-var is_rotating: bool = false
 static var unit: UnitData
-
-@export var phantom_camera: PhantomCamera3D
-static var camera_facing: Directions = Directions.NORTHWEST
 
 
 func _physics_process(delta: float) -> void:
@@ -44,7 +34,7 @@ func _physics_process(delta: float) -> void:
 	if not unit.can_move:
 		return
 	
-	if BattleManager.main_camera.get_viewport().is_input_handled() == true:
+	if get_viewport().is_input_handled() == true:
 		return
 	
 	# Get the input direction and handle the movement/deceleration.
@@ -63,7 +53,7 @@ func _physics_process(delta: float) -> void:
 		# get 3d click location based on raycast
 		# TODO instead of manual raycast use CollisionObject3D.input_event signal on the map (similar to map_tile_hover): map_instance.input_event.connect(on_map_mesh_event)
 		var space_state := get_world_3d().direct_space_state
-		var cam: Camera3D = BattleManager.main_camera
+		var cam: Camera3D = get_viewport().get_camera_3d()
 		var mousepos: Vector2 = get_viewport().get_mouse_position()
 
 		var origin: Vector3 = cam.project_ray_origin(mousepos)
@@ -90,49 +80,3 @@ func _unhandled_input(event: InputEvent) -> void:
 	# TODO implement a generic use_action system
 	#if Input.is_action_just_pressed("primary_action") and unit.char_body.is_on_floor():
 		#unit.use_attack()
-
-func rotate_camera(dir: int) -> void:
-	if is_rotating:
-		return
-	
-	is_rotating = true
-	var new_rotation: Vector3 = Vector3.ZERO
-	var offset: float = dir * ROTATE_INTERVAL
-	
-	var new_x = unit.char_body.rotation_degrees.x
-	var new_y = roundi(unit.char_body.rotation_degrees.y) + offset
-	var new_z = unit.char_body.rotation_degrees.z
-	#unit.char_body.rotation_degrees = Vector3(new_x, new_y, new_z)
-	
-	new_rotation = Vector3(-26.54, new_y, new_z)
-	var tween: Tween = create_tween()
-	tween.tween_method(rotate_phantom_camera, BattleManager.main_camera.rotation_degrees, new_rotation, ROTATE_INTERVAL / ROTATE_SPEED)
-	await tween.finished
-	
-	#push_warning(str(camera_facing))
-	is_rotating = false
-
-
-func rotate_phantom_camera(new_rotation_degress: Vector3) -> void:
-	phantom_camera.set_third_person_rotation_degrees(new_rotation_degress)
-	#unit.char_body.rotation_degrees = Vector3(0, new_rotation_degress.y, 0)
-	camera_rotated.emit(Vector3(0, new_rotation_degress.y, 0))
-	
-	var camera_angle: float = BattleManager.main_camera.rotation_degrees.y
-	#var target_angle = fposmod(new_rotation_degress.y, 360)
-	var camera_angle_pos = fposmod(camera_angle, 360)
-		
-	var new_camera_facing: Directions = Directions.NORTHEAST
-	if camera_angle_pos < 90:
-		new_camera_facing = Directions.NORTHWEST
-	elif camera_angle_pos < 180:
-		new_camera_facing = Directions.SOUTHWEST
-	elif camera_angle_pos < 270:
-		new_camera_facing = Directions.SOUTHEAST
-	elif camera_angle_pos < 360:
-		new_camera_facing = Directions.NORTHEAST
-	
-	if new_camera_facing != camera_facing:
-		camera_facing = new_camera_facing
-		camera_facing_changed.emit()
-		get_tree().call_group("Units", "update_animation_facing", CameraFacingVectors[camera_facing])

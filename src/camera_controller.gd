@@ -34,11 +34,11 @@ var zoom: float = 12:
 		if value != follow_node:
 			follow_node = value
 			start_transitioning()
-@export var time_to_transition: float = 1.0 # seconds
+@export var time_to_transition: float = 0.35 # seconds
 var is_transitioning: bool = false
 @export var transition_curve: Curve
 var transition_start_pos: Vector3
-var transition_time: int = 0
+var transition_time: float = 0.0
 
 
 enum Direction {

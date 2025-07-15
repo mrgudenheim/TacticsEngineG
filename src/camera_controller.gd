@@ -92,15 +92,6 @@ func _unhandled_input(event: InputEvent) -> void:
 		start_rotating_camera(-1)
 	elif event.is_action_pressed(&"camera_rotate_right", true):
 		start_rotating_camera(1)
-	#elif event is InputEventMagnifyGesture:  # Zoom gesture on touchscreens
-		#if event.factor >= 1:  # Zoom in
-			#zoom_camera(1)
-		#else:  # Zoom out
-			#zoom_camera(-1)
-	#elif event.is_action(&"camera_rotate_left", true):
-		#rotate_camera(-1)
-	#elif event.is_action(&"camera_rotate_right", true):
-		#rotate_camera(1)
 	#else:
 		#var dir := Input.get_vector(&"camera_left", &"camera_right", &"camera_up", &"camera_down")
 		#if dir != Vector2.ZERO:

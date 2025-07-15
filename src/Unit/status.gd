@@ -26,7 +26,7 @@ enum DurationType {
 var duration_type: DurationType = DurationType.TICKS
 @export var action_on_turn_start: Action
 @export var action_on_turn_end: Action
-@export var action_on_x_ticks: Action
+@export var action_on_x_ticks: Action # performing
 @export var x_ticks: int
 @export var action_on_apply: Action # dead sets current_hp = 0
 @export var action_on_complete: Action # dead -> crystal/treasure, death sentence, charging?
@@ -37,8 +37,8 @@ var visual_effect # TODO speech bubbles, sprite coloring, animation (haste, dead
 @export var unit_shading_type: int
 #@export var status_bubble_texture: Texture2D # from Frame.bin
 @export var status_icon_rects: Array[Rect2i] = []
+var duration_icons: Array[Rect2i] = RomReader.battle_bin_data.status_counter_rects
 @export var idle_animation_id: int = -1
-
 
 var counts_as_ko: bool = false:
 	get:

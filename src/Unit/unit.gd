@@ -214,9 +214,10 @@ var immune_statuses: Array[StatusEffect] = []
 var current_statuses: Array[StatusEffect] = [] # Status may have a corresponding CT countdown?
 var current_statuses2: Dictionary[StatusEffect, int] = {}
 var current_statuses3: Array[CurrentStatusData] = [] # could allow for stacking statuses (2 poisons, 2 charging actions, etc.)
+var current_statuses4: Dictionary[StatusEffect, StatusEffect] = {} # duplicate the orignal and modify as necessary
 class CurrentStatusData: # TODO clean up unit status stuff
-	var status: StatusEffect
-	var status_ct: int
+	var status_definition: StatusEffect
+	var status_current: StatusEffect # modified definition with delayed action, duration_left, etc.
 
 var learned_abilities: Array = []
 var job_levels: Dictionary[JobData, int] = {}

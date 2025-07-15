@@ -37,6 +37,7 @@ var visual_effect # TODO speech bubbles, sprite coloring, animation (haste, dead
 @export var unit_shading_type: int
 #@export var status_bubble_texture: Texture2D # from Frame.bin
 @export var status_icon_rects: Array[Rect2i] = []
+@export var icon_frames: int = 1
 var duration_icons: Array[Rect2i] = RomReader.battle_bin_data.status_counter_rects
 @export var idle_animation_id: int = -1
 
@@ -61,6 +62,18 @@ func set_data(status_effect_bytes: PackedByteArray) -> void:
 	
 	if duration == 0:
 		duration_type = DurationType.PERMANENT
+
+
+func get_icon_rect() -> Rect2i:
+	if duration_type == DurationType.TURNS:
+		if duration >= duration_icons.size() - 1:
+			return duration_icons[-1]
+		else:
+			return duration_icons[duration]
+	elif not status_icon_rects.is_empty():
+		return status_icon_rects[0]
+	else:
+		return Rect2i(Vector2i.ZERO, Vector2i.ONE)
 
 
 # called after all StatusEffects have already been initialized since this indexes into the complete array

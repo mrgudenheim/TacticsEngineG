@@ -1045,23 +1045,37 @@ func set_status_icon_rect(rect: Rect2i) -> void:
 func cycle_status_icons() -> void:
 	var status_idx: int = 0
 	while true:
-		if current_statuses2.keys().all(func(status: StatusEffect): return status.status_icon_rects.is_empty()):
-			set_status_icon_rect(Rect2i(Vector2i.ZERO, Vector2i.ONE))
-			await get_tree().create_timer(icon_cycle_time).timeout
-		elif current_statuses2.keys()[status_idx].status_icon_rects.size() > 0:
-			var rect: Rect2i = current_statuses2.keys()[status_idx].status_icon_rects[0]
+		var status: StatusEffect = null
+		if not current_statuses2.is_empty():
+			status = current_statuses2.keys()[status_idx]
+			var rect: Rect2i = status.get_icon_rect()
 			set_status_icon_rect(rect)
-			await get_tree().create_timer(icon_cycle_time).timeout
 			
 			if current_statuses2.keys().size() > 0:
 				status_idx = (status_idx + 1) % current_statuses2.keys().size()
 			else:
 				status_idx = 0
-		else:
-			if current_statuses2.keys().size() > 0:
-				status_idx = (status_idx + 1) % current_statuses2.keys().size()
-			else:
-				status_idx = 0
+		
+		await get_tree().create_timer(icon_cycle_time).timeout
+			
+		#if current_statuses2.keys().all(func(status: StatusEffect): return status.status_icon_rects.is_empty()):
+			#set_status_icon_rect(Rect2i(Vector2i.ZERO, Vector2i.ONE))
+			#await get_tree().create_timer(icon_cycle_time).timeout
+		#elif current_statuses2.keys()[status_idx].status_icon_rects.size() > 0:
+			#var rect: Rect2i = current_statuses2.keys()[status_idx].status_icon_rects[0]
+			##var rect: Rect2i = status.get_icon_rect()
+			#set_status_icon_rect(rect)
+			#await get_tree().create_timer(icon_cycle_time).timeout
+			#
+			#if current_statuses2.keys().size() > 0:
+				#status_idx = (status_idx + 1) % current_statuses2.keys().size()
+			#else:
+				#status_idx = 0
+		#else:
+			#if current_statuses2.keys().size() > 0:
+				#status_idx = (status_idx + 1) % current_statuses2.keys().size()
+			#else:
+				#status_idx = 0
 
 
 func change_equipment(slot_id: int, new_equipment: ItemData) -> void:

@@ -105,9 +105,9 @@ class ItemAttribute:
 	var sp_modifier: int = 0
 	var move_modifier: int = 0
 	var jump_modifier: int = 0
-	var status_always: Array[StatusEffect] = [] # 5 bytes of bitflags for up to 40 statuses # TODO use bit index as index into StatusEffect array
-	var status_immune: Array[StatusEffect] = [] # 5 bytes of bitflags for up to 40 statuses # TODO use bit index as index into StatusEffect array
-	var status_start: Array[StatusEffect] = [] # 5 bytes of bitflags for up to 40 statuses # TODO use bit index as index into StatusEffect array
+	var status_always: PackedInt32Array = [] # 5 bytes of bitflags for up to 40 statuses # TODO use bit index as index into StatusEffect array
+	var status_immune: PackedInt32Array = [] # 5 bytes of bitflags for up to 40 statuses # TODO use bit index as index into StatusEffect array
+	var status_start: PackedInt32Array = [] # 5 bytes of bitflags for up to 40 statuses # TODO use bit index as index into StatusEffect array
 	var elemental_absorb: int = 0 # 1 byte of bitflags, elemental types
 	var elemental_cancel: int = 0 # 1 byte of bitflags, elemental types
 	var elemental_half: int = 0 # 1 byte of bitflags, elemental types
@@ -120,9 +120,9 @@ class ItemAttribute:
 		sp_modifier = item_attribute_bytes.decode_u8(2)
 		move_modifier = item_attribute_bytes.decode_u8(3)
 		jump_modifier = item_attribute_bytes.decode_u8(4)
-		status_always = StatusEffect.get_status_array(item_attribute_bytes.slice(5, 10))
-		status_immune = StatusEffect.get_status_array(item_attribute_bytes.slice(10, 15))
-		status_start = StatusEffect.get_status_array(item_attribute_bytes.slice(15, 20))
+		status_always = StatusEffect.get_status_id_array(item_attribute_bytes.slice(5, 10))
+		status_immune = StatusEffect.get_status_id_array(item_attribute_bytes.slice(10, 15))
+		status_start = StatusEffect.get_status_id_array(item_attribute_bytes.slice(15, 20))
 		elemental_absorb = item_attribute_bytes.decode_u8(20)
 		elemental_cancel = item_attribute_bytes.decode_u8(21)
 		elemental_half = item_attribute_bytes.decode_u8(22)
@@ -147,7 +147,7 @@ class InflictStatus:
 	var is_separate: bool = false
 	var will_cancel: bool = false
 	var status_flags: PackedByteArray = []
-	var status_list: Array[StatusEffect]
+	var status_list: PackedInt32Array = []
 	
 	func set_data(inflict_status_bytes: PackedByteArray) -> void:
 		is_all = inflict_status_bytes.decode_u8(0) & 0x80 == 0x80
@@ -155,7 +155,7 @@ class InflictStatus:
 		is_separate = inflict_status_bytes.decode_u8(0) & 0x20 == 0x20
 		will_cancel = inflict_status_bytes.decode_u8(0) & 0x10 == 0x10
 		status_flags = inflict_status_bytes.slice(1)
-		status_list = StatusEffect.get_status_array(status_flags)
+		status_list = StatusEffect.get_status_id_array(status_flags)
 
 # Inflict Status data https://ffhacktics.com/wiki/Inflict_Statuses
 var inflict_status_data_start: int = 0x63fc4 - 0xf800

@@ -72,7 +72,7 @@ var hit_requirements: Array = [] # TODO always miss if requirement is not met, e
 @export var healing_damages_undead: bool = false
 
 # inflict status data
-@export var taregt_status_list: Array[StatusEffect] = []
+@export var taregt_status_list: PackedInt32Array = []
 @export var status_chance: int = 100
 @export var will_remove_status: bool = false
 @export var target_status_list_type: StatusListType = StatusListType.EACH
@@ -350,42 +350,42 @@ func apply_standard(action_instance: ActionInstance) -> void:
 	action_instance.action_completed.emit(action_instance.battle_manager)
 
 
-func apply_status(unit: UnitData, status_list: Array[StatusEffect], status_list_type: StatusListType) -> void:
+func apply_status(unit: UnitData, status_list: Array[int], status_list_type: StatusListType) -> void:
 	if status_list_type == StatusListType.ALL:
 		var status_success: bool = randi_range(0, 99) < status_chance
 		if status_success:
-			for status: StatusEffect in status_list:
-				if will_remove_status and unit.current_statuses2.keys().has(status):
-					unit.remove_status(status)
-					unit.show_popup_text(status.status_effect_name) # TODO different text for removing status
+			for status_id: int in status_list:
+				if will_remove_status and unit.current_statuses.any(func(status: StatusEffect): status.status_id == status_id):
+					unit.remove_status(status_id)
+					unit.show_popup_text(RomReader.status_effects[status_id].status_effect_name) # TODO different text for removing status
 				elif not will_remove_status:
-					unit.add_status(status)
-					unit.show_popup_text(status.status_effect_name)
+					unit.add_status(RomReader.status_effects[status_id].duplicate())
+					unit.show_popup_text(RomReader.status_effects[status_id].status_effect_name)
 	elif status_list_type == StatusListType.EACH:
-		for status: StatusEffect in status_list:
+		for status_id: int in status_list:
 			var status_success: bool = randi_range(0, 99) < status_chance
 			if status_success:
-				if will_remove_status and unit.current_statuses2.keys().has(status):
-					unit.remove_status(status)
-					unit.show_popup_text(status.status_effect_name) # TODO different text for removing status
+				if will_remove_status and unit.current_statuses.any(func(status: StatusEffect): status.status_id == status_id):
+					unit.remove_status(status_id)
+					unit.show_popup_text(RomReader.status_effects[status_id].status_effect_name) # TODO different text for removing status
 				elif not will_remove_status:
-					unit.add_status(status)
-					unit.show_popup_text(status.status_effect_name)
+					unit.add_status(RomReader.status_effects[status_id].duplicate())
+					unit.show_popup_text(RomReader.status_effects[status_id].status_effect_name)
 	elif status_list_type == StatusListType.RANDOM:
 		var status_success: bool = randi_range(0, 99) < status_chance
 		if status_success:
 			if will_remove_status:
-				var removable_status_list: Array[StatusEffect] = status_list.filter(func(status: StatusEffect): return unit.current_statuses2.keys().has(status))
+				var removable_status_list: Array[int] = status_list.filter(func(status_id: int): return unit.current_status_ids.has(status_id))
 				if not removable_status_list.is_empty():
-					var status: StatusEffect = removable_status_list.pick_random()
-					unit.remove_status(status)
-					unit.show_popup_text(status.status_effect_name) # TODO different text for removing status
+					var status_id: int = removable_status_list.pick_random()
+					unit.remove_status(status_id)
+					unit.show_popup_text(RomReader.status_effects[status_id].status_effect_name) # TODO different text for removing status
 			elif not will_remove_status:
-				var addable_status_list: Array[StatusEffect] = status_list.filter(func(status: StatusEffect): return not unit.current_statuses2.keys().has(status))
+				var addable_status_list: Array[int] = status_list.filter(func(status_id: int): return not unit.current_status_ids.has(status_id))
 				if not addable_status_list.is_empty():
-					var status: StatusEffect = addable_status_list.pick_random()
-					unit.add_status(status)
-					unit.show_popup_text(status.status_effect_name)
+					var status_id: int = addable_status_list.pick_random()
+					unit.add_status(RomReader.status_effects[status_id].duplicate())
+					unit.show_popup_text(RomReader.status_effects[status_id].status_effect_name)
 
 
 func show_vfx(action_instance: ActionInstance, position: Vector3) -> Node3D:

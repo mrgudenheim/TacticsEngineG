@@ -24,9 +24,9 @@ var jump: int = 3
 var evade_physical: int = 0
 var evade_datas: Array[EvadeData] = []
 
-var status_always: Array[StatusEffect] = [] # 5 bytes of bitflags for up to 40 statuses
-var status_immune: Array[StatusEffect] = [] # 5 bytes of bitflags for up to 40 statuses
-var status_start: Array[StatusEffect] = [] # 5 bytes of bitflags for up to 40 statuses
+var status_always: PackedInt32Array = [] # 5 bytes of bitflags for up to 40 statuses
+var status_immune: PackedInt32Array = [] # 5 bytes of bitflags for up to 40 statuses
+var status_start: PackedInt32Array = [] # 5 bytes of bitflags for up to 40 statuses
 
 var element_absorb: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
 var element_cancel: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
@@ -86,9 +86,9 @@ func _init(new_job_id: int, job_bytes: PackedByteArray) -> void:
 	evade_physical = job_bytes.decode_u8(0x19)
 	evade_datas.append(EvadeData.new(evade_physical, EvadeData.EvadeSource.JOB, EvadeData.EvadeType.PHYSICAL))
 	
-	status_always = StatusEffect.get_status_array(job_bytes.slice(0x1a, 0x1f))
-	status_immune = StatusEffect.get_status_array(job_bytes.slice(0x1f, 0x24))
-	status_start = StatusEffect.get_status_array(job_bytes.slice(0x24, 0x29))
+	status_always = StatusEffect.get_status_id_array(job_bytes.slice(0x1a, 0x1f))
+	status_immune = StatusEffect.get_status_id_array(job_bytes.slice(0x1f, 0x24))
+	status_start = StatusEffect.get_status_id_array(job_bytes.slice(0x24, 0x29))
 	
 	element_absorb = Action.get_element_types_array([job_bytes.decode_u8(0x29)])
 	element_cancel = Action.get_element_types_array([job_bytes.decode_u8(0x2a)])

@@ -382,12 +382,14 @@ func process_clock_tick() -> void:
 	
 	# increment status ticks
 	for unit: UnitData in units:
-		for status: StatusEffect in unit.current_statuses2.keys():
+		var statuses_to_remove: Array[StatusEffect] = []
+		for status: StatusEffect in unit.current_statuses:
 			safe_to_load_map = false
 			if status.duration_type == StatusEffect.DurationType.TICKS:
-				unit.current_statuses2[status] -= 1
-				if unit.current_statuses2[status] <= 0:
-					unit.remove_status(status)
+				status.duration -= 1
+				if status.duration <= 0:
+					#unit.current_statuses.erase(status)
+					statuses_to_remove.append(status)
 					if status.action_on_complete != null: # process potential removal if ticks_left == 0
 						var status_action_instance: ActionInstance = ActionInstance.new(status.action_on_complete, unit, self)
 						status_action_instance.submitted_targets.append(unit.tile_position) # TODO get targets for status action
@@ -410,9 +412,11 @@ func process_clock_tick() -> void:
 							return
 			safe_to_load_map = true
 			await get_tree().process_frame
+		for status: StatusEffect in statuses_to_remove:
+			unit.current_statuses.erase(status)
 	
 	for unit: UnitData in units: # increment each units ct by speed
-		if not unit.current_statuses2.keys().any(func(status: StatusEffect): return status.freezes_ct): # check status that prevent ct gain (stop, sleep, etc.)
+		if not unit.current_statuses.any(func(status: StatusEffect): return status.freezes_ct): # check status that prevent ct gain (stop, sleep, etc.)
 			unit.stats[UnitData.StatType.CT].add_value(unit.speed_current) 
 	
 	# execute unit turns, ties decided by unit index in units[]

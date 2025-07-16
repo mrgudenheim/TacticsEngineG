@@ -3,6 +3,7 @@
 class_name StatusEffect
 extends Resource
 
+var status_id: int = 0
 @export var status_effect_name: String = "Status effect name"
 @export var description: String = "Status effect description"
 
@@ -15,13 +16,13 @@ var byte_01: int = 0
 @export var status_cancels_flags: PackedByteArray = [] # 5 bytes of bitflags for up to 40 statuses 
 @export var status_cant_stack_flags: PackedByteArray = [] # 5 bytes of bitflags for up to 40 statuses
 
-@export var status_cancels: Array[StatusEffect] = [] 
-@export var status_cant_stack: Array[StatusEffect] = [] # TODO use bit index as index into StatusEffect array
+@export var status_cancels: PackedInt32Array = [] 
+@export var status_cant_stack: PackedInt32Array = [] # TODO use bit index as index into StatusEffect array
 
 enum DurationType {
 	TICKS,
 	TURNS, # death sentance, dead -> crystal/treasure
-	PERMANENT,
+	INDEFINITE,
 }
 var duration_type: DurationType = DurationType.TICKS
 @export var action_on_turn_start: Action
@@ -57,11 +58,11 @@ func set_data(status_effect_bytes: PackedByteArray) -> void:
 	duration = status_effect_bytes.decode_u8(3)
 	checks_01 = status_effect_bytes.decode_u8(4)
 	checks_02 = status_effect_bytes.decode_u8(5)
-	status_cancels_flags = get_status_array(status_effect_bytes.slice(6, 11))
-	status_cant_stack_flags = get_status_array(status_effect_bytes.slice(11, 16))
+	status_cancels_flags = status_effect_bytes.slice(6, 11)
+	status_cant_stack_flags = status_effect_bytes.slice(11, 16)
 	
 	if duration == 0:
-		duration_type = DurationType.PERMANENT
+		duration_type = DurationType.INDEFINITE
 
 
 func get_icon_rect() -> Rect2i:
@@ -78,12 +79,12 @@ func get_icon_rect() -> Rect2i:
 
 # called after all StatusEffects have already been initialized since this indexes into the complete array
 func status_flags_to_status_array() -> void:
-	status_cancels = get_status_array(status_cancels_flags)
-	status_cant_stack = get_status_array(status_cant_stack_flags)
+	status_cancels = get_status_id_array(status_cancels_flags)
+	status_cant_stack = get_status_id_array(status_cant_stack_flags)
 
 
-static func get_status_array(status_bitflags: PackedByteArray) -> Array[StatusEffect]:
-	var status_array: Array[StatusEffect] = []
+static func get_status_id_array(status_bitflags: PackedByteArray) -> PackedInt32Array:
+	var status_array: PackedInt32Array = []
 	
 	#if RomReader.status_effects.is_empty():
 		#push_warning("Trying to get StatusEffects before they are loaded")
@@ -94,7 +95,8 @@ static func get_status_array(status_bitflags: PackedByteArray) -> Array[StatusEf
 			var byte: int = status_bitflags.decode_u8(byte_idx)
 			if byte & (2 ** bit_idx) != 0:
 				var status_index: int = (7 - bit_idx) + (byte_idx * 8)
-				status_array.append(RomReader.scus_data.status_effects[status_index])
+				#status_array.append(RomReader.scus_data.status_effects[status_index])
+				status_array.append(status_index)
 	
 	return status_array
 

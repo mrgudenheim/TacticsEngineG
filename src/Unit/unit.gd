@@ -38,7 +38,7 @@ var ai_controller: UnitAi = UnitAi.new()
 
 var is_defeated: bool:
 	get:
-		return current_statuses2.keys().any(func(status: StatusEffect): return status.counts_as_ko) # returns false when no statuses
+		return current_statuses.any(func(status: StatusEffect): return status.counts_as_ko) # returns false when no statuses
 
 @export var unit_nickname: String = "Unit Nickname"
 @export var job_nickname: String = "Job Nickname"
@@ -209,15 +209,19 @@ var jump_current: int = 3:
 	get:
 		return stats[StatType.JUMP].modified_value
 
-var always_statuses: Array[StatusEffect] = []
-var immune_statuses: Array[StatusEffect] = []
-var current_statuses: Array[StatusEffect] = [] # Status may have a corresponding CT countdown?
-var current_statuses2: Dictionary[StatusEffect, int] = {}
-var current_statuses3: Array[CurrentStatusData] = [] # could allow for stacking statuses (2 poisons, 2 charging actions, etc.)
-var current_statuses4: Dictionary[StatusEffect, StatusEffect] = {} # duplicate the orignal and modify as necessary
-class CurrentStatusData: # TODO clean up unit status stuff
-	var status_definition: StatusEffect
-	var status_current: StatusEffect # modified definition with delayed action, duration_left, etc.
+var always_statuses: PackedInt32Array = []
+var immune_statuses: PackedInt32Array = []
+
+# TODO clean up unit status stuff
+var current_statuses: Array[StatusEffect] = [] # entry will be duplicate of status definition with modified values (duration_left, delayed action, etc)
+var current_status_ids: PackedInt32Array = []:
+	get:
+		var status_ids: PackedInt32Array = []
+		for status: StatusEffect in current_statuses:
+			if not status_ids.has(status.status_id):
+				status_ids.append(status.status_id)
+		return status_ids
+#var current_statuses2: Dictionary[StatusEffect, int] = {}
 
 var learned_abilities: Array = []
 var job_levels: Dictionary[JobData, int] = {}
@@ -618,51 +622,58 @@ func end_turn():
 
 func hp_changed(clamped_value: ClampedValue) -> void:
 	if stats[StatType.HP].current_value == 0:
-		add_status(RomReader.status_effects[2]) # add dead
+		add_status(RomReader.status_effects[2].duplicate()) # add dead
 	elif stats[StatType.HP].current_value < stats[StatType.HP].max_value / 5: # critical
-		add_status(RomReader.status_effects[23]) # add critical
+		add_status(RomReader.status_effects[23].duplicate()) # add critical
 	elif stats[StatType.HP].current_value >= stats[StatType.HP].max_value / 5: # critical
-		remove_status(RomReader.status_effects[23]) # remove critical
+		remove_status(23) # remove critical
 
 
-func add_status(status: StatusEffect) -> void:
-	for status_immune: StatusEffect in immune_statuses: # prevent application based on immune statuses
+func add_status(new_status: StatusEffect) -> void:
+	if immune_statuses.has(new_status.status_id): # prevent application based on immune statuses
 		return
 	
-	for status_prevents: StatusEffect in status.status_cant_stack: # prevent application based on flags
-		if current_statuses2.keys().has(status_prevents):
+	for status_prevents_id: int in new_status.status_cant_stack: # prevent application based on flags
+		if current_statuses.any(func(status: StatusEffect): return status.status_id == status_prevents_id):
 			return
 	
-	current_statuses2[status] = status.duration
+	current_statuses.append(new_status)
 	
-	for status_cancelled: StatusEffect in status.status_cancels:
-		if current_statuses2.keys().has(status_cancelled):
-			remove_status(status_cancelled)
-		if status_cancelled == RomReader.status_effects[4]: # charging, TODO correctly cancel charging and performing status
-			var charging_statuses: Array[StatusEffect] = current_statuses2.keys().filter(func(status: StatusEffect): return status.delayed_action != null)
-			for charging_status: StatusEffect in charging_statuses:
-				remove_status(charging_status)
-		if status_cancelled == RomReader.status_effects[7]: # performing, TODO correctly cancel charging and performing status
-			var performing_statuses: Array[StatusEffect] = current_statuses2.keys().filter(func(status: StatusEffect): return status.action_on_x_ticks != null)
-			for performing_status: StatusEffect in performing_statuses:
-				remove_status(performing_status)
+	var statuses_to_cancel: Array[StatusEffect] = []
+	for status_cancelled_id: int in new_status.status_cancels:
+		statuses_to_cancel.append_array(current_statuses.filter(func(status: StatusEffect): status.status_id == status_cancelled_id))
+	for status: StatusEffect in statuses_to_cancel:
+		current_statuses.erase(status)
+	
+		#if current_statuses.has(status_cancelled):
+			#remove_status(status_cancelled)
+		#if status_cancelled == RomReader.status_effects[4]: # charging, TODO correctly cancel charging and performing status
+			#var charging_statuses: Array[StatusEffect] = current_statuses2.keys().filter(func(status: StatusEffect): return status.delayed_action != null)
+			#for charging_status: StatusEffect in charging_statuses:
+				#remove_status(charging_status)
+		#if status_cancelled == RomReader.status_effects[7]: # performing, TODO correctly cancel charging and performing status
+			#var performing_statuses: Array[StatusEffect] = current_statuses2.keys().filter(func(status: StatusEffect): return status.action_on_x_ticks != null)
+			#for performing_status: StatusEffect in performing_statuses:
+				#remove_status(performing_status)
 		
 	
 	update_status_visuals()
 
 
-func remove_status(status: StatusEffect) -> void:
-	if always_statuses.has(status): # check always_statuses?
+func remove_status(status_removed_id: int) -> void:
+	if always_statuses.has(status_removed_id):
 		return
 	
-	if current_statuses2.keys().has(status):
-		current_statuses2.erase(status)
+	var statuses_to_remove: Array[StatusEffect] = []
+	statuses_to_remove.append_array(current_statuses.filter(func(status: StatusEffect): status.status_id == status_removed_id))
+	for status: StatusEffect in statuses_to_remove:
+		current_statuses.erase(status)
 	update_status_visuals()
 
 
 func update_status_visuals() -> void:
 	var anim_priority: int = 0
-	if current_statuses2.is_empty():
+	if current_statuses.is_empty():
 		if current_animation_id_fwd == current_idle_animation_id:
 			current_idle_animation_id = idle_walk_animation_id
 			set_base_animation_ptr_id(current_idle_animation_id)
@@ -672,7 +683,7 @@ func update_status_visuals() -> void:
 		icon2.region_rect = Rect2i(Vector2i.ZERO, Vector2i.ONE)
 		# TODO reset color shading
 	else:
-		for status: StatusEffect in current_statuses2.keys():
+		for status: StatusEffect in current_statuses:
 			if status.order >= anim_priority:
 				if status.idle_animation_id == -1:
 					continue
@@ -685,7 +696,7 @@ func update_status_visuals() -> void:
 					current_idle_animation_id = status.idle_animation_id
 				# TODO status color shading
 		
-		if anim_priority == 0: # no statuses set the idle animation
+		if anim_priority == 0: # no statuses set the idle animation (may happen when status is removed)
 			if current_animation_id_fwd == current_idle_animation_id:
 				current_idle_animation_id = idle_walk_animation_id
 				set_base_animation_ptr_id(current_idle_animation_id)
@@ -1046,13 +1057,13 @@ func cycle_status_icons() -> void:
 	var status_idx: int = 0
 	while true:
 		var status: StatusEffect = null
-		if not current_statuses2.is_empty():
-			status = current_statuses2.keys()[status_idx]
+		if not current_statuses.is_empty():
+			status = current_statuses[status_idx]
 			var rect: Rect2i = status.get_icon_rect()
 			set_status_icon_rect(rect)
 			
-			if current_statuses2.keys().size() > 0:
-				status_idx = (status_idx + 1) % current_statuses2.keys().size()
+			if current_statuses.size() > 0:
+				status_idx = (status_idx + 1) % current_statuses.size()
 			else:
 				status_idx = 0
 		

@@ -221,9 +221,9 @@ func get_statuses_text(target: UnitData) -> String:
 		status_group_type = "" # don't mention group type if 1 or less status
 	
 	var status_names: PackedStringArray = []
-	for status: StatusEffect in action.taregt_status_list:
-		if not action.will_remove_status or target.current_statuses2.keys().has(status): # don't show removing status the target does not have TODO don't show remove Always statuses
-			status_names.append(status.status_effect_name)
+	for status_id: int in action.taregt_status_list:
+		if not action.will_remove_status or target.current_status_ids.has(status_id): # don't show removing status the target does not have TODO don't show remove Always statuses
+			status_names.append(RomReader.status_effects[status_id].status_effect_name)
 	
 	if status_names.is_empty() and action.will_remove_status:
 		status_names = ["[No status to remove]"]

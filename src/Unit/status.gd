@@ -32,6 +32,7 @@ var duration_type: DurationType = DurationType.TICKS
 @export var action_on_apply: Action # dead sets current_hp = 0
 @export var action_on_complete: Action # dead -> crystal/treasure, death sentence, charging?
 var delayed_action: ActionInstance # charging
+@export var num_allowed: int = 1
 
 var visual_effect # TODO speech bubbles, sprite coloring, animation (haste, dead, etc.), float, etc.
 @export var unit_shading_color: Color

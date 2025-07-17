@@ -637,7 +637,12 @@ func add_status(new_status: StatusEffect) -> void:
 		if current_statuses.any(func(status: StatusEffect): return status.status_id == status_prevents_id):
 			return
 	
-	current_statuses.append(new_status)
+	var existing_statuses: Array[StatusEffect] = current_statuses.filter(func(status: StatusEffect): return status.status_id == new_status.status_id) # TODO use filter to allow for multiple of the same status, ex. double charging
+	if existing_statuses.size() < new_status.num_allowed:
+		current_statuses.append(new_status)
+	else:
+		current_statuses.erase(existing_statuses[0])
+		current_statuses.append(new_status)
 	
 	var statuses_to_cancel: Array[StatusEffect] = []
 	for status_cancelled_id: int in new_status.status_cancels:

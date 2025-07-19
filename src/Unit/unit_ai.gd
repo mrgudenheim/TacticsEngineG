@@ -194,7 +194,12 @@ func choose_action(unit: UnitData) -> void:
 		if best_action == null:
 			wait_action_instance.start_targeting()
 			await wait_action_instance.action_completed
-
+	elif strategy == Strategy.CONFUSED: # TODO implement confused ai
+		pass
+	elif strategy == Strategy.BERSERK: # TODO implement berserk ai
+		pass
+	elif strategy == Strategy.FLEE: # TODO implement flee ai
+		pass
 
 func action_targeted(unit: UnitData, chosen_action: ActionInstance, target: TerrainTile = null, hover_target = null) -> void:
 	#chosen_action.show_potential_targets() # TODO fix move targeting when updating paths/pathfinding is takes longer than delay (large maps with 10+ units)

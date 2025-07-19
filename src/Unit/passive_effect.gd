@@ -20,12 +20,12 @@ var stat_modifiers: Dictionary[UnitData.StatType, Modifier] = {}
 @export var elemental_weakness: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
 @export var elemental_strengthen: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
 
+var can_react: bool = true
+var target_can_react: bool = true
+var nullify_targeted: bool = false # ignore_attacks flag
 
-# TODO Affect usable actions - silence, don't act/move, chicken, frog (only frog attack, and Frog if known and block magic equipped); define in Action?
-# TODO Affect skillet/actions available - blood suck, frog
-# TODO affects targeting - float, reflect
-# TODO Affect reactions - transparent, dont act, sleep, can_react flag
-# TODO ignore_attacks flag - attacks do not animate or do anything
+# TODO affects targeting - float - can attack 1 higher, counts as 1 higher when being targeted, chicken/frog counts as further? maybe targeting just checks sprite height var
+# TODO reflect
 
 
 func modify_stat() -> void:

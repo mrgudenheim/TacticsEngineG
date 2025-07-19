@@ -436,6 +436,11 @@ func init_statuses() -> void:
 	for status: StatusEffect in status_effects:
 		if status.freezes_ct:
 			status.passive_effect.ct_gain_modifier.value = 0.0
+		status.passive_effect.can_react = status.checks_02 & 0x80 == 0x80 # cant react flag
+		status.passive_effect.nullify_targeted = status.checks_02 & 0x20 == 0x20 # ignore attacks flag
+	
+	# reflect
+	status_effects[38].passive_effect.hit_chance_modifier_targeted.value = 0.0
 	
 	# defending
 	status_effects[6].passive_effect.hit_chance_modifier_targeted.value = 0.5
@@ -462,6 +467,7 @@ func init_statuses() -> void:
 	# user is transparent
 	status_effects[19].passive_effect.evade_modifier_user.type = Modifier.ModifierType.SET
 	status_effects[19].passive_effect.evade_modifier_user.value = 1.0
+	status_effects[19].passive_effect.target_can_react = false
 	
 	# confuse
 	status_effects[11].passive_effect.ai_strategy = UnitAi.Strategy.CONFUSED

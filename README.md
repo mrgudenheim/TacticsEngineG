@@ -28,11 +28,28 @@ Escape: Open/Close debug menus
 ...
 
 
-# Limitations and Notes
-- vfx do not display 3d models
-- FFTae does not show items (MFItem related opcodes)
+# FFTae Limitations and Notes
+- Does not show items (MFItem related opcodes)
 ...
 
+
+# TacticsEngineG Limitations and Notes
+- vfx do not display 3d models
+- Indoor maps are practically unplayable because wall geometry intercepts mouse input
+- Sometimes units will have trouble reaching the tile they are trying to move to. The unit can be manually controlled with WASD and Spacebar to help it get there.
+- Initial loading of the ROM can take a little while (about 10+ seconds for me)
+- Loading expanded maps with lots of units can take a while (over a minute for 45 units per team + more time for pathfinding to run)
+- Units with lots of ranged actions (ex. Summoner) will take some time to decide what action to take
+- Reaction / Support / Movement abilities not implemented
+- Oil status caunts as Fire Weakness
+- Reflect re-targeting not implemented
+- Many statuses do nothing
+- Bard, Dancer, Calculator, Mime will not be generated, skillsets not implemented
+- Additionally, the following skillsets are not implemented:
+-- Chemist Item
+-- Archer Charge
+-- Lancer Jump
+-- Ninja Throw 
 
 # Future Improvements
 - Generally improve ability vfx by using more data from vfx files

@@ -18,6 +18,7 @@ var choose_best_action: bool = false
 var action_eval_data: Array = []
 
 enum Strategy {
+	PLAYER,
 	END_TURN,
 	RANDOM,
 	BEST,

@@ -201,49 +201,6 @@ func init_from_scus() -> void:
 	for status_effect: StatusEffect in status_effects:
 		status_effect.status_flags_to_status_array() # called after all StatusEffects have already been initialized since this indexes into the complete array
 	
-	
-	# https://ffhacktics.com/wiki/Target_XA_affecting_Statuses_(Physical)
-	# https://ffhacktics.com/wiki/Target%27s_Status_Affecting_XA_(Magical)
-	# https://ffhacktics.com/wiki/Evasion_Changes_due_to_Statuses
-	# evade also affected by transparent, concentrate, dark or confuse, on user
-	
-	# haste
-	status_effects[28].passive_effect.ct_gain_modifier.value = 1.5
-	# slow
-	status_effects[28].passive_effect.ct_gain_modifier.value = 0.5
-	
-	# freeze ct flag
-	for status: StatusEffect in status_effects:
-		if status.freezes_ct:
-			status.passive_effect.ct_gain_modifier.value = 0.0
-	
-	# defending
-	status_effects[6].passive_effect.hit_chance_modifier_targeted.value = 0.5
-	
-	# protect, shell
-	for idx: int in [26, 27]:
-		status_effects[idx].passive_effect.hit_chance_modifier_targeted.value = 0.66
-		status_effects[idx].passive_effect.power_modifier_targeted.value = 0.66
-	
-	# chicken, frog, sleeping, charging
-	for idx: int in [21, 22, 35, 4]:
-		status_effects[idx].passive_effect.hit_chance_modifier_targeted.value = 1.5
-		status_effects[idx].passive_effect.power_modifier_targeted.value = 1.5
-	
-	# dark, confuse
-	for idx: int in [10, 11]:
-		status_effects[idx].passive_effect.hit_chance_modifier_user.value = 0.5
-	
-	# dont act, sleep, stop, confuse, charging, performing
-	for idx: int in [37, 35, 30, 11, 4, 7]:
-		status_effects[idx].passive_effect.evade_modifier_targeted.type = Modifier.ModifierType.SET
-		status_effects[idx].passive_effect.evade_modifier_targeted.value = 1.0
-	
-	# user is transparent
-	status_effects[19].passive_effect.evade_modifier_user.type = Modifier.ModifierType.SET
-	status_effects[19].passive_effect.evade_modifier_user.value = 1.0
-	
-	
 	# Inflict Status data https://ffhacktics.com/wiki/Inflict_Statuses
 	# inflict status data needs to be loaded before abilities and items that reference the array
 	var inflict_status_data_bytes: PackedByteArray = scus_bytes.slice(inflict_status_data_start, inflict_status_data_start + (inflict_status_entries * inflict_status_entry_length))
@@ -462,3 +419,58 @@ func init_from_scus() -> void:
 		for byte_idx: int in unit_base_stats_mod_length:
 			unit_stat_mods_data[byte_idx] = unit_base_stats_mod_bytes.decode_u8(byte_idx)
 		unit_base_stats_mods[idx] = unit_stat_mods_data
+
+
+func init_statuses() -> void:
+	# https://ffhacktics.com/wiki/Target_XA_affecting_Statuses_(Physical)
+	# https://ffhacktics.com/wiki/Target%27s_Status_Affecting_XA_(Magical)
+	# https://ffhacktics.com/wiki/Evasion_Changes_due_to_Statuses
+	# evade also affected by transparent, concentrate, dark or confuse, on user
+	
+	# haste
+	status_effects[28].passive_effect.ct_gain_modifier.value = 1.5
+	# slow
+	status_effects[28].passive_effect.ct_gain_modifier.value = 0.5
+	
+	# freeze ct flag
+	for status: StatusEffect in status_effects:
+		if status.freezes_ct:
+			status.passive_effect.ct_gain_modifier.value = 0.0
+	
+	# defending
+	status_effects[6].passive_effect.hit_chance_modifier_targeted.value = 0.5
+	
+	# protect, shell
+	for idx: int in [26, 27]:
+		status_effects[idx].passive_effect.hit_chance_modifier_targeted.value = 0.66
+		status_effects[idx].passive_effect.power_modifier_targeted.value = 0.66
+	
+	# chicken, frog, sleeping, charging
+	for idx: int in [21, 22, 35, 4]:
+		status_effects[idx].passive_effect.hit_chance_modifier_targeted.value = 1.5
+		status_effects[idx].passive_effect.power_modifier_targeted.value = 1.5
+	
+	# dark, confuse
+	for idx: int in [10, 11]:
+		status_effects[idx].passive_effect.hit_chance_modifier_user.value = 0.5
+	
+	# dont act, sleep, stop, confuse, charging, performing
+	for idx: int in [37, 35, 30, 11, 4, 7]:
+		status_effects[idx].passive_effect.evade_modifier_targeted.type = Modifier.ModifierType.SET
+		status_effects[idx].passive_effect.evade_modifier_targeted.value = 1.0
+	
+	# user is transparent
+	status_effects[19].passive_effect.evade_modifier_user.type = Modifier.ModifierType.SET
+	status_effects[19].passive_effect.evade_modifier_user.value = 1.0
+	
+	# confuse
+	status_effects[11].passive_effect.ai_strategy = UnitAi.Strategy.CONFUSED
+	# berserk
+	status_effects[20].passive_effect.ai_strategy = UnitAi.Strategy.CONFUSED
+	# chicken
+	status_effects[21].passive_effect.ai_strategy = UnitAi.Strategy.FLEE
+	
+	# faith
+	status_effects[32].passive_effect.stat_modifiers = [Modifier.new(100.0, Modifier.ModifierType.SET)]
+	# innocent
+	status_effects[33].passive_effect.stat_modifiers = [Modifier.new(0.0, Modifier.ModifierType.SET)]

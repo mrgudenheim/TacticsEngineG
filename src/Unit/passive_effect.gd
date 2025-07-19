@@ -10,6 +10,7 @@ var evade_modifier_targeted: Modifier = Modifier.new(1.0, Modifier.ModifierType.
 
 var ct_gain_modifier: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
 
+var ai_strategy: UnitAi.Strategy = UnitAi.Strategy.PLAYER
 
 var stat_modifiers: Array[Modifier] = []
 
@@ -76,9 +77,10 @@ func modify_stat() -> void:
 #Affect elemental affinity - float, (oil - in addition to element)
 #Affect usable actions - silence, don't act/move
 #Counts as defeated - dead, crystal, petrify, poached, etc
-#Affects ai - critical, transparent
+#Affects ai - critical, transparent, do_not_target flag? (Confusion/Transparent/Charm/Sleep)
 #affects targeting - float, reflect
-#Affect reactions - transparent
+#Affect reactions - transparent, dont act, sleep, can_react flag
+# ignore_attacks flag - attacks do not animate or do anything
 #
 #Reaction/Support/Move:
 #Affect CT gain - 

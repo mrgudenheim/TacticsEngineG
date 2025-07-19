@@ -207,7 +207,18 @@ func init_from_scus() -> void:
 	# https://ffhacktics.com/wiki/Evasion_Changes_due_to_Statuses
 	# evade also affected by transparent, concentrate, dark or confuse, on user
 	
-	status_effects[6].passive_effect.hit_chance_modifier_targeted.value = 0.5 # defending
+	# haste
+	status_effects[28].passive_effect.ct_gain_modifier.value = 1.5
+	# slow
+	status_effects[28].passive_effect.ct_gain_modifier.value = 0.5
+	
+	# freeze ct flag
+	for status: StatusEffect in status_effects:
+		if status.freezes_ct:
+			status.passive_effect.ct_gain_modifier.value = 0.0
+	
+	# defending
+	status_effects[6].passive_effect.hit_chance_modifier_targeted.value = 0.5
 	
 	# protect, shell
 	for idx: int in [26, 27]:

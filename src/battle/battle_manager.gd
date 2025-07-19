@@ -417,7 +417,10 @@ func process_clock_tick() -> void:
 	
 	for unit: UnitData in units: # increment each units ct by speed
 		if not unit.current_statuses.any(func(status: StatusEffect): return status.freezes_ct): # check status that prevent ct gain (stop, sleep, etc.)
-			unit.stats[UnitData.StatType.CT].add_value(unit.speed_current) 
+			var ct_gain: int = unit.speed_current
+			for status: StatusEffect in unit.current_statuses:
+				ct_gain = status.passive_effect.ct_gain_modifier.apply(ct_gain)
+			unit.stats[UnitData.StatType.CT].add_value(ct_gain) 
 	
 	# execute unit turns, ties decided by unit index in units[]
 	for unit: UnitData in units:

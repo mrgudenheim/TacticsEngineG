@@ -7,6 +7,10 @@ var power_modifier_user: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT
 var power_modifier_targeted: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
 var evade_modifier_user: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
 var evade_modifier_targeted: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
+
+var ct_gain_modifier: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
+
+
 var stat_modifiers: Array[Modifier] = []
 
 ## dark, confusion, monster talk

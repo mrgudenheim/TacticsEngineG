@@ -7,12 +7,12 @@ var power_modifier_user: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT
 var power_modifier_targeted: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
 var evade_modifier_user: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
 var evade_modifier_targeted: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
-
 var ct_gain_modifier: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
 
 var ai_strategy: UnitAi.Strategy = UnitAi.Strategy.PLAYER
+var added_actions: Array[Action] = []
 
-var stat_modifiers: Array[Modifier] = []
+var stat_modifiers: Dictionary[UnitData.StatType, Modifier] = {}
 
 @export var elemental_absorb: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
 @export var elemental_cancel: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
@@ -21,8 +21,8 @@ var stat_modifiers: Array[Modifier] = []
 @export var elemental_strengthen: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
 
 
-# TODO Affect usable actions - silence, don't act/move, define in Action?
-# TODO Affect skillet/actions available - blood suck, frog, chicken
+# TODO Affect usable actions - silence, don't act/move, chicken, frog (only frog attack, and Frog if known and block magic equipped); define in Action?
+# TODO Affect skillet/actions available - blood suck, frog
 # TODO affects targeting - float, reflect
 # TODO Affect reactions - transparent, dont act, sleep, can_react flag
 # TODO ignore_attacks flag - attacks do not animate or do anything

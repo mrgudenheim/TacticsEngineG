@@ -1,26 +1,78 @@
-[gd_resource type="Resource" script_class="Action" load_steps=4 format=3 uid="uid://dv16rhvlwfg3h"]
+[gd_resource type="Resource" script_class="Action" load_steps=6 format=3 uid="uid://dv16rhvlwfg3h"]
 
+[ext_resource type="Script" uid="uid://cf5w02iml4cqu" path="res://src/items/item_data.gd" id="1_pioh6"]
 [ext_resource type="Script" uid="uid://dlaul7n568vti" path="res://src/actions/action.gd" id="1_spr2t"]
 [ext_resource type="Resource" uid="uid://dbptiq6hf5new" path="res://src/actions/move_targeting.tres" id="2_hkwuw"]
 [ext_resource type="Resource" uid="uid://nl6pdojiff0s" path="res://src/actions/move_use.tres" id="3_7kirg"]
+[ext_resource type="Script" uid="uid://cpa42ca48we8h" path="res://src/actions/action_effect.gd" id="3_akqym"]
 
 [resource]
 script = ExtResource("1_spr2t")
 action_name = "Move"
 description = "Action description"
-spell_quote = "spell quote"
+quote = "Action quote"
 display_action_name = false
 targeting_strategy = ExtResource("2_hkwuw")
 use_strategy = ExtResource("3_7kirg")
 move_points_cost = 1
 action_points_cost = 0
 mp_cost = 0
-formula_id = 0
-formula_x = 0
-formula_y = 0
-targeting_range = 4
-effect_radius = 1
-vertical_tolerance = 2
-inflict_status_id = 0
+min_targeting_range = 0
+max_targeting_range = 4
+area_of_effect_range = 0
+vertical_tolerance = 2.0
 ticks_charge_time = 0
+has_vertical_tolerance_from_user = false
+use_weapon_range = false
+use_weapon_targeting = false
+use_weapon_damage = false
+use_weapon_animation = false
+auto_target = false
+cant_target_self = false
+cant_hit_enimies = false
+cant_hit_allies = false
+cant_hit_user = false
+targeting_top_down = false
+cant_follow_target = true
+random_fire = false
+targeting_linear = false
+targeting_los = false
+aoe_has_vertical_tolerance = true
+aoe_vertical_tolerance = 2.0
+aoe_targeting_three_directions = false
+aoe_targeting_linear = false
+aoe_targeting_los = false
+target_effects = Array[ExtResource("3_akqym")]([])
+user_effects = Array[ExtResource("3_akqym")]([])
+applicable_evasion = 1
+is_reflectable = false
+is_math_usable = false
+is_mimicable = false
+blocked_by_golem = false
+repeat_use = false
+vfx_on_empty = false
+trigger_counter_flood = false
+trigger_counter_magic = false
+trigger_counter_grasp = false
+can_target = true
+element = 0
+healing_damages_undead = false
+ignores_statuses = Array[int]([])
+taregt_status_list = []
+status_chance = 100
+will_remove_status = false
+target_status_list_type = 1
+status_prevents_use_any = Array[int]([36])
+required_equipment_type = Array[int]([])
+required_equipment = Array[ExtResource("1_pioh6")]([])
+animation_start_id = 0
+animation_charging_id = 0
+animation_executing_id = 0
+secondary_actions = Array[ExtResource("1_spr2t")]([])
+secondary_actions_chances = [100]
+secondary_action_list_type = 1
+set_target_animation_on_hit = true
+ends_turn = false
+hit_chance_modified_by_passive = false
+power_modified_by_passive = true
 metadata/_custom_type_script = "uid://dlaul7n568vti"

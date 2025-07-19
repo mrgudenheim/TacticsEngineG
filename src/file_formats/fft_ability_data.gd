@@ -268,9 +268,10 @@ func set_action() -> void:
 		ability_action.target_status_list_type = Action.StatusListType.RANDOM
 	elif inflict_status_data.is_separate:
 		ability_action.target_status_list_type = Action.StatusListType.EACH
-
+	
+	ability_action.status_prevents_use_any = [37, 21, 22] # dont act, chicken, frog, etc.
 	if affected_by_silence:
-		ability_action.status_prevents_use_any = [RomReader.status_effects[12]] # silence, dont move, dont act, etc.
+		ability_action.status_prevents_use_any = [12] # silence
 	if require_sword:
 		ability_action.required_equipment_type = [ItemData.ItemType.SWORD] # sword, gun, etc.
 	if require_materia_blade:

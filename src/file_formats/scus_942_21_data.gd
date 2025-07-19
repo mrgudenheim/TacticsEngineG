@@ -470,14 +470,20 @@ func init_statuses() -> void:
 	# chicken
 	status_effects[21].passive_effect.ai_strategy = UnitAi.Strategy.FLEE
 	# blood suck
-	status_effects[21].passive_effect.ai_strategy = UnitAi.Strategy.BEST
+	status_effects[13].passive_effect.ai_strategy = UnitAi.Strategy.BEST
+	status_effects[13].passive_effect.added_actions = [RomReader.abilities[0xc8].ability_action] # blood suck action
 	
 	# faith
-	status_effects[32].passive_effect.stat_modifiers = [Modifier.new(100.0, Modifier.ModifierType.SET)]
+	status_effects[32].passive_effect.stat_modifiers[UnitData.StatType.FAITH] = Modifier.new(100.0, Modifier.ModifierType.SET)
 	# innocent
-	status_effects[33].passive_effect.stat_modifiers = [Modifier.new(0.0, Modifier.ModifierType.SET)]
+	status_effects[33].passive_effect.stat_modifiers[UnitData.StatType.FAITH] = Modifier.new(0.0, Modifier.ModifierType.SET)
 	
 	# float
 	status_effects[17].passive_effect.elemental_cancel = [Action.ElementTypes.EARTH]
 	# oil
 	status_effects[16].passive_effect.elemental_weakness = [Action.ElementTypes.FIRE] # TODO oil is in addition to fire weakness
+	
+	# frog
+	status_effects[22].passive_effect.added_actions = [RomReader.abilities[0x16f].ability_action] # frog attack action
+	RomReader.abilities[0x16f].ability_action.status_prevents_use_any.erase(22) # can use frog attack
+	RomReader.abilities[0x01d].ability_action.status_prevents_use_any.erase(22) # can use Frog

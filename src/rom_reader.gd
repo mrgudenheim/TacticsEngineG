@@ -118,6 +118,7 @@ func process_rom() -> void:
 	for ability: FftAbilityData in abilities:
 		ability.set_action()
 	
+	# TODO does status_init need to be called after setting ability actions for blood suck and frog attack actions?
 	
 	
 	# testing vfx vram data

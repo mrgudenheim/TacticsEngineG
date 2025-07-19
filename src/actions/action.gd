@@ -81,7 +81,7 @@ var all_status: bool = false
 var random_status: bool = false
 var separate_status: bool = false
 
-@export var status_prevents_use_any: Array[StatusEffect] = [] # silence, dont move, dont act, etc.
+@export var status_prevents_use_any: Array[int] = [] # silence, dont move, dont act, etc.
 @export var required_equipment_type: Array[ItemData.ItemType] = [] # sword, gun, etc.
 @export var required_equipment: Array[ItemData] = [] # materia_blade, etc.
 
@@ -149,7 +149,7 @@ func is_usable(action_instance: ActionInstance) -> bool:
 		var user_has_equipment_type: bool = required_equipment_type.is_empty() or required_equipment_type.has(action_instance.user.primary_weapon.item_type) # TODO check all unit.equipped, not just primary_weapon
 		var user_has_equipment: bool = required_equipment.is_empty() or required_equipment.has(action_instance.user.primary_weapon) # TODO check all unit.equipped, not just primary_weapon
 		
-		var action_not_prevented_by_status: bool = not action_instance.action.status_prevents_use_any.any(func(status: StatusEffect): return action_instance.user.current_statuses.has(status))
+		var action_not_prevented_by_status: bool = not action_instance.action.status_prevents_use_any.any(func(status_id: int): return action_instance.user.current_status_ids.has(status_id))
 		
 		action_is_usable = (user_has_enough_move_points 
 				and user_has_enough_action_points 

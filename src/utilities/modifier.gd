@@ -9,13 +9,13 @@ enum ModifierType {
 
 var type: ModifierType = ModifierType.ADD
 var value: float = 1.0
-var priority: int = 1 # order to be applied
+var order: int = 1 # order to be applied
 # TODO track modifier source?
 
-func _init(new_value: float = 1.0, new_type: ModifierType = ModifierType.ADD, new_priority: int = 1) -> void:
+func _init(new_value: float = 1.0, new_type: ModifierType = ModifierType.ADD, new_order: int = 1) -> void:
 	value = new_value
 	type = new_type
-	priority = new_priority
+	order = new_order
 
 
 func apply(to_value: int) -> int:

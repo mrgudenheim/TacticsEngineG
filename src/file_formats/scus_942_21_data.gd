@@ -201,6 +201,28 @@ func init_from_scus() -> void:
 	for status_effect: StatusEffect in status_effects:
 		status_effect.status_flags_to_status_array() # called after all StatusEffects have already been initialized since this indexes into the complete array
 	
+	
+	# https://ffhacktics.com/wiki/Target_XA_affecting_Statuses_(Physical)
+	# https://ffhacktics.com/wiki/Target%27s_Status_Affecting_XA_(Magical)
+	# https://ffhacktics.com/wiki/Evasion_Changes_due_to_Statuses
+	# evade also affected by transparent, concentrate, dark or confuse, on user
+	
+	status_effects[6].passive_effect.hit_chance_modifier_targeted.value = 0.5 # defending
+	status_effects[26].passive_effect.hit_chance_modifier_targeted.value = 0.66 # protect
+	status_effects[26].passive_effect.power_modifier_targeted.value = 0.66 # protect
+	status_effects[27].passive_effect.hit_chance_modifier_targeted.value = 0.66 # shell
+	status_effects[27].passive_effect.power_modifier_targeted.value = 0.66 # shell
+	
+	# chicken, frog, sleeping, charging
+	for idx: int in [21, 22, 35, 4]:
+		status_effects[idx].passive_effect.hit_chance_modifier_targeted.value = 1.5
+		status_effects[idx].passive_effect.power_modifier_targeted.value = 1.5
+	
+	# dont act, sleep, stop, confuse, charging, performing
+	for idx: int in [37, 35, 30, 11, 4, 7]:
+		status_effects[idx].passive_effect.evade_modifier_targeted.value = 0.0 # defending
+	
+	
 	# Inflict Status data https://ffhacktics.com/wiki/Inflict_Statuses
 	# inflict status data needs to be loaded before abilities and items that reference the array
 	var inflict_status_data_bytes: PackedByteArray = scus_bytes.slice(inflict_status_data_start, inflict_status_data_start + (inflict_status_entries * inflict_status_entry_length))

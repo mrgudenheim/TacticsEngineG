@@ -185,9 +185,9 @@ func get_total_hit_chance(user: UnitData, target: UnitData, evade_direction: Eva
 	var modified_hit_chance: float = base_hit_chance
 	if hit_chance_modified_by_passive:
 		for status: StatusEffect in user.current_statuses:
-			modified_hit_chance = status.passive_effect.modify_hit_chance_user(modified_hit_chance)
+			modified_hit_chance = status.passive_effect.hit_chance_modifier_user.apply(modified_hit_chance)
 		for status: StatusEffect in target.current_statuses:
-			modified_hit_chance = status.passive_effect.modify_hit_chance_targeted(modified_hit_chance)
+			modified_hit_chance = status.passive_effect.hit_chance_modifier_targeted.apply(modified_hit_chance)
 	
 	#var evade_direction: EvadeData.EvadeDirections = get_evade_direction(user, target)
 	var evade_values: PackedInt32Array = get_evade_values(target, evade_direction)
@@ -202,6 +202,11 @@ func get_total_hit_chance(user: UnitData, target: UnitData, evade_direction: Eva
 	
 		target_total_evade_factor = job_evade_factor * shield_evade_factor * accessory_factor * weapon_evade_factor
 		target_total_evade_factor = max(0, target_total_evade_factor) # prevent negative evasion
+	
+	for status: StatusEffect in user.current_statuses:
+		target_total_evade_factor = status.passive_effect.evade_modifier_user.apply(target_total_evade_factor)
+	for status: StatusEffect in target.current_statuses:
+		target_total_evade_factor = status.passive_effect.evade_modifier_targeted.apply(target_total_evade_factor)
 	
 	var total_hit_chance: int = roundi(base_hit_chance * target_total_evade_factor)
 	
@@ -305,9 +310,9 @@ func apply_standard(action_instance: ActionInstance) -> void:
 				var effect_value: int = roundi(effect.base_power_formula.get_result(action_instance.user, target_unit, element))
 				if power_modified_by_passive:
 					for status: StatusEffect in action_instance.user.current_statuses:
-						effect_value = status.passive_effect.modify_power_user(effect_value)
+						effect_value = status.passive_effect.power_modifier_user.apply(effect_value)
 					for status: StatusEffect in target_unit.current_statuses:
-						effect_value = status.passive_effect.modify_power_targeted(effect_value)
+						effect_value = status.passive_effect.power_modifier_targeted.apply(effect_value)
 				
 				effect.apply(action_instance.user, target_unit, effect_value)
 				

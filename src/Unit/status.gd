@@ -43,6 +43,9 @@ var visual_effect # TODO speech bubbles, sprite coloring, animation (haste, dead
 var duration_icons: Array[Rect2i] = RomReader.battle_bin_data.status_counter_rects
 @export var idle_animation_id: int = -1
 
+@export var passive_effect: PassiveEffect = PassiveEffect.new()
+
+
 var counts_as_ko: bool = false:
 	get:
 		counts_as_ko = checks_01 & 0x01 == 0x01
@@ -102,47 +105,51 @@ static func get_status_id_array(status_bitflags: PackedByteArray) -> PackedInt32
 	return status_array
 
 
+
+
+
 #Status Set 1
-#0x80 - 
-#0x40 - Crystal
-#0x20 - Dead
-#0x10 - Undead
-#0x08 - Charging
-#0x04 - Jump
-#0x02 - Defending
-#0x01 - Performing
+#0x80 - 0 
+#0x40 - 1 Crystal
+#0x20 - 2 Dead
+#0x10 - 3 Undead
+#0x08 - 4 Charging
+#0x04 - 5 Jump
+#0x02 - 6 Defending
+#0x01 - 7 Performing
 #Status Set 2
-#0x80 - Petrify
-#0x40 - Invite
-#0x20 - Darkness
-#0x10 - Confusion
-#0x08 - Silence
-#0x04 - Blood Suck
-#0x02 - Cursed
-#0x01 - Treasure
+#0x80 - 8 Petrify
+#0x40 - 9 Invite
+#0x20 - 10 Darkness
+#0x10 - 11 Confusion
+#0x08 - 12 Silence
+#0x04 - 13 Blood Suck
+#0x02 - 14 Cursed
+#0x01 - 15 Treasure
 #Status Set 3
-#0x80 - Oil
-#0x40 - Float
-#0x20 - Reraise
-#0x10 - Transparent
-#0x08 - Berserk
-#0x04 - Chicken
-#0x02 - Frog
-#0x01 - Critical
+#0x80 - 16 Oil
+#0x40 - 17 Float
+#0x20 - 18 Reraise
+#0x10 - 19 Transparent
+#0x08 - 20 Berserk
+#0x04 - 21 Chicken
+#0x02 - 22 Frog
+#0x01 - 23 Critical
 #Status Set 4
-#0x80 - Poison
-#0x40 - Regen
-#0x20 - Protect
-#0x10 - Shell
-#0x08 - Haste
-#0x04 - Slow
-#0x02 - Stop
+#0x80 - 24 Poison
+#0x40 - 25 Regen
+#0x20 - 26 Protect
+#0x10 - 27 Shell
+#0x08 - 28 Haste
+#0x04 - 29 Slow
+#0x02 - 30 Stop
+#0x01 - 31 Wall
 #Status Set 5
-#0x80 - Faith
-#0x40 - Innocent
-#0x20 - Charm
-#0x10 - Sleep
-#0x08 - Don't Move
-#0x04 - Don't Act
-#0x02 - Reflect
-#0x01 - Death Sentence
+#0x80 - 32 Faith
+#0x40 - 33 Innocent
+#0x20 - 34 Charm
+#0x10 - 35 Sleep
+#0x08 - 36 Don't Move
+#0x04 - 37 Don't Act
+#0x02 - 38 Reflect
+#0x01 - 39 Death Sentence

@@ -64,3 +64,8 @@ func all_units_defeated(units: Array[UnitData]) -> bool:
 
 func any_units_defeated(units: Array[UnitData]) -> bool:
 	return units.any(func(unit: UnitData): return unit.is_defeated) # returns false if units is empty
+
+
+# TODO check if all units (from all teams) are permanently frozen to prevent infinite loop
+func all_units_frozen(units: Array[UnitData]) -> bool:
+	return units.all(func(unit: UnitData): return unit.current_statuses.any(func(status: StatusEffect): return status.freezes_ct and status.duration_type == StatusEffect.DurationType.INDEFINITE)) # returns true if units is empty

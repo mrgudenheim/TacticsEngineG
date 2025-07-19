@@ -271,7 +271,7 @@ func set_action() -> void:
 	
 	ability_action.status_prevents_use_any = [37, 21, 22, 13, 20] # dont act, chicken, frog, blood suck, berserk
 	if affected_by_silence:
-		ability_action.status_prevents_use_any = [12] # silence
+		ability_action.status_prevents_use_any.append(12) # silence
 	if require_sword:
 		ability_action.required_equipment_type = [ItemData.ItemType.SWORD] # sword, gun, etc.
 	if require_materia_blade:

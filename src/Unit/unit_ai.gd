@@ -21,6 +21,9 @@ enum Strategy {
 	END_TURN,
 	RANDOM,
 	BEST,
+	CONFUSED,
+	BERSERK,
+	FLEE,
 }
 
 func choose_action(unit: UnitData) -> void:

@@ -14,46 +14,18 @@ var ai_strategy: UnitAi.Strategy = UnitAi.Strategy.PLAYER
 
 var stat_modifiers: Array[Modifier] = []
 
-## dark, confusion, monster talk
-#func modify_hit_chance_user(value: float) -> float:
-	#var new_value: float = value * hit_chance_modifier_user
-	#
-	#return new_value
-#
-#
-## protect, shell, frog, chicken, sleeping, charging, def up, mdef up, 
-#func modify_hit_chance_targeted(value: float) -> float:
-	#var new_value: float = value * hit_chance_modifier_targeted
-	#
-	#return new_value
-#
-#
-## atk up, ma up, two hands, martial arts
-#func modify_power_user(value: float) -> float:
-	#var new_value: float = value * power_modifier_user
-	#
-	#return new_value
-#
-#
-## protect, shell, frog, chicken, sleeping, charging, def up, mdef up, 
-#func modify_power_targeted(value: float) -> float:
-	#var new_value: float = value * power_modifier_targeted
-	#
-	#return new_value
-#
-#
-## concentrate, transparent, night/weather
-#func modify_evade_user(value: float) -> float:
-	#var new_value: float = value * evade_modifier_user
-	#
-	#return new_value
-#
-#
-## abandon, defending, blade grasp, dont act, sleep, stop, confuse, charging, performing
-#func modify_evade_targeted(value: float) -> float:
-	#var new_value: float = value * evade_modifier_targeted
-	#
-	#return new_value
+@export var elemental_absorb: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
+@export var elemental_cancel: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
+@export var elemental_half: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
+@export var elemental_weakness: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
+@export var elemental_strengthen: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
+
+
+# TODO Affect usable actions - silence, don't act/move, define in Action?
+# TODO Affect skillet/actions available - blood suck, frog, chicken
+# TODO affects targeting - float, reflect
+# TODO Affect reactions - transparent, dont act, sleep, can_react flag
+# TODO ignore_attacks flag - attacks do not animate or do anything
 
 
 func modify_stat() -> void:

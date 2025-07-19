@@ -469,8 +469,15 @@ func init_statuses() -> void:
 	status_effects[20].passive_effect.ai_strategy = UnitAi.Strategy.CONFUSED
 	# chicken
 	status_effects[21].passive_effect.ai_strategy = UnitAi.Strategy.FLEE
+	# blood suck
+	status_effects[21].passive_effect.ai_strategy = UnitAi.Strategy.BEST
 	
 	# faith
 	status_effects[32].passive_effect.stat_modifiers = [Modifier.new(100.0, Modifier.ModifierType.SET)]
 	# innocent
 	status_effects[33].passive_effect.stat_modifiers = [Modifier.new(0.0, Modifier.ModifierType.SET)]
+	
+	# float
+	status_effects[17].passive_effect.elemental_cancel = [Action.ElementTypes.EARTH]
+	# oil
+	status_effects[16].passive_effect.elemental_weakness = [Action.ElementTypes.FIRE] # TODO oil is in addition to fire weakness

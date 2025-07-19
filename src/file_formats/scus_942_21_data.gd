@@ -466,12 +466,13 @@ func init_statuses() -> void:
 	# confuse
 	status_effects[11].passive_effect.ai_strategy = UnitAi.Strategy.CONFUSED
 	# berserk
-	status_effects[20].passive_effect.ai_strategy = UnitAi.Strategy.CONFUSED
+	status_effects[20].passive_effect.ai_strategy = UnitAi.Strategy.BEST
 	# chicken
 	status_effects[21].passive_effect.ai_strategy = UnitAi.Strategy.FLEE
 	# blood suck
 	status_effects[13].passive_effect.ai_strategy = UnitAi.Strategy.BEST
-	status_effects[13].passive_effect.added_actions = [RomReader.abilities[0xc8].ability_action] # blood suck action
+	status_effects[13].passive_effect.added_actions = [RomReader.abilities[0x0c8].ability_action] # blood suck action
+	RomReader.abilities[0x0c8].ability_action.status_prevents_use_any.erase(13) # can use blood suck
 	
 	# faith
 	status_effects[32].passive_effect.stat_modifiers[UnitData.StatType.FAITH] = Modifier.new(100.0, Modifier.ModifierType.SET)

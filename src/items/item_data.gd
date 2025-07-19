@@ -282,7 +282,7 @@ func _init(idx: int = 0) -> void:
 		elif weapon_is_direct:
 			weapon_attack_action.targeting_los = true
 		
-		weapon_attack_action.status_prevents_use_any.append(37) # Don't Act status prevents weapon attack
+		weapon_attack_action.status_prevents_use_any.append_array([37, 21, 22, 13]) # Don't Act, chicken, frog, blood suck status prevents weapon attack
 		
 		#weapon_attack_action.animation_executing_id = RomReader.battle_bin_data.weapon_animation_ids[item_type].y * 2
 		

@@ -1,6 +1,6 @@
 class_name RangeTargeting
 extends TargetingStrategy
-
+# https://ffhacktics.com/wiki/Targeting_routine
 
 func get_potential_targets(action_instance: ActionInstance) -> Array[TerrainTile]:
 	if action_instance.action.use_weapon_targeting:
@@ -8,7 +8,7 @@ func get_potential_targets(action_instance: ActionInstance) -> Array[TerrainTile
 		return weapon_attack_action_instance.action.targeting_strategy.get_potential_targets(weapon_attack_action_instance)
 	
 	var start_time: int = Time.get_ticks_msec()
-	var max_frame_time_ms: float = 1000.0 / 240.0
+	var max_frame_time_ms: float = 1000.0 / 120.0
 	
 	var potential_targets: Array[TerrainTile] = []
 	#action_instance.user.get_map_paths(action_instance.battle_manager.total_map_tiles, action_instance.battle_manager.units)

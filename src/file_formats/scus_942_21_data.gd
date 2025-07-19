@@ -208,20 +208,29 @@ func init_from_scus() -> void:
 	# evade also affected by transparent, concentrate, dark or confuse, on user
 	
 	status_effects[6].passive_effect.hit_chance_modifier_targeted.value = 0.5 # defending
-	status_effects[26].passive_effect.hit_chance_modifier_targeted.value = 0.66 # protect
-	status_effects[26].passive_effect.power_modifier_targeted.value = 0.66 # protect
-	status_effects[27].passive_effect.hit_chance_modifier_targeted.value = 0.66 # shell
-	status_effects[27].passive_effect.power_modifier_targeted.value = 0.66 # shell
+	
+	# protect, shell
+	for idx: int in [26, 27]:
+		status_effects[idx].passive_effect.hit_chance_modifier_targeted.value = 0.66
+		status_effects[idx].passive_effect.power_modifier_targeted.value = 0.66
 	
 	# chicken, frog, sleeping, charging
 	for idx: int in [21, 22, 35, 4]:
 		status_effects[idx].passive_effect.hit_chance_modifier_targeted.value = 1.5
 		status_effects[idx].passive_effect.power_modifier_targeted.value = 1.5
 	
+	# dark, confuse
+	for idx: int in [10, 11]:
+		status_effects[idx].passive_effect.hit_chance_modifier_user.value = 0.5
+	
 	# dont act, sleep, stop, confuse, charging, performing
 	for idx: int in [37, 35, 30, 11, 4, 7]:
 		status_effects[idx].passive_effect.evade_modifier_targeted.type = Modifier.ModifierType.SET
 		status_effects[idx].passive_effect.evade_modifier_targeted.value = 1.0
+	
+	# user is transparent
+	status_effects[19].passive_effect.evade_modifier_user.type = Modifier.ModifierType.SET
+	status_effects[19].passive_effect.evade_modifier_user.value = 1.0
 	
 	
 	# Inflict Status data https://ffhacktics.com/wiki/Inflict_Statuses

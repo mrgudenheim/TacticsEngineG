@@ -220,7 +220,8 @@ func init_from_scus() -> void:
 	
 	# dont act, sleep, stop, confuse, charging, performing
 	for idx: int in [37, 35, 30, 11, 4, 7]:
-		status_effects[idx].passive_effect.evade_modifier_targeted.value = 0.0 # defending
+		status_effects[idx].passive_effect.evade_modifier_targeted.type = Modifier.ModifierType.SET
+		status_effects[idx].passive_effect.evade_modifier_targeted.value = 1.0
 	
 	
 	# Inflict Status data https://ffhacktics.com/wiki/Inflict_Statuses

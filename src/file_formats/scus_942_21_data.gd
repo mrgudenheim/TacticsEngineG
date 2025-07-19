@@ -487,3 +487,8 @@ func init_statuses() -> void:
 	status_effects[22].passive_effect.added_actions = [RomReader.abilities[0x16f].ability_action] # frog attack action
 	RomReader.abilities[0x16f].ability_action.status_prevents_use_any.erase(22) # can use frog attack
 	RomReader.abilities[0x01d].ability_action.status_prevents_use_any.erase(22) # can use Frog
+	
+	# death sentence, dead
+	for idx: int in [39, 2]:
+		status_effects[idx].duration = 3
+		status_effects[idx].duration_type = StatusEffect.DurationType.TURNS

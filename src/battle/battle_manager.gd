@@ -413,7 +413,7 @@ func process_clock_tick() -> void:
 			safe_to_load_map = true
 			await get_tree().process_frame
 		for status: StatusEffect in statuses_to_remove:
-			unit.current_statuses.erase(status)
+			unit.remove_status(status)
 	
 	for unit: UnitData in units: # increment each units ct by speed
 		if not unit.current_statuses.any(func(status: StatusEffect): return status.freezes_ct): # check status that prevent ct gain (stop, sleep, etc.)

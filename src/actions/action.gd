@@ -378,7 +378,7 @@ func apply_status(unit: UnitData, status_list: Array[int], status_list_type: Sta
 		if status_success:
 			for status_id: int in status_list:
 				if will_remove_status and unit.current_statuses.any(func(status: StatusEffect): status.status_id == status_id):
-					unit.remove_status(status_id)
+					unit.remove_status_id(status_id)
 					unit.show_popup_text(RomReader.status_effects[status_id].status_effect_name) # TODO different text for removing status
 				elif not will_remove_status:
 					unit.add_status(RomReader.status_effects[status_id].duplicate())
@@ -388,7 +388,7 @@ func apply_status(unit: UnitData, status_list: Array[int], status_list_type: Sta
 			var status_success: bool = randi_range(0, 99) < status_chance
 			if status_success:
 				if will_remove_status and unit.current_statuses.any(func(status: StatusEffect): status.status_id == status_id):
-					unit.remove_status(status_id)
+					unit.remove_status_id(status_id)
 					unit.show_popup_text(RomReader.status_effects[status_id].status_effect_name) # TODO different text for removing status
 				elif not will_remove_status:
 					unit.add_status(RomReader.status_effects[status_id].duplicate())
@@ -400,7 +400,7 @@ func apply_status(unit: UnitData, status_list: Array[int], status_list_type: Sta
 				var removable_status_list: Array[int] = status_list.filter(func(status_id: int): return unit.current_status_ids.has(status_id))
 				if not removable_status_list.is_empty():
 					var status_id: int = removable_status_list.pick_random()
-					unit.remove_status(status_id)
+					unit.remove_status_id(status_id)
 					unit.show_popup_text(RomReader.status_effects[status_id].status_effect_name) # TODO different text for removing status
 			elif not will_remove_status:
 				var addable_status_list: Array[int] = status_list.filter(func(status_id: int): return not unit.current_status_ids.has(status_id))

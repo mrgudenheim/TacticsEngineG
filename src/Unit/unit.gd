@@ -626,7 +626,7 @@ func hp_changed(clamped_value: ClampedValue) -> void:
 	elif stats[StatType.HP].current_value < stats[StatType.HP].max_value / 5: # critical
 		add_status(RomReader.status_effects[23].duplicate()) # add critical
 	elif stats[StatType.HP].current_value >= stats[StatType.HP].max_value / 5: # critical
-		remove_status(23) # remove critical
+		remove_status_id(23) # remove critical
 
 
 func add_status(new_status: StatusEffect) -> void:
@@ -641,14 +641,16 @@ func add_status(new_status: StatusEffect) -> void:
 	if existing_statuses.size() < new_status.num_allowed:
 		current_statuses.append(new_status)
 	else:
-		current_statuses.erase(existing_statuses[0])
+		remove_status(existing_statuses[0])
 		current_statuses.append(new_status)
 	
 	var statuses_to_cancel: Array[StatusEffect] = []
 	for status_cancelled_id: int in new_status.status_cancels:
-		statuses_to_cancel.append_array(current_statuses.filter(func(status: StatusEffect): status.status_id == status_cancelled_id))
-	for status: StatusEffect in statuses_to_cancel:
-		current_statuses.erase(status)
+		remove_status_id(status_cancelled_id)
+		
+		#statuses_to_cancel.append_array(current_statuses.filter(func(status: StatusEffect): status.status_id == status_cancelled_id))
+	#for status: StatusEffect in statuses_to_cancel:
+		#current_statuses.erase(status)
 	
 		#if current_statuses.has(status_cancelled):
 			#remove_status(status_cancelled)
@@ -665,7 +667,7 @@ func add_status(new_status: StatusEffect) -> void:
 	update_status_visuals()
 
 
-func remove_status(status_removed_id: int) -> void:
+func remove_status_id(status_removed_id: int) -> void:
 	if always_statuses.has(status_removed_id):
 		return
 	
@@ -673,6 +675,14 @@ func remove_status(status_removed_id: int) -> void:
 	statuses_to_remove.append_array(current_statuses.filter(func(status: StatusEffect): status.status_id == status_removed_id))
 	for status: StatusEffect in statuses_to_remove:
 		current_statuses.erase(status)
+	update_status_visuals()
+
+
+func remove_status(status_removed: StatusEffect) -> void:
+	if always_statuses.has(status_removed.status_id):
+		return
+	
+	current_statuses.erase(status_removed)
 	update_status_visuals()
 
 

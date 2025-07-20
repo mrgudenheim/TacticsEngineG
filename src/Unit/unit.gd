@@ -1076,14 +1076,10 @@ func cycle_status_icons() -> void:
 	while true:
 		var status: StatusEffect = null
 		if not current_statuses.is_empty():
+			status_idx = (status_idx + 1) % current_statuses.size()
 			status = current_statuses[status_idx]
 			var rect: Rect2i = status.get_icon_rect()
 			set_status_icon_rect(rect)
-			
-			if current_statuses.size() > 0:
-				status_idx = (status_idx + 1) % current_statuses.size()
-			else:
-				status_idx = 0
 		
 		await get_tree().create_timer(icon_cycle_time).timeout
 			

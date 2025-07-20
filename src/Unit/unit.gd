@@ -473,6 +473,7 @@ func generate_equipment() -> void:
 	update_equipment_modifiers()
 	stats[StatType.HP].current_value = stats[StatType.HP].max_value
 	stats[StatType.MP].current_value = stats[StatType.MP].max_value
+	hp_changed(stats[StatType.HP])
 
 
 func update_equipment_modifiers() -> void:

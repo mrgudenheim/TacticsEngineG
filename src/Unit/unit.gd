@@ -471,9 +471,9 @@ func generate_equipment() -> void:
 	set_primary_weapon(equip_slots[0].item.id)
 	
 	update_equipment_modifiers()
-	stats[StatType.HP].current_value = stats[StatType.HP].max_value
-	stats[StatType.MP].current_value = stats[StatType.MP].max_value
-	hp_changed(stats[StatType.HP])
+	stats[StatType.HP].set_value(stats[StatType.HP].max_value)
+	stats[StatType.MP].set_value(stats[StatType.MP].max_value)
+	#hp_changed(stats[StatType.HP])
 
 
 func update_equipment_modifiers() -> void:

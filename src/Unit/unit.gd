@@ -466,7 +466,7 @@ func generate_equipment() -> void:
 	equip_slots[1].item = get_slot_item(ItemData.SlotType.SHIELD, level) # LH
 	equip_slots[2].item = get_slot_item(ItemData.SlotType.HEADGEAR, level) # headgear
 	equip_slots[3].item = get_slot_item(ItemData.SlotType.ARMOR, level) # armor
-	equip_slots[4].item = get_slot_item(ItemData.SlotType.ACCESSORY, level) # accessory
+	equip_slots[4].item = get_slot_item(ItemData.SlotType.ACCESSORY, level, true) # accessory
 	
 	set_primary_weapon(equip_slots[0].item.id)
 	

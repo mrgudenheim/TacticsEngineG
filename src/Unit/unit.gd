@@ -473,6 +473,8 @@ func generate_equipment() -> void:
 	update_equipment_modifiers()
 	stats[StatType.HP].set_value(stats[StatType.HP].max_value)
 	stats[StatType.MP].set_value(stats[StatType.MP].max_value)
+	
+	update_elemental_affinity()
 
 
 func update_equipment_modifiers() -> void:
@@ -497,6 +499,60 @@ func get_slot_item(slot_type: ItemData.SlotType, item_level: int, random: bool =
 			item = valid_items[0] # pick highest level item
 			#item = valid_items.pick_random()
 	return item
+
+
+func update_elemental_affinity() -> void:
+	elemental_absorb.clear()
+	elemental_cancel.clear()
+	elemental_half.clear()
+	elemental_strengthen.clear()
+	elemental_weakness.clear()
+	
+	for slot: EquipmentSlot in equip_slots:
+		elemental_absorb = append_element_array_unique(elemental_absorb, slot.item.elemental_absorb)
+		elemental_cancel = append_element_array_unique(elemental_cancel, slot.item.elemental_cancel)
+		elemental_half = append_element_array_unique(elemental_half, slot.item.elemental_half)
+		elemental_strengthen = append_element_array_unique(elemental_strengthen, slot.item.elemental_strengthen)
+		elemental_weakness = append_element_array_unique(elemental_weakness, slot.item.elemental_weakness)
+		
+		#elemental_absorb.append_array(slot.item.elemental_absorb)
+		#elemental_cancel.append_array(slot.item.elemental_cancel)
+		#elemental_half.append_array(slot.item.elemental_half)
+		#elemental_strengthen.append_array(slot.item.elemental_strengthen)
+		#elemental_weakness.append_array(slot.item.elemental_weakness)
+	
+	for status: StatusEffect in current_statuses:
+		elemental_absorb = append_element_array_unique(elemental_absorb, status.passive_effect.elemental_absorb)
+		elemental_cancel = append_element_array_unique(elemental_cancel, status.passive_effect.elemental_cancel)
+		elemental_half = append_element_array_unique(elemental_half, status.passive_effect.elemental_half)
+		elemental_strengthen = append_element_array_unique(elemental_strengthen, status.passive_effect.elemental_strengthen)
+		elemental_weakness = append_element_array_unique(elemental_weakness, status.passive_effect.elemental_weakness)
+		
+		#elemental_absorb.append_array(status.passive_effect.elemental_absorb)
+		#elemental_cancel.append_array(status.passive_effect.elemental_cancel)
+		#elemental_half.append_array(status.passive_effect.elemental_half)
+		#elemental_strengthen.append_array(status.passive_effect.elemental_strengthen)
+		#elemental_weakness.append_array(status.passive_effect.elemental_weakness)
+	
+	elemental_absorb = append_element_array_unique(elemental_absorb, job_data.elemental_absorb)
+	elemental_cancel = append_element_array_unique(elemental_cancel, job_data.elemental_cancel)
+	elemental_half = append_element_array_unique(elemental_half, job_data.elemental_half)
+	elemental_strengthen = append_element_array_unique(elemental_strengthen, job_data.elemental_strengthen)
+	elemental_weakness = append_element_array_unique(elemental_weakness, job_data.elemental_weakness)
+	
+	#elemental_absorb.append_array(job_data.elemental_absorb)
+	#elemental_cancel.append_array(job_data.elemental_cancel)
+	#elemental_half.append_array(job_data.elemental_half)
+	#elemental_strengthen.append_array(job_data.elemental_strengthen)
+	#elemental_weakness.append_array(job_data.elemental_weakness)
+
+
+func append_element_array_unique(current_array: Array[Action.ElementTypes], array_to_append: Array[Action.ElementTypes]) -> Array[Action.ElementTypes]:
+	for element: Action.ElementTypes in array_to_append:
+		if not current_array.has(element):
+			current_array.append(element)
+	
+	return current_array
 
 
 func start_turn(battle_manager: BattleManager) -> void:
@@ -656,24 +712,9 @@ func add_status(new_status: StatusEffect) -> void:
 	var statuses_to_cancel: Array[StatusEffect] = []
 	for status_cancelled_id: int in new_status.status_cancels:
 		remove_status_id(status_cancelled_id)
-		
-		#statuses_to_cancel.append_array(current_statuses.filter(func(status: StatusEffect): status.status_id == status_cancelled_id))
-	#for status: StatusEffect in statuses_to_cancel:
-		#current_statuses.erase(status)
-	
-		#if current_statuses.has(status_cancelled):
-			#remove_status(status_cancelled)
-		#if status_cancelled == RomReader.status_effects[4]: # charging, TODO correctly cancel charging and performing status
-			#var charging_statuses: Array[StatusEffect] = current_statuses2.keys().filter(func(status: StatusEffect): return status.delayed_action != null)
-			#for charging_status: StatusEffect in charging_statuses:
-				#remove_status(charging_status)
-		#if status_cancelled == RomReader.status_effects[7]: # performing, TODO correctly cancel charging and performing status
-			#var performing_statuses: Array[StatusEffect] = current_statuses2.keys().filter(func(status: StatusEffect): return status.action_on_x_ticks != null)
-			#for performing_status: StatusEffect in performing_statuses:
-				#remove_status(performing_status)
-		
 	
 	update_status_visuals()
+	update_elemental_affinity()
 
 
 func remove_status_id(status_removed_id: int) -> void:
@@ -694,6 +735,7 @@ func remove_status(status_removed: StatusEffect) -> void:
 		stats[stat].remove_modifier(status_removed.passive_effect.stat_modifiers[stat])
 	current_statuses.erase(status_removed)
 	update_status_visuals()
+	update_elemental_affinity()
 
 
 func update_status_visuals() -> void:
@@ -1042,6 +1084,8 @@ func set_job_id(new_job_id: int) -> void:
 		walk_to_animation_id = 0x1e
 		current_idle_animation_id = idle_walk_animation_id
 		set_base_animation_ptr_id(idle_walk_animation_id)
+	
+	update_elemental_affinity()
 
 func set_ability(new_ability_id: int) -> void:
 	active_ability_id = new_ability_id

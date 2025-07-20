@@ -11,7 +11,7 @@ var ct_gain_modifier: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
 
 var ai_strategy: UnitAi.Strategy = UnitAi.Strategy.PLAYER
 var added_actions: Array[Action] = []
-
+var added_equipment_types: Array[int] = []
 var stat_modifiers: Dictionary[UnitData.StatType, Modifier] = {}
 
 @export var elemental_absorb: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
@@ -24,12 +24,8 @@ var can_react: bool = true
 var target_can_react: bool = true
 var nullify_targeted: bool = false # ignore_attacks flag
 
-# TODO affects targeting - float - can attack 1 higher, counts as 1 higher when being targeted, chicken/frog counts as further? maybe targeting just checks sprite height var
+# TODO affects targeting - float - can attack 1 higher, jump 1 higher, ignore depth and terrain cost, counts as 1 higher when being targeted, chicken/frog counts as further? maybe targeting just checks sprite height var
 # TODO reflect
-
-
-func modify_stat() -> void:
-	pass
 
 
 # https://ffhacktics.com/wiki/Target_XA_affecting_Statuses_(Physical)
@@ -64,11 +60,11 @@ func modify_stat() -> void:
 #Affect usable actions - 
 #Counts as defeated - 
 #Affects ai - 
-#affects targeting - move+/jump+, throw item, ignore height
+#affects targeting - throw item, ignore height
 #Affect reactions - 
 #Affects equipment - Equip x
 #
 #jp up, exp up, 
 #maintenance, 
-#affects stat - move+/jump+, hp up, item attributes
-#short charge, no charge, poach, tame, half mp, 
+#affects stat - move+/jump+, max_hp up, item attributes
+#affects action data - short charge, no charge, half mp, poach (secondary action?), tame (secondary action?) 

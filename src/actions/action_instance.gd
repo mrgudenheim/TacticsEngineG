@@ -281,6 +281,7 @@ func queue_use() -> void:
 		var charging_status: StatusEffect = RomReader.status_effects[4].duplicate() # charging
 		charging_status.delayed_action = self.duplicate()
 		charging_status.duration = action.ticks_charge_time
+		charging_status.duration_type = StatusEffect.DurationType.TICKS
 		if charging_status.delayed_action.action_completed.is_connected(charging_status.delayed_action.user.update_actions):
 			charging_status.delayed_action.action_completed.disconnect(charging_status.delayed_action.user.update_actions)
 		user.add_status(charging_status)

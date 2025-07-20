@@ -482,7 +482,7 @@ func update_equipment_modifiers() -> void:
 			stats[stat_type].add_modifier(slot.item.stat_modifiers[stat_type])
 
 
-func get_slot_item(slot_type: ItemData.SlotType, item_level: int) -> ItemData:
+func get_slot_item(slot_type: ItemData.SlotType, item_level: int, random: bool = false) -> ItemData:
 	var valid_items: Array[ItemData] = []
 	valid_items.assign(RomReader.items.filter(func(item: ItemData): 
 		var slot_type_is_valid: bool = item.slot_type == slot_type

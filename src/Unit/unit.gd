@@ -676,7 +676,7 @@ func remove_status_id(status_removed_id: int) -> void:
 		return
 	
 	var statuses_to_remove: Array[StatusEffect] = []
-	statuses_to_remove.append_array(current_statuses.filter(func(status: StatusEffect): status.status_id == status_removed_id))
+	statuses_to_remove.append_array(current_statuses.filter(func(status: StatusEffect): return status.status_id == status_removed_id))
 	for status: StatusEffect in statuses_to_remove:
 		current_statuses.erase(status)
 	update_status_visuals()

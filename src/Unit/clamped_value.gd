@@ -51,22 +51,22 @@ func get_set_delta(new_value: int) -> int:
 	return delta_value
 
 
-func add_value(add_value: int) -> int:
-	add_value = get_add_delta(add_value)
-	current_value += add_value
+func add_value(value: int) -> int:
+	value = get_add_delta(value)
+	current_value += value
 	
 	changed.emit(self)
-	return add_value
+	return value
 
 
-func get_add_delta(add_value: int) -> int:
+func get_add_delta(value: int) -> int:
 	# clamp delta
-	if add_value + current_value > max_value:
-		add_value = max_value - current_value
-	elif add_value + current_value < min_value:
-		add_value = min_value - current_value
+	if value + current_value > max_value:
+		value = max_value - current_value
+	elif value + current_value < min_value:
+		value = min_value - current_value
 	
-	return add_value
+	return value
 
 
 func set_max_value(new_max_value: int) -> int:
@@ -96,5 +96,10 @@ func add_modifier(new_modifier: Modifier) -> void:
 	changed.emit(self)
 
 
-func update_max_from_clamped_value(max_value: ClampedValue):
-	set_max_value(max_value.get_modified_value())
+func remove_modifier(modifier: Modifier) -> void:
+	modifiers.erase(modifier)
+	changed.emit(self)
+
+
+func update_max_from_clamped_value(max_clamped: ClampedValue):
+	set_max_value(max_clamped.get_modified_value())

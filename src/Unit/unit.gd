@@ -646,11 +646,12 @@ func add_status(new_status: StatusEffect) -> void:
 			return
 	
 	var existing_statuses: Array[StatusEffect] = current_statuses.filter(func(status: StatusEffect): return status.status_id == new_status.status_id) # TODO use filter to allow for multiple of the same status, ex. double charging
-	if existing_statuses.size() < new_status.num_allowed:
-		current_statuses.append(new_status)
-	else:
+	if existing_statuses.size() >= new_status.num_allowed:
 		remove_status(existing_statuses[0])
-		current_statuses.append(new_status)
+	
+	current_statuses.append(new_status)
+	for stat: StatType in new_status.passive_effect.stat_modifiers.keys():
+		stats[stat].add_modifier(new_status.passive_effect.stat_modifiers[stat])
 	
 	var statuses_to_cancel: Array[StatusEffect] = []
 	for status_cancelled_id: int in new_status.status_cancels:
@@ -682,14 +683,15 @@ func remove_status_id(status_removed_id: int) -> void:
 	var statuses_to_remove: Array[StatusEffect] = []
 	statuses_to_remove.append_array(current_statuses.filter(func(status: StatusEffect): return status.status_id == status_removed_id))
 	for status: StatusEffect in statuses_to_remove:
-		current_statuses.erase(status)
-	update_status_visuals()
+		remove_status(status)
 
 
 func remove_status(status_removed: StatusEffect) -> void:
 	if always_statuses.has(status_removed.status_id):
 		return
 	
+	for stat: StatType in status_removed.passive_effect.stat_modifiers.keys():
+		stats[stat].remove_modifier(status_removed.passive_effect.stat_modifiers[stat])
 	current_statuses.erase(status_removed)
 	update_status_visuals()
 

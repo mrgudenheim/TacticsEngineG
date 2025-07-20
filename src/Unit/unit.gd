@@ -546,6 +546,11 @@ func set_available_actions() -> void:
 	actions.append(attack_action)
 	
 	actions.append_array(get_skillset_actions())
+	# add actions from statuses (frog, blood suck)
+	for status: StatusEffect in current_statuses:
+		for action: Action in status.passive_effect.added_actions:
+			if not actions.has(action):
+				actions.append(action)
 	# TODO append all other potential actions, from jobs, equipment, etc.
 	
 	actions.append(wait_action)

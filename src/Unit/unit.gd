@@ -1080,6 +1080,8 @@ func cycle_status_icons() -> void:
 			status = current_statuses[status_idx]
 			var rect: Rect2i = status.get_icon_rect()
 			set_status_icon_rect(rect)
+		else:
+			status_idx = 0
 		
 		await get_tree().create_timer(icon_cycle_time).timeout
 			

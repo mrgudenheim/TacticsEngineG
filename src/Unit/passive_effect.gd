@@ -27,6 +27,7 @@ extends Resource
 # TODO affects targeting - float - can attack 1 higher, jump 1 higher, ignore depth and terrain cost, counts as 1 higher when being targeted, chicken/frog counts as further? maybe targeting just checks sprite height var
 # TODO reflect
 # TODO undead healing -> damage
+# TODO invite, charm
 
 # https://ffhacktics.com/wiki/Target_XA_affecting_Statuses_(Physical)
 # https://ffhacktics.com/wiki/Target%27s_Status_Affecting_XA_(Magical)

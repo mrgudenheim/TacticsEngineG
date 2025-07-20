@@ -423,6 +423,7 @@ func process_clock_tick() -> void:
 			unit.stats[UnitData.StatType.CT].add_value(ct_gain) 
 	
 	# execute unit turns, ties decided by unit index in units[]
+	# TODO keep looping until all units ct_current < 100
 	for unit: UnitData in units:
 		if unit.ct_current >= 100:
 			safe_to_load_map = false

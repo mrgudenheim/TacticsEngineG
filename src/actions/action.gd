@@ -73,7 +73,7 @@ var hit_requirements: Array = [] # TODO always miss if requirement is not met, e
 @export var ignores_statuses: Array[int] = []
 
 # inflict status data
-@export var taregt_status_list: PackedInt32Array = []
+@export var taregt_status_list: PackedInt32Array = [] # TODO fix typo
 @export var status_chance: int = 100
 @export var will_remove_status: bool = false
 @export var target_status_list_type: StatusListType = StatusListType.EACH

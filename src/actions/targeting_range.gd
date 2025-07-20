@@ -132,7 +132,7 @@ func target_tile(tile: TerrainTile, action_instance: ActionInstance, event: Inpu
 		# show target previews
 		for preview_tile: TerrainTile in action_instance.preview_targets:
 			for unit: UnitData in action_instance.battle_manager.units:
-				if unit.tile_position == preview_tile:
+				if unit.tile_position == preview_tile and not unit.current_statuses.any(func(status: StatusEffect): return status.passive_effect.nullify_targeted):
 					action_instance.show_result_preview(unit)
 					break
 	

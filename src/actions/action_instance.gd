@@ -130,6 +130,9 @@ func get_target_units(target_tiles: Array[TerrainTile]) -> Array[UnitData]:
 	var target_units: Array[UnitData] = []
 	for target_tile: TerrainTile in target_tiles:
 		var units_on_tile: Array[UnitData] = battle_manager.units.filter(func(unit: UnitData): return unit.tile_position == target_tile)
+		units_on_tile = units_on_tile.filter(
+			func(unit: UnitData): return not unit.current_statuses.any(
+				func(status: StatusEffect): return status.passive_effect.nullify_targeted))
 		target_units.append_array(units_on_tile)
 		#if unit_index == -1:
 			#continue

@@ -1,8 +1,7 @@
-[gd_resource type="Resource" script_class="Action" load_steps=10 format=3 uid="uid://hfseiukq3qpk"]
+[gd_resource type="Resource" script_class="Action" load_steps=9 format=3 uid="uid://hfseiukq3qpk"]
 
 [ext_resource type="Script" uid="uid://cf5w02iml4cqu" path="res://src/items/item_data.gd" id="1_v43vl"]
 [ext_resource type="Script" uid="uid://dlaul7n568vti" path="res://src/actions/action.gd" id="2_22o4i"]
-[ext_resource type="Script" uid="uid://cg0yup2a7gcs8" path="res://src/Unit/status.gd" id="3_jmljt"]
 [ext_resource type="Script" uid="uid://cpa42ca48we8h" path="res://src/actions/action_effect.gd" id="4_ltkoj"]
 [ext_resource type="Script" uid="uid://2y1mi77a2isp" path="res://src/actions/formula_data.gd" id="5_22o4i"]
 [ext_resource type="Resource" uid="uid://bu2sto41olfil" path="res://src/actions/targeting_range.tres" id="6_jmljt"]
@@ -89,11 +88,12 @@ can_target = false
 element = 0
 base_hit_formula = SubResource("Resource_22o4i")
 healing_damages_undead = false
+ignores_statuses = Array[int]([])
 taregt_status_list = []
 status_chance = 100
 will_remove_status = false
 target_status_list_type = 1
-status_prevents_use_any = Array[ExtResource("3_jmljt")]([])
+status_prevents_use_any = Array[int]([])
 required_equipment_type = Array[int]([])
 required_equipment = Array[ExtResource("1_v43vl")]([])
 animation_start_id = 0
@@ -104,4 +104,6 @@ secondary_actions_chances = [100]
 secondary_action_list_type = 1
 set_target_animation_on_hit = false
 ends_turn = true
+hit_chance_modified_by_passive = false
+power_modified_by_passive = true
 metadata/_custom_type_script = "uid://dlaul7n568vti"

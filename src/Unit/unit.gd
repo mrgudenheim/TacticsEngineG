@@ -514,12 +514,6 @@ func update_elemental_affinity() -> void:
 		elemental_half = append_element_array_unique(elemental_half, slot.item.elemental_half)
 		elemental_strengthen = append_element_array_unique(elemental_strengthen, slot.item.elemental_strengthen)
 		elemental_weakness = append_element_array_unique(elemental_weakness, slot.item.elemental_weakness)
-		
-		#elemental_absorb.append_array(slot.item.elemental_absorb)
-		#elemental_cancel.append_array(slot.item.elemental_cancel)
-		#elemental_half.append_array(slot.item.elemental_half)
-		#elemental_strengthen.append_array(slot.item.elemental_strengthen)
-		#elemental_weakness.append_array(slot.item.elemental_weakness)
 	
 	for status: StatusEffect in current_statuses:
 		elemental_absorb = append_element_array_unique(elemental_absorb, status.passive_effect.elemental_absorb)
@@ -527,24 +521,12 @@ func update_elemental_affinity() -> void:
 		elemental_half = append_element_array_unique(elemental_half, status.passive_effect.elemental_half)
 		elemental_strengthen = append_element_array_unique(elemental_strengthen, status.passive_effect.elemental_strengthen)
 		elemental_weakness = append_element_array_unique(elemental_weakness, status.passive_effect.elemental_weakness)
-		
-		#elemental_absorb.append_array(status.passive_effect.elemental_absorb)
-		#elemental_cancel.append_array(status.passive_effect.elemental_cancel)
-		#elemental_half.append_array(status.passive_effect.elemental_half)
-		#elemental_strengthen.append_array(status.passive_effect.elemental_strengthen)
-		#elemental_weakness.append_array(status.passive_effect.elemental_weakness)
 	
-	elemental_absorb = append_element_array_unique(elemental_absorb, job_data.elemental_absorb)
-	elemental_cancel = append_element_array_unique(elemental_cancel, job_data.elemental_cancel)
-	elemental_half = append_element_array_unique(elemental_half, job_data.elemental_half)
-	elemental_strengthen = append_element_array_unique(elemental_strengthen, job_data.elemental_strengthen)
-	elemental_weakness = append_element_array_unique(elemental_weakness, job_data.elemental_weakness)
-	
-	#elemental_absorb.append_array(job_data.elemental_absorb)
-	#elemental_cancel.append_array(job_data.elemental_cancel)
-	#elemental_half.append_array(job_data.elemental_half)
-	#elemental_strengthen.append_array(job_data.elemental_strengthen)
-	#elemental_weakness.append_array(job_data.elemental_weakness)
+	elemental_absorb = append_element_array_unique(elemental_absorb, job_data.element_absorb)
+	elemental_cancel = append_element_array_unique(elemental_cancel, job_data.element_cancel)
+	elemental_half = append_element_array_unique(elemental_half, job_data.element_half)
+	elemental_strengthen = append_element_array_unique(elemental_strengthen, job_data.element_strengthen)
+	elemental_weakness = append_element_array_unique(elemental_weakness, job_data.element_weakness)
 
 
 func append_element_array_unique(current_array: Array[Action.ElementTypes], array_to_append: Array[Action.ElementTypes]) -> Array[Action.ElementTypes]:

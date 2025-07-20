@@ -622,9 +622,9 @@ func end_turn():
 
 func hp_changed(clamped_value: ClampedValue) -> void:
 	if stats[StatType.HP].current_value == 0:
-		add_status(RomReader.status_effects[2].duplicate()) # add dead
+		add_status(RomReader.status_effects[2].duplicate(true)) # add dead
 	elif stats[StatType.HP].current_value < stats[StatType.HP].max_value / 5: # critical
-		add_status(RomReader.status_effects[23].duplicate()) # add critical
+		add_status(RomReader.status_effects[23].duplicate(true)) # add critical
 	elif stats[StatType.HP].current_value >= stats[StatType.HP].max_value / 5: # critical
 		remove_status(23) # remove critical
 

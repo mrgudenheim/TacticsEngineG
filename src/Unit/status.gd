@@ -3,12 +3,12 @@
 class_name StatusEffect
 extends Resource
 
-var status_id: int = 0
+@export var status_id: int = 0
 @export var status_effect_name: String = "Status effect name"
 @export var description: String = "Status effect description"
 
-var byte_00: int = 0
-var byte_01: int = 0
+@export var byte_00: int = 0
+@export var byte_01: int = 0
 @export var order: int = 0
 @export var duration: int = 10
 @export_flags("Freeze CT", "(Crystal/Treasure)", "(Defend/Perform)", "(Poison/Regen)", "(Confusion/Transparent/Charm/Sleep)", "(Checks 3)", "(Checks 2)", "Counts as KO") var checks_01: int = 0
@@ -24,7 +24,7 @@ enum DurationType {
 	TURNS, # death sentance, dead -> crystal/treasure
 	INDEFINITE,
 }
-var duration_type: DurationType = DurationType.TICKS
+@export var duration_type: DurationType = DurationType.TICKS
 @export var action_on_turn_start: Action
 @export var action_on_turn_end: Action
 @export var action_on_x_ticks: Action # performing
@@ -40,7 +40,7 @@ var visual_effect # TODO speech bubbles, sprite coloring, animation (haste, dead
 #@export var status_bubble_texture: Texture2D # from Frame.bin
 @export var status_icon_rects: Array[Rect2i] = []
 @export var icon_frames: int = 1
-var duration_icons: Array[Rect2i] = RomReader.battle_bin_data.status_counter_rects
+@export var duration_icons: Array[Rect2i] = RomReader.battle_bin_data.status_counter_rects
 @export var idle_animation_id: int = -1
 
 @export var passive_effect: PassiveEffect = PassiveEffect.new()

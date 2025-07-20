@@ -278,7 +278,7 @@ func queue_use() -> void:
 	pay_action_point_costs()
 	face_target()
 	if action.ticks_charge_time > 0:
-		var charging_status: StatusEffect = RomReader.status_effects[4].duplicate(true) # charging
+		var charging_status: StatusEffect = RomReader.status_effects[4].duplicate() # charging
 		charging_status.delayed_action = self.duplicate()
 		charging_status.duration = action.ticks_charge_time
 		if charging_status.delayed_action.action_completed.is_connected(charging_status.delayed_action.user.update_actions):

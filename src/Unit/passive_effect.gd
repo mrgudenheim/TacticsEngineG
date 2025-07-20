@@ -1,18 +1,18 @@
 class_name PassiveEffect
 extends Resource
 
-var hit_chance_modifier_user: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
-var hit_chance_modifier_targeted: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
-var power_modifier_user: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
-var power_modifier_targeted: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
-var evade_modifier_user: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
-var evade_modifier_targeted: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
-var ct_gain_modifier: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
+@export var hit_chance_modifier_user: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
+@export var hit_chance_modifier_targeted: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
+@export var power_modifier_user: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
+@export var power_modifier_targeted: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
+@export var evade_modifier_user: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
+@export var evade_modifier_targeted: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
+@export var ct_gain_modifier: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
 
-var ai_strategy: UnitAi.Strategy = UnitAi.Strategy.PLAYER
-var added_actions: Array[Action] = []
-var added_equipment_types: Array[int] = []
-var stat_modifiers: Dictionary[UnitData.StatType, Modifier] = {}
+@export var ai_strategy: UnitAi.Strategy = UnitAi.Strategy.PLAYER
+@export var added_actions: Array[Action] = []
+@export var added_equipment_types: Array[int] = []
+@export var stat_modifiers: Dictionary[UnitData.StatType, Modifier] = {}
 
 @export var elemental_absorb: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
 @export var elemental_cancel: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
@@ -20,13 +20,13 @@ var stat_modifiers: Dictionary[UnitData.StatType, Modifier] = {}
 @export var elemental_weakness: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
 @export var elemental_strengthen: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
 
-var can_react: bool = true
-var target_can_react: bool = true
-var nullify_targeted: bool = false # ignore_attacks flag
+@export var can_react: bool = true
+@export var target_can_react: bool = true
+@export var nullify_targeted: bool = false # ignore_attacks flag
 
 # TODO affects targeting - float - can attack 1 higher, jump 1 higher, ignore depth and terrain cost, counts as 1 higher when being targeted, chicken/frog counts as further? maybe targeting just checks sprite height var
 # TODO reflect
-
+# TODO undead healing -> damage
 
 # https://ffhacktics.com/wiki/Target_XA_affecting_Statuses_(Physical)
 # https://ffhacktics.com/wiki/Target%27s_Status_Affecting_XA_(Magical)

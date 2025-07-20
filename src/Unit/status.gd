@@ -33,6 +33,7 @@ enum DurationType {
 @export var action_on_complete: Action # dead -> crystal/treasure, death sentence, charging?
 var delayed_action: ActionInstance # charging
 @export var num_allowed: int = 1
+@export var removed_on_damaged: bool = false # TODO should these statuses instead be included in actions remove_status list?
 
 var visual_effect # TODO speech bubbles, sprite coloring, animation (haste, dead, etc.), float, etc.
 @export var unit_shading_color: Color
@@ -64,6 +65,7 @@ func set_data(status_effect_bytes: PackedByteArray) -> void:
 	checks_02 = status_effect_bytes.decode_u8(5)
 	status_cancels_flags = status_effect_bytes.slice(6, 11)
 	status_cant_stack_flags = status_effect_bytes.slice(11, 16)
+	removed_on_damaged = checks_01 & 0x08 == 0x08 # confusion, transparent, charm, sleep, TODO is this really what this flag does?
 	
 	if duration == 0:
 		duration_type = DurationType.INDEFINITE

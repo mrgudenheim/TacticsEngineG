@@ -491,9 +491,12 @@ func get_slot_item(slot_type: ItemData.SlotType, item_level: int) -> ItemData:
 		return slot_type_is_valid and level_is_valid and type_is_valid))
 	var item: ItemData = RomReader.items[0]
 	if not valid_items.is_empty():
-		valid_items.sort_custom(func(item_a: ItemData, item_b: ItemData): return item_a.min_level > item_b.min_level)
-		item = valid_items[0] # pick highest level item
-		#item = valid_items.pick_random()
+		if random:
+			item = valid_items.pick_random()
+		else:
+			valid_items.sort_custom(func(item_a: ItemData, item_b: ItemData): return item_a.min_level > item_b.min_level)
+			item = valid_items[0] # pick highest level item
+			#item = valid_items.pick_random()
 	return item
 
 

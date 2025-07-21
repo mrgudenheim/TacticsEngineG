@@ -487,9 +487,9 @@ func init_statuses() -> void:
 	status_effects[33].passive_effect.stat_modifiers[UnitData.StatType.FAITH] = Modifier.new(0.0, Modifier.ModifierType.SET)
 	
 	# float
-	status_effects[17].passive_effect.elemental_cancel = [Action.ElementTypes.EARTH]
+	status_effects[17].passive_effect.element_cancel = [Action.ElementTypes.EARTH]
 	# oil
-	status_effects[16].passive_effect.elemental_weakness = [Action.ElementTypes.FIRE] # TODO oil is in addition to fire weakness
+	status_effects[16].passive_effect.element_weakness = [Action.ElementTypes.FIRE] # TODO oil is in addition to fire weakness
 	
 	# frog
 	status_effects[22].passive_effect.added_actions = [RomReader.abilities[0x16f].ability_action] # frog attack action

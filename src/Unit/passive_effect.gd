@@ -14,11 +14,11 @@ extends Resource
 @export var added_equipment_types: Array[int] = []
 @export var stat_modifiers: Dictionary[UnitData.StatType, Modifier] = {}
 
-@export var elemental_absorb: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
-@export var elemental_cancel: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
-@export var elemental_half: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
-@export var elemental_weakness: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
-@export var elemental_strengthen: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
+@export var element_absorb: Array[Action.ElementTypes] = []
+@export var element_cancel: Array[Action.ElementTypes] = []
+@export var element_half: Array[Action.ElementTypes] = []
+@export var element_weakness: Array[Action.ElementTypes] = []
+@export var element_strengthen: Array[Action.ElementTypes] = []
 
 @export var status_always: PackedInt32Array = []
 @export var status_immune: PackedInt32Array = []

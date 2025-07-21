@@ -516,11 +516,11 @@ func update_elemental_affinity() -> void:
 		elemental_weakness = append_element_array_unique(elemental_weakness, slot.item.elemental_weakness)
 	
 	for status: StatusEffect in current_statuses:
-		elemental_absorb = append_element_array_unique(elemental_absorb, status.passive_effect.elemental_absorb)
-		elemental_cancel = append_element_array_unique(elemental_cancel, status.passive_effect.elemental_cancel)
-		elemental_half = append_element_array_unique(elemental_half, status.passive_effect.elemental_half)
-		elemental_strengthen = append_element_array_unique(elemental_strengthen, status.passive_effect.elemental_strengthen)
-		elemental_weakness = append_element_array_unique(elemental_weakness, status.passive_effect.elemental_weakness)
+		elemental_absorb = append_element_array_unique(elemental_absorb, status.passive_effect.element_absorb)
+		elemental_cancel = append_element_array_unique(elemental_cancel, status.passive_effect.element_cancel)
+		elemental_half = append_element_array_unique(elemental_half, status.passive_effect.element_half)
+		elemental_strengthen = append_element_array_unique(elemental_strengthen, status.passive_effect.element_strengthen)
+		elemental_weakness = append_element_array_unique(elemental_weakness, status.passive_effect.element_weakness)
 	
 	elemental_absorb = append_element_array_unique(elemental_absorb, job_data.element_absorb)
 	elemental_cancel = append_element_array_unique(elemental_cancel, job_data.element_cancel)

@@ -76,11 +76,11 @@ var equip_slots: Array[EquipmentSlot] = [
 ]
 
 var ability_slots: Array[AbilitySlot] = [
-	AbilitySlot.new("Skillset 1", [Ability.Type.SKILLSET]),
-	AbilitySlot.new("Skillset 2", [Ability.Type.SKILLSET]),
-	AbilitySlot.new("Reaction", [Ability.Type.REACTION]),
-	AbilitySlot.new("Support", [Ability.Type.SUPPORT]),
-	AbilitySlot.new("Movement", [Ability.Type.MOVEMENT]),
+	AbilitySlot.new("Skillset 1", [Ability.SlotType.SKILLSET]),
+	AbilitySlot.new("Skillset 2", [Ability.SlotType.SKILLSET]),
+	AbilitySlot.new("Reaction", [Ability.SlotType.REACTION]),
+	AbilitySlot.new("Support", [Ability.SlotType.SUPPORT]),
+	AbilitySlot.new("Movement", [Ability.SlotType.MOVEMENT]),
 ]
 
 class EquipmentSlot:
@@ -98,10 +98,10 @@ class EquipmentSlot:
 
 class AbilitySlot:
 	var ability_slot_name: String = "[Ability Slot]"
-	var slot_types: Array[Ability.Type] = []
+	var slot_types: Array[Ability.SlotType] = []
 	var ability: Ability = Ability.new()
 	
-	func _init(new_name: String = "", new_slot_types: Array[Ability.Type] = [], new_ability: Ability = Ability.new()) -> void:
+	func _init(new_name: String = "", new_slot_types: Array[Ability.SlotType] = [], new_ability: Ability = Ability.new()) -> void:
 		ability_slot_name = new_name
 		slot_types = new_slot_types
 		ability = new_ability

@@ -3,7 +3,7 @@ extends Resource
 
 @export var id: int = 0
 @export var name: String = "[Ability Name]"
-@export var type: Type = Type.SKILLSET
+@export var slot_type: SlotType = SlotType.SKILLSET
 
 @export var spell_quote: String = "spell quote"
 @export var jp_cost: int = 0
@@ -14,7 +14,7 @@ extends Resource
 
 @export var passive_effect: PassiveEffect
 
-enum Type {
+enum SlotType {
 	SKILLSET,
 	REACTION,
 	SUPPORT,

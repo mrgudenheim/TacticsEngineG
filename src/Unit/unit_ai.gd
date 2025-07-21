@@ -196,10 +196,16 @@ func choose_action(unit: UnitData) -> void:
 			await wait_action_instance.action_completed
 	elif strategy == Strategy.CONFUSED: # TODO implement confused ai
 		push_error("Confused ai not implemented")
+		var chosen_action: ActionInstance = eligible_actions.pick_random()
+		await action_targeted(unit, chosen_action) # random target
 	elif strategy == Strategy.BERSERK: # TODO implement berserk ai
 		push_error("Berserk ai not implemented")
+		var chosen_action: ActionInstance = eligible_actions.pick_random()
+		await action_targeted(unit, chosen_action) # random target
 	elif strategy == Strategy.FLEE: # TODO implement flee ai
 		push_error("Flee ai not implemented")
+		var chosen_action: ActionInstance = eligible_actions.pick_random()
+		await action_targeted(unit, chosen_action) # random target
 
 func action_targeted(unit: UnitData, chosen_action: ActionInstance, target: TerrainTile = null, hover_target = null) -> void:
 	#chosen_action.show_potential_targets() # TODO fix move targeting when updating paths/pathfinding is takes longer than delay (large maps with 10+ units)

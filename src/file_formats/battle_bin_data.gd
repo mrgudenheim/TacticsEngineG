@@ -97,6 +97,16 @@ var status_colors: Dictionary[int, PackedInt32Array] = { # status_id :  [R, G, B
 	14 : [-8, -8, -8, 5], # cursed
 	3 : [4, 0, 5, 5], # undead
 }
+var status_modulate_colors: Dictionary[int, Color] = { # status_id :  [R, G, B, Shade type]
+	8 : Color8(32, 32, 32), # petrify
+	13 : Color8(84, 87, 255), # blood suck
+	20 : Color8(255, 128, 128), # berserk
+	24 : Color8(64, 192, 64), # poison
+	25 : Color8(21, 150, 231), # regen
+	16 : Color8(64, 64, 64), # oil
+	14 : Color8(32, 32, 32), # cursed
+	3 : Color8(116, 14, 255), # undead
+}
 
 # https://ffhacktics.com/wiki/Set_Idle_Animation_based_on_status_(not_MON)
 # https://ffhacktics.com/wiki/More_animation_based_on_status,_death_sound_effects

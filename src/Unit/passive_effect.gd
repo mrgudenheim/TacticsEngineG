@@ -11,7 +11,7 @@ extends Resource
 
 @export var ai_strategy: UnitAi.Strategy = UnitAi.Strategy.PLAYER
 @export var added_actions: Array[Action] = []
-@export var added_equipment_types: Array[int] = []
+@export var added_equipment_types: Array[int] = [] # equip x support abilities
 @export var stat_modifiers: Dictionary[UnitData.StatType, Modifier] = {}
 
 @export var element_absorb: Array[Action.ElementTypes] = []

@@ -291,9 +291,11 @@ func add_test_teams_to_map() -> void:
 		#0x67, # panther
 		#0x76, # juravis
 		#0x4a, # squire
-		0x50, # black mage
-		0x4f, # white mage
-		0x52, # summoner
+		#0x50, # black mage
+		#0x4f, # white mage
+		#0x52, # summoner
+		0x51, # time mage
+		0x55, # oracle
 		]
 	
 	for specific_job: int in specific_jobs:

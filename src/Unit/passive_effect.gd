@@ -28,6 +28,7 @@ extends Resource
 # TODO reflect
 # TODO undead healing -> damage
 # TODO invite, charm
+# TODO modify action - short charge, no charge, half mp, poach (secondary action?), tame (secondary action?) 
 
 # https://ffhacktics.com/wiki/Target_XA_affecting_Statuses_(Physical)
 # https://ffhacktics.com/wiki/Target%27s_Status_Affecting_XA_(Magical)
@@ -61,7 +62,7 @@ extends Resource
 #Affect usable actions - 
 #Counts as defeated - 
 #Affects ai - 
-#affects targeting - throw item, ignore height
+#affects targeting - throw item, ignore height, jump (lancer abilities)
 #Affect reactions - 
 #Affects equipment - Equip x
 #

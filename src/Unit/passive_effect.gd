@@ -20,6 +20,10 @@ extends Resource
 @export var elemental_weakness: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
 @export var elemental_strengthen: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
 
+@export var status_always: PackedInt32Array = []
+@export var status_immune: PackedInt32Array = []
+@export var status_start: PackedInt32Array = []
+
 @export var can_react: bool = true
 @export var target_can_react: bool = true
 @export var nullify_targeted: bool = false # ignore_attacks flag

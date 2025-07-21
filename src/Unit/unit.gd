@@ -75,6 +75,14 @@ var equip_slots: Array[EquipmentSlot] = [
 	EquipmentSlot.new("Accesory", [ItemData.SlotType.ACCESSORY]),
 ]
 
+var ability_slots: Array[AbilitySlot] = [
+	AbilitySlot.new("Skillset 1", [Ability.Type.SKILLSET]),
+	AbilitySlot.new("Skillset 2", [Ability.Type.SKILLSET]),
+	AbilitySlot.new("Reaction", [Ability.Type.REACTION]),
+	AbilitySlot.new("Support", [Ability.Type.SUPPORT]),
+	AbilitySlot.new("Movement", [Ability.Type.MOVEMENT]),
+]
+
 class EquipmentSlot:
 	var equipment_slot_name: String = "[Equipment Slot]"
 	var slot_types: Array[ItemData.SlotType] = []
@@ -87,6 +95,20 @@ class EquipmentSlot:
 	
 	func _to_string() -> String:
 		return equipment_slot_name + ": " + item.name
+
+class AbilitySlot:
+	var ability_slot_name: String = "[Ability Slot]"
+	var slot_types: Array[Ability.Type] = []
+	var ability: Ability = Ability.new()
+	
+	func _init(new_name: String = "", new_slot_types: Array[Ability.Type] = [], new_ability: Ability = Ability.new()) -> void:
+		ability_slot_name = new_name
+		slot_types = new_slot_types
+		ability = new_ability
+	
+	func _to_string() -> String:
+		return ability_slot_name + ": " + ability.name
+
 
 enum StatBasis {
 	MALE,

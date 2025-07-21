@@ -84,6 +84,8 @@ var separate_status: bool = false
 @export var status_prevents_use_any: Array[int] = [] # silence, dont move, dont act, etc.
 @export var required_equipment_type: Array[ItemData.ItemType] = [] # sword, gun, etc.
 @export var required_equipment: Array[ItemData] = [] # materia_blade, etc.
+@export var required_target_job_id: Array[int] = [] # dragon, etc.
+@export var required_target_status_id: Array[int] = [] # undead
 
 # animation data
 @export var animation_start_id: int = 0

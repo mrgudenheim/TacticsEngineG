@@ -2,42 +2,42 @@ class_name JobData
 extends Resource
 
 # Job Data # 800610b8 in RAM
-var job_id = 0
-var job_name: String = "Job Name"
-var skillset_id: int = 0
-var innate_abilities: PackedInt32Array = []
-var equippable_item_types: Array[ItemData.ItemType] # 4 bytes of bitflags, 32 total
-var hp_growth: int = 1
-var mp_growth: int = 1
-var speed_growth: int = 1
-var pa_growth: int = 1
-var ma_growth: int = 1
+@export var job_id = 0
+@export var job_name: String = "Job Name"
+@export var skillset_id: int = 0
+@export var innate_abilities: PackedInt32Array = []
+@export var equippable_item_types: Array[ItemData.ItemType] # 4 bytes of bitflags, 32 total
+@export var hp_growth: int = 1
+@export var mp_growth: int = 1
+@export var speed_growth: int = 1
+@export var pa_growth: int = 1
+@export var ma_growth: int = 1
 
-var hp_multiplier: int = 1
-var mp_multiplier: int = 1
-var speed_multiplier: int = 1
-var pa_multiplier: int = 1
-var ma_multiplier: int = 1
+@export var hp_multiplier: int = 1
+@export var mp_multiplier: int = 1
+@export var speed_multiplier: int = 1
+@export var pa_multiplier: int = 1
+@export var ma_multiplier: int = 1
 
-var move: int = 3
-var jump: int = 3
-var evade_physical: int = 0
-var evade_datas: Array[EvadeData] = []
+@export var move: int = 3
+@export var jump: int = 3
+@export var evade_physical: int = 0
+@export var evade_datas: Array[EvadeData] = []
 
-var status_always: PackedInt32Array = [] # 5 bytes of bitflags for up to 40 statuses
-var status_immune: PackedInt32Array = [] # 5 bytes of bitflags for up to 40 statuses
-var status_start: PackedInt32Array = [] # 5 bytes of bitflags for up to 40 statuses
+@export var status_always: PackedInt32Array = [] # 5 bytes of bitflags for up to 40 statuses
+@export var status_immune: PackedInt32Array = [] # 5 bytes of bitflags for up to 40 statuses
+@export var status_start: PackedInt32Array = [] # 5 bytes of bitflags for up to 40 statuses
 
-var element_absorb: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
-var element_cancel: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
-var element_half: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
-var element_weakness: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
-var element_strengthen: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
+@export var element_absorb: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
+@export var element_cancel: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
+@export var element_half: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
+@export var element_weakness: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
+@export var element_strengthen: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
 
-var monster_portrait_id: int = 0
-var monster_palette_id: int = 0
-var monster_type: int = 0 # monster type sprite? sprite_id = 0x85 + this
-var sprite_id: int = 0
+@export var monster_portrait_id: int = 0
+@export var monster_palette_id: int = 0
+@export var monster_type: int = 0 # monster type sprite? sprite_id = 0x85 + this
+@export var sprite_id: int = 0
 
 func _init(new_job_id: int, job_bytes: PackedByteArray) -> void:
 	job_id = new_job_id

@@ -131,8 +131,8 @@ func get_target_units(target_tiles: Array[TerrainTile]) -> Array[UnitData]:
 	for target_tile: TerrainTile in target_tiles:
 		var units_on_tile: Array[UnitData] = battle_manager.units.filter(func(unit: UnitData): return unit.tile_position == target_tile)
 		units_on_tile = units_on_tile.filter(
-			func(unit: UnitData): return not unit.current_statuses.any(
-				func(status: StatusEffect): return status.passive_effect.nullify_targeted)) # TODO how to remove the nullify_targeted status?
+			func(unit: UnitData): return unit.get_nullify_statuses().is_empty() or unit.get_nullify_statuses().any(
+				func(status: StatusEffect): return action.will_remove_status and action.taregt_status_list.has(status.status_id))) # ignore action unless it would remove nullify
 		target_units.append_array(units_on_tile)
 		#if unit_index == -1:
 			#continue

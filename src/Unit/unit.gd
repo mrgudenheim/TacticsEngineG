@@ -746,8 +746,15 @@ func remove_status(status_removed: StatusEffect, remove_permanent: bool = false)
 	update_elemental_affinity() # TODO update passives in general?
 
 
+func get_nullify_statuses() -> Array[StatusEffect]:
+	return current_statuses.filter(func(status: StatusEffect): return status.passive_effect.nullify_targeted)
+
+
 func update_permanent_statuses() -> void:
 	for status_id: int in RomReader.status_effects.size():
+		if immune_statuses.has(status_id):
+			continue
+		
 		# check passive sources: equipment, job, abilities, statuses
 		var num_should_have: int = 0
 		

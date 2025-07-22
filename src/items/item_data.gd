@@ -62,9 +62,11 @@ var stat_modifiers: Dictionary[UnitData.StatType, Modifier] = {}
 @export var sp_modifier: int = 0
 @export var move_modifier: int = 0
 @export var jump_modifier: int = 0
+
 @export var status_always: PackedInt32Array = []
 @export var status_immune: PackedInt32Array = []
 @export var status_start: PackedInt32Array = []
+
 @export var elemental_absorb: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
 @export var elemental_cancel: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
 @export var elemental_half: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types

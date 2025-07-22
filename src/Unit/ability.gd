@@ -12,7 +12,7 @@ extends Resource
 @export var display_ability_name: bool = true
 @export var learn_on_hit: bool = false
 
-@export var passive_effect: PassiveEffect
+@export var passive_effect: PassiveEffect = PassiveEffect.new()
 
 enum SlotType {
 	SKILLSET,

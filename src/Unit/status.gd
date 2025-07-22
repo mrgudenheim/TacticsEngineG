@@ -23,6 +23,7 @@ enum DurationType {
 	TICKS,
 	TURNS, # death sentance, dead -> crystal/treasure
 	INDEFINITE,
+	PERMANENT,
 }
 @export var duration_type: DurationType = DurationType.TICKS
 @export var action_on_turn_start: Action

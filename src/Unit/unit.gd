@@ -497,6 +497,7 @@ func generate_equipment() -> void:
 	stats[StatType.MP].set_value(stats[StatType.MP].max_value)
 	
 	update_elemental_affinity()
+	update_permanent_statuses()
 
 
 func update_equipment_modifiers() -> void:
@@ -707,7 +708,11 @@ func add_status(new_status: StatusEffect) -> void:
 	
 	var existing_statuses: Array[StatusEffect] = current_statuses.filter(func(status: StatusEffect): return status.status_id == new_status.status_id) # TODO use filter to allow for multiple of the same status, ex. double charging
 	if existing_statuses.size() >= new_status.num_allowed:
-		remove_status(existing_statuses[0])
+		var temp_statuses: Array[StatusEffect] = existing_statuses.filter(func(status: StatusEffect): return status.duration_type != StatusEffect.DurationType.PERMANENT)
+		if not temp_statuses.is_empty():
+			remove_status(temp_statuses[0]) # remove oldest temp status
+		else:
+			return # if already has max stack of status and they are all permanent
 	
 	current_statuses.append(new_status)
 	for stat: StatType in new_status.passive_effect.stat_modifiers.keys():
@@ -718,28 +723,55 @@ func add_status(new_status: StatusEffect) -> void:
 		remove_status_id(status_cancelled_id)
 	
 	update_status_visuals()
-	update_elemental_affinity()
+	update_elemental_affinity() # TODO update passives in general?
 
 
 func remove_status_id(status_removed_id: int) -> void:
-	if always_statuses.has(status_removed_id):
-		return
-	
 	var statuses_to_remove: Array[StatusEffect] = []
-	statuses_to_remove.append_array(current_statuses.filter(func(status: StatusEffect): return status.status_id == status_removed_id))
+	statuses_to_remove.append_array(current_statuses.filter(func(status: StatusEffect): return status.status_id == status_removed_id and status.duration_type != StatusEffect.DurationType.PERMANENT))
 	for status: StatusEffect in statuses_to_remove:
 		remove_status(status)
 
 
-func remove_status(status_removed: StatusEffect) -> void:
-	if always_statuses.has(status_removed.status_id):
+func remove_status(status_removed: StatusEffect, remove_permanent: bool = false) -> void:
+	if status_removed.duration_type == StatusEffect.DurationType.PERMANENT and not remove_permanent:
+		push_error("Trying to removing Always status: " + status_removed.status_effect_name)
 		return
 	
 	for stat: StatType in status_removed.passive_effect.stat_modifiers.keys():
 		stats[stat].remove_modifier(status_removed.passive_effect.stat_modifiers[stat])
 	current_statuses.erase(status_removed)
 	update_status_visuals()
-	update_elemental_affinity()
+	update_elemental_affinity() # TODO update passives in general?
+
+
+func update_permanent_statuses() -> void:
+	for status_id: int in RomReader.status_effects.size():
+		var num_should_have: int = 0
+		# check passive sources: equipment, job, abilities, statuses
+		for slot: EquipmentSlot in equip_slots:
+			num_should_have += slot.item.status_always.count(status_id)
+		for slot: AbilitySlot in ability_slots:
+			num_should_have += slot.ability.passive_effect.status_always.count(status_id)
+		for status: StatusEffect in current_statuses:
+			num_should_have += status.passive_effect.status_always.count(status_id)
+		num_should_have += job_data.status_always.count(status_id)
+		
+		var current_permanent: Array[StatusEffect] = current_statuses.filter(func(status: StatusEffect): return status.status_id == status_id and status.duration_type == StatusEffect.DurationType.PERMANENT)
+		var num_has: int = current_permanent.size()
+		var change: int = num_should_have - num_has
+		
+		if change == 0:
+			return
+		elif change > 0:
+			for counter: int in change:
+				var new_status: StatusEffect = RomReader.status_effects[status_id].duplicate()
+				new_status.duration_type = StatusEffect.DurationType.PERMANENT
+				add_status(new_status)
+		elif change < 0:
+			for counter: int in -change:
+				var status_to_remove: StatusEffect = current_permanent[-counter - 1] # remove most recent permanent stack
+				remove_status(status_to_remove, true)
 
 
 func update_status_visuals() -> void:
@@ -1090,6 +1122,7 @@ func set_job_id(new_job_id: int) -> void:
 		set_base_animation_ptr_id(idle_walk_animation_id)
 	
 	update_elemental_affinity()
+	update_permanent_statuses()
 
 func set_ability(new_ability_id: int) -> void:
 	active_ability_id = new_ability_id

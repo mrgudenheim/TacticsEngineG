@@ -552,7 +552,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.value_01 = formula_y / 100.0
 			target_effects[0].base_power_formula.reverse_sign = false
 		0x0e:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL # Does this use magic evade?

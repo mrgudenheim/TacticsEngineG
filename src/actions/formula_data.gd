@@ -76,6 +76,7 @@ enum Formulas {
 	TARGET_CURRENT_HP_minus_V1,
 	USER_MISSING_HPxV1,
 	TARGET_MISSING_HPxV1,
+	TARGET_CURRENT_HPxV1,
 	RANDOM_V1_V2,
 	}
 
@@ -192,6 +193,8 @@ func get_base_value(formula: Formulas, user: UnitData, target: UnitData) -> floa
 			base_value = (user.hp_max - user.hp_current) * value_01 # 0x43 USER_MISSING_HP
 		Formulas.TARGET_MISSING_HPxV1:
 			base_value = (target.hp_max - target.hp_current) * value_01 # 0x45 TARGET_MISSING_HP
+		Formulas.TARGET_CURRENT_HPxV1:
+			base_value = target.hp_current * value_01 # TARGET_CURRENT_HP, ai status score
 		Formulas.RANDOM_V1_V2:
 			base_value = randi_range(value_01, value_02) # 0x4b RANDOM_RANGE
 			

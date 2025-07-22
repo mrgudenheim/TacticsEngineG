@@ -35,6 +35,7 @@ enum DurationType {
 var delayed_action: ActionInstance # charging
 @export var num_allowed: int = 1
 @export var removed_on_damaged: bool = false # TODO should these statuses instead be included in actions remove_status list?
+@export var ai_score_formula: FormulaData = FormulaData.new(FormulaData.Formulas.TARGET_CURRENT_HPxV1)
 
 var visual_effect # TODO speech bubbles, sprite coloring, animation (haste, dead, etc.), float, etc.
 @export var unit_shading_color: Color

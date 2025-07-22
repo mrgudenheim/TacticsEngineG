@@ -497,6 +497,7 @@ func generate_equipment() -> void:
 	stats[StatType.MP].set_value(stats[StatType.MP].max_value)
 	
 	update_elemental_affinity()
+	update_immune_statuses()
 	update_permanent_statuses()
 
 
@@ -747,8 +748,9 @@ func remove_status(status_removed: StatusEffect, remove_permanent: bool = false)
 
 func update_permanent_statuses() -> void:
 	for status_id: int in RomReader.status_effects.size():
-		var num_should_have: int = 0
 		# check passive sources: equipment, job, abilities, statuses
+		var num_should_have: int = 0
+		
 		for slot: EquipmentSlot in equip_slots:
 			num_should_have += slot.item.status_always.count(status_id)
 		for slot: AbilitySlot in ability_slots:
@@ -772,6 +774,23 @@ func update_permanent_statuses() -> void:
 			for counter: int in -change:
 				var status_to_remove: StatusEffect = current_permanent[-counter - 1] # remove most recent permanent stack
 				remove_status(status_to_remove, true)
+
+
+func update_immune_statuses() -> void:
+	# check passive sources: equipment, job, abilities, statuses
+	immune_statuses.clear()
+	
+	for slot: EquipmentSlot in equip_slots:
+		immune_statuses.append_array(slot.item.status_immune)
+	for slot: AbilitySlot in ability_slots:
+		immune_statuses.append_array(slot.ability.passive_effect.status_immune)
+	for status: StatusEffect in current_statuses:
+		immune_statuses.append_array(status.passive_effect.status_immune)
+	immune_statuses.append_array(job_data.status_immune)
+	
+	for status: StatusEffect in current_statuses:
+		if immune_statuses.has(status.status_id):
+			remove_status(status, true)
 
 
 func update_status_visuals() -> void:
@@ -1122,6 +1141,7 @@ func set_job_id(new_job_id: int) -> void:
 		set_base_animation_ptr_id(idle_walk_animation_id)
 	
 	update_elemental_affinity()
+	update_immune_statuses()
 	update_permanent_statuses()
 
 func set_ability(new_ability_id: int) -> void:

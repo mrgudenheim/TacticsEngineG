@@ -631,7 +631,7 @@ func set_available_actions() -> void:
 	actions.append(move_action)
 	actions.append(attack_action)
 	
-	actions.append_array(get_skillset_actions())
+	actions.append_array(get_skillset_actions()) # TODO move to skillset ability
 	# add actions from statuses (frog, blood suck)
 	for slot: AbilitySlot in ability_slots:
 		for action: Action in slot.ability.passive_effect.added_actions:
@@ -645,9 +645,10 @@ func set_available_actions() -> void:
 		for action: Action in status.passive_effect.added_actions:
 			if not actions.has(action):
 				actions.append(action)
-	for action: Action in job_data.passive_effect.added_actions:
-			if not actions.has(action):
-				actions.append(action)
+	if job_data != null:
+		for action: Action in job_data.passive_effect.added_actions:
+				if not actions.has(action):
+					actions.append(action)
 	
 	# TODO append all other potential actions, from jobs, equipment, etc.
 	

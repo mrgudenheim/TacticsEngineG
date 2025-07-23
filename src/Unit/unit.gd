@@ -510,7 +510,7 @@ func set_equipment_slot(slot: EquipmentSlot, item: ItemData):
 func update_equipment_modifiers() -> void:
 	for slot: EquipmentSlot in equip_slots:
 		for stat_type: StatType in slot.item.stat_modifiers.keys():
-			stats[stat_type].add_modifier(slot.item.stat_modifiers[stat_type])
+			stats[stat_type].add_modifier(slot.item.stat_modifiers[stat_type]) # TODO remove modifier if equipment is removed
 
 
 func get_item_for_slot(slot_type: ItemData.SlotType, item_level: int, random: bool = false) -> ItemData:
@@ -551,15 +551,19 @@ func update_elemental_affinity() -> void:
 		elemental_strengthen = append_element_array_unique(elemental_strengthen, slot.item.elemental_strengthen)
 		elemental_weakness = append_element_array_unique(elemental_weakness, slot.item.elemental_weakness)
 	
+	for slot: AbilitySlot in ability_slots:
+		elemental_absorb = append_element_array_unique(elemental_absorb, slot.ability.passive_effect.element_absorb)
+		elemental_cancel = append_element_array_unique(elemental_cancel, slot.ability.passive_effect.element_cancel)
+		elemental_half = append_element_array_unique(elemental_half, slot.ability.passive_effect.element_half)
+		elemental_strengthen = append_element_array_unique(elemental_strengthen, slot.ability.passive_effect.element_strengthen)
+		elemental_weakness = append_element_array_unique(elemental_weakness, slot.ability.passive_effect.element_weakness)
+	
 	for status: StatusEffect in current_statuses:
 		elemental_absorb = append_element_array_unique(elemental_absorb, status.passive_effect.element_absorb)
 		elemental_cancel = append_element_array_unique(elemental_cancel, status.passive_effect.element_cancel)
 		elemental_half = append_element_array_unique(elemental_half, status.passive_effect.element_half)
 		elemental_strengthen = append_element_array_unique(elemental_strengthen, status.passive_effect.element_strengthen)
 		elemental_weakness = append_element_array_unique(elemental_weakness, status.passive_effect.element_weakness)
-	
-	# TODO check ability slots
-	
 	
 	elemental_absorb = append_element_array_unique(elemental_absorb, job_data.element_absorb)
 	elemental_cancel = append_element_array_unique(elemental_cancel, job_data.element_cancel)

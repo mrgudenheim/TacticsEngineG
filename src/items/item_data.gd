@@ -78,9 +78,11 @@ var stat_modifiers: Dictionary[UnitData.StatType, Modifier] = {}
 @export var consumable_item_z: int = 0
 @export var consumable_inflict_status_id: int = 0
 
-@export var actions_granted: Array[Action] = []
+#@export var actions_granted: Array[Action] = []
 
 @export var evade_datas: Array[EvadeData] = []
+
+@export var passive_effect: PassiveEffect = PassiveEffect.new() # TODO item move element affinities, stat modifiers, and status arrays to passive_effect
 
 enum SlotType {
 	WEAPON = 0x80,

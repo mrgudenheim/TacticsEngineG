@@ -513,6 +513,11 @@ func update_equipment_modifiers() -> void:
 			stats[stat_type].add_modifier(slot.item.stat_modifiers[stat_type]) # TODO remove modifier if equipment is removed
 
 
+func update_passive_modifiers() -> void:
+	pass
+	# TODO implement updating passive modifiers: abilities, equipment, statuses, job
+
+
 func get_item_for_slot(slot_type: ItemData.SlotType, item_level: int, random: bool = false) -> ItemData:
 	var valid_items: Array[ItemData] = []
 	valid_items.assign(RomReader.items.filter(func(item: ItemData): 
@@ -628,10 +633,22 @@ func set_available_actions() -> void:
 	
 	actions.append_array(get_skillset_actions())
 	# add actions from statuses (frog, blood suck)
+	for slot: AbilitySlot in ability_slots:
+		for action: Action in slot.ability.passive_effect.added_actions:
+			if not actions.has(action):
+				actions.append(action)
+	for slot: EquipmentSlot in equip_slots:
+		for action: Action in slot.item.passive_effect.added_actions:
+			if not actions.has(action):
+				actions.append(action)
 	for status: StatusEffect in current_statuses:
 		for action: Action in status.passive_effect.added_actions:
 			if not actions.has(action):
 				actions.append(action)
+	for action: Action in job_data.passive_effect.added_actions:
+			if not actions.has(action):
+				actions.append(action)
+	
 	# TODO append all other potential actions, from jobs, equipment, etc.
 	
 	actions.append(wait_action)

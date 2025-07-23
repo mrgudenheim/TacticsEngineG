@@ -34,6 +34,8 @@ extends Resource
 @export var element_weakness: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
 @export var element_strengthen: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
 
+@export var passive_effect: PassiveEffect = PassiveEffect.new() # TODO job_data move element affinities, stat modifiers, and status arrays to passive_effect
+
 @export var monster_portrait_id: int = 0
 @export var monster_palette_id: int = 0
 @export var monster_type: int = 0 # monster type sprite? sprite_id = 0x85 + this

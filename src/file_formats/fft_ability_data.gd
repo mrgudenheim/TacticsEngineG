@@ -255,7 +255,7 @@ func set_action() -> void:
 	
 	# inflict status data
 	var inflict_status_data: ScusData.InflictStatus = RomReader.scus_data.inflict_statuses[inflict_status_id]
-	ability_action.taregt_status_list = inflict_status_data.status_list
+	ability_action.target_status_list = inflict_status_data.status_list
 	ability_action.status_chance = 100
 	ability_action.will_remove_status = inflict_status_data.will_cancel
 	

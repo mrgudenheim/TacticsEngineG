@@ -132,7 +132,7 @@ func get_target_units(target_tiles: Array[TerrainTile]) -> Array[UnitData]:
 		var units_on_tile: Array[UnitData] = battle_manager.units.filter(func(unit: UnitData): return unit.tile_position == target_tile)
 		units_on_tile = units_on_tile.filter(
 			func(unit: UnitData): return unit.get_nullify_statuses().is_empty() or unit.get_nullify_statuses().any(
-				func(status: StatusEffect): return action.will_remove_status and action.taregt_status_list.has(status.status_id))) # ignore action unless it would remove nullify
+				func(status: StatusEffect): return action.will_remove_status and action.target_status_list.has(status.status_id))) # ignore action unless it would remove nullify
 		target_units.append_array(units_on_tile)
 		#if unit_index == -1:
 			#continue
@@ -212,7 +212,7 @@ func get_effects_text(target: UnitData) -> String:
 
 func get_statuses_text(target: UnitData) -> String:
 	# status preview
-	if action.taregt_status_list.is_empty():
+	if action.target_status_list.is_empty():
 		return ""
 	
 	var status_chance: String = str(action.status_chance) + "%"
@@ -220,11 +220,11 @@ func get_statuses_text(target: UnitData) -> String:
 	if action.will_remove_status:
 		remove_status = "Remove "
 	var status_group_type: String = Action.StatusListType.keys()[action.target_status_list_type] + " "
-	if action.taregt_status_list.size() < 2:
+	if action.target_status_list.size() < 2:
 		status_group_type = "" # don't mention group type if 1 or less status
 	
 	var status_names: PackedStringArray = []
-	for status_id: int in action.taregt_status_list:
+	for status_id: int in action.target_status_list:
 		if not action.will_remove_status or target.current_status_ids.has(status_id): # don't show removing status the target does not have TODO don't show remove Always statuses
 			status_names.append(RomReader.status_effects[status_id].status_effect_name)
 	

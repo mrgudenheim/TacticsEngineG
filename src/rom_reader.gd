@@ -121,7 +121,7 @@ func process_rom() -> void:
 	scus_data.init_statuses()
 	for idx: int in status_effects.size():
 		status_effects[idx].ai_score_formula.value_01 = battle_bin_data.ai_status_priorities[idx] / 128.0
-	# TODO does status_init need to be called after setting ability actions for blood suck and frog attack actions?
+		# TODO implement ai formulas that are modified by other statuses (ex. stop is worth zero if target is already confused/charm/blood suck) or action properties (ex. evadeable, silenceable)
 	
 	
 	# testing vfx vram data

@@ -262,7 +262,7 @@ func _init(idx: int = 0) -> void:
 		else: # inflict status data
 			weapon_attack_action.inflict_status_id = weapon_inflict_status_spell_id
 			var inflict_status: ScusData.InflictStatus = RomReader.scus_data.inflict_statuses[weapon_inflict_status_spell_id]
-			weapon_attack_action.taregt_status_list = inflict_status.status_list
+			weapon_attack_action.target_status_list = inflict_status.status_list
 			weapon_attack_action.will_remove_status = inflict_status.will_cancel
 			weapon_attack_action.status_chance = 19
 			

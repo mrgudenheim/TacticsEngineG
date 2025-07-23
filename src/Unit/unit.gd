@@ -484,11 +484,11 @@ func generate_equipment() -> void:
 	#if not ["TYPE1.SEQ", "TYPE3.SEQ"].has(animation_manager.global_seq.file_name): # monsters don't have equipment
 		#return
 	
-	equip_slots[0].item = get_slot_item(ItemData.SlotType.WEAPON, level) # RH
-	equip_slots[1].item = get_slot_item(ItemData.SlotType.SHIELD, level) # LH
-	equip_slots[2].item = get_slot_item(ItemData.SlotType.HEADGEAR, level) # headgear
-	equip_slots[3].item = get_slot_item(ItemData.SlotType.ARMOR, level) # armor
-	equip_slots[4].item = get_slot_item(ItemData.SlotType.ACCESSORY, level, true) # accessory
+	equip_slots[0].item = get_item_for_slot(ItemData.SlotType.WEAPON, level) # RH
+	equip_slots[1].item = get_item_for_slot(ItemData.SlotType.SHIELD, level) # LH
+	equip_slots[2].item = get_item_for_slot(ItemData.SlotType.HEADGEAR, level) # headgear
+	equip_slots[3].item = get_item_for_slot(ItemData.SlotType.ARMOR, level) # armor
+	equip_slots[4].item = get_item_for_slot(ItemData.SlotType.ACCESSORY, level, true) # accessory
 	
 	set_primary_weapon(equip_slots[0].item.id)
 	
@@ -501,13 +501,19 @@ func generate_equipment() -> void:
 	update_permanent_statuses()
 
 
+func set_equipment_slot(slot: EquipmentSlot, item: ItemData):
+	pass
+	# TODO implement equipping individual equipement slots
+	# update passives
+
+
 func update_equipment_modifiers() -> void:
 	for slot: EquipmentSlot in equip_slots:
 		for stat_type: StatType in slot.item.stat_modifiers.keys():
 			stats[stat_type].add_modifier(slot.item.stat_modifiers[stat_type])
 
 
-func get_slot_item(slot_type: ItemData.SlotType, item_level: int, random: bool = false) -> ItemData:
+func get_item_for_slot(slot_type: ItemData.SlotType, item_level: int, random: bool = false) -> ItemData:
 	var valid_items: Array[ItemData] = []
 	valid_items.assign(RomReader.items.filter(func(item: ItemData): 
 		var slot_type_is_valid: bool = item.slot_type == slot_type
@@ -523,6 +529,12 @@ func get_slot_item(slot_type: ItemData.SlotType, item_level: int, random: bool =
 			item = valid_items[0] # pick highest level item
 			#item = valid_items.pick_random()
 	return item
+
+
+func set_ability_slot(slot: AbilitySlot, ability: Ability):
+	pass
+	# TODO implement equipping individual ability slots
+	# update passives
 
 
 func update_elemental_affinity() -> void:
@@ -545,6 +557,9 @@ func update_elemental_affinity() -> void:
 		elemental_half = append_element_array_unique(elemental_half, status.passive_effect.element_half)
 		elemental_strengthen = append_element_array_unique(elemental_strengthen, status.passive_effect.element_strengthen)
 		elemental_weakness = append_element_array_unique(elemental_weakness, status.passive_effect.element_weakness)
+	
+	# TODO check ability slots
+	
 	
 	elemental_absorb = append_element_array_unique(elemental_absorb, job_data.element_absorb)
 	elemental_cancel = append_element_array_unique(elemental_cancel, job_data.element_cancel)

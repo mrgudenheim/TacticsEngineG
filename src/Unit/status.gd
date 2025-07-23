@@ -119,7 +119,7 @@ func get_ai_score(user: UnitData, target: UnitData, remove: bool = false) -> flo
 		return 0.0
 	
 	score = ai_score_formula.get_base_value(ai_score_formula.formula, user, target)
-	if target.team != user.team:
+	if target.team == user.team:
 		score = -score
 	
 	if not remove and current_statuses.size() >= num_allowed: # re-applying existing status

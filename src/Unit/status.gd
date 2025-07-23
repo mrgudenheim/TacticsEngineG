@@ -109,7 +109,28 @@ static func get_status_id_array(status_bitflags: PackedByteArray) -> PackedInt32
 	return status_array
 
 
-
+func get_ai_score(user: UnitData, target: UnitData, remove: bool = false) -> float:
+	var score: float = 0.0
+	if not remove and target.immune_statuses.has(status_id):
+		return 0.0
+	
+	var current_statuses: Array[StatusEffect] = target.current_statuses.filter(func(status: StatusEffect): return status.status_id == status_id)
+	if remove and current_statuses.all(func(status: StatusEffect): return status.duration_type != StatusEffect.DurationType.PERMANENT):
+		return 0.0
+	
+	score = ai_score_formula.get_base_value(ai_score_formula.formula, user, target)
+	if target.team != user.team:
+		score = -score
+	
+	if not remove and current_statuses.size() >= num_allowed: # re-applying existing status
+		if current_statuses.all(func(status: StatusEffect): return status.duration_type == StatusEffect.DurationType.PERMANENT):
+			return 0.0
+		
+		var ticking_statuses: Array[StatusEffect] = current_statuses.filter(func(status: StatusEffect): return status.duration_type == StatusEffect.DurationType.TICKS)
+		if not ticking_statuses.is_empty():
+			score = score * ticking_statuses[0].duration * duration
+	
+	return score
 
 
 #Status Set 1

@@ -157,10 +157,21 @@ func get_ai_score() -> int:
 		hit_chance_value = clamp(hit_chance_value, 0, 100)
 		target_score = target_score * (hit_chance_value / 100.0)
 		
-		# TODO status scores
-		RomReader.battle_bin_data.ai_status_priorities
+		# status scores
+		var total_status_score: float = 0.0
+		for status_id: int in action.target_status_list:
+			var status: StatusEffect = RomReader.status_effects[status_id]
+			var status_score: float = status.get_ai_score(user, target, action.will_remove_status)
+			if action.target_status_list_type == Action.StatusListType.ALL:
+				status_score = status_score * action.status_chance
+			elif action.target_status_list_type == Action.StatusListType.EACH:
+				status_score = status_score * action.status_chance
+			total_status_score += status_score
 		
-		ai_score += roundi(target_score)
+		if action.target_status_list_type == Action.StatusListType.RANDOM:
+			total_status_score = total_status_score / action.target_status_list.size()
+		
+		ai_score += roundi(target_score) + roundi(total_status_score)
 		#push_warning(action.action_name + " " + str(preview_targets) + " " + str(ai_score))
 	
 	return ai_score

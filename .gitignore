@@ -1,6 +1,7 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+.vscode/
 
 # editior addons to ignore
 addons/script-ide/

@@ -84,6 +84,7 @@ allow_mirror = false
 environment = SubResource("Environment_njvnp")
 
 [node name="CameraController" parent="." instance=ExtResource("12_l2dig")]
+physics_interpolation_mode = 2
 transform = Transform3D(0.707107, -0.315509, 0.632814, 0, 0.894934, 0.446198, -0.707107, -0.315509, 0.632814, 0, 0, 0)
 
 [node name="DebugOptions" type="PanelContainer" parent="."]

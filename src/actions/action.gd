@@ -306,7 +306,8 @@ func apply_standard(action_instance: ActionInstance) -> void:
 			#vfx_data.vfx_completed.connect(func(): vfx_completed = true, CONNECT_ONE_SHOT)
 			vfx_locations.append(show_vfx(action_instance, target_unit.tile_position.get_world_position()))
 		var evade_direction: EvadeData.Directions = get_evade_direction(action_instance.user, target_unit)
-		var hit_success: bool = randi_range(0, 99) < get_total_hit_chance(action_instance.user, target_unit, evade_direction)
+		var total_hit_chance: int = get_total_hit_chance(action_instance.user, target_unit, evade_direction)
+		var hit_success: bool = randi_range(0, 99) < total_hit_chance
 		if hit_success:
 			for effect: ActionEffect in target_effects:
 				var effect_value: int = roundi(effect.base_power_formula.get_result(action_instance.user, target_unit, element))

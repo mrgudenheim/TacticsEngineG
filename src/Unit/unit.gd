@@ -315,7 +315,7 @@ var actions_data: Dictionary[Action, ActionInstance] = {}
 # constants?
 @export var idle_walk_animation_id: int = 6 # 0x0c for flying sprites
 @export var walk_to_animation_id: int = 0x18 # 0x1e (30) for flying sprites
-@export var evade_animation_id: int = 0x30
+@export var evade_animation_id: int = 0x30 # TODO fix for kanzen, arute?
 @export var taking_damage_animation_id: int = 0x32
 @export var knocked_out_animation_id: int = 0x34
 @export var heal_animation_id: int = 0x36
@@ -1108,7 +1108,8 @@ func update_unit_facing(dir: Vector3) -> void:
 	if new_facing != facing:
 		var temp_facing = facing
 		facing = new_facing
-		update_animation_facing(global_battle_manager.camera_controller.CameraFacingVectors[global_battle_manager.camera_controller.camera_facing])
+		if global_battle_manager != null:
+			update_animation_facing(global_battle_manager.camera_controller.CameraFacingVectors[global_battle_manager.camera_controller.camera_facing])
 
 
 func update_animation_facing(camera_facing_vector: Vector3) -> void:
@@ -1333,7 +1334,7 @@ func set_submerged_depth(new_depth: int) -> void:
 
 func update_spritesheet_grid_texture() -> void:
 	var new_spr: Spr = RomReader.sprs[sprite_file_idx]
-	animation_manager.unit_sprites_manager.sprite_primary.texture = new_spr.create_frame_grid_texture(sprite_palette_id, 0, 0, 0, submerged_depth)
+	animation_manager.unit_sprites_manager.sprite_primary.texture = new_spr.create_frame_grid_texture(sprite_palette_id, 0, animation_manager.other_type_index, 0, submerged_depth)
 
 
 func on_sprite_idx_selected(index: int) -> void:

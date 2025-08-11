@@ -29,6 +29,7 @@ var item_spr: Spr
 
 var other_spr: Spr
 var other_shp: Shp
+var other_type_index: int = 0 # 0 = chicken/chest, 1 = frog, 2 = crystal
 
 @export var item_index: int = 0
 @export var is_right_facing: bool = false
@@ -501,6 +502,7 @@ func get_animation_from_globals(keep_time: bool = false) -> FftAnimation:
 	fft_animation.sequence = global_seq.sequences[global_animation_id]
 	fft_animation.flipped_v = false
 	fft_animation.back_face_offset = 0
+	fft_animation.other_type_index = other_type_index
 	
 	if keep_time:
 		fft_animation.time = global_fft_animation.get_time()

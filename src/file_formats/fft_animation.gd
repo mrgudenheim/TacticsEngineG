@@ -11,7 +11,7 @@ var sequence := Sequence.new()
 
 var flipped_v: bool = false # mirrors the animation
 var submerged_depth: int = 0
-var other_type_index: int = 0
+var other_type_index: int = 0 # 0 = chicken/chest, 1 = frog, 2 = crystal
 var back_face_offset: int = 0
 
 var time: float = 0

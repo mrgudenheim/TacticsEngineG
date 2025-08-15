@@ -1,4 +1,5 @@
-class_name Spr extends Bmp
+class_name Spr
+extends Bmp
 
 var is_initialized: bool = false
 

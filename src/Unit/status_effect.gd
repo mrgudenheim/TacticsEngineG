@@ -37,13 +37,21 @@ var delayed_action: ActionInstance # charging
 @export var removed_on_damaged: bool = false # TODO should these statuses instead be included in actions remove_status list?
 @export var ai_score_formula: FormulaData = FormulaData.new(FormulaData.Formulas.TARGET_CURRENT_HPxV1)
 
-var visual_effect # TODO speech bubbles, sprite coloring, animation (haste, dead, etc.), float, etc.
-@export var unit_shading_color: Color
-@export var unit_shading_type: int
+var visual_effect # TODO icons, sprite coloring, spritesheet, animation (haste, dead, etc.), float, etc.
+
+@export var spritesheet_file_name: String
+@export var palette_idx: int = 0
+@export var other_type_index: int = 0 # 0 = chicken/chest, 1 = frog, 2 = crystal
+
+@export var shading_color: Color
+@export var shading_type: int
+@export var modulation_color: Color
 #@export var status_bubble_texture: Texture2D # from Frame.bin
-@export var status_icon_rects: Array[Rect2i] = []
-@export var icon_frames: int = 1
+
+@export var icon_rects: Array[Rect2i] = []
+@export var num_icon_frames: int = 1
 @export var duration_icons: Array[Rect2i] = RomReader.battle_bin_data.status_counter_rects
+
 @export var idle_animation_id: int = -1
 
 @export var passive_effect: PassiveEffect = PassiveEffect.new()
@@ -79,8 +87,8 @@ func get_icon_rect() -> Rect2i:
 			return duration_icons[-1]
 		else:
 			return duration_icons[duration]
-	elif not status_icon_rects.is_empty():
-		return status_icon_rects[0]
+	elif not icon_rects.is_empty():
+		return icon_rects[0]
 	else:
 		return Rect2i(Vector2i.ZERO, Vector2i.ONE)
 

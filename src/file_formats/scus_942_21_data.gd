@@ -193,8 +193,8 @@ func init_from_scus() -> void:
 			var r: int = RomReader.battle_bin_data.status_colors[id][0]
 			var g: int = RomReader.battle_bin_data.status_colors[id][1]
 			var b: int = RomReader.battle_bin_data.status_colors[id][2]
-			new_status_effect.unit_shading_color = Color8(r, g, b)
-			new_status_effect.unit_shading_type = RomReader.battle_bin_data.status_colors[id][3]
+			new_status_effect.shading_color = Color8(r, g, b)
+			new_status_effect.shading_type = RomReader.battle_bin_data.status_colors[id][3]
 		
 		if RomReader.battle_bin_data.status_idle_animations.has(id):
 			new_status_effect.idle_animation_id = RomReader.battle_bin_data.status_idle_animations[id]

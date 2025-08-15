@@ -1,4 +1,5 @@
 class_name Bmp
+extends Resource
 
 var file_name: String = "file_name"
 var bits_per_pixel: int = BIT_DEPTH.EIGHT

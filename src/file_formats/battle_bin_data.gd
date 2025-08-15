@@ -260,7 +260,7 @@ func init_from_battle_bin() -> void:
 	for status_id: int in RomReader.scus_data.status_effects.size():
 		if status_icon_ids.keys().has(status_id):
 			var rect: Rect2i = status_icon_rects[status_icon_ids[status_id]]
-			RomReader.scus_data.status_effects[status_id].status_icon_rects.append(rect) # TODO get second frame of status icons
+			RomReader.scus_data.status_effects[status_id].icon_rects.append(rect) # TODO get second frame of status icons
 	
 	# status counter locations
 	entry_size = 1

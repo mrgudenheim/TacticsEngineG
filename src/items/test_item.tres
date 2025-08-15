@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dlaul7n568vti" path="res://src/actions/action.gd" id="1_5alu4"]
 [ext_resource type="Script" uid="uid://cf5w02iml4cqu" path="res://src/items/item_data.gd" id="2_5alu4"]
-[ext_resource type="Script" uid="uid://cg0yup2a7gcs8" path="res://src/Unit/status.gd" id="3_sx00x"]
+[ext_resource type="Script" uid="uid://cg0yup2a7gcs8" path="res://src/Unit/status_effect.gd" id="3_sx00x"]
 
 [sub_resource type="Resource" id="Resource_5alu4"]
 script = ExtResource("1_5alu4")

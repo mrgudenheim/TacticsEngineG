@@ -181,7 +181,7 @@ camera = NodePath("../PreviewSubViewport/PreviewCamera3D")
 
 [node name="PreviewSubViewport" type="SubViewport" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer"]
 transparent_bg = true
-size = Vector2i(200, 200)
+size = Vector2i(128, 128)
 
 [node name="PreviewCamera3D" type="Camera3D" parent="HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer/PreviewSubViewport"]
 transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 2.5, 0, 2.5)
@@ -366,6 +366,7 @@ horizontal_alignment = 2
 layout_mode = 2
 max_value = 7.0
 rounded = true
+allow_greater = true
 editable = false
 select_all_on_focus = true
 

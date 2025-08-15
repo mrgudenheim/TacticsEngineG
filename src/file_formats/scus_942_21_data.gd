@@ -197,7 +197,7 @@ func init_from_scus() -> void:
 			new_status_effect.shading_type = RomReader.battle_bin_data.status_colors[id][3]
 		
 		if RomReader.battle_bin_data.status_modulate_colors.has(id):
-			new_status_effect.modulation_color = RomReader.status_modulate_colors.status_colors[id]
+			new_status_effect.modulation_color = RomReader.battle_bin_data.status_modulate_colors[id]
 		
 		if RomReader.battle_bin_data.status_idle_animations.has(id):
 			new_status_effect.idle_animation_id = RomReader.battle_bin_data.status_idle_animations[id]
@@ -479,6 +479,9 @@ func init_statuses() -> void:
 	status_effects[20].passive_effect.ai_strategy = UnitAi.Strategy.BEST
 	# chicken
 	status_effects[21].passive_effect.ai_strategy = UnitAi.Strategy.FLEE
+	status_effects[21].spritesheet_file_name = "OTHER.SPR"
+	status_effects[21].palette_idx_offset = 0 # TODO chicken is actually palettes 0-4 depending on original palette
+	status_effects[1].other_type_index = 0
 	# blood suck
 	status_effects[13].passive_effect.ai_strategy = UnitAi.Strategy.BEST
 	status_effects[13].passive_effect.added_actions = [RomReader.abilities[0x0c8].ability_action] # blood suck action
@@ -496,9 +499,22 @@ func init_statuses() -> void:
 	
 	# frog
 	status_effects[22].passive_effect.added_actions = [RomReader.abilities[0x16f].ability_action] # frog attack action
+	status_effects[22].spritesheet_file_name = "OTHER.SPR"
+	status_effects[22].palette_idx_offset = 5 # TODO frog is actually palettes 5-9 depending on original palette
+	status_effects[22].other_type_index = 1
 	RomReader.abilities[0x16f].ability_action.status_prevents_use_any.erase(22) # can use frog attack
 	RomReader.abilities[0x01d].ability_action.status_prevents_use_any.erase(22) # can use Frog
 	
+	# crystal
+	status_effects[1].spritesheet_file_name = "OTHER.SPR"
+	status_effects[1].palette_idx_offset = 10 # TODO crystal is actually palettes 10-14 depending on original palette
+	status_effects[1].other_type_index = 2
+
+	# treasure
+	status_effects[15].spritesheet_file_name = "OTHER.SPR"
+	status_effects[15].palette_idx_offset = 16 # TODO treasure is actually palettes 16-20 depending on original palette
+	status_effects[1].other_type_index = 0
+
 	# death sentence, dead
 	for idx: int in [39, 2]:
 		status_effects[idx].duration = 3

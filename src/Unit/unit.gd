@@ -1170,7 +1170,7 @@ func set_job_id(new_job_id: int) -> void:
 		set_sprite_palette(job_data.monster_palette_id)
 		stat_basis = StatBasis.MONSTER
 	else:
-		stat_basis = [StatBasis.MALE, StatBasis.FEMALE].pick_random()
+		stat_basis = [StatBasis.MALE, StatBasis.FEMALE].pick_random() # TODO set StatBasis gender independent of job_id
 		if job_id >= 0x4a and job_id <= 0x5d and stat_basis == StatBasis.FEMALE:
 			set_sprite_by_id(job_data.sprite_id + 1)
 	
@@ -1188,6 +1188,7 @@ func set_job_id(new_job_id: int) -> void:
 	update_elemental_affinity()
 	update_immune_statuses()
 	update_permanent_statuses()
+
 
 func set_ability(new_ability_id: int) -> void:
 	active_ability_id = new_ability_id

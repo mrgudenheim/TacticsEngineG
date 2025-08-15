@@ -196,6 +196,9 @@ func init_from_scus() -> void:
 			new_status_effect.shading_color = Color8(r, g, b)
 			new_status_effect.shading_type = RomReader.battle_bin_data.status_colors[id][3]
 		
+		if RomReader.battle_bin_data.status_modulate_colors.has(id):
+			new_status_effect.modulation_color = RomReader.status_modulate_colors.status_colors[id]
+		
 		if RomReader.battle_bin_data.status_idle_animations.has(id):
 			new_status_effect.idle_animation_id = RomReader.battle_bin_data.status_idle_animations[id]
 	

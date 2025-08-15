@@ -97,7 +97,7 @@ var status_colors: Dictionary[int, PackedInt32Array] = { # status_id :  [R, G, B
 	14 : [-8, -8, -8, 5], # cursed
 	3 : [4, 0, 5, 5], # undead
 }
-var status_modulate_colors: Dictionary[int, Color] = { # status_id :  [R, G, B, Shade type]
+var status_modulate_colors: Dictionary[int, Color] = { # status_id :  [R, G, B, A]
 	8 : Color8(32, 32, 32), # petrify
 	13 : Color8(84, 87, 255), # blood suck
 	20 : Color8(255, 128, 128), # berserk
@@ -106,6 +106,7 @@ var status_modulate_colors: Dictionary[int, Color] = { # status_id :  [R, G, B, 
 	16 : Color8(64, 64, 64), # oil
 	14 : Color8(32, 32, 32), # cursed
 	3 : Color8(116, 14, 255), # undead
+	19 : Color8(255, 255, 255, 128), # tranparent
 }
 
 # https://ffhacktics.com/wiki/Set_Idle_Animation_based_on_status_(not_MON)

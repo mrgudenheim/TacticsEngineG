@@ -296,6 +296,7 @@ func add_test_teams_to_map() -> void:
 		#0x52, # summoner
 		0x51, # time mage
 		0x55, # oracle
+		0x49, # arch angel
 		]
 	
 	for specific_job: int in specific_jobs:
@@ -316,6 +317,10 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData
 	new_unit.tile_position = tile_position
 	new_unit.char_body.global_position = Vector3(tile_position.location.x + 0.5, randi_range(15, 20), tile_position.location.y + 0.5)
 	new_unit.update_unit_facing([Vector3.FORWARD, Vector3.BACK, Vector3.LEFT, Vector3.RIGHT].pick_random())
+	if job_id < 0x5e: # non-monster
+		new_unit.stat_basis = [UnitData.StatBasis.MALE, UnitData.StatBasis.FEMALE].pick_random()
+	else:
+		new_unit.stat_basis = UnitData.StatBasis.MONSTER
 	new_unit.set_job_id(job_id)
 	if range(0x4a, 0x5e).has(job_id):
 		new_unit.set_sprite_palette(range(0,5).pick_random())

@@ -49,6 +49,7 @@ var stat_basis: StatBasis = StatBasis.MALE
 var job_id: int = 0
 var job_data: JobData
 var sprite_palette_id: int = 0
+var sprite_palette_id_override: int = -1
 var team_id: int = 0
 var player_control: bool = true
 
@@ -839,6 +840,12 @@ func update_immune_statuses() -> void:
 
 func update_status_visuals() -> void:
 	var anim_priority: int = 0
+	var shading_priority: int = 0
+	var other_type_priority: int = 0
+	var spritesheet_priority: int = 0
+
+	var other_type_status: StatusEffect
+	var spritesheet_status: StatusEffect
 	if current_statuses.is_empty():
 		if current_animation_id_fwd == current_idle_animation_id:
 			current_idle_animation_id = idle_walk_animation_id
@@ -847,20 +854,30 @@ func update_status_visuals() -> void:
 			current_idle_animation_id = idle_walk_animation_id
 		
 		icon2.region_rect = Rect2i(Vector2i.ZERO, Vector2i.ONE)
-		# TODO reset color shading
+		animation_manager.unit_sprites_manager.sprite_primary.modulate = Color.WHITE
+		animation_manager.other_type_index = 0
+		set_sprite_by_job_id(job_id)
 	else:
 		for status: StatusEffect in current_statuses:
-			if status.order >= anim_priority:
-				if status.idle_animation_id == -1:
-					continue
-				
+			if status.order >= anim_priority and status.idle_animation_id != -1:
 				anim_priority = status.order
 				if current_animation_id_fwd == current_idle_animation_id:
 					current_idle_animation_id = status.idle_animation_id
 					set_base_animation_ptr_id(status.idle_animation_id)
 				else:
 					current_idle_animation_id = status.idle_animation_id
-				# TODO status color shading
+			
+			if status.order >= shading_priority and status.modulation_color != Color.BLACK:
+				shading_priority = status.order
+				animation_manager.unit_sprites_manager.sprite_primary.modulate = status.modulation_color
+			
+			if status.order >= other_type_priority and status.spritesheet_file_name == "OTHER.SPR":
+				other_type_priority = status.order
+				other_type_status = status
+			
+			if status.order >= spritesheet_priority and status.spritesheet_file_name != "":
+				spritesheet_priority = status.order
+				spritesheet_status = status
 		
 		if anim_priority == 0: # no statuses set the idle animation (may happen when status is removed)
 			if current_animation_id_fwd == current_idle_animation_id:
@@ -868,6 +885,20 @@ func update_status_visuals() -> void:
 				set_base_animation_ptr_id(current_idle_animation_id)
 			else:
 				current_idle_animation_id = idle_walk_animation_id
+		
+		if shading_priority == 0:
+			animation_manager.unit_sprites_manager.sprite_primary.modulate = Color.WHITE
+		
+		if other_type_priority == 0:
+			animation_manager.other_type_index = 0
+		else:
+			animation_manager.other_type_index = other_type_status.other_type_index
+			set_sprite_palette_override(sprite_palette_id + other_type_status.palette_idx_offset)
+		
+		if spritesheet_priority == 0:
+			set_sprite_by_job_id(job_id)
+		else:
+			set_sprite_by_file_name(spritesheet_status.spritesheet_file_name)
 
 
 func use_attack() -> void:
@@ -1165,14 +1196,7 @@ func hide_debug_menu() -> void:
 func set_job_id(new_job_id: int) -> void:
 	job_id = new_job_id
 	job_data = RomReader.scus_data.jobs_data[job_id]
-	set_sprite_by_id(job_data.sprite_id)
-	if job_id >= 0x5e: # monster
-		set_sprite_palette(job_data.monster_palette_id)
-		stat_basis = StatBasis.MONSTER
-	else:
-		stat_basis = [StatBasis.MALE, StatBasis.FEMALE].pick_random() # TODO set StatBasis gender independent of job_id
-		if job_id >= 0x4a and job_id <= 0x5d and stat_basis == StatBasis.FEMALE:
-			set_sprite_by_id(job_data.sprite_id + 1)
+	set_sprite_by_job_id(new_job_id)
 	
 	skillsets.clear()
 	skillsets.append(RomReader.scus_data.skillsets_data[job_data.skillset_id])
@@ -1292,6 +1316,9 @@ func show_popup_text(text: String) -> void:
 
 
 func set_sprite_by_file_idx(new_sprite_file_idx: int) -> void:
+	if sprite_file_idx == new_sprite_file_idx:
+		return # do nothing if no change
+	
 	sprite_file_idx = new_sprite_file_idx
 	var spr: Spr = RomReader.sprs[new_sprite_file_idx]
 	if RomReader.spr_file_name_to_id.has(spr.file_name):
@@ -1317,12 +1344,35 @@ func set_sprite_by_id(new_sprite_id: int) -> void:
 	set_sprite_by_file_idx(new_sprite_file_idx)
 
 
+func set_sprite_by_job_id(new_job_id: int) -> void:
+	var job_id_data = RomReader.scus_data.jobs_data[job_id]
+	var new_sprite_id = job_id_data.sprite_id
+	if new_job_id >= 0x4a and new_job_id <= 0x5d and stat_basis == StatBasis.FEMALE:
+		new_sprite_id += 1
+	set_sprite_by_id(new_sprite_id)
+	if new_job_id >= 0x5e: # monster
+		set_sprite_palette(job_data.monster_palette_id)
+
+
 func set_sprite_palette(new_palette_id: int) -> void:
 	if new_palette_id == sprite_palette_id:
 		return
 	
 	sprite_palette_id = new_palette_id
+	if sprite_palette_id_override == -1: # don't update grid texture if palette is still being overridden
+		update_spritesheet_grid_texture()
+
+
+func set_sprite_palette_override(new_palette_id: int) -> void:
+	if new_palette_id == sprite_palette_id_override:
+		return
+	
+	sprite_palette_id_override = new_palette_id
 	update_spritesheet_grid_texture()
+
+
+func modulate_sprite_color(new_modulate_color: Color) -> void:
+	animation_manager.unit_sprites_manager.sprite_primary.modulate = new_modulate_color
 
 
 func set_submerged_depth(new_depth: int) -> void:
@@ -1335,14 +1385,20 @@ func set_submerged_depth(new_depth: int) -> void:
 
 func update_spritesheet_grid_texture() -> void:
 	var new_spr: Spr = RomReader.sprs[sprite_file_idx]
-	animation_manager.unit_sprites_manager.sprite_primary.texture = new_spr.create_frame_grid_texture(sprite_palette_id, 0, animation_manager.other_type_index, 0, submerged_depth)
+	var palette_idx_final = sprite_palette_id_override
+	if sprite_palette_id_override < 0:
+		palette_idx_final = sprite_palette_id
+	animation_manager.unit_sprites_manager.sprite_primary.texture = new_spr.create_frame_grid_texture(palette_idx_final, 0, animation_manager.other_type_index, 0, submerged_depth)
 
 
 func on_sprite_idx_selected(index: int) -> void:
 	var spr: Spr = RomReader.sprs[index]
 	if not spr.is_initialized:
 		spr.set_data()
-		spr.set_spritesheet_data(RomReader.spr_file_name_to_id[spr.file_name])
+		if RomReader.spr_file_name_to_id.keys().has(spr.file_name):
+			spr.set_spritesheet_data(RomReader.spr_file_name_to_id[spr.file_name])
+		else:
+			spr.set_spritesheet_data(-1) # get data for OTHER.SPR
 	
 	animation_manager.global_spr = spr
 	

@@ -39,13 +39,13 @@ var delayed_action: ActionInstance # charging
 
 var visual_effect # TODO icons, sprite coloring, spritesheet, animation (haste, dead, etc.), float, etc.
 
-@export var spritesheet_file_name: String
+@export var spritesheet_file_name: String = ""
 @export var palette_idx_offset: int = 0
 @export var other_type_index: int = 0 # 0 = chicken/chest, 1 = frog, 2 = crystal
 
 @export var shading_color: Color
 @export var shading_type: int
-@export var modulation_color: Color
+@export var modulation_color: Color = Color.BLACK
 #@export var status_bubble_texture: Texture2D # from Frame.bin
 
 @export var icon_rects: Array[Rect2i] = []

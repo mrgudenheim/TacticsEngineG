@@ -113,3 +113,16 @@ func apply(user: UnitData, target: UnitData, value: int) -> int:
 		apply_value(user, -value)
 	
 	return value
+
+
+func to_dictionary() -> Dictionary:
+	var properties_to_exclude: PackedStringArray = [
+		"RefCounted",
+		"Resource",
+		"resource_local_to_scene",
+		"resource_path",
+		"resource_name",
+		"resource_scene_unique_id",
+		"script",
+	]
+	return Utilities.object_properties_to_dictionary(self, properties_to_exclude)

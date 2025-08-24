@@ -93,6 +93,7 @@ var separate_status: bool = false
 @export var animation_charging_id: int = 0
 @export var animation_executing_id: int = 0
 
+@export var vfx_id: int = 0
 var vfx_data: VisualEffectData
 
 class SecondaryAction:
@@ -1326,6 +1327,19 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.values[0] = 1 # TODO 1.5 if spear, PAxBRAVE if unarmed, else 1
 			
 			ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
+
+
+func to_json() -> String:
+	var properties_to_exclude: PackedStringArray = [
+		"RefCounted",
+		"Resource",
+		"resource_local_to_scene",
+		"resource_path",
+		"resource_name",
+		"resource_scene_unique_id",
+		"script",
+	]
+	return Utilities.object_properties_to_json(self, properties_to_exclude)
 
 
 static func get_element_types_array(element_bitflags: PackedByteArray) -> Array[ElementTypes]:

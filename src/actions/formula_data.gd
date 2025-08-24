@@ -251,3 +251,16 @@ func element_modify(value: float, user: UnitData, target: UnitData, element: Act
 			new_value = abs(new_value) # positive is healing
 	
 	return new_value
+
+
+func to_dictionary() -> Dictionary:
+	var properties_to_exclude: PackedStringArray = [
+		"RefCounted",
+		"Resource",
+		"resource_local_to_scene",
+		"resource_path",
+		"resource_name",
+		"resource_scene_unique_id",
+		"script",
+	]
+	return Utilities.object_properties_to_dictionary(self, properties_to_exclude)

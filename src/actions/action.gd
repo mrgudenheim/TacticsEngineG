@@ -479,6 +479,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 				var new_secondary_action: Action = RomReader.abilities[secondary_action_ids[secondary_action_idx]].ability_action.duplicate() # abilities need to be initialized before items
 				new_secondary_action.area_of_effect_range = 0
 				new_secondary_action.target_effects[0].base_power_formula.formula = FormulaData.Formulas.WPxV1
+				new_secondary_action.mp_cost = 0
 				var chance: int = secondary_actions_chances[secondary_action_idx]
 				secondary_actions.append(new_secondary_action)
 				secondary_actions2.append(SecondaryAction.new(new_secondary_action, chance))

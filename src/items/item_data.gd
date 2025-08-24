@@ -245,6 +245,9 @@ func _init(idx: int = 0) -> void:
 				
 				for secondary_action_idx: int in secondary_action_ids.size():
 					var new_secondary_action: Action = RomReader.abilities[secondary_action_ids[secondary_action_idx]].ability_action # abilities need to be initialized before items
+					new_secondary_action.area_of_effect_range = 0
+					new_secondary_action.target_effects[0].base_power_formula.formula = FormulaData.Formulas.WPxV1
+					new_secondary_action.mp_cost = 0
 					var chance: int = weapon_attack_action.secondary_actions_chances[secondary_action_idx]
 					weapon_attack_action.secondary_actions.append(new_secondary_action)
 					weapon_attack_action.secondary_actions2.append(Action.SecondaryAction.new(new_secondary_action, chance))

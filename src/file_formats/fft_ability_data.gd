@@ -292,6 +292,7 @@ func set_action() -> void:
 	ability_action.animation_executing_id = animation_executing_id
 	
 	ability_action.vfx_data = vfx_data
+	ability_action.vfx_id = vfx_data.vfx_id
 
 
 func display_stasis_sword_vfx(location: Node3D) -> void:

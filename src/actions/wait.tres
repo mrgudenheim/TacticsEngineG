@@ -105,6 +105,7 @@ required_target_status_id = Array[int]([])
 animation_start_id = 0
 animation_charging_id = 0
 animation_executing_id = -1
+vfx_id = 0
 secondary_actions = Array[ExtResource("2_22o4i")]([])
 secondary_actions_chances = [100]
 secondary_action_list_type = 1

@@ -19,6 +19,8 @@ func object_properties_to_dictionary(object: Object, exclude_property_names: Pac
 	var property_dict: Dictionary = {}
 	for property_idx in property_list.size():
 		var property = property_list[property_idx]
+		if not property["usage"] & PROPERTY_USAGE_STORAGE:
+			continue
 		if exclude_property_names.has(property["name"]) or property["name"].ends_with(".gd"):
 			continue
 		if property["class_name"] == '' or object.get(property["name"]) == null or not (object.get(property["name"]) is Object):

@@ -76,7 +76,7 @@ var inflict_status_id: int = 0
 @export var ignores_statuses: Array[int] = []
 
 # inflict status data
-@export var target_status_list: PackedInt32Array = [] # TODO fix typo
+@export var target_status_list: PackedInt32Array = []
 @export var status_chance: int = 100
 @export var will_remove_status: bool = false
 @export var target_status_list_type: StatusListType = StatusListType.EACH

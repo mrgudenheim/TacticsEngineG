@@ -1,14 +1,14 @@
 class_name ActionEffect
 extends Resource
 
-@export var base_power_formula: FormulaData = FormulaData.new(FormulaData.Formulas.PAxV1, 5, 0, FormulaData.FaithModifier.NONE, FormulaData.FaithModifier.NONE, true)
+@export var base_power_formula: FormulaData = FormulaData.new(FormulaData.Formulas.PAxV1, [5, 0], FormulaData.FaithModifier.NONE, FormulaData.FaithModifier.NONE, true)
 @export var type: EffectType = EffectType.UNIT_STAT
 @export var effect_stat_type: UnitData.StatType = UnitData.StatType.HP
-var show_ui: bool = true
-var transfer_to_user: bool = false # absorb, steal
-var apply_to_user: bool = false
-var set_value: bool = false # fales = add value, true = set value
-var label: String = ""
+@export var show_ui: bool = true
+@export var transfer_to_user: bool = false # absorb, steal
+@export var apply_to_user: bool = false
+@export var set_value: bool = false # false = add value, true = set value
+@export var label: String = ""
 
 enum EffectType {
 	UNIT_STAT,

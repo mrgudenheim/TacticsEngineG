@@ -1,6 +1,7 @@
 class_name Action
 extends Resource
 
+@export var id: int = 0
 @export var action_name: String = "Action Name"
 @export var description: String = "Action description"
 @export var quote: String = "Action quote"
@@ -67,7 +68,7 @@ var hit_requirements: Array = [] # TODO always miss if requirement is not met, e
 
 @export var element: ElementTypes = ElementTypes.NONE
 
-@export var base_hit_formula: FormulaData = FormulaData.new(FormulaData.Formulas.UNMODIFIED, 100, 0, FormulaData.FaithModifier.NONE, FormulaData.FaithModifier.NONE, true, false)
+@export var base_hit_formula: FormulaData = FormulaData.new(FormulaData.Formulas.UNMODIFIED, [100, 0], FormulaData.FaithModifier.NONE, FormulaData.FaithModifier.NONE, true, false)
 
 @export var healing_damages_undead: bool = false
 @export var ignores_statuses: Array[int] = []
@@ -83,7 +84,7 @@ var separate_status: bool = false
 
 @export var status_prevents_use_any: Array[int] = [] # silence, dont move, dont act, etc.
 @export var required_equipment_type: Array[ItemData.ItemType] = [] # sword, gun, etc.
-@export var required_equipment: Array[ItemData] = [] # materia_blade, etc.
+@export var required_equipment: Array[ItemData] = [] # materia_blade, etc. TODO change required_equipment to PackedInt32 [ItemId]
 @export var required_target_job_id: Array[int] = [] # dragon, etc.
 @export var required_target_status_id: Array[int] = [] # undead
 
@@ -497,7 +498,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MAxV1
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			target_effects[0].base_power_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			target_effects[0].base_power_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 			
@@ -507,13 +508,13 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			status_chance = 19
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
-			target_effects[0].base_power_formula.value_01 = formula_y / 100.0
+			target_effects[0].base_power_formula.values[0] = formula_y / 100.0
 			
 			ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			hit_chance_modified_by_passive = true
@@ -521,7 +522,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 			
@@ -531,7 +532,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 		0x0c:
@@ -539,7 +540,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MAxV1
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			target_effects[0].base_power_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			target_effects[0].base_power_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 			target_effects[0].base_power_formula.reverse_sign = false
@@ -547,20 +548,20 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
-			target_effects[0].base_power_formula.value_01 = formula_y / 100.0
+			target_effects[0].base_power_formula.values[0] = formula_y / 100.0
 			target_effects[0].base_power_formula.reverse_sign = false
 		0x0e:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL # Does this use magic evade?
 			
 			# TODO apply status first? if target is immune to status, no damage
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 			
@@ -568,7 +569,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			
 			ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			hit_chance_modified_by_passive = true
@@ -576,13 +577,13 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.MP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_MPxV1
-			target_effects[0].base_power_formula.value_01 = formula_y / 100.0
+			target_effects[0].base_power_formula.values[0] = formula_y / 100.0
 			target_effects[0].transfer_to_user = true
 			
 			ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
@@ -591,13 +592,13 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
-			target_effects[0].base_power_formula.value_01 = formula_y / 100.0
+			target_effects[0].base_power_formula.values[0] = formula_y / 100.0
 			target_effects[0].transfer_to_user = true
 			
 			ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
@@ -608,13 +609,13 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.CT))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
-			target_effects[0].base_power_formula.value_01 = 100
+			target_effects[0].base_power_formula.values[0] = 100
 			target_effects[0].set_value = true
 		0x13:
 			pass
@@ -623,19 +624,19 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			# TODO set Golem
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 		0x15:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.CT))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
-			target_effects[0].base_power_formula.value_01 = 00
+			target_effects[0].base_power_formula.values[0] = 00
 			target_effects[0].set_value = true
 			
 			ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
@@ -644,13 +645,13 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.MP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_CURRENT_MP_minus_V1
-			target_effects[0].base_power_formula.value_01 = 0
+			target_effects[0].base_power_formula.values[0] = 0
 			
 			ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			hit_chance_modified_by_passive = true
@@ -658,13 +659,13 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_CURRENT_HP_minus_V1
-			target_effects[0].base_power_formula.value_01 = 1
+			target_effects[0].base_power_formula.values[0] = 1
 			
 			ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			hit_chance_modified_by_passive = true
@@ -674,13 +675,13 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
-			base_hit_formula.value_01 = formula_y
+			base_hit_formula.values[0] = formula_y
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.PHYSICAL_ATTACK)) # TODO MAGICAL_ATTACK or SPEED dependent on ability ID?
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
-			target_effects[0].base_power_formula.value_01 = formula_x
+			target_effects[0].base_power_formula.values[0] = formula_x
 			
 			ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			hit_chance_modified_by_passive = true
@@ -688,13 +689,13 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.MP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_MPxV1
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			
 			ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			hit_chance_modified_by_passive = true
@@ -702,14 +703,14 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			base_hit_formula.formula = FormulaData.Formulas.UNMODIFIED
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			
 			# TODO song effects based on ability ID
 		0x1d:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			base_hit_formula.formula = FormulaData.Formulas.UNMODIFIED
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			
 			# TODO dance effects based on ability ID
 		0x1e:
@@ -717,7 +718,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MA_plus_V1xMA_div_2
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			# TODO random number of hits within AoE
 			
 			ignores_statuses.erase(27) # affected by shell, frog, chicken
@@ -726,7 +727,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MA_plus_V1xMA_div_2
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			target_effects[0].base_power_formula.user_faith_modifier = FormulaData.FaithModifier.UNFAITH
 			target_effects[0].base_power_formula.target_faith_modifier = FormulaData.FaithModifier.UNFAITH
 			# TODO random number of hits within AoE
@@ -737,7 +738,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MAxV1
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			# TODO chance to decrease inventory
 			
 			ignores_statuses.erase(27) # affected by shell, frog, chicken
@@ -746,7 +747,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.MP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MAxV1
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			# TODO chance to decrease inventory
 			
 			ignores_statuses.erase(27) # affected by shell, frog, chicken
@@ -754,14 +755,14 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			base_hit_formula.formula = FormulaData.Formulas.UNMODIFIED
-			base_hit_formula.value_01 = 100
+			base_hit_formula.values[0] = 100
 			# TODO chance to decrease inventory
 		0x23:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MAxV1
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			target_effects[0].base_power_formula.reverse_sign = false # heal
 			# TODO chance to decrease inventory
 		0x24:
@@ -769,20 +770,20 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PA_plus_V1xMA_div_2
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			# TODO usable based on terrain?
 			
 			ignores_statuses.erase(27) # affected by shell, frog, chicken
 		0x25:
 			base_hit_formula.formula = FormulaData.Formulas.PA_plus_WP_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.REMOVE_EQUIPMENT))
 			# TODO set equipement slod id based on ability id?
 			ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
 			hit_chance_modified_by_passive = true
 		0x26:
 			base_hit_formula.formula = FormulaData.Formulas.SP_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.REMOVE_EQUIPMENT))
 			target_effects[0].transfer_to_user = true
 			# TODO set equipement slod id based on ability id?
@@ -791,22 +792,22 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			hit_chance_modified_by_passive = true
 		0x27:
 			base_hit_formula.formula = FormulaData.Formulas.SP_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.LVLxSPxV1
-			target_effects[0].base_power_formula.value_01 = 1
+			target_effects[0].base_power_formula.values[0] = 1
 			# TODO add to user currency? user_effects.append(ActionEffect.new(ActionEffect.EffectType.CURRENCY))
 			
 			ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
 			hit_chance_modified_by_passive = true
 		0x28:
 			base_hit_formula.formula = FormulaData.Formulas.SP_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.EXP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MIN_TARGET_EXP_or_SP_plus_V1
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			target_effects[0].transfer_to_user = true
 			
 			ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
@@ -816,43 +817,43 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			# TODO hit chance based on gender
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 		0x2a:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.BRAVE))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			target_effects[0].base_power_formula.reverse_sign = false
 			# TODO set effects based on ability id
 		0x2b:
 			base_hit_formula.formula = FormulaData.Formulas.PA_plus_V1
-			base_hit_formula.value_01 = formula_y
+			base_hit_formula.values[0] = formula_y
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.SPEED))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
-			target_effects[0].base_power_formula.value_01 = formula_x
+			target_effects[0].base_power_formula.values[0] = formula_x
 			# TODO set effects based on ability id
 			
 			ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
 			hit_chance_modified_by_passive = true
 		0x2c:
 			base_hit_formula.formula = FormulaData.Formulas.PA_plus_V1
-			base_hit_formula.value_01 = formula_y
+			base_hit_formula.values[0] = formula_y
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.MP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
-			target_effects[0].base_power_formula.value_01 = formula_y / 100.0
+			target_effects[0].base_power_formula.values[0] = formula_y / 100.0
 			
 			ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
 			hit_chance_modified_by_passive = true
 		0x2d:
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PAxWP_plus_V1
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			
 			
 			status_chance = 100
@@ -862,79 +863,79 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x2e:
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PAxWPxV1
-			target_effects[0].base_power_formula.value_01 = 1
+			target_effects[0].base_power_formula.values[0] = 1
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.REMOVE_EQUIPMENT))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
-			target_effects[0].base_power_formula.value_01 = 1
+			target_effects[0].base_power_formula.values[0] = 1
 			# TODO set equipement slod id based on ability id?
 			
 			ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
 		0x2f:
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.MP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PAxWPxV1
-			target_effects[0].base_power_formula.value_01 = 1
+			target_effects[0].base_power_formula.values[0] = 1
 			target_effects[0].transfer_to_user = true
 			
 			ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
 		0x30:
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PAxWPxV1
-			target_effects[0].base_power_formula.value_01 = 1
+			target_effects[0].base_power_formula.values[0] = 1
 			target_effects[0].transfer_to_user = true
 			
 			ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
 		0x31:
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PAxPA_plus_V1_div_2
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			
 			ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
 		0x32:
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.RANDOM_V1xPAx3_plus_V2_div_2
-			target_effects[0].base_power_formula.value_01 = formula_x
-			target_effects[0].base_power_formula.value_02 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_x
+			target_effects[0].base_power_formula.values[1] = formula_y
 			
 			ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
 		0x33:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			base_hit_formula.formula = FormulaData.Formulas.PA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 		0x34:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PAxV1
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			target_effects[0].base_power_formula.reverse_sign = false
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.MP))
 			target_effects[1].base_power_formula.formula = FormulaData.Formulas.PAxV1
-			target_effects[1].base_power_formula.value_01 = formula_y / 2.0
+			target_effects[1].base_power_formula.values[0] = formula_y / 2.0
 			target_effects[1].base_power_formula.reverse_sign = false
 		0x35:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			base_hit_formula.formula = FormulaData.Formulas.PA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			target_effects[0].base_power_formula.reverse_sign = false
 		0x36:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.PHYSICAL_ATTACK))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			target_effects[0].base_power_formula.reverse_sign = false
 		0x37:
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.RANDOM_V1xPA
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			
 			ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
 		0x38:
@@ -946,26 +947,26 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.SPEED))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			target_effects[0].base_power_formula.reverse_sign = false
 		0x3a:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.BRAVE))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			target_effects[0].base_power_formula.reverse_sign = false
 		0x3b:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.BRAVE))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
-			target_effects[0].base_power_formula.value_01 = formula_x
+			target_effects[0].base_power_formula.values[0] = formula_x
 			target_effects[0].base_power_formula.reverse_sign = false
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.SPEED)) # TODO set type based on ability id
 			target_effects[1].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
-			target_effects[1].base_power_formula.value_01 = formula_y
+			target_effects[1].base_power_formula.values[0] = formula_y
 			target_effects[1].base_power_formula.reverse_sign = false
 			
 		0x3c:
@@ -973,17 +974,17 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
-			target_effects[0].base_power_formula.value_01 = 2.0 / 5.0
+			target_effects[0].base_power_formula.values[0] = 2.0 / 5.0
 			target_effects[0].base_power_formula.reverse_sign = false
 			
 			user_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP)) # TODO this should be per target
 			user_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
-			user_effects[0].base_power_formula.value_01 = 1.0 / 5.0
+			user_effects[0].base_power_formula.values[0] = 1.0 / 5.0
 		0x3d:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			
 			ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			hit_chance_modified_by_passive = true
@@ -992,12 +993,12 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_CURRENT_HP_minus_V1
-			target_effects[0].base_power_formula.value_01 = 1
+			target_effects[0].base_power_formula.values[0] = 1
 		0x3f:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			base_hit_formula.formula = FormulaData.Formulas.SP_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			
 			ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
 			hit_chance_modified_by_passive = true
@@ -1005,7 +1006,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			base_hit_formula.formula = FormulaData.Formulas.SP_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			# TODO only hit undead? or chosen status?
 			
 			ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
@@ -1014,7 +1015,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			
 			ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			hit_chance_modified_by_passive = true
@@ -1023,29 +1024,29 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PAxV1
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			
 			user_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			user_effects[0].base_power_formula.formula = FormulaData.Formulas.PAxV1
-			user_effects[0].base_power_formula.value_01 = formula_y / formula_x
+			user_effects[0].base_power_formula.values[0] = formula_y / formula_x
 		0x43:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.USER_MISSING_HPxV1
-			target_effects[0].base_power_formula.value_01 = 1
+			target_effects[0].base_power_formula.values[0] = 1
 		0x44:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_CURRENT_MP_minus_V1
-			target_effects[0].base_power_formula.value_01 = 0
+			target_effects[0].base_power_formula.values[0] = 0
 		0x45:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MISSING_HPxV1
-			target_effects[0].base_power_formula.value_01 = 1
+			target_effects[0].base_power_formula.values[0] = 1
 		0x46:
 			pass
 		0x47:
@@ -1055,20 +1056,20 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
-			target_effects[0].base_power_formula.value_01 = formula_y / 100.0
+			target_effects[0].base_power_formula.values[0] = formula_y / 100.0
 		0x48:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
-			target_effects[0].base_power_formula.value_01 = formula_x * 10 # maybe should be handled in Item initialization?
+			target_effects[0].base_power_formula.values[0] = formula_x * 10 # maybe should be handled in Item initialization?
 			target_effects[0].base_power_formula.reverse_sign = false # heal
 		0x49:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.MP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
-			target_effects[0].base_power_formula.value_01 = formula_x * 10 # maybe should be handled in Item initialization?
+			target_effects[0].base_power_formula.values[0] = formula_x * 10 # maybe should be handled in Item initialization?
 			target_effects[0].base_power_formula.reverse_sign = false # heal
 		0x4a:
 			applicable_evasion = EvadeData.EvadeType.NONE
@@ -1080,12 +1081,12 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
-			target_effects[0].base_power_formula.value_01 = 1 # maybe should be handled in Item initialization?
+			target_effects[0].base_power_formula.values[0] = 1 # maybe should be handled in Item initialization?
 			target_effects[0].base_power_formula.reverse_sign = false # heal
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.MP))
 			target_effects[1].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_MPxV1
-			target_effects[1].base_power_formula.value_01 = 1 # maybe should be handled in Item initialization?
+			target_effects[1].base_power_formula.values[0] = 1 # maybe should be handled in Item initialization?
 			target_effects[1].base_power_formula.reverse_sign = false # heal
 		0x4b:
 			applicable_evasion = EvadeData.EvadeType.NONE
@@ -1094,23 +1095,23 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.RANDOM_V1_V2
-			target_effects[0].base_power_formula.value_01 = 1
-			target_effects[0].base_power_formula.value_02 = 9
+			target_effects[0].base_power_formula.values[0] = 1
+			target_effects[0].base_power_formula.values[1] = 9
 			target_effects[0].base_power_formula.reverse_sign = false # heal
 		0x4c:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MAxV1
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			target_effects[0].base_power_formula.reverse_sign = false # heal
 		0x4d:
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
-			target_effects[0].base_power_formula.value_01 = formula_y / 100.0
+			target_effects[0].base_power_formula.values[0] = formula_y / 100.0
 			target_effects[0].transfer_to_user = true
 			
 			ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
@@ -1120,23 +1121,23 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MAxV1
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			
 			ignores_statuses.erase(27) # affected by shell, frog, chicken
 		0x4f:
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.USER_MISSING_HPxV1
-			target_effects[0].base_power_formula.value_01 = 1
+			target_effects[0].base_power_formula.values[0] = 1
 			
 			ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
 			hit_chance_modified_by_passive = true
 			power_modified_by_passive = false
 		0x50:
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			
 			ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
 			hit_chance_modified_by_passive = true
@@ -1144,7 +1145,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 		0x52:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
@@ -1152,20 +1153,20 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.USER_MISSING_HPxV1
-			target_effects[0].base_power_formula.value_01 = 1
+			target_effects[0].base_power_formula.values[0] = 1
 			
 			user_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			user_effects[0].base_power_formula.formula = FormulaData.Formulas.USER_CURRENT_HP_minus_V1
-			user_effects[0].base_power_formula.value_01 = 0
+			user_effects[0].base_power_formula.values[0] = 0
 		0x53:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
-			target_effects[0].base_power_formula.value_01 = formula_y / 100.0
+			target_effects[0].base_power_formula.values[0] = formula_y / 100.0
 			
 			ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			hit_chance_modified_by_passive = true
@@ -1174,17 +1175,17 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.MP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MAxV1
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			target_effects[0].base_power_formula.reverse_sign = true
 		0x55:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.PHYSICAL_ATTACK))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			
 			ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			hit_chance_modified_by_passive = true
@@ -1192,11 +1193,11 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.MAGIC_ATTACK))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			
 			ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			hit_chance_modified_by_passive = true
@@ -1205,24 +1206,24 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.LEVEL))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
-			target_effects[0].base_power_formula.value_01 = 1
+			target_effects[0].base_power_formula.values[0] = 1
 			target_effects[0].base_power_formula.reverse_sign = true # add
 		0x58:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			
 			# TODO set MORBOL
 		0x59:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.LEVEL))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
-			target_effects[0].base_power_formula.value_01 = 1
+			target_effects[0].base_power_formula.values[0] = 1
 			
 			ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			hit_chance_modified_by_passive = true
@@ -1237,17 +1238,17 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 		0x5c:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.BRAVE))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
-			target_effects[0].base_power_formula.value_01 = formula_x
+			target_effects[0].base_power_formula.values[0] = formula_x
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.SPEED)) # TODO set type based on ability id
 			target_effects[1].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
-			target_effects[1].base_power_formula.value_01 = formula_y
+			target_effects[1].base_power_formula.values[0] = formula_y
 			target_effects[1].base_power_formula.reverse_sign = false
 			
 			# TODO miss if target is not Dragon type
@@ -1256,7 +1257,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.CT))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
-			target_effects[0].base_power_formula.value_01 = 100
+			target_effects[0].base_power_formula.values[0] = 100
 			target_effects[0].set_value = true
 			
 			# TODO miss if target is not Dragon type
@@ -1266,7 +1267,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MA_plus_V1xMA_div_2
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			
 			ignores_statuses.erase(27) # affected by shell, frog, chicken
 			# TODO x+1 hits at random target in AoE
@@ -1275,7 +1276,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MA_plus_V1xMA_div_2
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			
 			ignores_statuses.erase(27) # affected by shell, frog, chicken
 		0x60:
@@ -1283,20 +1284,20 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MA_plus_V1xMA_div_2
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			
 			ignores_statuses.erase(27) # affected by shell, frog, chicken
 		0x61:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.BRAVE))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			
 			ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			hit_chance_modified_by_passive = true
@@ -1304,17 +1305,17 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
-			base_hit_formula.value_01 = formula_x
+			base_hit_formula.values[0] = formula_x
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.BRAVE))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
-			target_effects[0].base_power_formula.value_01 = formula_y
+			target_effects[0].base_power_formula.values[0] = formula_y
 			
 			ignores_statuses.erase(27) # affected by shell, frog, chicken hit chance
 		0x63:
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PAxWPxV1 # TODO SPxWP
-			target_effects[0].base_power_formula.value_01 = 1
+			target_effects[0].base_power_formula.values[0] = 1
 			
 			ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
 		0x64:
@@ -1322,7 +1323,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PAxWPxV1
-			target_effects[0].base_power_formula.value_01 = 1 # TODO 1.5 if spear, PAxBRAVE if unarmed, else 1
+			target_effects[0].base_power_formula.values[0] = 1 # TODO 1.5 if spear, PAxBRAVE if unarmed, else 1
 			
 			ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
 

@@ -183,7 +183,7 @@ func _init(idx: int = 0) -> void:
 		weapon_attack_action = Action.new()
 		weapon_attack_action.target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 		
-		weapon_attack_action.target_effects[0].base_power_formula.value_01 = weapon_power
+		weapon_attack_action.target_effects[0].base_power_formula.values[0] = weapon_power
 		weapon_attack_action.element = weapon_element
 		weapon_attack_action.use_weapon_animation = true
 		

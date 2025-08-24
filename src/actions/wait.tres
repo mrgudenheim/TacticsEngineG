@@ -9,8 +9,7 @@
 [sub_resource type="Resource" id="Resource_22o4i"]
 script = ExtResource("5_22o4i")
 formula = 0
-value_01 = 100.0
-value_02 = 0.0
+values = [100, 0]
 reverse_sign = false
 user_faith_modifier = 0
 target_faith_modifier = 0
@@ -21,8 +20,7 @@ metadata/_custom_type_script = "uid://2y1mi77a2isp"
 [sub_resource type="Resource" id="Resource_jmljt"]
 script = ExtResource("5_22o4i")
 formula = 0
-value_01 = 20.0
-value_02 = 0.0
+values = [20, 0]
 reverse_sign = false
 user_faith_modifier = 0
 target_faith_modifier = 0
@@ -35,10 +33,16 @@ script = ExtResource("4_ltkoj")
 base_power_formula = SubResource("Resource_jmljt")
 type = 0
 effect_stat_type = 4
+show_ui = true
+transfer_to_user = false
+apply_to_user = false
+set_value = false
+label = ""
 metadata/_custom_type_script = "uid://cpa42ca48we8h"
 
 [resource]
 script = ExtResource("2_22o4i")
+id = 0
 action_name = "Wait"
 description = "Ends turn"
 quote = "Action quote"

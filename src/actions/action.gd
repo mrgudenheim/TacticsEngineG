@@ -145,6 +145,8 @@ func _init():
 	id = current_id
 	current_id += 1
 
+	emit_changed()
+
 
 func _to_string() -> String:
 	return action_name
@@ -476,7 +478,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			secondary_action_list_type = StatusListType.RANDOM
 			
 			for secondary_action_idx: int in secondary_action_ids.size():
-				var new_secondary_action: Action = RomReader.abilities[secondary_action_ids[secondary_action_idx]].ability_action.duplicate() # abilities need to be initialized before items
+				var new_secondary_action: Action = RomReader.abilities[secondary_action_ids[secondary_action_idx]].ability_action.duplicate(true) # abilities need to be initialized before items
 				new_secondary_action.area_of_effect_range = 0
 				new_secondary_action.target_effects[0].base_power_formula.formula = FormulaData.Formulas.WPxV1
 				new_secondary_action.mp_cost = 0
@@ -1336,7 +1338,8 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.values[0] = 1 # TODO 1.5 if spear, PAxBRAVE if unarmed, else 1
 			
 			ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
-
+	
+	emit_changed()
 
 func to_json() -> String:
 	var properties_to_exclude: PackedStringArray = [
@@ -1376,6 +1379,7 @@ static func create_from_dictonary(property_dict: Dictionary) -> Action:
 		else:
 			new_action.set(property_name, property_dict[property_name])
 
+	new_action.emit_changed()
 	return new_action
 
 

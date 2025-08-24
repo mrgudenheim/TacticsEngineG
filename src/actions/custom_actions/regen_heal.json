@@ -1,5 +1,5 @@
 {
-	"action_name": "Poison Damage",
+	"action_name": "Regen Healing",
 	"action_points_cost": 0,
 	"animation_charging_id": 0,
 	"animation_executing_id": 0,
@@ -31,7 +31,7 @@
 	"cant_hit_enimies": false,
 	"cant_hit_user": false,
 	"cant_target_self": false,
-	"description": "Deals damage from Poison status",
+	"description": "Heals HP from Regeneration status",
 	"display_action_name": true,
 	"element": 0,
 	"ends_turn": false,
@@ -74,7 +74,7 @@
 				"formula": 26,
 				"is_modified_by_element": true,
 				"is_modified_by_zodiac": false,
-				"reverse_sign": false,
+				"reverse_sign": true,
 				"target_faith_modifier": 0,
 				"user_faith_modifier": 0,
 				"values": [

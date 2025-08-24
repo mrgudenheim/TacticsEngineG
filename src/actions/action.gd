@@ -4,6 +4,7 @@ extends Resource
 static var current_id: int = 0
 
 @export var id: int = 0
+@export var idx: int = 0
 @export var action_name: String = "Action Name"
 @export var description: String = "Action description"
 @export var quote: String = "Action quote"
@@ -141,10 +142,20 @@ enum ActionRelativePosition {
 	}
 
 
-func _init():
+func _init(new_idx: int = -1):
 	id = current_id
 	current_id += 1
 
+	if new_idx < 0 or new_idx >= RomReader.actions.size():
+		if new_idx >= RomReader.actions.size():
+			push_warning("Action index (" + str(idx) + ") is beyond bounds. Setting idx to end of array: " + str(RomReader.actions.size()))
+		
+		idx = RomReader.actions.size()
+		RomReader.actions.append(self)
+	else:
+		idx = new_idx
+		RomReader.actions[new_idx] = self
+		
 	emit_changed()
 
 
@@ -1373,9 +1384,10 @@ static func create_from_dictonary(property_dict: Dictionary) -> Action:
 		elif property_name == "base_hit_formula":
 			var new_formula_data: FormulaData = FormulaData.create_from_dictionary(property_dict[property_name])
 			new_action.set(property_name, new_formula_data)
-		elif property_name == "id":
+		elif ["id", "idx"].has(property_name):
 			if property_dict[property_name] >= 0: # auto generate id
 				new_action.set(property_name, property_dict[property_name])
+				# TODO overwrite other Action at index
 		else:
 			new_action.set(property_name, property_dict[property_name])
 

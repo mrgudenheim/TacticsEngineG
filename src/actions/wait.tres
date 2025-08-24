@@ -9,7 +9,7 @@
 [sub_resource type="Resource" id="Resource_22o4i"]
 script = ExtResource("5_22o4i")
 formula = 0
-values = [100, 0]
+values = [100.0, 0.0]
 reverse_sign = false
 user_faith_modifier = 0
 target_faith_modifier = 0
@@ -20,7 +20,7 @@ metadata/_custom_type_script = "uid://2y1mi77a2isp"
 [sub_resource type="Resource" id="Resource_jmljt"]
 script = ExtResource("5_22o4i")
 formula = 0
-values = [20, 0]
+values = [20.0, 0.0]
 reverse_sign = false
 user_faith_modifier = 0
 target_faith_modifier = 0

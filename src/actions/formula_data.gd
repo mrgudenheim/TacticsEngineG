@@ -47,6 +47,7 @@ enum Formulas {
 	ZERO,
 	PAxV1,
 	MAxV1,
+	WPxV1,
 	AVG_PA_MAxV1,
 	AVG_PA_SPxV1,
 	PA_BRAVExV1,
@@ -133,6 +134,8 @@ func get_base_value(formula: Formulas, user: UnitData, target: UnitData) -> floa
 			base_value = user.physical_attack_current * values[0]
 		Formulas.MAxV1:
 			base_value = user.magical_attack_current * values[0]
+		Formulas.WPxV1:
+			base_value = wp * values[0]
 		Formulas.AVG_PA_MAxV1:
 			base_value = ((user.physical_attack_current + user.magical_attack_current) / 2.0) * values[0]
 		Formulas.AVG_PA_SPxV1:

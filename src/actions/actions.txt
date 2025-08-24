@@ -148,38 +148,86 @@ enum FaithModifier {
 	}
 
 enum Formulas {
-	UNMODIFIED,
-	ZERO,
-	PAxV1,
-	MAxV1,
-	AVG_PA_MAxV1,
-	AVG_PA_SPxV1,
-	PA_BRAVExV1,
-	RANDOM_PAxV1,
-	V1xV1,
-	PA_BRAVExPA,
-	MA_plus_V1,
-	MA_plus_V1xMA_div_2,
-	PA_plus_V1xMA_div_2,
-	PA_plus_WP_plus_V1,
-	SP_plus_V1,
-	LVLxSPxV1,
-	MIN_TARGET_EXP_or_SP_plus_V1,
-	PA_plus_V1,
-	PAxWP_plus_V1,
-	PAxWPxV1,
-	PAxPA_plus_V1_div_2,
-	RANDOM_V1xPAx3_plus_V2_div_2,
-	RANDOM_V1xPA,
-	USER_MAX_HPxV1,
-	USER_MAX_MPxV1,
-	TARGET_MAX_HPxV1,
-	TARGET_MAX_MPxV1,
-	USER_CURRENT_HP_minus_V1,
-	TARGET_CURRENT_MP_minus_V1,
-	TARGET_CURRENT_HP_minus_V1,
-	USER_MISSING_HPxV1,
-	TARGET_MISSING_HPxV1,
-	TARGET_CURRENT_HPxV1,
-	RANDOM_V1_V2,
+0	UNMODIFIED,
+1	ZERO,
+2	PAxV1,
+3	MAxV1,
+4	WPxV1,
+5	AVG_PA_MAxV1,
+6	AVG_PA_SPxV1,
+7	PA_BRAVExV1,
+8	RANDOM_PAxV1,
+9	V1xV1,
+10	PA_BRAVExPA,
+11	MA_plus_V1,
+12	MA_plus_V1xMA_div_2,
+13	PA_plus_V1xMA_div_2,
+14	PA_plus_WP_plus_V1,
+15	SP_plus_V1,
+16	LVLxSPxV1,
+17	MIN_TARGET_EXP_or_SP_plus_V1,
+18	PA_plus_V1,
+19	PAxWP_plus_V1,
+20	PAxWPxV1,
+21	PAxPA_plus_V1_div_2,
+22	RANDOM_V1xPAx3_plus_V2_div_2,
+23	RANDOM_V1xPA,
+24	USER_MAX_HPxV1,
+25	USER_MAX_MPxV1,
+26	TARGET_MAX_HPxV1,
+27	TARGET_MAX_MPxV1,
+28	USER_CURRENT_HP_minus_V1,
+29	TARGET_CURRENT_MP_minus_V1,
+30	TARGET_CURRENT_HP_minus_V1,
+31	USER_MISSING_HPxV1,
+32	TARGET_MISSING_HPxV1,
+33	TARGET_CURRENT_HPxV1,
+34	RANDOM_V1_V2,
 	}
+
+
+#Status Set 1
+#0x80 - 0 
+#0x40 - 1 Crystal
+#0x20 - 2 Dead
+#0x10 - 3 Undead
+#0x08 - 4 Charging
+#0x04 - 5 Jump
+#0x02 - 6 Defending
+#0x01 - 7 Performing
+#Status Set 2
+#0x80 - 8 Petrify
+#0x40 - 9 Invite
+#0x20 - 10 Darkness
+#0x10 - 11 Confusion
+#0x08 - 12 Silence
+#0x04 - 13 Blood Suck
+#0x02 - 14 Cursed
+#0x01 - 15 Treasure
+#Status Set 3
+#0x80 - 16 Oil
+#0x40 - 17 Float
+#0x20 - 18 Reraise
+#0x10 - 19 Transparent
+#0x08 - 20 Berserk
+#0x04 - 21 Chicken
+#0x02 - 22 Frog
+#0x01 - 23 Critical
+#Status Set 4
+#0x80 - 24 Poison
+#0x40 - 25 Regen
+#0x20 - 26 Protect
+#0x10 - 27 Shell
+#0x08 - 28 Haste
+#0x04 - 29 Slow
+#0x02 - 30 Stop
+#0x01 - 31 Wall
+#Status Set 5
+#0x80 - 32 Faith
+#0x40 - 33 Innocent
+#0x20 - 34 Charm
+#0x10 - 35 Sleep
+#0x08 - 36 Don't Move
+#0x04 - 37 Don't Act
+#0x02 - 38 Reflect
+#0x01 - 39 Death Sentence

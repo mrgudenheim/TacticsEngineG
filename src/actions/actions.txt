@@ -1,0 +1,185 @@
+## Action
+id = 0
+action_name = "Cure 2"
+description = "f0or.f0Ed0f0X6ds pf085hf005briesf0bhtf1Z53f005bf09if08b64f03cbf0?5af08c0f0orhtf0b4e1f03dbMPf08cf10f03[TextVariable]SPf08d9020f0a054"
+quote = "[UnitName] Life's refreshing breeze, heal from the sky! Cure2!"
+display_action_name = true
+move_points_cost = 0
+action_points_cost = 1
+mp_cost = 0
+min_targeting_range = 0
+max_targeting_range = 4
+area_of_effect_range = 1
+vertical_tolerance = 1.0
+ticks_charge_time = 5
+has_vertical_tolerance_from_user = false
+use_weapon_range = false
+use_weapon_targeting = false
+use_weapon_damage = false
+use_weapon_animation = false
+auto_target = false
+cant_target_self = false
+cant_hit_enimies = false
+cant_hit_allies = false
+cant_hit_user = false
+targeting_top_down = false
+cant_follow_target = false
+random_fire = false
+targeting_linear = false
+targeting_los = false
+aoe_has_vertical_tolerance = true
+aoe_vertical_tolerance = 1.0
+aoe_targeting_three_directions = false
+aoe_targeting_linear = false
+aoe_targeting_los = false
+target_effects = Array[ExtResource("4_2csw3")]([SubResource("Resource_2nsu7")])
+user_effects = Array[ExtResource("4_2csw3")]([])
+applicable_evasion = 0
+is_reflectable = true
+is_math_usable = true
+is_mimicable = true
+blocked_by_golem = false
+repeat_use = false
+vfx_on_empty = false
+trigger_counter_flood = false
+trigger_counter_magic = false
+trigger_counter_grasp = false
+can_target = true
+element = 0
+healing_damages_undead = false
+ignores_statuses = Array[int]([26, 27]) ## status ids
+target_status_list = PackedInt32Array()
+status_chance = 100
+will_remove_status = false
+target_status_list_type = 1
+status_prevents_use_any = Array[int]([37, 21, 22, 13, 20, 12])
+required_equipment_type = Array[int]([])
+required_equipment = [Item] #### int id?
+required_target_job_id = Array[int]([])
+required_target_status_id = Array[int]([])
+animation_start_id = 84
+animation_charging_id = 86
+animation_executing_id = 88
+secondary_actions = [Action] #### int id?
+secondary_actions_chances = PackedInt32Array(100)
+secondary_action_list_type = 1
+set_target_animation_on_hit = true
+ends_turn = false
+hit_chance_modified_by_passive = false
+power_modified_by_passive = true
+
+##  Action base_hit_formula
+formula = 0
+values = PackedInt32Array(100, 0)
+reverse_sign = false
+user_faith_modifier = 0
+target_faith_modifier = 0
+is_modified_by_element = true
+is_modified_by_zodiac = true
+
+## ActionEffect
+type = 0 ## enum id for effect type: UNIT_STAT, CURRENCY, INVENTORY, etc.
+effect_stat_type = 0 ## enum id for unit stats: HP, MP, SP, etc.
+show_ui = true
+transfer_to_user = false ## absorb, steal, etc.
+apply_to_user = false
+set_value = false ## false = add value, true = set value
+label = "" ## shown in UI (ex. Gold), if "" will be set automatically based on type and effect_stat_type
+
+## ActionEffect base_power_formula
+formula = 3
+values = PackedInt32Array(20, 0)
+reverse_sign = false
+user_faith_modifier = 1
+target_faith_modifier = 1
+is_modified_by_element = true
+is_modified_by_zodiac = true
+
+
+enum EffectType {
+	UNIT_STAT,
+	CURRENCY,
+	INVENTORY,
+	#BREAK_EQUIPMENT, # Break is Remove equipment + lower inventory?
+	REMOVE_EQUIPMENT, # Steal if transfer = true
+	#PHYSICAL_EVADE, 
+	#MAGIC_EVADE,
+}
+
+enum StatType {
+	HP,
+	HP_MAX,
+	MP,
+	MP_MAX,
+	CT,
+	MOVE,
+	JUMP,
+	SPEED,
+	PHYSICAL_ATTACK,
+	MAGIC_ATTACK,
+	BRAVE,
+	FAITH,
+	EXP,
+	LEVEL,
+}
+
+enum ElementTypes {
+	NONE = 0x00,
+	DARK = 0x01,
+	HOLY = 0x02,
+	WATER = 0x04,
+	EARTH = 0x08,
+	WIND = 0x10,
+	ICE = 0x20,
+	LIGHTNING = 0x40,
+	FIRE = 0x80,
+	}
+
+enum StatusListType {
+	ALL,
+	EACH,
+	RANDOM,
+	}
+
+enum FaithModifier {
+	NONE,
+	FAITH,
+	UNFAITH,
+	}
+
+enum Formulas {
+	UNMODIFIED,
+	ZERO,
+	PAxV1,
+	MAxV1,
+	AVG_PA_MAxV1,
+	AVG_PA_SPxV1,
+	PA_BRAVExV1,
+	RANDOM_PAxV1,
+	V1xV1,
+	PA_BRAVExPA,
+	MA_plus_V1,
+	MA_plus_V1xMA_div_2,
+	PA_plus_V1xMA_div_2,
+	PA_plus_WP_plus_V1,
+	SP_plus_V1,
+	LVLxSPxV1,
+	MIN_TARGET_EXP_or_SP_plus_V1,
+	PA_plus_V1,
+	PAxWP_plus_V1,
+	PAxWPxV1,
+	PAxPA_plus_V1_div_2,
+	RANDOM_V1xPAx3_plus_V2_div_2,
+	RANDOM_V1xPA,
+	USER_MAX_HPxV1,
+	USER_MAX_MPxV1,
+	TARGET_MAX_HPxV1,
+	TARGET_MAX_MPxV1,
+	USER_CURRENT_HP_minus_V1,
+	TARGET_CURRENT_MP_minus_V1,
+	TARGET_CURRENT_HP_minus_V1,
+	USER_MISSING_HPxV1,
+	TARGET_MISSING_HPxV1,
+	TARGET_CURRENT_HPxV1,
+	RANDOM_V1_V2,
+	}

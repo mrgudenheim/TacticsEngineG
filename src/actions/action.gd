@@ -1350,6 +1350,31 @@ func to_json() -> String:
 	return Utilities.object_properties_to_json(self, properties_to_exclude)
 
 
+static func create_from_json(json_string: String) -> Action:
+	var property_dict: Dictionary = JSON.parse_string(json_string)
+	var new_action: Action = create_from_dictonary(property_dict)
+	
+	return new_action
+
+
+static func create_from_dictonary(property_dict: Dictionary) -> Action:
+	var new_action: Action = Action.new()
+	for property_name in property_dict.keys:
+		if ["target_effects", "user_effects"].has(property_name):
+			var new_effects: Array[ActionEffect] = []
+			for effect in property_dict[property_name]:
+				var new_action_effect: ActionEffect = ActionEffect.create_from_dictonary(property_dict[property_name])
+				new_effects.append(new_action_effect)
+			new_action.set(property_name, new_effects)
+		elif property_name == "base_hit_formula":
+			var new_formula_data: FormulaData = FormulaData.create_from_dictonary(property_dict[property_name])
+			new_action.set(property_name, new_formula_data)
+		else:
+			new_action.set(property_name, property_dict[property_name])
+
+	return new_action
+
+
 static func get_element_types_array(element_bitflags: PackedByteArray) -> Array[ElementTypes]:
 	var elemental_types: Array[ElementTypes] = []
 	

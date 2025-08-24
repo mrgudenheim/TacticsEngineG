@@ -1370,6 +1370,9 @@ static func create_from_dictonary(property_dict: Dictionary) -> Action:
 		elif property_name == "base_hit_formula":
 			var new_formula_data: FormulaData = FormulaData.create_from_dictonary(property_dict[property_name])
 			new_action.set(property_name, new_formula_data)
+		elif property_name == "id":
+			if property_dict[property_name] >= 0: # auto generate id
+				new_action.set(property_name, property_dict[property_name])
 		else:
 			new_action.set(property_name, property_dict[property_name])
 

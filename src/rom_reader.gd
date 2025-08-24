@@ -139,6 +139,10 @@ func process_rom() -> void:
 		#seq.set_data_from_seq_bytes(get_file_data(seq.file_name))
 		#seq.write_wiki_table()
 	
+	# var file = FileAccess.open("user://overrides/action2_to_json.json", FileAccess.WRITE)
+	# file.store_line(abilities[2].ability_action.to_json())
+	# file.close()
+	
 	is_ready = true
 	rom_loaded.emit()
 

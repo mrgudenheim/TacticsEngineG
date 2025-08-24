@@ -130,18 +130,19 @@ func to_dictionary() -> Dictionary:
 
 static func create_from_json(json_string: String) -> ActionEffect:
 	var property_dict: Dictionary = JSON.parse_string(json_string)
-	var new_action_effect: ActionEffect = create_from_dictonary(property_dict)
+	var new_action_effect: ActionEffect = create_from_dictionary(property_dict)
 	
 	return new_action_effect
 
 
-static func create_from_dictonary(property_dict: Dictionary) -> ActionEffect:
+static func create_from_dictionary(property_dict: Dictionary) -> ActionEffect:
 	var new_action_effect: ActionEffect = ActionEffect.new()
-	for property_name in property_dict.keys:
+	for property_name in property_dict.keys():
 		if property_name == "base_power_formula":
-			var new_formula_data: FormulaData = FormulaData.create_from_dictonary(property_dict[property_name])
+			var new_formula_data: FormulaData = FormulaData.create_from_dictionary(property_dict[property_name])
 			new_action_effect.set(property_name, new_formula_data)
 		else:	
 			new_action_effect.set(property_name, property_dict[property_name])
 
+	new_action_effect.emit_changed()
 	return new_action_effect

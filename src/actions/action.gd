@@ -1360,15 +1360,15 @@ static func create_from_json(json_string: String) -> Action:
 
 static func create_from_dictonary(property_dict: Dictionary) -> Action:
 	var new_action: Action = Action.new()
-	for property_name in property_dict.keys:
+	for property_name in property_dict.keys():
 		if ["target_effects", "user_effects"].has(property_name):
 			var new_effects: Array[ActionEffect] = []
 			for effect in property_dict[property_name]:
-				var new_action_effect: ActionEffect = ActionEffect.create_from_dictonary(property_dict[property_name])
+				var new_action_effect: ActionEffect = ActionEffect.create_from_dictionary(effect)
 				new_effects.append(new_action_effect)
 			new_action.set(property_name, new_effects)
 		elif property_name == "base_hit_formula":
-			var new_formula_data: FormulaData = FormulaData.create_from_dictonary(property_dict[property_name])
+			var new_formula_data: FormulaData = FormulaData.create_from_dictionary(property_dict[property_name])
 			new_action.set(property_name, new_formula_data)
 		elif property_name == "id":
 			if property_dict[property_name] >= 0: # auto generate id

@@ -272,14 +272,15 @@ func to_dictionary() -> Dictionary:
 
 static func create_from_json(json_string: String) -> FormulaData:
 	var property_dict: Dictionary = JSON.parse_string(json_string)
-	var new_formula: FormulaData = create_from_dictonary(property_dict)
-	
+	var new_formula: FormulaData = create_from_dictionary(property_dict)
+
 	return new_formula
 
 
-static func create_from_dictonary(property_dict: Dictionary) -> FormulaData:
+static func create_from_dictionary(property_dict: Dictionary) -> FormulaData:
 	var new_formula: FormulaData = FormulaData.new()
-	for property_name in property_dict.keys:
+	for property_name in property_dict.keys():
 		new_formula.set(property_name, property_dict[property_name])
 
+	new_formula.emit_changed()
 	return new_formula

@@ -41,6 +41,7 @@ var abilities: Array[FftAbilityData] = []
 var items: Array[ItemData] = []
 var status_effects: Array[StatusEffect] = [] # TODO reference scus_data.status_effects
 var job_data: Array[JobData] = [] # TODO reference scus_data.jobs
+var actions: Array[Action] = []
 
 # BATTLE.BIN tables
 var battle_bin_data: BattleBinData = BattleBinData.new()
@@ -143,6 +144,35 @@ func process_rom() -> void:
 	# file.store_line(abilities[2].ability_action.to_json())
 	# file.close()
 	
+	for fft_ability: FftAbilityData in abilities:
+		if fft_ability.ability_action != null:
+			actions.append(fft_ability.ability_action)
+	
+	for item: ItemData in items:
+		if item.weapon_attack_action != null:
+			actions.append(item.weapon_attack_action)
+	
+	var dir_path: String = "res://src/actions/custom_actions/" # Or "user://another_folder" for user data
+	var dir := DirAccess.open(dir_path)
+
+	if dir:
+		dir.list_dir_begin()
+		var file_name: String = dir.get_next()
+		while file_name != "":
+			if not file_name.begins_with("."): # Exclude hidden files
+				push_warning("Found file: " + file_name)
+				if file_name.ends_with(".json"):
+					var file_path: String = dir_path + file_name
+					var file := FileAccess.open(file_path, FileAccess.READ)
+					var file_text = file.get_as_text()
+
+					var new_action: Action = Action.create_from_json(file_text)
+					actions.append(new_action)
+			file_name = dir.get_next()
+		dir.list_dir_end()
+	else:
+		push_warning("Could not open directory: " + dir_path)
+
 	is_ready = true
 	rom_loaded.emit()
 

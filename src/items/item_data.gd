@@ -244,10 +244,10 @@ func _init(idx: int = 0) -> void:
 				weapon_attack_action.secondary_action_list_type = Action.StatusListType.RANDOM
 				
 				for secondary_action_idx: int in secondary_action_ids.size():
-					var new_secondary_action: Action = RomReader.abilities[secondary_action_ids[secondary_action_idx]].ability_action # abilities need to be initialized before items
-					new_secondary_action.area_of_effect_range = 0
-					new_secondary_action.target_effects[0].base_power_formula.formula = FormulaData.Formulas.WPxV1
-					new_secondary_action.mp_cost = 0
+					var new_secondary_action: Action = RomReader.abilities[secondary_action_ids[secondary_action_idx]].ability_action.duplicate(true) # abilities need to be initialized before items
+					#new_secondary_action.area_of_effect_range = 0
+					#new_secondary_action.target_effects[0].base_power_formula.formula = FormulaData.Formulas.WPxV1
+					#new_secondary_action.mp_cost = 0
 					var chance: int = weapon_attack_action.secondary_actions_chances[secondary_action_idx]
 					weapon_attack_action.secondary_actions.append(new_secondary_action)
 					weapon_attack_action.secondary_actions2.append(Action.SecondaryAction.new(new_secondary_action, chance))
@@ -292,6 +292,7 @@ func _init(idx: int = 0) -> void:
 		weapon_attack_action.status_prevents_use_any.append_array([37, 21, 22, 13]) # Don't Act, chicken, frog, blood suck status prevents weapon attack
 		
 		#weapon_attack_action.animation_executing_id = RomReader.battle_bin_data.weapon_animation_ids[item_type].y * 2
+		emit_changed()
 		
 		
 	elif idx < 0x90: # shield data
@@ -325,6 +326,8 @@ func _init(idx: int = 0) -> void:
 	for key: UnitData.StatType in stat_modifiers.keys():
 		if stat_modifiers[key].value == 0:
 			stat_modifiers.erase(key)
+	
+	emit_changed()
 
 
 func set_item_attributes(item_attribute: ScusData.ItemAttribute) -> void:
@@ -348,3 +351,5 @@ func set_item_attributes(item_attribute: ScusData.ItemAttribute) -> void:
 	elemental_half = Action.get_element_types_array([item_attribute.elemental_half])
 	elemental_weakness = Action.get_element_types_array([item_attribute.elemental_weakness])
 	elemental_strengthen = Action.get_element_types_array([item_attribute.elemental_strengthen])
+
+	emit_changed()

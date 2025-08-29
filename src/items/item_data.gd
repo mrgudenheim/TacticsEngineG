@@ -264,6 +264,7 @@ func _init(idx: int = 0) -> void:
 			weapon_attack_action.secondary_actions.append(RomReader.abilities[weapon_inflict_status_spell_id].ability_action)
 			weapon_attack_action.status_chance = 19
 			weapon_attack_action.secondary_actions_chances = [19]
+			weapon_attack_action.secondary_actions2.append(Action.SecondaryAction.new(RomReader.abilities[weapon_inflict_status_spell_id].ability_action.action_idx, 19))
 		else: # inflict status data
 			weapon_attack_action.inflict_status_id = weapon_inflict_status_spell_id
 			var inflict_status: ScusData.InflictStatus = RomReader.scus_data.inflict_statuses[weapon_inflict_status_spell_id]

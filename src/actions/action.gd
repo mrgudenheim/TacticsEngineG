@@ -476,6 +476,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			secondary_actions.append(RomReader.abilities[inflict_status_id].ability_action)
 			status_chance = 19
 			secondary_actions_chances = [19]
+			secondary_actions2.append(SecondaryAction.new(RomReader.abilities[inflict_status_id].ability_action.action_idx, status_chance))
 			ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
 		3: # weapon_power * weapon_power
 			applicable_evasion = EvadeData.EvadeType.NONE

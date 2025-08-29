@@ -5,8 +5,8 @@
 
 [resource]
 script = ExtResource("1_spr2t")
-action_id = 0
-action_idx = 0
+action_id = -1
+action_idx = -1
 action_name = "Move"
 description = "Action description"
 quote = "Action quote"

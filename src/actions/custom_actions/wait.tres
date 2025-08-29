@@ -1,9 +1,8 @@
-[gd_resource type="Resource" script_class="Action" load_steps=8 format=3 uid="uid://hfseiukq3qpk"]
+[gd_resource type="Resource" script_class="Action" load_steps=7 format=3 uid="uid://hfseiukq3qpk"]
 
 [ext_resource type="Script" uid="uid://dlaul7n568vti" path="res://src/actions/action.gd" id="2_22o4i"]
 [ext_resource type="Script" uid="uid://cpa42ca48we8h" path="res://src/actions/action_effect.gd" id="4_ltkoj"]
 [ext_resource type="Script" uid="uid://2y1mi77a2isp" path="res://src/actions/formula_data.gd" id="5_22o4i"]
-[ext_resource type="Resource" uid="uid://bu2sto41olfil" path="res://src/actions/targeting_range.tres" id="6_jmljt"]
 
 [sub_resource type="Resource" id="Resource_22o4i"]
 script = ExtResource("5_22o4i")
@@ -41,13 +40,14 @@ metadata/_custom_type_script = "uid://cpa42ca48we8h"
 
 [resource]
 script = ExtResource("2_22o4i")
-action_id = 0
-action_idx = 0
+action_id = -1
+action_idx = -1
 action_name = "Wait"
 description = "Ends turn"
 quote = "Action quote"
 display_action_name = false
-targeting_strategy = ExtResource("6_jmljt")
+targeting_type = 0
+use_type = 0
 move_points_cost = 0
 action_points_cost = 0
 mp_cost = 0

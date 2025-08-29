@@ -4,7 +4,7 @@ extends Resource
 # https://ffhacktics.com/wiki/Item_Data
 
 @export var name: String = "Item name"
-var id: int = 0
+@export var item_idx: int = 0
 @export var item_graphic_id: int = 0
 @export var item_palette_id: int = 0
 @export var min_level: int = 0
@@ -134,7 +134,7 @@ enum ItemType {
 # In SCUS data tables
 func _init(idx: int = 0) -> void:
 	name = RomReader.fft_text.item_names[idx]
-	id = idx
+	item_idx = idx
 	item_type = RomReader.scus_data.item_types[idx]
 	slot_type = RomReader.scus_data.item_slot_types[idx] & 0xfc # skip rare flag
 	is_rare = RomReader.scus_data.item_slot_types[idx] & 0x02 == 0x02 # rare flag

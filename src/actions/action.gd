@@ -3,8 +3,8 @@ extends Resource
 
 static var current_id: int = 0
 
-@export var id: int = 0
-@export var idx: int = 0
+@export var action_id: int = 0
+@export var action_idx: int = 0
 @export var action_name: String = "Action Name"
 @export var description: String = "Action description"
 @export var quote: String = "Action quote"
@@ -86,7 +86,7 @@ var separate_status: bool = false
 
 @export var status_prevents_use_any: Array[int] = [] # silence, dont move, dont act, etc.
 @export var required_equipment_type: Array[ItemData.ItemType] = [] # sword, gun, etc.
-@export var required_equipment: Array[ItemData] = [] # materia_blade, etc. TODO change required_equipment to PackedInt32 [ItemId]
+@export var required_equipment_idx: PackedInt32Array = [] # materia_blade, etc.
 @export var required_target_job_id: Array[int] = [] # dragon, etc.
 @export var required_target_status_id: Array[int] = [] # undead
 
@@ -127,33 +127,33 @@ enum ElementTypes {
 	ICE = 0x20,
 	LIGHTNING = 0x40,
 	FIRE = 0x80,
-	}
+}
 
 enum StatusListType {
 	ALL,
 	EACH,
 	RANDOM,
-	}
+}
 
 enum ActionRelativePosition {
 	FRONT,
 	SIDE,
 	BACK,
-	}
+}
 
 
 func _init(new_idx: int = -1):
-	id = current_id
+	action_id = current_id
 	current_id += 1
 
 	if new_idx < 0 or new_idx >= RomReader.actions.size():
 		if new_idx >= RomReader.actions.size():
-			push_warning("Action index (" + str(idx) + ") is beyond bounds. Setting idx to end of array: " + str(RomReader.actions.size()))
+			push_warning("Action index (" + str(new_idx) + ") is beyond bounds. Setting action_idx to end of array: " + str(RomReader.actions.size()))
 		
-		idx = RomReader.actions.size()
+		action_idx = RomReader.actions.size()
 		RomReader.actions.append(self)
 	else:
-		idx = new_idx
+		action_idx = new_idx
 		RomReader.actions[new_idx] = self
 		
 	emit_changed()
@@ -170,7 +170,14 @@ func is_usable(action_instance: ActionInstance) -> bool:
 		var user_has_enough_action_points: bool = action_instance.user.action_points_remaining >= action_instance.action.action_points_cost
 		var user_has_enough_mp: bool = action_instance.user.mp_current >= action_instance.action.mp_cost
 		var user_has_equipment_type: bool = required_equipment_type.is_empty() or required_equipment_type.has(action_instance.user.primary_weapon.item_type) # TODO check all unit.equipped, not just primary_weapon
-		var user_has_equipment: bool = required_equipment.is_empty() or required_equipment.has(action_instance.user.primary_weapon) # TODO check all unit.equipped, not just primary_weapon
+		var user_has_equipment: bool = false
+		if required_equipment_idx.is_empty():
+			user_has_equipment = true
+		else:
+			for equipment_slot: UnitData.EquipmentSlot in action_instance.user.equip_slots:
+				if required_equipment_idx.has(equipment_slot.item.item_idx): # TODO allow actions that require combination of items
+					user_has_equipment = true
+					break
 		
 		var action_not_prevented_by_status: bool = not action_instance.action.status_prevents_use_any.any(func(status_id: int): return action_instance.user.current_status_ids.has(status_id))
 		
@@ -1384,8 +1391,8 @@ static func create_from_dictonary(property_dict: Dictionary) -> Action:
 		elif property_name == "base_hit_formula":
 			var new_formula_data: FormulaData = FormulaData.create_from_dictionary(property_dict[property_name])
 			new_action.set(property_name, new_formula_data)
-		elif ["id", "idx"].has(property_name):
-			if property_dict[property_name] >= 0: # auto generate id
+		elif ["action_id", "action_idx"].has(property_name):
+			if property_dict[property_name] >= 0: # auto generate action_id if < 0
 				new_action.set(property_name, property_dict[property_name])
 				# TODO overwrite other Action at index
 		else:

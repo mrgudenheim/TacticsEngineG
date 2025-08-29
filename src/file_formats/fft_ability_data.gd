@@ -275,7 +275,7 @@ func set_action() -> void:
 	if require_sword:
 		ability_action.required_equipment_type = [ItemData.ItemType.SWORD] # sword, gun, etc.
 	if require_materia_blade:
-		ability_action.required_equipment = [RomReader.items[0x20]] # materia_blade, etc.
+		ability_action.required_equipment_idx = [0x20] # materia_blade, etc.
 	if not is_reflectable:
 		ability_action.ignores_statuses.append(38) # ignore reflect
 	

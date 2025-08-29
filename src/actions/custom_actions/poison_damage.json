@@ -1,4 +1,6 @@
 {
+	"action_id": -1,
+	"action_idx": -1,
 	"action_name": "Poison Damage",
 	"action_points_cost": 0,
 	"animation_charging_id": 0,
@@ -38,8 +40,6 @@
 	"has_vertical_tolerance_from_user": false,
 	"healing_damages_undead": false,
 	"hit_chance_modified_by_passive": false,
-	"id": -1,
-	"idx": -1,
 	"ignores_statuses": [
 		26,
 		27
@@ -55,7 +55,7 @@
 	"quote": "!!",
 	"random_fire": false,
 	"repeat_use": false,
-	"required_equipment": [],
+	"required_equipment_idx": [],
 	"required_equipment_type": [],
 	"required_target_job_id": [],
 	"required_target_status_id": [],

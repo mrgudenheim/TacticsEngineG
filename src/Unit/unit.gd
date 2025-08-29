@@ -491,7 +491,7 @@ func generate_equipment() -> void:
 	equip_slots[3].item = get_item_for_slot(ItemData.SlotType.ARMOR, level) # armor
 	equip_slots[4].item = get_item_for_slot(ItemData.SlotType.ACCESSORY, level, true) # accessory
 	
-	set_primary_weapon(equip_slots[0].item.id)
+	set_primary_weapon(equip_slots[0].item.item_idx)
 	
 	update_equipment_modifiers()
 	stats[StatType.HP].set_value(stats[StatType.HP].max_value)
@@ -1414,7 +1414,7 @@ func on_sprite_idx_selected(index: int) -> void:
 	if shp.file_name == "TYPE2.SHP":
 		if animation_manager.wep_shp.file_name != "WEP2.SHP":
 			animation_manager.wep_shp = RomReader.shps[RomReader.file_records["WEP2.SHP"].type_index]
-			set_primary_weapon(primary_weapon.id) # get new texture based on wep2.shp
+			set_primary_weapon(primary_weapon.item_idx) # get new texture based on wep2.shp
 			animation_changed = true
 		animation_manager.wep_seq = RomReader.seqs[RomReader.file_records["WEP2.SEQ"].type_index]
 	

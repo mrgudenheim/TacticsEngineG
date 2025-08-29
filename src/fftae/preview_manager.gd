@@ -40,7 +40,7 @@ func initialize() -> void:
 			equipment_type_name = " (" + RomReader.fft_text.equipment_types[RomReader.items[weapon_index].item_type] + ")"
 		weapon_options.add_item(str(weapon_index) + " - " + RomReader.items[weapon_index].name + equipment_type_name)
 	
-	weapon_options.select(unit.primary_weapon.id)
+	weapon_options.select(unit.primary_weapon.item_idx)
 	
 	item_options.clear()
 	for item_index: int in RomReader.NUM_ITEMS:

@@ -1,17 +1,14 @@
 extends Node
 
-var targeting_strategies: Dictionary[TargetingTypes, TargetingStrategy] = {}
-
-
-enum TargetingTypes {
-	MOVE,
-	RANGE,
-	}
-
+var targeting_strategies: Dictionary[Action.TargetingTypes, TargetingStrategy] = {}
+var use_strategies: Dictionary[Action.UseTypes, UseStrategy] = {}
 
 func _ready() -> void:
-	targeting_strategies[TargetingTypes.MOVE] = MoveTargeting.new()
-	targeting_strategies[TargetingTypes.RANGE] = RangeTargeting.new()
+	targeting_strategies[Action.TargetingTypes.MOVE] = MoveTargeting.new()
+	targeting_strategies[Action.TargetingTypes.RANGE] = RangeTargeting.new()
+
+	use_strategies[Action.UseTypes.NORMAL] = null
+	use_strategies[Action.UseTypes.MOVE] = MoveUse.new()
 
 
 func object_properties_to_dictionary(object: Object, exclude_property_names: PackedStringArray = []) -> Dictionary:

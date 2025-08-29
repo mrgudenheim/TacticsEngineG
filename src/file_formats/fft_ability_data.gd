@@ -202,7 +202,8 @@ func set_action() -> void:
 	ability_action.quote = spell_quote
 	ability_action.display_action_name = show_quote
 	
-	ability_action.targeting_strategy = Utilities.targeting_strategies[Utilities.TargetingTypes.RANGE]
+	ability_action.targeting_type = Action.TargetingTypes.RANGE
+	# ability_action.targeting_strategy = Utilities.targeting_strategies[Utilities.TargetingTypes.RANGE]
 	
 	ability_action.mp_cost = mp_cost
 	

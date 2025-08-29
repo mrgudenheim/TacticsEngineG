@@ -199,7 +199,8 @@ func _init(idx: int = 0) -> void:
 		weapon_attack_action.trigger_counter_flood = true
 		weapon_attack_action.trigger_counter_grasp = true
 		
-		weapon_attack_action.targeting_strategy = Utilities.targeting_strategies[Utilities.TargetingTypes.RANGE] # set weapon targeting strategy to TargetingRange by default
+		weapon_attack_action.targeting_type = Action.TargetingTypes.RANGE
+		# weapon_attack_action.targeting_strategy = Utilities.targeting_strategies[Utilities.TargetingTypes.RANGE] # set weapon targeting strategy to TargetingRange by default
 		
 		match item_type:
 			ItemType.BOW, ItemType.CROSSBOW, ItemType.GUN, ItemType.INSTRUMENT, ItemType.BOOK:

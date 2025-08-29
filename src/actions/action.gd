@@ -11,8 +11,14 @@ static var current_id: int = 0
 @export var display_action_name: bool = true
 
 @export var useable_strategy: UseableStrategy
-@export var targeting_strategy: TargetingStrategy
-@export var use_strategy: UseStrategy
+@export var targeting_type: TargetingTypes = TargetingTypes.RANGE
+var targeting_strategy: TargetingStrategy:
+	get:
+		return Utilities.targeting_strategies[targeting_type]
+@export var use_type: UseTypes = UseTypes.NORMAL
+var use_strategy: UseStrategy:
+	get:
+		return Utilities.use_strategies[use_type]
 
 @export var move_points_cost: int = 0
 @export var action_points_cost: int = 1
@@ -141,6 +147,15 @@ enum ActionRelativePosition {
 	BACK,
 }
 
+enum TargetingTypes {
+	RANGE,
+	MOVE,
+}
+
+enum UseTypes {
+	NORMAL,
+	MOVE,
+}
 
 func _init(new_idx: int = -1):
 	action_id = current_id

@@ -87,12 +87,15 @@ var ability_slots: Array[AbilitySlot] = [
 class EquipmentSlot:
 	var equipment_slot_name: String = "[Equipment Slot]"
 	var slot_types: Array[ItemData.SlotType] = []
-	var item: ItemData = RomReader.items[0]
+	var item_idx: int = 0
+	var item: ItemData:
+		get:
+			return RomReader.items[item_idx]
 	
-	func _init(new_name: String = "", new_slot_types: Array[ItemData.SlotType] = [], new_item: ItemData = RomReader.items[0]) -> void:
+	func _init(new_name: String = "", new_slot_types: Array[ItemData.SlotType] = [], new_item_idx: int = 0) -> void:
 		equipment_slot_name = new_name
 		slot_types = new_slot_types
-		item = new_item
+		item_idx = new_item_idx
 	
 	func _to_string() -> String:
 		return equipment_slot_name + ": " + item.name
@@ -485,13 +488,13 @@ func generate_equipment() -> void:
 	#if not ["TYPE1.SEQ", "TYPE3.SEQ"].has(animation_manager.global_seq.file_name): # monsters don't have equipment
 		#return
 	
-	equip_slots[0].item = get_item_for_slot(ItemData.SlotType.WEAPON, level) # RH
-	equip_slots[1].item = get_item_for_slot(ItemData.SlotType.SHIELD, level) # LH
-	equip_slots[2].item = get_item_for_slot(ItemData.SlotType.HEADGEAR, level) # headgear
-	equip_slots[3].item = get_item_for_slot(ItemData.SlotType.ARMOR, level) # armor
-	equip_slots[4].item = get_item_for_slot(ItemData.SlotType.ACCESSORY, level, true) # accessory
+	equip_slots[0].item_idx = get_item_idx_for_slot(ItemData.SlotType.WEAPON, level) # RH
+	equip_slots[1].item_idx = get_item_idx_for_slot(ItemData.SlotType.SHIELD, level) # LH
+	equip_slots[2].item_idx = get_item_idx_for_slot(ItemData.SlotType.HEADGEAR, level) # headgear
+	equip_slots[3].item_idx = get_item_idx_for_slot(ItemData.SlotType.ARMOR, level) # armor
+	equip_slots[4].item_idx = get_item_idx_for_slot(ItemData.SlotType.ACCESSORY, level, true) # accessory
 	
-	set_primary_weapon(equip_slots[0].item.item_idx)
+	set_primary_weapon(equip_slots[0].item_idx)
 	
 	update_equipment_modifiers()
 	stats[StatType.HP].set_value(stats[StatType.HP].max_value)
@@ -519,22 +522,22 @@ func update_passive_modifiers() -> void:
 	# TODO implement updating passive modifiers: abilities, equipment, statuses, job
 
 
-func get_item_for_slot(slot_type: ItemData.SlotType, item_level: int, random: bool = false) -> ItemData:
+func get_item_idx_for_slot(slot_type: ItemData.SlotType, item_level: int, random: bool = false) -> int:
 	var valid_items: Array[ItemData] = []
 	valid_items.assign(RomReader.items.filter(func(item: ItemData): 
 		var slot_type_is_valid: bool = item.slot_type == slot_type
 		var level_is_valid: bool = item.min_level <= item_level
 		var type_is_valid: bool = job_data.equippable_item_types.has(item.item_type) # TODO allow forcing specifc type based on ability requirements
 		return slot_type_is_valid and level_is_valid and type_is_valid))
-	var item: ItemData = RomReader.items[0]
+	var item_idx: int = 0
 	if not valid_items.is_empty():
 		if random:
-			item = valid_items.pick_random()
+			item_idx = valid_items.pick_random().item_idx
 		else:
 			valid_items.sort_custom(func(item_a: ItemData, item_b: ItemData): return item_a.min_level > item_b.min_level)
-			item = valid_items[0] # pick highest level item
+			item_idx = valid_items[0].item_idx # pick highest level item
 			#item = valid_items.pick_random()
-	return item
+	return item_idx
 
 
 func set_ability_slot(slot: AbilitySlot, ability: Ability):

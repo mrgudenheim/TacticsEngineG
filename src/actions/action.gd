@@ -190,7 +190,7 @@ func is_usable(action_instance: ActionInstance) -> bool:
 			user_has_equipment = true
 		else:
 			for equipment_slot: UnitData.EquipmentSlot in action_instance.user.equip_slots:
-				if required_equipment_idx.has(equipment_slot.item.item_idx): # TODO allow actions that require combination of items
+				if required_equipment_idx.has(equipment_slot.item_idx): # TODO allow actions that require combination of items
 					user_has_equipment = true
 					break
 		

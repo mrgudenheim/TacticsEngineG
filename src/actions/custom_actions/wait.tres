@@ -1,6 +1,5 @@
-[gd_resource type="Resource" script_class="Action" load_steps=9 format=3 uid="uid://hfseiukq3qpk"]
+[gd_resource type="Resource" script_class="Action" load_steps=8 format=3 uid="uid://hfseiukq3qpk"]
 
-[ext_resource type="Script" uid="uid://cf5w02iml4cqu" path="res://src/items/item_data.gd" id="1_v43vl"]
 [ext_resource type="Script" uid="uid://dlaul7n568vti" path="res://src/actions/action.gd" id="2_22o4i"]
 [ext_resource type="Script" uid="uid://cpa42ca48we8h" path="res://src/actions/action_effect.gd" id="4_ltkoj"]
 [ext_resource type="Script" uid="uid://2y1mi77a2isp" path="res://src/actions/formula_data.gd" id="5_22o4i"]
@@ -42,7 +41,8 @@ metadata/_custom_type_script = "uid://cpa42ca48we8h"
 
 [resource]
 script = ExtResource("2_22o4i")
-id = 0
+action_id = 0
+action_idx = 0
 action_name = "Wait"
 description = "Ends turn"
 quote = "Action quote"
@@ -99,7 +99,7 @@ will_remove_status = false
 target_status_list_type = 1
 status_prevents_use_any = Array[int]([])
 required_equipment_type = Array[int]([])
-required_equipment = Array[ExtResource("1_v43vl")]([])
+required_equipment_idx = []
 required_target_job_id = Array[int]([])
 required_target_status_id = Array[int]([])
 animation_start_id = 0

@@ -250,7 +250,7 @@ func _init(idx: int = 0) -> void:
 					#new_secondary_action.mp_cost = 0
 					var chance: int = weapon_attack_action.secondary_actions_chances[secondary_action_idx]
 					weapon_attack_action.secondary_actions.append(new_secondary_action)
-					weapon_attack_action.secondary_actions2.append(Action.SecondaryAction.new(new_secondary_action, chance))
+					weapon_attack_action.secondary_actions2.append(Action.SecondaryAction.new(new_secondary_action.action_idx, chance))
 				
 				# TODO damage formula is WP (instead of MA) * ability Y
 				# TODO magic gun should probably use totally new Actions?, with WP*V1 formula, EvadeType.NONE, no costs, animation_ids = 0, etc., but where V1 and vfx are from the original action

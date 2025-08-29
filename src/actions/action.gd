@@ -99,11 +99,11 @@ var separate_status: bool = false
 var vfx_data: VisualEffectData
 
 class SecondaryAction:
-	var action: Action
+	var action_idx: int
 	var chance: int
 	
-	func _init(new_action: Action, new_chance: int) -> void:
-		action = new_action
+	func _init(new_action_idx: int, new_chance: int) -> void:
+		action_idx = new_action_idx
 		chance = new_chance
 
 @export var secondary_actions: Array[Action] = [] # skip right to applying ActionEffects to targets, but can use new FormulaData
@@ -154,7 +154,7 @@ func _init(new_idx: int = -1):
 		RomReader.actions.append(self)
 	else:
 		action_idx = new_idx
-		RomReader.actions[new_idx] = self
+		RomReader.actions[action_idx] = self
 		
 	emit_changed()
 
@@ -364,7 +364,7 @@ func apply_standard(action_instance: ActionInstance) -> void:
 				for secondary_action: SecondaryAction in secondary_actions2:
 					if rng < secondary_action.chance:
 						var secondary_action_instance: ActionInstance = action_instance.duplicate()
-						secondary_action_instance.action = secondary_action.action
+						secondary_action_instance.action = RomReader.actions[secondary_action.action_idx]
 						secondary_action_instance.use() # TODO do not use unit animations, don't check for hit again (when using magic gun)
 						break
 					else:
@@ -496,13 +496,13 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			secondary_action_list_type = StatusListType.RANDOM
 			
 			for secondary_action_idx: int in secondary_action_ids.size():
-				var new_secondary_action: Action = RomReader.abilities[secondary_action_ids[secondary_action_idx]].ability_action.duplicate(true) # abilities need to be initialized before items
-				new_secondary_action.area_of_effect_range = 0
-				new_secondary_action.target_effects[0].base_power_formula.formula = FormulaData.Formulas.WPxV1
-				new_secondary_action.mp_cost = 0
+				var new_action: Action = RomReader.abilities[secondary_action_ids[secondary_action_idx]].ability_action.duplicate(true) # abilities need to be initialized before items
+				new_action.area_of_effect_range = 0
+				new_action.target_effects[0].base_power_formula.formula = FormulaData.Formulas.WPxV1
+				new_action.mp_cost = 0
 				var chance: int = secondary_actions_chances[secondary_action_idx]
-				secondary_actions.append(new_secondary_action)
-				secondary_actions2.append(SecondaryAction.new(new_secondary_action, chance))
+				secondary_actions.append(new_action)
+				secondary_actions2.append(SecondaryAction.new(new_action.action_idx, chance))
 			
 			# TODO damage formula is WP (instead of MA) * ability Y
 			# TODO magic gun should probably use totally new Actions?, with WP*V1 formula, EvadeType.NONE, no costs, animation_ids = 0, etc., but where V1 and vfx are from the original action

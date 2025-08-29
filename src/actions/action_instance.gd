@@ -259,7 +259,7 @@ func get_secondary_actions_text(target: UnitData) -> String:
 	for secondary_action: Action.SecondaryAction in action.secondary_actions2:
 		var secondary_action_chance: String = str(secondary_action.chance) + "%"
 		#var secondary_action_effect_text: String = secondary_action.ac # TODO get effect text of secondary action?
-		var secondary_action_text: String = secondary_action_chance + " " + secondary_action.action.action_name
+		var secondary_action_text: String = secondary_action_chance + " " + RomReader.actions[secondary_action.action_idx].action_name
 		all_secondary_action_text.append(secondary_action_text)
 	
 	total_secondary_action_text += "\n".join(all_secondary_action_text)

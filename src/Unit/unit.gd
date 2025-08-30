@@ -592,6 +592,13 @@ func append_element_array_unique(current_array: Array[Action.ElementTypes], arra
 func start_turn(battle_manager: BattleManager) -> void:
 	battle_manager.game_state_label.text = job_nickname + "-" + unit_nickname + " starting turn"
 	is_ending_turn = false
+
+	for status_effect: StatusEffect in current_statuses:
+		if status_effect.action_on_turn_start != null:
+			var action_instance: ActionInstance = ActionInstance.new(RomReader.actions[status_effect.action_on_turn_start], self, battle_manager)
+			action_instance.submitted_targets = [tile_position] # TODO allow other targeting for status actions on turn start
+			await action_instance.use()
+
 	# set CT
 	stats[StatType.CT].add_value(-100)
 	
@@ -600,7 +607,7 @@ func start_turn(battle_manager: BattleManager) -> void:
 
 func update_actions(battle_manager: BattleManager) -> void:
 	if is_ending_turn:
-		end_turn()
+		await end_turn()
 		return
 	
 	if battle_manager.active_unit != self:
@@ -701,7 +708,7 @@ func select_first_action() -> void:
 	
 	# end turn when no actions left
 	if active_action == null or is_defeated:
-		end_turn()
+		await end_turn()
 	else:
 		if is_ai_controlled:
 			#await get_tree().process_frame
@@ -718,6 +725,12 @@ func end_turn():
 		active_action.clear()
 		active_action.stop_targeting()
 	
+	for status_effect: StatusEffect in current_statuses:
+		if status_effect.action_on_turn_end != null:
+			var action_instance: ActionInstance = ActionInstance.new(RomReader.actions[status_effect.action_on_turn_end], self, global_battle_manager)
+			action_instance.submitted_targets = [tile_position] # TODO allow other targeting for status actions on turn end
+			await action_instance.use()
+
 	# set some stats for next turn - move_points_remaining, action_points_remaining, etc.
 	move_points_remaining = move_points_start
 	action_points_remaining = action_points_start

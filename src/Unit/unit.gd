@@ -987,7 +987,9 @@ func use_ability(pos: Vector3) -> void:
 		await get_tree().create_timer(0.1 + (ability_data.ticks_charge_time * 0.1)).timeout
 	
 	#if ability_data.animation_executing_id != 0:
-	if ability_data.animation_executing_id == 0:
+	if ability_data.animation_executing_id < 0:
+		pass
+	elif ability_data.animation_executing_id == 0:
 		#animation_executing_id = 0x3e * 2 # TODO look up based on equiped weapon and target relative height
 		#animation_manager.unit_debug_menu.anim_id_spin.value = 0x3e * 2 # TODO look up based on equiped weapon and target relative height
 		#debug_menu.anim_id_spin.value = (RomReader.battle_bin_data.weapon_animation_ids[primary_weapon.item_type].y * 2) + int(is_back_facing) # TODO lookup based on target relative height

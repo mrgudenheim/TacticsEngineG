@@ -4,7 +4,7 @@
 	"action_name": "Dead to Crystal/Treasure",
 	"action_points_cost": 0,
 	"animation_charging_id": 0,
-	"animation_executing_id": 0,
+	"animation_executing_id": -1,
 	"animation_start_id": 0,
 	"aoe_has_vertical_tolerance": true,
 	"aoe_targeting_linear": false,

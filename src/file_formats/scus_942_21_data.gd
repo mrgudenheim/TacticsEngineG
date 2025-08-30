@@ -519,3 +519,19 @@ func init_statuses() -> void:
 	for idx: int in [39, 2]:
 		status_effects[idx].duration = 3
 		status_effects[idx].duration_type = StatusEffect.DurationType.TURNS
+	
+	# dead actions
+	status_effects[2].action_on_apply = 593 # dead damage
+	status_effects[2].action_on_complete = 594 # dead to crystal/treasure
+
+	# poison action
+	status_effects[24].action_on_turn_end = 596
+
+	# regen action
+	status_effects[25].action_on_turn_end = 597
+
+	# reraise action
+	status_effects[18].action_on_turn_start = 598
+
+	# death sentence action
+	status_effects[39].action_on_complete = 595

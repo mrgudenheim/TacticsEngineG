@@ -401,7 +401,7 @@ func process_clock_tick() -> void:
 					if status.action_on_complete >= 0: # process potential removal if ticks_left == 0
 						var status_action_instance: ActionInstance = ActionInstance.new(RomReader.actions[status.action_on_complete], unit, self)
 						status_action_instance.submitted_targets.append(unit.tile_position) # TODO get targets for status action
-						status_action_instance.use()
+						await status_action_instance.use()
 						# RomReader.actions[status.action_on_complete].use(status_action_instance)
 						camera_controller.follow_node = unit.char_body
 						game_state_label.text = unit.job_nickname + "-" + unit.unit_nickname + " processing " + status.status_effect_name + " ending"

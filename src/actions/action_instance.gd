@@ -295,12 +295,12 @@ func queue_use() -> void:
 		charging_status.duration_type = StatusEffect.DurationType.TICKS
 		if charging_status.delayed_action.action_completed.is_connected(charging_status.delayed_action.user.update_actions):
 			charging_status.delayed_action.action_completed.disconnect(charging_status.delayed_action.user.update_actions)
-		user.add_status(charging_status)
+		await user.add_status(charging_status)
 		
 		stop_targeting()
 		action_completed.emit(battle_manager)
 	else:
-		use()
+		await use()
 
 
 func use() -> void:

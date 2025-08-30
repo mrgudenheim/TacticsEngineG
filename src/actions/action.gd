@@ -368,7 +368,7 @@ func apply_standard(action_instance: ActionInstance) -> void:
 					target_unit.animate_recieve_heal(vfx_data)
 			
 			# apply status
-			apply_status(target_unit, target_status_list, target_status_list_type)
+			await apply_status(target_unit, target_status_list, target_status_list_type)
 			
 			# TODO apply secondary action
 			if secondary_action_list_type == StatusListType.RANDOM:
@@ -380,7 +380,7 @@ func apply_standard(action_instance: ActionInstance) -> void:
 					if rng < secondary_action.chance:
 						var secondary_action_instance: ActionInstance = action_instance.duplicate()
 						secondary_action_instance.action = RomReader.actions[secondary_action.action_idx]
-						secondary_action_instance.use() # TODO do not use unit animations, don't check for hit again (when using magic gun)
+						await secondary_action_instance.use() # TODO do not use unit animations, don't check for hit again (when using magic gun)
 						break
 					else:
 						rng -= secondary_action.chance
@@ -427,8 +427,8 @@ func apply_status(unit: UnitData, status_list: Array[int], status_list_type: Sta
 					unit.remove_status_id(status_id)
 					unit.show_popup_text(RomReader.status_effects[status_id].status_effect_name) # TODO different text for removing status
 				elif not will_remove_status:
-					unit.add_status(RomReader.status_effects[status_id].duplicate())
 					unit.show_popup_text(RomReader.status_effects[status_id].status_effect_name)
+					await unit.add_status(RomReader.status_effects[status_id].duplicate())
 	elif status_list_type == StatusListType.EACH:
 		for status_id: int in status_list:
 			var status_success: bool = randi_range(0, 99) < status_chance
@@ -437,8 +437,8 @@ func apply_status(unit: UnitData, status_list: Array[int], status_list_type: Sta
 					unit.remove_status_id(status_id)
 					unit.show_popup_text(RomReader.status_effects[status_id].status_effect_name) # TODO different text for removing status
 				elif not will_remove_status:
-					unit.add_status(RomReader.status_effects[status_id].duplicate())
 					unit.show_popup_text(RomReader.status_effects[status_id].status_effect_name)
+					await unit.add_status(RomReader.status_effects[status_id].duplicate())
 	elif status_list_type == StatusListType.RANDOM:
 		var status_success: bool = randi_range(0, 99) < status_chance
 		if status_success:
@@ -452,8 +452,8 @@ func apply_status(unit: UnitData, status_list: Array[int], status_list_type: Sta
 				var addable_status_list: Array[int] = status_list.filter(func(status_id: int): return not unit.current_status_ids.has(status_id))
 				if not addable_status_list.is_empty():
 					var status_id: int = addable_status_list.pick_random()
-					unit.add_status(RomReader.status_effects[status_id].duplicate())
 					unit.show_popup_text(RomReader.status_effects[status_id].status_effect_name)
+					await unit.add_status(RomReader.status_effects[status_id].duplicate())
 
 
 func show_vfx(action_instance: ActionInstance, position: Vector3) -> Node3D:

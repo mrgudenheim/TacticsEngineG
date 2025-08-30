@@ -746,9 +746,9 @@ func end_turn():
 
 func hp_changed(clamped_value: ClampedValue) -> void:
 	if stats[StatType.HP].current_value == 0:
-		add_status(RomReader.status_effects[2].duplicate()) # add dead
+		await add_status(RomReader.status_effects[2].duplicate()) # add dead
 	elif stats[StatType.HP].current_value < stats[StatType.HP].max_value / 5: # critical
-		add_status(RomReader.status_effects[23].duplicate()) # add critical
+		await add_status(RomReader.status_effects[23].duplicate()) # add critical
 	elif stats[StatType.HP].current_value >= stats[StatType.HP].max_value / 5: # critical
 		remove_status_id(23) # remove critical
 
@@ -770,6 +770,12 @@ func add_status(new_status: StatusEffect) -> void:
 			return # if already has max stack of status and they are all permanent
 	
 	current_statuses.append(new_status)
+	# use action_on_apply
+	if new_status.action_on_apply >= 0:
+		var action_instance: ActionInstance = ActionInstance.new(RomReader.actions[new_status.action_on_apply], self, global_battle_manager)
+		action_instance.submitted_targets = [tile_position] # TODO allow other targeting for status actions on turn end
+		await action_instance.use()
+
 	for stat: StatType in new_status.passive_effect.stat_modifiers.keys():
 		stats[stat].add_modifier(new_status.passive_effect.stat_modifiers[stat])
 	
@@ -830,7 +836,7 @@ func update_permanent_statuses() -> void:
 			for counter: int in change:
 				var new_status: StatusEffect = RomReader.status_effects[status_id].duplicate()
 				new_status.duration_type = StatusEffect.DurationType.PERMANENT
-				add_status(new_status)
+				await add_status(new_status)
 		elif change < 0:
 			for counter: int in -change:
 				var status_to_remove: StatusEffect = current_permanent[-counter - 1] # remove most recent permanent stack

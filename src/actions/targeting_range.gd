@@ -82,7 +82,7 @@ func start_targeting(action_instance: ActionInstance) -> void:
 	else: # TODO auto targeting for reactions and all enimies/allies for dance/sing?
 		action_instance.preview_targets.append(action_instance.user.tile_position)
 		action_instance.submitted_targets = action_instance.preview_targets
-		action_instance.queue_use()
+		await action_instance.queue_use()
 
 
 func stop_targeting(action_instance: ActionInstance) -> void:
@@ -144,7 +144,7 @@ func target_tile(tile: TerrainTile, action_instance: ActionInstance, event: Inpu
 	if event.is_action_pressed("primary_action"):
 		action_instance.submitted_targets = action_instance.preview_targets
 		#action_instance.submitted_targets.append(tile)
-		action_instance.queue_use()
+		await action_instance.queue_use()
 		return
 
 

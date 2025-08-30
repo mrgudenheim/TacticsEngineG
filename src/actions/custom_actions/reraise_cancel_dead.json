@@ -42,7 +42,8 @@
 	"hit_chance_modified_by_passive": false,
 	"ignores_statuses": [
 		26,
-		27
+		27,
+		2
 	],
 	"is_math_usable": false,
 	"is_mimicable": false,

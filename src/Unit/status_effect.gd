@@ -26,12 +26,12 @@ enum DurationType {
 	PERMANENT,
 }
 @export var duration_type: DurationType = DurationType.TICKS
-@export var action_on_turn_start: int
-@export var action_on_turn_end: int
-@export var action_on_x_ticks: int # performing
-@export var x_ticks: int
-@export var action_on_apply: int # dead sets current_hp = 0
-@export var action_on_complete: int # dead -> crystal/treasure, death sentence, charging?
+@export var action_on_turn_start: int = -1
+@export var action_on_turn_end: int = -1
+@export var action_on_x_ticks: int = -1 # performing
+@export var x_ticks: int = -1
+@export var action_on_apply: int = -1 # dead sets current_hp = 0
+@export var action_on_complete: int = -1 # dead -> crystal/treasure, death sentence, charging?
 var delayed_action: ActionInstance # charging
 @export var num_allowed: int = 1
 @export var removed_on_damaged: bool = false # TODO should these statuses instead be included in actions remove_status list? ex. sleep

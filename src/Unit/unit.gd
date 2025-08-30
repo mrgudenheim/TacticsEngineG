@@ -594,7 +594,7 @@ func start_turn(battle_manager: BattleManager) -> void:
 	is_ending_turn = false
 
 	for status_effect: StatusEffect in current_statuses:
-		if status_effect.action_on_turn_start != null:
+		if status_effect.action_on_turn_start >= 0:
 			var action_instance: ActionInstance = ActionInstance.new(RomReader.actions[status_effect.action_on_turn_start], self, battle_manager)
 			action_instance.submitted_targets = [tile_position] # TODO allow other targeting for status actions on turn start
 			await action_instance.use()
@@ -726,7 +726,7 @@ func end_turn():
 		active_action.stop_targeting()
 	
 	for status_effect: StatusEffect in current_statuses:
-		if status_effect.action_on_turn_end != null:
+		if status_effect.action_on_turn_end >= 0:
 			var action_instance: ActionInstance = ActionInstance.new(RomReader.actions[status_effect.action_on_turn_end], self, global_battle_manager)
 			action_instance.submitted_targets = [tile_position] # TODO allow other targeting for status actions on turn end
 			await action_instance.use()

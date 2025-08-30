@@ -26,15 +26,15 @@ enum DurationType {
 	PERMANENT,
 }
 @export var duration_type: DurationType = DurationType.TICKS
-@export var action_on_turn_start: Action
-@export var action_on_turn_end: Action
-@export var action_on_x_ticks: Action # performing
+@export var action_on_turn_start: int
+@export var action_on_turn_end: int
+@export var action_on_x_ticks: int # performing
 @export var x_ticks: int
-@export var action_on_apply: Action # dead sets current_hp = 0
-@export var action_on_complete: Action # dead -> crystal/treasure, death sentence, charging?
+@export var action_on_apply: int # dead sets current_hp = 0
+@export var action_on_complete: int # dead -> crystal/treasure, death sentence, charging?
 var delayed_action: ActionInstance # charging
 @export var num_allowed: int = 1
-@export var removed_on_damaged: bool = false # TODO should these statuses instead be included in actions remove_status list?
+@export var removed_on_damaged: bool = false # TODO should these statuses instead be included in actions remove_status list? ex. sleep
 @export var ai_score_formula: FormulaData = FormulaData.new(FormulaData.Formulas.TARGET_CURRENT_HPxV1)
 
 var visual_effect # TODO icons, sprite coloring, spritesheet, animation (haste, dead, etc.), float, etc.

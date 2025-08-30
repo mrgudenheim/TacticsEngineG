@@ -33,7 +33,7 @@
 	"cant_hit_enimies": false,
 	"cant_hit_user": false,
 	"cant_target_self": false,
-	"description": "Dead unit stands back up",
+	"description": "Dead unit stands back up with 10% max hp",
 	"display_action_name": true,
 	"element": 0,
 	"ends_turn": false,

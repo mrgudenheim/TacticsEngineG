@@ -1253,7 +1253,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.LEVEL))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
 			target_effects[0].base_power_formula.values[0] = 1
-			target_effects[0].base_power_formula.reverse_sign = true # add
+			target_effects[0].base_power_formula.reverse_sign = false # add
 		0x58:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			

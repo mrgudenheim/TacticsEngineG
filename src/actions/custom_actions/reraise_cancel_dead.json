@@ -67,7 +67,29 @@
 	"set_target_animation_on_hit": true,
 	"status_chance": 100,
 	"status_prevents_use_any": [],
-	"target_effects": [],
+	"target_effects": [
+		{
+			"apply_to_user": false,
+			"base_power_formula": {
+				"formula": 26,
+				"is_modified_by_element": true,
+				"is_modified_by_zodiac": false,
+				"reverse_sign": true,
+				"target_faith_modifier": 0,
+				"user_faith_modifier": 0,
+				"values": [
+					0.10,
+					0.0
+				]
+			},
+			"effect_stat_type": 0,
+			"label": "",
+			"set_value": false,
+			"show_ui": true,
+			"transfer_to_user": false,
+			"type": 0
+		}
+	],
 	"target_status_list": [
 		2
 	],

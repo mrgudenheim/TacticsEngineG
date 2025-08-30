@@ -74,7 +74,7 @@
 				"formula": 26,
 				"is_modified_by_element": true,
 				"is_modified_by_zodiac": false,
-				"reverse_sign": true,
+				"reverse_sign": false,
 				"target_faith_modifier": 0,
 				"user_faith_modifier": 0,
 				"values": [

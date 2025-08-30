@@ -730,6 +730,16 @@ func end_turn():
 			var action_instance: ActionInstance = ActionInstance.new(RomReader.actions[status_effect.action_on_turn_end], self, global_battle_manager)
 			action_instance.submitted_targets = [tile_position] # TODO allow other targeting for status actions on turn end
 			await action_instance.use()
+		
+		if status_effect.duration_type == StatusEffect.DurationType.TURNS:
+			status_effect.duration -= 1
+			if status_effect.duration < 0 and status_effect.action_on_complete >= 0:
+				var status_action_instance: ActionInstance = ActionInstance.new(RomReader.actions[status_effect.action_on_complete], self, global_battle_manager)
+				status_action_instance.submitted_targets.append(tile_position) # TODO get targets for status action
+				global_battle_manager.game_state_label.text = job_nickname + "-" + unit_nickname + " processing " + status_effect.status_effect_name + " completing"
+				await status_action_instance.use()
+
+				remove_status(status_effect)
 
 	# set some stats for next turn - move_points_remaining, action_points_remaining, etc.
 	move_points_remaining = move_points_start
@@ -911,16 +921,19 @@ func update_status_visuals() -> void:
 		if shading_priority == 0:
 			animation_manager.unit_sprites_manager.sprite_primary.modulate = Color.WHITE
 		
+		if spritesheet_priority == 0:
+			set_sprite_by_job_id(job_id)
+		else:
+			set_sprite_by_file_name(spritesheet_status.spritesheet_file_name)
+
+		# palette update must come after spritesheet change to make sure palettes are taken from correct spritesheet
 		if other_type_priority == 0:
 			animation_manager.other_type_index = 0
 		else:
 			animation_manager.other_type_index = other_type_status.other_type_index
 			set_sprite_palette_override(sprite_palette_id + other_type_status.palette_idx_offset)
 		
-		if spritesheet_priority == 0:
-			set_sprite_by_job_id(job_id)
-		else:
-			set_sprite_by_file_name(spritesheet_status.spritesheet_file_name)
+		
 
 
 func use_attack() -> void:

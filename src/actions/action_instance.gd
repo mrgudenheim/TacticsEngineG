@@ -130,16 +130,39 @@ func get_target_units(target_tiles: Array[TerrainTile]) -> Array[UnitData]:
 	var target_units: Array[UnitData] = []
 	for target_tile: TerrainTile in target_tiles:
 		var units_on_tile: Array[UnitData] = battle_manager.units.filter(func(unit: UnitData): return unit.tile_position == target_tile)
-		units_on_tile = units_on_tile.filter(
-			func(unit: UnitData): return unit.get_nullify_statuses().is_empty() or unit.get_nullify_statuses().any(
-				func(status: StatusEffect): return action.will_remove_status and action.target_status_list.has(status.status_id))) # ignore action unless it would remove nullify
-		target_units.append_array(units_on_tile)
+		
+		for unit: UnitData in units_on_tile:
+			if unit.get_nullify_statuses().is_empty():
+				target_units.append(unit)
+				continue
+			
+			var action_ignores_all_null_statuses: bool = unit.get_nullify_statuses().all(
+				func(status: StatusEffect): return action.ignores_statuses.has(status.status_id))
+			var action_removes_null_status: bool = unit.get_nullify_statuses().any(
+				func(status: StatusEffect): return action.will_remove_status and action.target_status_list.has(status.status_id)) # ignore action unless it would remove nullify
+		
+			if action_ignores_all_null_statuses or action_removes_null_status:
+				target_units.append(unit)
+
+		# units_on_tile = units_on_tile.filter(
+		# 	func(unit: UnitData): return unit.get_nullify_statuses().is_empty() or action_ignores_all_null_statuses(unit) or action_removes_null_status(unit))
+		# target_units.append_array(units_on_tile)
 		#if unit_index == -1:
 			#continue
 		#var target_unit: UnitData = battle_manager.units[unit_index]
 		#target_units.append(target_unit)
 	
 	return target_units
+
+
+# func action_ignores_all_null_statuses(unit: UnitData) -> bool:
+# 	return unit.get_nullify_statuses().all(
+# 			func(status: StatusEffect): return action.ignores_statuses.has(status.status_id))
+
+
+# func action_removes_null_status(unit: UnitData) -> bool:
+# 	return unit.get_nullify_statuses().any(
+# 			func(status: StatusEffect): return action.will_remove_status and action.target_status_list.has(status.status_id)) # ignore action unless it would remove nullify
 
 
 func get_ai_score() -> int:

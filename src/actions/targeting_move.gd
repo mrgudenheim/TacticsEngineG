@@ -85,7 +85,7 @@ func target_tile(tile: TerrainTile, action_instance: ActionInstance, event: Inpu
 					push_error(action_instance.user.unit_nickname + " trying to use Move without any targets")
 				
 				#action_instance.submitted_targets.append(tile)
-				action_instance.queue_use()
+				await action_instance.queue_use()
 				return
 
 # TODO allow cost based on Unit Move value or action range value, allow vertical jumping or horizontal leapint to use a parameter or unit stat

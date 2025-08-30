@@ -18,7 +18,7 @@ enum EffectType {
 	REMOVE_EQUIPMENT, # Steal if transfer = true
 	#PHYSICAL_EVADE, 
 	#MAGIC_EVADE,
-	}
+}
 
 
 func _init(new_type: EffectType = EffectType.UNIT_STAT, new_effect_stat: UnitData.StatType = UnitData.StatType.HP, new_show_ui: bool = true, new_transfer_to_user: bool = false, new_set_value: bool = false) -> void:

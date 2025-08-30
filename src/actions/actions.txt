@@ -133,19 +133,19 @@ enum ElementTypes {
 	ICE = 0x20,
 	LIGHTNING = 0x40,
 	FIRE = 0x80,
-	}
+}
 
 enum StatusListType {
 	ALL,
 	EACH,
 	RANDOM,
-	}
+}
 
 enum FaithModifier {
 	NONE,
 	FAITH,
 	UNFAITH,
-	}
+}
 
 enum Formulas {
 0	UNMODIFIED,
@@ -183,7 +183,7 @@ enum Formulas {
 32	TARGET_MISSING_HPxV1,
 33	TARGET_CURRENT_HPxV1,
 34	RANDOM_V1_V2,
-	}
+}
 
 
 #Status Set 1

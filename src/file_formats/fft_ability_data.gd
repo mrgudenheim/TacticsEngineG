@@ -21,7 +21,7 @@ enum AbilityType {
 	UNKNOWN4,
 	UNKNOWN5,
 	UNKNOWN6,
-	}
+}
 
 var id: int = 0
 var name: String = "ability name"

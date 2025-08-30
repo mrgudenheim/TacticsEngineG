@@ -91,7 +91,7 @@ enum SlotType {
 	ARMOR = 0x10,
 	ACCESSORY = 0x08,
 	NONE = 0x04,
-	}
+}
 
 enum ItemType {
 	FISTS = 0,
@@ -129,7 +129,7 @@ enum ItemType {
 	SHURIKEN,
 	BALL,
 	CONSUMABLE_ITEM,
-	}
+}
 
 # In SCUS data tables
 func _init(idx: int = 0) -> void:

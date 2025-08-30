@@ -96,7 +96,7 @@ var walled_maps: PackedInt32Array = [
 	95,
 	96,
 	104,
-	]
+]
 
 const SCALE: float = 1.0 / MapData.TILE_SIDE_LENGTH
 const SCALED_UNITS_PER_HEIGHT: float = SCALE * MapData.UNITS_PER_HEIGHT

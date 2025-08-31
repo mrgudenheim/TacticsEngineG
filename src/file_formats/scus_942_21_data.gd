@@ -513,7 +513,7 @@ func init_statuses() -> void:
 	# treasure
 	status_effects[15].spritesheet_file_name = "OTHER.SPR"
 	status_effects[15].palette_idx_offset = 16 # TODO treasure is actually palettes 16-20 depending on original palette
-	status_effects[1].other_type_index = 0
+	status_effects[15].other_type_index = 0
 
 	# death sentence, dead
 	for idx: int in [39, 2]:

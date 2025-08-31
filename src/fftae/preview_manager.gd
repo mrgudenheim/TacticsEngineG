@@ -97,7 +97,7 @@ func _on_weapon_options_item_selected(index: int) -> void:
 func _on_other_type_selected(index: int) -> void:
 	#unit.animation_manager._on_weapon_options_item_selected(index)
 	#unit.animation_manager.weapon_id = index
-	unit.animation_manager.other_type_index = index # TODO other_type_index should probably be car on Unit, set by status?
+	unit.animation_manager.other_type_index = index # TODO other_type_index should probably be var on Unit, set by status?
 	#unit.debug_menu.weapon_options.select(index)
 
 

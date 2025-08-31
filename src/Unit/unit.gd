@@ -921,16 +921,18 @@ func update_status_visuals() -> void:
 		if shading_priority == 0:
 			animation_manager.unit_sprites_manager.sprite_primary.modulate = Color.WHITE
 		
+		if other_type_priority == 0:
+			animation_manager.other_type_index = 0
+		else:
+			animation_manager.other_type_index = other_type_status.other_type_index
+		
 		if spritesheet_priority == 0:
 			set_sprite_by_job_id(job_id)
 		else:
 			set_sprite_by_file_name(spritesheet_status.spritesheet_file_name)
 
 		# palette update must come after spritesheet change to make sure palettes are taken from correct spritesheet
-		if other_type_priority == 0:
-			animation_manager.other_type_index = 0
-		else:
-			animation_manager.other_type_index = other_type_status.other_type_index
+		if other_type_priority != 0:
 			set_sprite_palette_override(sprite_palette_id + other_type_status.palette_idx_offset)
 		
 		
@@ -1136,7 +1138,7 @@ func animate_return_to_idle() -> void:
 	# add random delay to prevent unit animations from syncing
 	# Talcall: if changing animation to one of the walking animations (anything less than 0xC) it checks the unit ID && 0x3 against the event timer. if they are equal, start animating the unit. else... don't animate the unit.
 	var desync_delay: float = randf_range(0.0, 0.25)
-	await  get_tree().create_timer(desync_delay).timeout 
+	await get_tree().create_timer(desync_delay).timeout 
 	
 	set_base_animation_ptr_id(current_idle_animation_id)
 

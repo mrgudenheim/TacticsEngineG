@@ -185,7 +185,7 @@ func is_usable(action_instance: ActionInstance) -> bool:
 		var user_has_enough_move_points: bool = action_instance.user.move_points_remaining >= action_instance.action.move_points_cost
 		var user_has_enough_action_points: bool = action_instance.user.action_points_remaining >= action_instance.action.action_points_cost
 		var user_has_enough_mp: bool = action_instance.user.mp_current >= action_instance.action.mp_cost
-		var user_has_equipment_type: bool = required_equipment_type.is_empty() or required_equipment_type.has(action_instance.user.primary_weapon.item_type) # TODO check all unit.equipped, not just primary_weapon
+		var user_has_equipment_type: bool = required_equipment_type.is_empty() or required_equipment_type.has(action_instance.user.primary_weapon.item_type) # TODO check all unit.equip_slots, not just primary_weapon
 		var user_has_equipment: bool = false
 		if required_equipment_idx.is_empty():
 			user_has_equipment = true

@@ -67,7 +67,6 @@ var support_ability: Array = []
 var movement_ability: Array = []
 
 var primary_weapon: ItemData
-var equipped: Array[ItemData] = []
 var equip_slots: Array[EquipmentSlot] = [
 	EquipmentSlot.new("RH", [ItemData.SlotType.WEAPON, ItemData.SlotType.SHIELD]),
 	EquipmentSlot.new("LH", [ItemData.SlotType.WEAPON, ItemData.SlotType.SHIELD]),
@@ -334,16 +333,6 @@ func _ready() -> void:
 	stats[StatType.HP_MAX].changed.connect(stats[StatType.HP].update_max_from_clamped_value)
 	stats[StatType.MP_MAX].changed.connect(stats[StatType.MP].update_max_from_clamped_value)
 	stats[StatType.HP].changed.connect(hp_changed)
-	
-	#equipped.resize(5)
-	#equipped.fill(RomReader.items[0])
-	var item_ids: PackedInt32Array = [
-		1, # dagger
-		0x85, # gold shield
-		#0xe9, # dracula mantle
-		]
-	for item_id: int in item_ids:
-		equipped.append(RomReader.items[item_id])
 	
 	cycle_status_icons()
 	
@@ -1267,7 +1256,6 @@ func set_ability(new_ability_id: int) -> void:
 
 func set_primary_weapon(new_weapon_id: int) -> void:
 	primary_weapon = RomReader.items[new_weapon_id]
-	equipped[0] = primary_weapon
 	#animation_manager.weapon_id = new_weapon_id
 	#var weapon_palette_id = RomReader.battle_bin_data.weapon_graphic_palettes_1[primary_weapon.id]
 	animation_manager.unit_sprites_manager.sprite_weapon.texture = animation_manager.wep_spr.create_frame_grid_texture(
@@ -1322,15 +1310,6 @@ func cycle_status_icons() -> void:
 				#status_idx = 0
 
 
-func change_equipment(slot_id: int, new_equipment: ItemData) -> void:
-	if new_equipment == null: # used by RemoveEquipment action effect?
-		equipped[slot_id] = RomReader.items[0] 
-	else:
-		equipped[slot_id] = new_equipment
-	
-	# TODO update stats and/or weapon
-
-
 func get_evade(evade_source: EvadeData.EvadeSource, evade_type: EvadeData.EvadeType, evade_direction: EvadeData.Directions) -> int:
 	var evade: int = 0
 	
@@ -1340,8 +1319,8 @@ func get_evade(evade_source: EvadeData.EvadeSource, evade_type: EvadeData.EvadeT
 				and evade_data.directions.has(evade_direction)):
 			evade += evade_data.value
 	
-	for equipment: ItemData in equipped:
-		for evade_data: EvadeData in equipment.evade_datas:
+	for equip_slot: EquipmentSlot in equip_slots:
+		for evade_data: EvadeData in RomReader.items[equip_slot.item_idx].evade_datas:
 			if (evade_data.source == evade_source 
 					and evade_data.type == evade_type
 					and evade_data.directions.has(evade_direction)):

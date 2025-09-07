@@ -95,7 +95,8 @@ func apply_value(apply_unit: UnitData, value: int) -> int:
 			else:
 				apply_unit.team.inventory[0] += value # TODO get inventory item id to change
 		EffectType.REMOVE_EQUIPMENT:
-			apply_unit.change_equipment(0, null) # TODO get equipment slot id to change
+			pass
+			# TODO implement action_effect removing equipment from unit.equip_slot
 	
 	var effect_text: String = get_text(value)
 	apply_unit.show_popup_text(effect_text)

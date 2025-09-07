@@ -297,8 +297,9 @@ func add_test_teams_to_map() -> void:
 		#0x51, # time mage
 		#0x55, # oracle
 		#0x49, # arch angel
-		0x5f, # black chocobo
+		#0x5f, # black chocobo
 		0x7b, # wildbow
+		0x8D, # tiamat
 		]
 	
 	for specific_job: int in specific_jobs:

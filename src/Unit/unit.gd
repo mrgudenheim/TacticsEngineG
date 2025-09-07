@@ -1255,6 +1255,7 @@ func set_ability(new_ability_id: int) -> void:
 
 
 func set_primary_weapon(new_weapon_id: int) -> void:
+	equip_slots[0].item_idx = new_weapon_id
 	primary_weapon = RomReader.items[new_weapon_id]
 	#animation_manager.weapon_id = new_weapon_id
 	#var weapon_palette_id = RomReader.battle_bin_data.weapon_graphic_palettes_1[primary_weapon.id]

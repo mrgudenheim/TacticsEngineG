@@ -83,12 +83,14 @@ enum Formulas {
 
 func _init(new_formula: Formulas = Formulas.UNMODIFIED, new_values: PackedFloat64Array = [1, 1], 
 		new_user_faith_modifier: FaithModifier = FaithModifier.NONE, new_target_faith_modifier: FaithModifier = FaithModifier.NONE, 
-		new_modified_by_element: bool = true, new_reverse_sign = true) -> void:
+		new_modified_by_element: bool = true, new_modified_by_zodiac: bool = true, 
+		new_reverse_sign = true) -> void:
 	formula = new_formula
 	values = new_values
 	user_faith_modifier = new_user_faith_modifier
 	target_faith_modifier = new_target_faith_modifier
 	is_modified_by_element = new_modified_by_element
+	is_modified_by_zodiac = new_modified_by_zodiac
 	reverse_sign = new_reverse_sign
 
 

@@ -76,7 +76,7 @@ var inflict_status_id: int = 0
 
 @export var element: ElementTypes = ElementTypes.NONE
 
-@export var base_hit_formula: FormulaData = FormulaData.new(FormulaData.Formulas.UNMODIFIED, [100, 0], FormulaData.FaithModifier.NONE, FormulaData.FaithModifier.NONE, true, false)
+@export var base_hit_formula: FormulaData = FormulaData.new(FormulaData.Formulas.UNMODIFIED, [100, 0], FormulaData.FaithModifier.NONE, FormulaData.FaithModifier.NONE, false, false, false)
 
 @export var healing_damages_undead: bool = false
 # @export var ignores_statuses: Array[int] = []
@@ -565,7 +565,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.values[0] = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
-			
+			base_hit_formula.is_modified_by_element = true
+			base_hit_formula.is_modified_by_zodiac = true
+
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
 			target_effects[0].base_power_formula.values[0] = formula_y / 100.0
@@ -580,6 +582,8 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.values[0] = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
+			base_hit_formula.is_modified_by_element = true
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			ignores_statuses.remove_at(1)
@@ -591,6 +595,8 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.values[0] = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
+			base_hit_formula.is_modified_by_element = true
+			base_hit_formula.is_modified_by_zodiac = true
 		0x0c:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
@@ -607,6 +613,8 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.values[0] = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
+			base_hit_formula.is_modified_by_element = true
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
@@ -620,6 +628,8 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.values[0] = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
+			base_hit_formula.is_modified_by_element = true
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			status_chance = 100
 			
@@ -637,6 +647,8 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.values[0] = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
+			base_hit_formula.is_modified_by_element = true
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.MP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_MPxV1
@@ -653,6 +665,8 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.values[0] = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
+			base_hit_formula.is_modified_by_element = true
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
@@ -671,6 +685,8 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.values[0] = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
+			base_hit_formula.is_modified_by_element = true
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.CT))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
@@ -685,6 +701,8 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.values[0] = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
+			base_hit_formula.is_modified_by_element = true
+			base_hit_formula.is_modified_by_zodiac = true
 		0x15:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
@@ -692,6 +710,8 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.values[0] = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
+			base_hit_formula.is_modified_by_element = true
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.CT))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
@@ -708,6 +728,8 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.values[0] = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
+			base_hit_formula.is_modified_by_element = true
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.MP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_CURRENT_MP_minus_V1
@@ -723,6 +745,8 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.values[0] = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
+			base_hit_formula.is_modified_by_element = true
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_CURRENT_HP_minus_V1
@@ -740,6 +764,8 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.values[0] = formula_y
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
+			base_hit_formula.is_modified_by_element = true
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.PHYSICAL_ATTACK)) # TODO MAGICAL_ATTACK or SPEED dependent on ability ID?
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
@@ -755,6 +781,8 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.values[0] = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
+			base_hit_formula.is_modified_by_element = true
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.MP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_MPxV1
@@ -822,8 +850,6 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x22:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
-			base_hit_formula.formula = FormulaData.Formulas.UNMODIFIED
-			base_hit_formula.values[0] = 100
 			# TODO chance to decrease inventory
 		0x23:
 			applicable_evasion = EvadeData.EvadeType.NONE
@@ -846,6 +872,8 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x25:
 			base_hit_formula.formula = FormulaData.Formulas.PA_plus_WP_plus_V1
 			base_hit_formula.values[0] = formula_x
+			base_hit_formula.is_modified_by_zodiac = true
+
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.REMOVE_EQUIPMENT))
 			# TODO set equipement slod id based on ability id?
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
@@ -854,6 +882,8 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x26:
 			base_hit_formula.formula = FormulaData.Formulas.SP_plus_V1
 			base_hit_formula.values[0] = formula_x
+			base_hit_formula.is_modified_by_zodiac = true
+
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.REMOVE_EQUIPMENT))
 			target_effects[0].transfer_to_user = true
 			# TODO set equipement slod id based on ability id?
@@ -864,6 +894,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x27:
 			base_hit_formula.formula = FormulaData.Formulas.SP_plus_V1
 			base_hit_formula.values[0] = formula_x
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.LVLxSPxV1
@@ -876,6 +907,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x28:
 			base_hit_formula.formula = FormulaData.Formulas.SP_plus_V1
 			base_hit_formula.values[0] = formula_x
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.EXP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MIN_TARGET_EXP_or_SP_plus_V1
@@ -891,11 +923,13 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			# TODO hit chance based on gender
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.values[0] = formula_x
+			base_hit_formula.is_modified_by_zodiac = true
 		0x2a:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.values[0] = formula_x
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.BRAVE))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
@@ -905,6 +939,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x2b:
 			base_hit_formula.formula = FormulaData.Formulas.PA_plus_V1
 			base_hit_formula.values[0] = formula_y
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.SPEED))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
@@ -917,6 +952,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x2c:
 			base_hit_formula.formula = FormulaData.Formulas.PA_plus_V1
 			base_hit_formula.values[0] = formula_y
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.MP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
@@ -984,6 +1020,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			base_hit_formula.formula = FormulaData.Formulas.PA_plus_V1
 			base_hit_formula.values[0] = formula_x
+			base_hit_formula.is_modified_by_zodiac = true
 		0x34:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
@@ -1001,6 +1038,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			base_hit_formula.formula = FormulaData.Formulas.PA_plus_V1
 			base_hit_formula.values[0] = formula_x
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
@@ -1067,6 +1105,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.values[0] = formula_x
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			ignores_statuses.remove_at(1)
@@ -1082,6 +1121,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			base_hit_formula.formula = FormulaData.Formulas.SP_plus_V1
 			base_hit_formula.values[0] = formula_x
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
 			ignores_statuses.remove_at(0)
@@ -1091,6 +1131,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			base_hit_formula.formula = FormulaData.Formulas.SP_plus_V1
 			base_hit_formula.values[0] = formula_x
+			base_hit_formula.is_modified_by_zodiac = true
 			# TODO only hit undead? or chosen status?
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
@@ -1101,6 +1142,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.values[0] = formula_x
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			ignores_statuses.remove_at(1)
@@ -1194,6 +1236,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x4d:
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.values[0] = formula_x
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
@@ -1215,6 +1258,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x4f:
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.values[0] = formula_x
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.USER_MISSING_HPxV1
@@ -1227,6 +1271,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x50:
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.values[0] = formula_x
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
 			ignores_statuses.remove_at(0)
@@ -1236,6 +1281,8 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.values[0] = formula_x
+			base_hit_formula.is_modified_by_element = true # TODO only Strengthen element?
+			base_hit_formula.is_modified_by_zodiac = true
 		0x52:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
@@ -1253,6 +1300,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.values[0] = formula_x
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
@@ -1273,6 +1321,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.values[0] = formula_x
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.PHYSICAL_ATTACK))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
@@ -1286,6 +1335,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.values[0] = formula_x
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.MAGIC_ATTACK))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
@@ -1306,6 +1356,8 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.values[0] = formula_x
+			base_hit_formula.is_modified_by_element = true # TODO element Strengthen only
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			# TODO set MORBOL
 		0x59:
@@ -1313,6 +1365,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.values[0] = formula_x
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.LEVEL))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
@@ -1391,6 +1444,8 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.values[0] = formula_x
 			base_hit_formula.user_faith_modifier = FormulaData.FaithModifier.FAITH
 			base_hit_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
+			base_hit_formula.is_modified_by_element = true
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.BRAVE))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED
@@ -1404,6 +1459,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.values[0] = formula_x
+			base_hit_formula.is_modified_by_zodiac = true
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.BRAVE))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.UNMODIFIED

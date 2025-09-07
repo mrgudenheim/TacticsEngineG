@@ -21,6 +21,7 @@ extends Resource
 
 @export var move: int = 3
 @export var jump: int = 3
+@export var can_be_walked_on: bool = false
 @export var evade_physical: int = 0
 @export var evade_datas: Array[EvadeData] = []
 
@@ -84,7 +85,8 @@ func _init(new_job_id: int, job_bytes: PackedByteArray) -> void:
 	ma_multiplier = job_bytes.decode_u8(0x16)
 	
 	move = job_bytes.decode_u8(0x17)
-	jump = job_bytes.decode_u8(0x18)
+	jump = job_bytes.decode_u8(0x18) & 127
+	can_be_walked_on = job_bytes.decode_u8(0x18) & 128
 	evade_physical = job_bytes.decode_u8(0x19)
 	evade_datas.append(EvadeData.new(evade_physical, EvadeData.EvadeSource.JOB, EvadeData.EvadeType.PHYSICAL))
 	

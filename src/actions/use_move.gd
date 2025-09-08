@@ -67,6 +67,7 @@ func process_physics_move(user: UnitData, target_position: Vector3) -> void:
 
 func travel_path(user: UnitData, path: Array[TerrainTile]) -> void:
 	user.is_traveling_path = true
+	var initial_pos: Vector2i = user.tile_position.location
 	for tile: TerrainTile in path:
 		await walk_to_tile(user, tile) # TODO handle movement types other than walking
 	
@@ -75,4 +76,6 @@ func travel_path(user: UnitData, path: Array[TerrainTile]) -> void:
 	#user.current_animation_id_fwd = user.current_idle_animation_id
 	user.set_base_animation_ptr_id(user.current_idle_animation_id)
 	user.is_traveling_path = false
-	user.completed_move.emit()
+	var distance_moved: Vector2i = (user.tile_position.location - initial_pos).abs()
+	var tiles_moved: int = distance_moved.x + distance_moved.y
+	user.completed_move.emit(tiles_moved)

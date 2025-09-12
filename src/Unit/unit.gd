@@ -102,6 +102,7 @@ class EquipmentSlot:
 class AbilitySlot:
 	var ability_slot_name: String = "[Ability Slot]"
 	var slot_types: Array[Ability.SlotType] = []
+	var ability_idx: int = 0
 	var ability: Ability = Ability.new()
 	
 	func _init(new_name: String = "", new_slot_types: Array[Ability.SlotType] = [], new_ability: Ability = Ability.new()) -> void:
@@ -529,8 +530,11 @@ func get_item_idx_for_slot(slot_type: ItemData.SlotType, item_level: int, random
 	return item_idx
 
 
-func set_ability_slot(slot: AbilitySlot, ability: Ability):
-	pass
+func equip_ability(slot: AbilitySlot, ability: Ability):
+	slot.ability = ability
+
+	for triggered_action: TriggeredAction in ability.triggered_actions:
+		triggered_action.connect_trigger(self)
 	# TODO implement equipping individual ability slots
 	# update passives
 

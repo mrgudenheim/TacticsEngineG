@@ -13,6 +13,7 @@ extends Resource
 @export var learn_on_hit: bool = false
 
 @export var passive_effect: PassiveEffect = PassiveEffect.new()
+@export var triggered_actions: Array[TriggeredAction] = []
 
 enum SlotType {
 	SKILLSET,

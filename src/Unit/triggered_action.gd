@@ -18,6 +18,8 @@ enum TriggerType {
 	false
 )
 @export var allow_triggering_actions: bool = false
+@export var deduct_action_points: bool = false
+@export var allow_valid_targets_only: bool = true
 
 
 func connect_trigger(unit: UnitData) -> void:
@@ -39,13 +41,11 @@ func move_trigger_action(user: UnitData, moved_tiles: int) -> void:
 	if not is_triggered:
 		return
 	
-	var action: Action = get_action(user)
-	var new_action_instance: ActionInstance = ActionInstance.new(action, user, user.global_battle_manager)
-	new_action_instance.allow_triggering_actions = allow_triggering_actions
+	var new_action_instance: ActionInstance = get_action_instance(user)
 	# TODO allow targeting other than self
-	new_action_instance.submitted_targets = action.targeting_strategy.get_aoe_targets(new_action_instance, user.tile_position)
+	new_action_instance.submitted_targets = new_action_instance.action.targeting_strategy.get_aoe_targets(new_action_instance, user.tile_position)
 	
-	await new_action_instance.use()
+	await new_action_instance.queue_use()
 
 
 func targetted_trigger_action(user: UnitData, action_instance_targeted_by: ActionInstance) -> void:
@@ -53,17 +53,16 @@ func targetted_trigger_action(user: UnitData, action_instance_targeted_by: Actio
 	if not is_triggered:
 		return
 	
-	var action: Action = get_action(user)
-	var new_action_instance: ActionInstance = ActionInstance.new(action, user, user.global_battle_manager)
-	new_action_instance.allow_triggering_actions = allow_triggering_actions
+	var new_action_instance: ActionInstance = get_action_instance(user)
 	
-	var action_valid_targets: Array[TerrainTile] = action.targeting_strategy.get_potential_targets(new_action_instance)
-	if not action_valid_targets.has(action_instance_targeted_by.user.tile_position):
-		return
+	var action_valid_targets: Array[TerrainTile] = new_action_instance.action.targeting_strategy.get_potential_targets(new_action_instance)
+	if allow_valid_targets_only:
+		if not action_valid_targets.has(action_instance_targeted_by.user.tile_position):
+			return
 	# TODO allow targeting other than attacker
-	new_action_instance.submitted_targets = action.targeting_strategy.get_aoe_targets(new_action_instance, action_instance_targeted_by.user.tile_position)
+	new_action_instance.submitted_targets = new_action_instance.action.targeting_strategy.get_aoe_targets(new_action_instance, action_instance_targeted_by.user.tile_position)
 	
-	await new_action_instance.use()
+	await new_action_instance.queue_use()
 
 
 func check_if_triggered(user: UnitData, target: UnitData, element: Action.ElementTypes = Action.ElementTypes.NONE) -> bool:
@@ -72,6 +71,15 @@ func check_if_triggered(user: UnitData, target: UnitData, element: Action.Elemen
 	is_triggered = randi() % 100 < trigger_chance
 
 	return is_triggered
+
+
+func get_action_instance(user: UnitData) -> ActionInstance:
+	var action: Action = get_action(user)
+	var new_action_instance: ActionInstance = ActionInstance.new(action, user, user.global_battle_manager)
+	new_action_instance.allow_triggering_actions = allow_triggering_actions
+	new_action_instance.deduct_action_points = deduct_action_points
+
+	return new_action_instance
 
 
 func get_action(user: UnitData) -> Action:

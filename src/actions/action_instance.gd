@@ -14,6 +14,7 @@ var preview_targets: Array[TerrainTile]
 var preview_targets_highlights: Dictionary[TerrainTile, Node3D]
 var submitted_targets: Array[TerrainTile]
 var allow_triggering_actions: bool = true
+var deduct_action_points: bool = true
 
 var current_tile_hovered: TerrainTile
 var potential_targets_are_set: bool = false
@@ -310,7 +311,8 @@ func on_unit_hovered(unit: UnitData, event: InputEvent):
 func queue_use() -> void:
 	battle_manager.game_state_label.text = user.job_nickname + "-" + user.unit_nickname + " using " + action.action_name
 	user.clear_action_buttons(battle_manager)
-	pay_action_point_costs()
+	if deduct_action_points:
+		pay_action_point_costs()
 	face_target()
 	if action.ticks_charge_time > 0:
 		var charging_status: StatusEffect = RomReader.status_effects[4].duplicate() # charging

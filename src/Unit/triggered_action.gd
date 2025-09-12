@@ -24,9 +24,9 @@ func connect_trigger(unit: UnitData) -> void:
 		TriggerType.MOVED:
 			unit.completed_move.connect(move_trigger_action)
 		TriggerType.TARGETTED_PRE_ACTION:
-			unit.completed_move.connect(move_trigger_action)
+			unit.targeted_pre_action.connect(targetted_trigger_action)
 		TriggerType.TARGETTED_POST_ACTION:
-			unit.completed_move.connect(move_trigger_action)
+			unit.targeted_post_action.connect(targetted_trigger_action)
 		TriggerType.LOST_HP:
 			unit.completed_move.connect(move_trigger_action)
 		TriggerType.STATUS_CHANGED:
@@ -38,8 +38,24 @@ func move_trigger_action(user: UnitData, moved_tiles: int) -> void:
 	if not is_triggered:
 		return
 	
-	var new_action_instance: ActionInstance = ActionInstance.new(RomReader.actions[action_idx], user, user.global_battle_manager)
-	new_action_instance.submitted_targets = [user.tile_position]
+	var action: Action = get_action(user)
+	var new_action_instance: ActionInstance = ActionInstance.new(action, user, user.global_battle_manager)
+	# TODO allow targeting other than self
+	new_action_instance.submitted_targets = action.targeting_strategy.get_aoe_targets(new_action_instance, user.tile_position)
+	
+	await new_action_instance.use()
+
+
+func targetted_trigger_action(user: UnitData, action_instance_targeted_by: ActionInstance) -> void:
+	var is_triggered = check_if_triggered(user, action_instance_targeted_by.user)
+	if not is_triggered:
+		return
+	
+	var action: Action = get_action(user)
+	var new_action_instance: ActionInstance = ActionInstance.new(action, user, user.global_battle_manager)
+	
+	# TODO allow targeting other than attacker
+	new_action_instance.submitted_targets = action.targeting_strategy.get_aoe_targets(new_action_instance, action_instance_targeted_by.user.tile_position)
 	
 	await new_action_instance.use()
 
@@ -50,3 +66,15 @@ func check_if_triggered(user: UnitData, target: UnitData, element: Action.Elemen
 	is_triggered = randi() % 100 < trigger_chance
 
 	return is_triggered
+
+
+func get_action(user: UnitData) -> Action:
+	var action: Action = user.attack_action
+	if action_idx >=0 and action_idx < RomReader.actions.size():
+		action = RomReader.actions[action_idx]
+	elif action_idx == -1: # special case to use weapon attack
+		action = user.attack_action
+	else:
+		push_error("Action idx: " + str(action_idx) + " not in valid range of actions (" + str(RomReader.actions.size() - 1) + "). Using weapon attack.")
+	
+	return action

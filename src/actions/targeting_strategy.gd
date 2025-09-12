@@ -7,6 +7,11 @@ func get_potential_targets(action_instance: ActionInstance) -> Array[TerrainTile
 	return []
 
 
+func get_aoe_targets(action_instance: ActionInstance, tile_target: TerrainTile) -> Array[TerrainTile]:
+	push_error("Using base TargetingStrategy get_aoe_targets instead of specific targeting strategy")
+	return []
+
+
 func start_targeting(action_instance: ActionInstance) -> void:
 	action_instance.show_targets_highlights(action_instance.potential_targets_highlights)
 

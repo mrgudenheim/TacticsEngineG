@@ -307,7 +307,16 @@ func add_test_teams_to_map() -> void:
 	
 	units[3].set_primary_weapon(0x4a) # blaze gun
 	
+
+	var test_ability: Ability = Ability.new()
+	var test_triggered_action: TriggeredAction = TriggeredAction.new()
+	test_triggered_action.trigger = TriggeredAction.TriggerType.MOVED
+	test_triggered_action.action_idx = 597 # Regen
+
+	test_ability.triggered_actions.append(test_triggered_action)
+
 	for unit in units:
+		unit.equip_ability(unit.ability_slots[4], test_ability)
 		unit.is_ai_controlled = false
 
 

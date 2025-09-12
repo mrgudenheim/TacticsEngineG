@@ -78,4 +78,6 @@ func travel_path(user: UnitData, path: Array[TerrainTile]) -> void:
 	user.is_traveling_path = false
 	var distance_moved: Vector2i = (user.tile_position.location - initial_pos).abs()
 	var tiles_moved: int = distance_moved.x + distance_moved.y
-	user.completed_move.emit(user, tiles_moved)
+	# user.completed_move.emit(user, tiles_moved)
+	for connection in user.completed_move.get_connections():
+		await connection["callable"].call(user, tiles_moved)

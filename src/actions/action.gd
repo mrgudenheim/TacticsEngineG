@@ -249,12 +249,7 @@ func get_total_hit_chance(user: UnitData, target: UnitData, evade_direction: Eva
 		target_total_evade_factor = job_evade_factor * shield_evade_factor * accessory_factor * weapon_evade_factor
 		target_total_evade_factor = max(0, target_total_evade_factor) # prevent negative evasion
 	
-	for status: StatusEffect in user.current_statuses:
-		target_total_evade_factor = status.passive_effect.evade_modifier_user.apply(target_total_evade_factor)
-	for status: StatusEffect in target.current_statuses:
-		target_total_evade_factor = status.passive_effect.evade_modifier_targeted.apply(target_total_evade_factor)
-	
-	var total_hit_chance: int = roundi(base_hit_chance * target_total_evade_factor)
+	var total_hit_chance: int = roundi(modified_hit_chance * target_total_evade_factor)
 	
 	return roundi(total_hit_chance)
 

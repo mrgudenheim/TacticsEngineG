@@ -202,7 +202,7 @@ func get_base_value(formula: Formulas, user: UnitData, target: UnitData) -> floa
 		Formulas.RANDOM_V1_V2:
 			base_value = randi_range(values[0], values[1]) # 0x4b RANDOM_RANGE
 		Formulas.BRAVExV1:
-			base_value = user.brave_current * values[1] # reactions
+			base_value = user.brave_current * values[0] # reactions
 			
 			
 			#base_value = action_modifier / 100.0 # % treat value as a percent when actually applying effect

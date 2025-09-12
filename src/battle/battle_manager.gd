@@ -319,6 +319,11 @@ func add_test_teams_to_map() -> void:
 	test_triggered_action.trigger_chance_formula.formula = FormulaData.Formulas.V1
 
 	# Counter Attack
+	test_triggered_action.trigger = TriggeredAction.TriggerType.TARGETTED_POST_ACTION
+	test_triggered_action.action_idx = -1 # primary attack special case
+	test_triggered_action.trigger_chance_formula.values = [1.0]
+	test_triggered_action.trigger_chance_formula.formula = FormulaData.Formulas.BRAVExV1
+	
 
 	for unit in units:
 		unit.equip_ability(unit.ability_slots[4], test_ability)

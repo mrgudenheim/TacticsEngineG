@@ -13,5 +13,14 @@ enum TriggerType {
 }
 
 
-func connect_trigger() -> void:
-    pass
+func connect_trigger(unit: UnitData) -> void:
+    match trigger:
+        TriggerType.MOVED:
+            unit.completed_move.connect(move_trigger_action)
+
+
+func move_trigger_action(unit: UnitData, moved_tiles: int) -> void:
+    var new_action_instance: ActionInstance = ActionInstance.new(RomReader.actions[action_idx], unit, unit.global_battle_manager)
+    new_action_instance.submitted_targets = [unit.tile_position]
+    
+    new_action_instance.use()

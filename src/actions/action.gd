@@ -317,9 +317,10 @@ func animate_evade(target_unit: UnitData, evade_direction: EvadeData.Directions,
 func apply_standard(action_instance: ActionInstance) -> void:
 	var target_units: Array[UnitData] = action_instance.get_target_units(action_instance.submitted_targets)
 	
-	for target: UnitData in target_units:
-		for connection in target.targeted_pre_action.get_connections():
-			await connection["callable"].call(action_instance, target)
+	if action_instance.allow_triggering_actions:
+		for target: UnitData in target_units:
+			for connection in target.targeted_pre_action.get_connections():
+				await connection["callable"].call(action_instance, target)
 	
 
 	# look up animation based on weapon type and vertical angle to target
@@ -410,9 +411,10 @@ func apply_standard(action_instance: ActionInstance) -> void:
 	# pay costs
 	action_instance.user.mp_current -= action_instance.action.mp_cost
 
-	for target: UnitData in target_units:
-		for connection in target.targeted_post_action.get_connections():
-			await connection["callable"].call(target, action_instance)
+	if action_instance.allow_triggering_actions:
+		for target: UnitData in target_units:
+			for connection in target.targeted_post_action.get_connections():
+				await connection["callable"].call(target, action_instance)
 
 	action_instance.clear() # clear all highlighting and target data
 	

@@ -13,6 +13,7 @@ var potential_targets_highlights: Dictionary[TerrainTile, Node3D]
 var preview_targets: Array[TerrainTile]
 var preview_targets_highlights: Dictionary[TerrainTile, Node3D]
 var submitted_targets: Array[TerrainTile]
+var allow_triggering_actions: bool = true
 
 var current_tile_hovered: TerrainTile
 var potential_targets_are_set: bool = false

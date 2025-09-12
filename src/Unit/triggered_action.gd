@@ -17,6 +17,7 @@ enum TriggerType {
 	false, false,
 	false
 )
+@export var allow_triggering_actions: bool = false
 
 
 func connect_trigger(unit: UnitData) -> void:
@@ -40,6 +41,7 @@ func move_trigger_action(user: UnitData, moved_tiles: int) -> void:
 	
 	var action: Action = get_action(user)
 	var new_action_instance: ActionInstance = ActionInstance.new(action, user, user.global_battle_manager)
+	new_action_instance.allow_triggering_actions = allow_triggering_actions
 	# TODO allow targeting other than self
 	new_action_instance.submitted_targets = action.targeting_strategy.get_aoe_targets(new_action_instance, user.tile_position)
 	
@@ -53,7 +55,11 @@ func targetted_trigger_action(user: UnitData, action_instance_targeted_by: Actio
 	
 	var action: Action = get_action(user)
 	var new_action_instance: ActionInstance = ActionInstance.new(action, user, user.global_battle_manager)
+	new_action_instance.allow_triggering_actions = allow_triggering_actions
 	
+	var action_valid_targets: Array[TerrainTile] = action.targeting_strategy.get_potential_targets(new_action_instance)
+	if not action_valid_targets.has(action_instance_targeted_by.user.tile_position):
+		return
 	# TODO allow targeting other than attacker
 	new_action_instance.submitted_targets = action.targeting_strategy.get_aoe_targets(new_action_instance, action_instance_targeted_by.user.tile_position)
 	

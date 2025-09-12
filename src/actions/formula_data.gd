@@ -7,7 +7,7 @@ extends Resource
 #@export var is_modified_by_element: bool = false
 #@export var is_modified_by_undead: bool = false
 
-@export var formula: Formulas = Formulas.UNMODIFIED
+@export var formula: Formulas = Formulas.V1
 @export var values: PackedFloat64Array = [100.0, 0.0]
 @export var reverse_sign: bool = true
 @export var user_faith_modifier: FaithModifier = FaithModifier.NONE
@@ -43,7 +43,7 @@ enum FaithModifier {
 	}
 
 enum Formulas {
-	UNMODIFIED,
+	V1,
 	ZERO,
 	PAxV1,
 	MAxV1,
@@ -78,10 +78,11 @@ enum Formulas {
 	TARGET_MISSING_HPxV1,
 	TARGET_CURRENT_HPxV1,
 	RANDOM_V1_V2,
+	BRAVExV1,
 	}
 
 
-func _init(new_formula: Formulas = Formulas.UNMODIFIED, new_values: PackedFloat64Array = [1, 1], 
+func _init(new_formula: Formulas = Formulas.V1, new_values: PackedFloat64Array = [1, 1], 
 		new_user_faith_modifier: FaithModifier = FaithModifier.NONE, new_target_faith_modifier: FaithModifier = FaithModifier.NONE, 
 		new_modified_by_element: bool = true, new_modified_by_zodiac: bool = true, 
 		new_reverse_sign = true) -> void:
@@ -128,7 +129,7 @@ func get_base_value(formula: Formulas, user: UnitData, target: UnitData) -> floa
 	var wp = user.primary_weapon.weapon_power
 	
 	match formula:
-		Formulas.UNMODIFIED:
+		Formulas.V1:
 			base_value = values[0]
 		Formulas.ZERO:
 			base_value = 0
@@ -200,6 +201,8 @@ func get_base_value(formula: Formulas, user: UnitData, target: UnitData) -> floa
 			base_value = target.hp_current * values[0] # TARGET_CURRENT_HP, ai status score
 		Formulas.RANDOM_V1_V2:
 			base_value = randi_range(values[0], values[1]) # 0x4b RANDOM_RANGE
+		Formulas.BRAVExV1:
+			base_value = user.brave_current * values[1] # reactions
 			
 			
 			#base_value = action_modifier / 100.0 # % treat value as a percent when actually applying effect

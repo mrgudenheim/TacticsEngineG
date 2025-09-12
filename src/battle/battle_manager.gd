@@ -310,10 +310,15 @@ func add_test_teams_to_map() -> void:
 
 	var test_ability: Ability = Ability.new()
 	var test_triggered_action: TriggeredAction = TriggeredAction.new()
+	test_ability.triggered_actions.append(test_triggered_action)
+
+	# Move Hp Up
 	test_triggered_action.trigger = TriggeredAction.TriggerType.MOVED
 	test_triggered_action.action_idx = 597 # Regen
+	test_triggered_action.trigger_chance_formula.values = [100.0]
+	test_triggered_action.trigger_chance_formula.formula = FormulaData.Formulas.V1
 
-	test_ability.triggered_actions.append(test_triggered_action)
+	# Counter Attack
 
 	for unit in units:
 		unit.equip_ability(unit.ability_slots[4], test_ability)

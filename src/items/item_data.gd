@@ -299,6 +299,7 @@ func _init(idx: int = 0) -> void:
 			15, # treasure
 			21, # chicken
 			22, # frog
+			30, # Stop
 			37, # dont act
 		]
 		weapon_attack_action.status_prevents_use_any.append_array(default_statuses_prevents_weapon_attacks) # Don't Act, chicken, frog, blood suck status prevents weapon attack

@@ -279,6 +279,7 @@ func set_action() -> void:
 		20, # berserk
 		21, # chicken
 		22, # frog
+		30, # Stop
 		37, # dont act
 	]
 	if affected_by_silence:

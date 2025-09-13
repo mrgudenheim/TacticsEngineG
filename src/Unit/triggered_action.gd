@@ -9,8 +9,15 @@ enum TriggerType {
 	STATUS_CHANGED,
 }
 
+enum TargetingTypes {
+	MANUAL,
+	SELF,
+	INITIATOR,
+}
+
 @export var action_idx: int = -1
 @export var trigger: TriggerType = TriggerType.TARGETTED_POST_ACTION
+@export var targeting: TargetingTypes = TargetingTypes.SELF
 @export var trigger_chance_formula: FormulaData = FormulaData.new(
 	FormulaData.Formulas.BRAVExV1, [1.0],
 	FormulaData.FaithModifier.NONE, FormulaData.FaithModifier.NONE, 

@@ -1,7 +1,7 @@
 class_name TriggeredAction
 extends Resource
 
-enum TriggerType {
+enum TriggerTiming {
 	MOVED,
 	TARGETTED_PRE_ACTION,
 	TARGETTED_POST_ACTION,
@@ -10,13 +10,30 @@ enum TriggerType {
 }
 
 enum TargetingTypes {
-	MANUAL,
+	ACTION,
 	SELF,
 	INITIATOR,
 }
 
+enum TriggerType {
+	NONE,
+	BASIC, # Counter Grasp
+	COUNTER_MAGIC,
+	COUNTER_FLOOD,
+	REFLECTABLE,
+}
+
+enum ActionType {
+	ALL,
+	HP_DAMAGE,
+	HP_RECOVERY,
+	MP_DAMAGE,
+	MP_RECOVERY,
+	STATUS_CHANGE,
+}
+
 @export var action_idx: int = -1
-@export var trigger: TriggerType = TriggerType.TARGETTED_POST_ACTION
+@export var trigger: TriggerTiming = TriggerTiming.TARGETTED_POST_ACTION
 @export var targeting: TargetingTypes = TargetingTypes.SELF
 @export var trigger_chance_formula: FormulaData = FormulaData.new(
 	FormulaData.Formulas.BRAVExV1, [1.0],
@@ -24,23 +41,32 @@ enum TargetingTypes {
 	false, false,
 	false
 )
-@export var only_trigger_if_usable: bool = true
 @export var allow_triggering_actions: bool = false
 @export var deduct_action_points: bool = false
-@export var allow_valid_targets_only: bool = true
 
+# requirements to trigger
+@export var react_flags: Array[TriggerType] = [TriggerType.NONE] # will not trigger if action does not have any of these flags
+@export var action_mp_cost_threshold: int = 0 # will not trigger if action mp cost is not >= this value
+@export var is_hit: bool = false # will only trigger if action successfully hit this unit
+@export var action_type: Array[ActionType] = [] # will not trigger if action does not have any of these flags
+@export var current_status_id: PackedInt32Array = [] # will not trigger if unit does not have any of these flags
+@export var only_trigger_if_usable: bool = true
+@export var allow_valid_targets_only: bool = true
+@export var user_mp_threshold: int = 0 # will only trigger if user's current MP is >= this value
+@export var action_hp_damage_threshold: int = 0 # will only trigger if HP damage caused by action is >= this value
+@export var excessive_hp_recovery_threshold: int = 0 # will only trigger if HP recovered by action would exceed units max by this value
 
 func connect_trigger(unit: UnitData) -> void:
 	match trigger:
-		TriggerType.MOVED:
+		TriggerTiming.MOVED:
 			unit.completed_move.connect(move_trigger_action)
-		TriggerType.TARGETTED_PRE_ACTION:
+		TriggerTiming.TARGETTED_PRE_ACTION:
 			unit.targeted_pre_action.connect(targetted_trigger_action)
-		TriggerType.TARGETTED_POST_ACTION:
+		TriggerTiming.TARGETTED_POST_ACTION:
 			unit.targeted_post_action.connect(targetted_trigger_action)
-		TriggerType.LOST_HP:
+		TriggerTiming.LOST_HP:
 			unit.completed_move.connect(move_trigger_action)
-		TriggerType.STATUS_CHANGED:
+		TriggerTiming.STATUS_CHANGED:
 			unit.completed_move.connect(move_trigger_action)
 
 

@@ -5,8 +5,8 @@ enum TriggerTiming {
 	MOVED,
 	TARGETTED_PRE_ACTION,
 	TARGETTED_POST_ACTION,
-	LOST_HP,
-	STATUS_CHANGED,
+	TURN_START,
+	TURN_END,
 }
 
 enum TargetingTypes {
@@ -56,6 +56,14 @@ enum ActionType {
 @export var action_hp_damage_threshold: int = 0 # will only trigger if HP damage caused by action is >= this value
 @export var excessive_hp_recovery_threshold: int = 0 # will only trigger if HP recovered by action would exceed units max by this value
 
+
+# assorted data
+class TriggeredActionInstance:
+	var user: UnitData
+	var tiles_moved: int = 0
+	var initiating_action_instance: ActionInstance
+
+
 func connect_trigger(unit: UnitData) -> void:
 	match trigger:
 		TriggerTiming.MOVED:
@@ -64,46 +72,55 @@ func connect_trigger(unit: UnitData) -> void:
 			unit.targeted_pre_action.connect(targetted_trigger_action)
 		TriggerTiming.TARGETTED_POST_ACTION:
 			unit.targeted_post_action.connect(targetted_trigger_action)
-		TriggerTiming.LOST_HP:
+		TriggerTiming.TURN_START:
 			unit.completed_move.connect(move_trigger_action)
-		TriggerTiming.STATUS_CHANGED:
+		TriggerTiming.TURN_END:
 			unit.completed_move.connect(move_trigger_action)
 
 
 func move_trigger_action(user: UnitData, moved_tiles: int) -> void:	
-	var is_triggered = check_if_triggered(user, user)
+	var new_triggered_action_data: TriggeredActionInstance = TriggeredActionInstance.new()
+	new_triggered_action_data.user = user
+	new_triggered_action_data.tiles_moved = moved_tiles
+	await process_triggered_action(new_triggered_action_data)
+
+func targetted_trigger_action(user: UnitData, action_instance_targeted_by: ActionInstance) -> void:
+	var new_triggered_action_data: TriggeredActionInstance = TriggeredActionInstance.new()
+	new_triggered_action_data.user = user
+	new_triggered_action_data.initiating_action_instance = action_instance_targeted_by
+	await process_triggered_action(new_triggered_action_data)
+
+
+func process_triggered_action(triggered_action_data: TriggeredActionInstance) -> void:
+	var is_triggered = check_if_triggered(triggered_action_data.user, triggered_action_data.initiating_action_instance.user)
 	if not is_triggered:
 		return
 	
-	var new_action_instance: ActionInstance = get_action_instance(user)
+	var new_action_instance: ActionInstance = get_action_instance(triggered_action_data.user)
 	if only_trigger_if_usable:
 		if not new_action_instance.is_usable():
 			return
 
-	# TODO allow targeting other than self
-	new_action_instance.submitted_targets = new_action_instance.action.targeting_strategy.get_aoe_targets(new_action_instance, user.tile_position)
-	
-	await new_action_instance.queue_use()
-
-
-func targetted_trigger_action(user: UnitData, action_instance_targeted_by: ActionInstance) -> void:
-	var is_triggered = check_if_triggered(user, action_instance_targeted_by.user)
-	if not is_triggered:
-		return
-	
-	var new_action_instance: ActionInstance = get_action_instance(user)
-	if not new_action_instance.is_usable():
-			return
-
 	var action_valid_targets: Array[TerrainTile] = new_action_instance.action.targeting_strategy.get_potential_targets(new_action_instance)
 	if allow_valid_targets_only:
-		if not action_valid_targets.has(action_instance_targeted_by.user.tile_position):
+		if not action_valid_targets.has(triggered_action_data.initiating_action_instance.user.tile_position):
 			return
-	# TODO allow targeting other than attacker
-	new_action_instance.submitted_targets = new_action_instance.action.targeting_strategy.get_aoe_targets(new_action_instance, action_instance_targeted_by.user.tile_position)
+	
+	match targeting:
+		TargetingTypes.ACTION:
+			await new_action_instance.start_targeting() # TODO await targeting selection of triggered action
+		TargetingTypes.SELF:
+			var target_tile: TerrainTile = triggered_action_data.user.tile_position
+			new_action_instance.submitted_targets = new_action_instance.action.targeting_strategy.get_aoe_targets(new_action_instance, target_tile)
+			await new_action_instance.queue_use()
+		TargetingTypes.INITIATOR:
+			var target_tile: TerrainTile = triggered_action_data.initiating_action_instance.user.tile_position
+			new_action_instance.submitted_targets = new_action_instance.action.targeting_strategy.get_aoe_targets(new_action_instance, target_tile)
+			await new_action_instance.queue_use()
+		_:
+			push_warning("Invalid targeting type for triggered: " + new_action_instance.action.action_name)
 	
 	await new_action_instance.queue_use()
-
 
 func check_if_triggered(user: UnitData, target: UnitData, element: Action.ElementTypes = Action.ElementTypes.NONE) -> bool:
 	var is_triggered: bool = false

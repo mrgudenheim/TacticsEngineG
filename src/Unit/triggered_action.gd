@@ -17,6 +17,7 @@ enum TriggerType {
 	false, false,
 	false
 )
+@export var only_trigger_if_usable: bool = true
 @export var allow_triggering_actions: bool = false
 @export var deduct_action_points: bool = false
 @export var allow_valid_targets_only: bool = true
@@ -36,12 +37,16 @@ func connect_trigger(unit: UnitData) -> void:
 			unit.completed_move.connect(move_trigger_action)
 
 
-func move_trigger_action(user: UnitData, moved_tiles: int) -> void:
+func move_trigger_action(user: UnitData, moved_tiles: int) -> void:	
 	var is_triggered = check_if_triggered(user, user)
 	if not is_triggered:
 		return
 	
 	var new_action_instance: ActionInstance = get_action_instance(user)
+	if only_trigger_if_usable:
+		if not new_action_instance.is_usable():
+			return
+
 	# TODO allow targeting other than self
 	new_action_instance.submitted_targets = new_action_instance.action.targeting_strategy.get_aoe_targets(new_action_instance, user.tile_position)
 	
@@ -54,7 +59,9 @@ func targetted_trigger_action(user: UnitData, action_instance_targeted_by: Actio
 		return
 	
 	var new_action_instance: ActionInstance = get_action_instance(user)
-	
+	if not new_action_instance.is_usable():
+			return
+
 	var action_valid_targets: Array[TerrainTile] = new_action_instance.action.targeting_strategy.get_potential_targets(new_action_instance)
 	if allow_valid_targets_only:
 		if not action_valid_targets.has(action_instance_targeted_by.user.tile_position):

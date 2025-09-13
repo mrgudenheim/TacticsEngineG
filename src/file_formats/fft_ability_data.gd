@@ -270,7 +270,17 @@ func set_action() -> void:
 	elif inflict_status_data.is_separate:
 		ability_action.target_status_list_type = Action.StatusListType.EACH
 	
-	ability_action.status_prevents_use_any = [37, 21, 22, 13, 20] # dont act, chicken, frog, blood suck, berserk
+	ability_action.status_prevents_use_any = [
+		1, # crystal
+		2, # dead
+		8, # petrify
+		13, # blood suck
+		15, # treasure
+		20, # berserk
+		21, # chicken
+		22, # frog
+		37, # dont act
+	]
 	if affected_by_silence:
 		ability_action.status_prevents_use_any.append(12) # silence
 	if require_sword:

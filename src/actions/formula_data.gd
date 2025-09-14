@@ -34,13 +34,13 @@ static var formula_descriptions: Dictionary[Formulas, String] = {
 	Formulas.RANDOM_PAxV1: "RANDOM_PAxWP",
 	Formulas.V1xV1: "WPxWP",
 	Formulas.PA_BRAVExPA: "PA_BRAVExPA",
-	}
+}
 
 enum FaithModifier {
 	NONE,
 	FAITH,
 	UNFAITH,
-	}
+}
 
 enum Formulas {
 	V1,
@@ -79,7 +79,7 @@ enum Formulas {
 	TARGET_CURRENT_HPxV1,
 	RANDOM_V1_V2,
 	BRAVExV1,
-	}
+}
 
 
 func _init(new_formula: Formulas = Formulas.V1, new_values: PackedFloat64Array = [1, 1], 

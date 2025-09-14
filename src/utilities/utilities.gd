@@ -48,3 +48,19 @@ func object_properties_to_dictionary(object: Object, exclude_property_names: Pac
 func object_properties_to_json(object, exclude_property_names: PackedStringArray = []) -> String:
 	var property_dict: Dictionary = object_properties_to_dictionary(object, exclude_property_names)
 	return JSON.stringify(property_dict, "\t")
+
+
+## returns true if array1 has any element in array2 or if arry2 is empty
+func has_any_elements(array1: Array, array2: Array) -> bool:
+	if array2.is_empty():
+		return true
+	
+	# alternate of below?
+	# if array2.any(func(element): return array1.has(element)):
+	# 	return true
+
+	for element in array2:
+		if array1.has(element):
+			return true
+	
+	return false

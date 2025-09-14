@@ -13,26 +13,18 @@ enum TargetingTypes {
 	ACTION,
 	SELF,
 	INITIATOR,
+	MIMIC,
+	REFLECT,
 }
 
 enum TriggerType {
-	NONE,
-	BASIC, # Counter Grasp
+	PHYSICAL, # Counter Grasp
 	COUNTER_MAGIC,
 	COUNTER_FLOOD,
 	REFLECTABLE,
 }
 
-enum ActionType {
-	ALL,
-	HP_DAMAGE,
-	HP_RECOVERY,
-	MP_DAMAGE,
-	MP_RECOVERY,
-	STATUS_CHANGE,
-}
-
-@export var action_idx: int = -1
+@export var action_idx: int = -1 # -1 is attack_action, -2 is iniating action
 @export var trigger: TriggerTiming = TriggerTiming.TARGETTED_POST_ACTION
 @export var targeting: TargetingTypes = TargetingTypes.SELF
 @export var trigger_chance_formula: FormulaData = FormulaData.new(
@@ -44,16 +36,19 @@ enum ActionType {
 @export var allow_triggering_actions: bool = false
 @export var deduct_action_points: bool = false
 
-# requirements to trigger
-@export var react_flags: Array[TriggerType] = [TriggerType.NONE] # will not trigger if action does not have any of these flags
-@export var action_mp_cost_threshold: int = 0 # will not trigger if action mp cost is not >= this value
-@export var is_hit: bool = false # will only trigger if action successfully hit this unit
-@export var action_type: Array[ActionType] = [] # will not trigger if action does not have any of these flags
-@export var current_status_id: PackedInt32Array = [] # will not trigger if unit does not have any of these flags
+# requirements to trigger - user data
+@export var required_status_id: PackedInt32Array = [] # will not trigger if unit does not have any of these flags (can trigger if empty)
+@export var user_stat_thresholds: Dictionary[UnitData.StatType, int] = {} # will only trigger if each of user's stat (modified_value) is >= the threshold - ex. MP >= 0
+
+# requirements to trigger - action data
 @export var only_trigger_if_usable: bool = true
 @export var allow_valid_targets_only: bool = true
-@export var user_mp_threshold: int = 0 # will only trigger if user's current MP is >= this value
-@export var user_stat_thresholds: Dictionary[UnitData.StatType, int] = {} # will only trigger if each of user's stat (modified_value) is >= the threshold - ex. MP >= 0
+
+# requirements to trigger - initiator action data
+@export var required_trigger_type: Array[TriggerType] = [] # will not trigger if action does not have any of these flags (can trigger if empty)
+@export var action_mp_cost_threshold: int = 0 # will not trigger if action mp cost is not >= this value
+@export var is_hit: bool = false # will only trigger if action successfully hit this unit
+@export var required_action_type: Array[Action.ActionType] = [] # will not trigger if action does not have any of these flags
 @export var action_hp_damage_threshold: int = 0 # will only trigger if HP damage caused by action is >= this value
 @export var excessive_hp_recovery_threshold: int = 0 # will only trigger if HP recovered by action would exceed units max by this value
 
@@ -70,13 +65,13 @@ func connect_trigger(unit: UnitData) -> void:
 		TriggerTiming.MOVED:
 			unit.completed_move.connect(moved_trigger)
 		TriggerTiming.TARGETTED_PRE_ACTION:
-			unit.targeted_pre_action.connect(targetted_trigger)
+			unit.targeted_pre_action.connect(action_trigger)
 		TriggerTiming.TARGETTED_POST_ACTION:
-			unit.targeted_post_action.connect(targetted_trigger)
+			unit.targeted_post_action.connect(action_trigger)
 		TriggerTiming.TURN_START:
-			unit.turn_ended.connect(turn_trigger)
+			unit.turn_ended.connect(self_trigger)
 		TriggerTiming.TURN_END:
-			unit.turn_ended.connect(turn_trigger)
+			unit.turn_ended.connect(self_trigger)
 
 
 func moved_trigger(user: UnitData, moved_tiles: int) -> void:	
@@ -86,25 +81,74 @@ func moved_trigger(user: UnitData, moved_tiles: int) -> void:
 	await process_triggered_action(new_triggered_action_data)
 
 
-func targetted_trigger(user: UnitData, action_instance_targeted_by: ActionInstance) -> void:
+func action_trigger(user: UnitData, action_instance_targeted_by: ActionInstance) -> void:
 	var new_triggered_action_data: TriggeredActionInstance = TriggeredActionInstance.new()
 	new_triggered_action_data.user = user
 	new_triggered_action_data.initiating_action_instance = action_instance_targeted_by
 	await process_triggered_action(new_triggered_action_data)
 
 
-func turn_trigger(user: UnitData) -> void:	
+func self_trigger(user: UnitData) -> void:	
 	var new_triggered_action_data: TriggeredActionInstance = TriggeredActionInstance.new()
 	new_triggered_action_data.user = user
 	await process_triggered_action(new_triggered_action_data)
 
 
 func process_triggered_action(triggered_action_data: TriggeredActionInstance) -> void:
+	var user = triggered_action_data.user
+	if not Utilities.has_any_elements(user.current_status_ids, required_status_id):
+		return
+	
+	for stat_type: UnitData.StatType in user_stat_thresholds.keys():
+		if user.stats[stat_type].modified_value < user_stat_thresholds[stat_type]:
+			return
+
+	var needs_initiator: bool = (action_idx == -2
+			or not required_trigger_type.is_empty()
+			or action_mp_cost_threshold != 0
+			or is_hit == true
+			or not required_action_type.is_empty()
+			or action_hp_damage_threshold != 0
+			or excessive_hp_recovery_threshold != 0)
+
+
+	var initiator_data: ActionInstance = triggered_action_data.initiating_action_instance
+	var has_initiator_data: bool = initiator_data != null
+
+	if needs_initiator:
+		if not has_initiator_data:
+			push_error("Trigger needs iniating action data but does not have it")
+			return
+
+		if not Utilities.has_any_elements(initiator_data.action.trigger_types, required_trigger_type):
+			return
+		
+		if not initiator_data.action.mp_cost >= action_mp_cost_threshold:
+			return
+		
+		# TODO store if action hit, miss, guarded?, evade type source?, element nullified?
+		# if not action_instance? hit_type == is_hit:
+		# 	return
+
+		# TODO store action types?
+		if not Utilities.has_any_elements(initiator_data.action.get_action_types(), required_action_type):
+			return
+		
+		# TODO store hp damage done
+		# if action_hp_damage < action_hp_damage_threshold:
+		# 	return
+
+		# TODO check excessive hp recovered
+		# if excessive_hp_recovery_threshold != 0:
+		# 	var excess_hp = action_hp_recovered + user.stats[UnitData.StatType.HP].modified_value - user.stats[UnitData.StatType.HP_MAX].modified_value
+		# 	if excess_hp < excessive_hp_recovery_threshold:
+		# 		return
+	
 	var is_triggered = check_if_triggered(triggered_action_data.user, triggered_action_data.initiating_action_instance.user)
 	if not is_triggered:
 		return
 	
-	var new_action_instance: ActionInstance = get_action_instance(triggered_action_data.user)
+	var new_action_instance: ActionInstance = get_action_instance(triggered_action_data)
 	if only_trigger_if_usable:
 		if not new_action_instance.is_usable():
 			return
@@ -138,21 +182,23 @@ func check_if_triggered(user: UnitData, target: UnitData, element: Action.Elemen
 	return is_triggered
 
 
-func get_action_instance(user: UnitData) -> ActionInstance:
-	var action: Action = get_action(user)
-	var new_action_instance: ActionInstance = ActionInstance.new(action, user, user.global_battle_manager)
+func get_action_instance(triggered_action_data: TriggeredActionInstance) -> ActionInstance:
+	var action: Action = get_action(triggered_action_data)
+	var new_action_instance: ActionInstance = ActionInstance.new(action, triggered_action_data.user, triggered_action_data.user.global_battle_manager)
 	new_action_instance.allow_triggering_actions = allow_triggering_actions
 	new_action_instance.deduct_action_points = deduct_action_points
 
 	return new_action_instance
 
 
-func get_action(user: UnitData) -> Action:
-	var action: Action = user.attack_action
+func get_action(triggered_action_data: TriggeredActionInstance) -> Action:
+	var action: Action = triggered_action_data.user.attack_action
 	if action_idx >=0 and action_idx < RomReader.actions.size():
 		action = RomReader.actions[action_idx]
 	elif action_idx == -1: # special case to use weapon attack
-		action = user.attack_action
+		action = triggered_action_data.user.attack_action
+	elif action_idx == -1: # special case to use initiator action
+		action = triggered_action_data.initiating_action_instance.action
 	else:
 		push_error("Action idx: " + str(action_idx) + " not in valid range of actions (" + str(RomReader.actions.size() - 1) + "). Using weapon attack.")
 	

@@ -68,6 +68,7 @@ var inflict_status_id: int = 0
 @export var repeat_use: bool = false # performing
 @export var vfx_on_empty: bool = false
 
+@export var allow_triggered_actions: bool = true
 @export var trigger_counter_flood: bool = false
 @export var trigger_counter_magic: bool = false
 @export var trigger_counter_grasp: bool = false

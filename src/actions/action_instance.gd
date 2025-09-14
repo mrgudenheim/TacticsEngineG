@@ -27,6 +27,8 @@ func _init(new_action: Action, new_user: UnitData, new_battle_manager: BattleMan
 	user = new_user
 	battle_manager = new_battle_manager
 
+	allow_triggering_actions = action.allow_triggered_actions
+
 
 func duplicate() -> ActionInstance:
 	var new_action_instance = ActionInstance.new(action, user, battle_manager)

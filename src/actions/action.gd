@@ -124,6 +124,16 @@ var secondary_actions2: Array[SecondaryAction] = []
 @export var hit_chance_modified_by_passive: bool = false
 @export var power_modified_by_passive: bool = true
 
+@export var trigger_types: Array[TriggeredAction.TriggerType] = []
+
+enum ActionType {
+	HP_DAMAGE,
+	HP_RECOVERY,
+	MP_DAMAGE,
+	MP_RECOVERY,
+	STATUS_CHANGE,
+}
+
 enum ElementTypes {
 	NONE = 0x00,
 	DARK = 0x01,
@@ -478,6 +488,28 @@ func show_vfx(action_instance: ActionInstance, position: Vector3) -> Node3D:
 	
 	vfx_data.display_vfx(new_vfx_location)
 	return new_vfx_location
+
+
+# TODO set action type directly for each action? maybe as part of action processing per target to check values after formula processing and passive effect modifications
+func get_action_types() -> Array[ActionType]:
+	var action_types: Array[ActionType] = []
+	
+	for effect: ActionEffect in target_effects:
+		if effect.type == ActionEffect.EffectType.UNIT_STAT:
+			if effect.effect_stat_type == UnitData.StatType.HP:
+				if effect.base_power_formula.values[0] > 0:
+					action_types.append(ActionType.HP_RECOVERY)
+				elif effect.base_power_formula.values[0] < 0:
+					action_types.append(ActionType.HP_DAMAGE)
+			if effect.effect_stat_type == UnitData.StatType.MP:
+				if effect.base_power_formula.values[0] > 0:
+					action_types.append(ActionType.MP_RECOVERY)
+				elif effect.base_power_formula.values[0] < 0:
+					action_types.append(ActionType.MP_DAMAGE)
+		if not target_status_list.is_empty():
+			action_types.append(ActionType.STATUS_CHANGE)
+	
+	return action_types
 
 
 func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> void:

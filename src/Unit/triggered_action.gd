@@ -170,9 +170,8 @@ func process_triggered_action(triggered_action_data: TriggeredActionInstance) ->
 			new_action_instance.submitted_targets = new_action_instance.action.targeting_strategy.get_aoe_targets(new_action_instance, target_tile)
 			await new_action_instance.queue_use()
 		_:
-			push_warning("Invalid targeting type for triggered: " + new_action_instance.action.action_name)
-	
-	await new_action_instance.queue_use()
+			push_warning("Invalid targeting type for triggered action: " + new_action_instance.action.action_name)
+
 
 func check_if_triggered(user: UnitData, target: UnitData, element: Action.ElementTypes = Action.ElementTypes.NONE) -> bool:
 	var is_triggered: bool = false

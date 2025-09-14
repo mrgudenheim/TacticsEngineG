@@ -67,27 +67,34 @@ class TriggeredActionInstance:
 func connect_trigger(unit: UnitData) -> void:
 	match trigger:
 		TriggerTiming.MOVED:
-			unit.completed_move.connect(move_trigger_action)
+			unit.completed_move.connect(moved_trigger)
 		TriggerTiming.TARGETTED_PRE_ACTION:
-			unit.targeted_pre_action.connect(targetted_trigger_action)
+			unit.targeted_pre_action.connect(targetted_trigger)
 		TriggerTiming.TARGETTED_POST_ACTION:
-			unit.targeted_post_action.connect(targetted_trigger_action)
+			unit.targeted_post_action.connect(targetted_trigger)
 		TriggerTiming.TURN_START:
-			unit.completed_move.connect(move_trigger_action)
+			unit.turn_ended.connect(turn_trigger)
 		TriggerTiming.TURN_END:
-			unit.completed_move.connect(move_trigger_action)
+			unit.turn_ended.connect(turn_trigger)
 
 
-func move_trigger_action(user: UnitData, moved_tiles: int) -> void:	
+func moved_trigger(user: UnitData, moved_tiles: int) -> void:	
 	var new_triggered_action_data: TriggeredActionInstance = TriggeredActionInstance.new()
 	new_triggered_action_data.user = user
 	new_triggered_action_data.tiles_moved = moved_tiles
 	await process_triggered_action(new_triggered_action_data)
 
-func targetted_trigger_action(user: UnitData, action_instance_targeted_by: ActionInstance) -> void:
+
+func targetted_trigger(user: UnitData, action_instance_targeted_by: ActionInstance) -> void:
 	var new_triggered_action_data: TriggeredActionInstance = TriggeredActionInstance.new()
 	new_triggered_action_data.user = user
 	new_triggered_action_data.initiating_action_instance = action_instance_targeted_by
+	await process_triggered_action(new_triggered_action_data)
+
+
+func turn_trigger(user: UnitData) -> void:	
+	var new_triggered_action_data: TriggeredActionInstance = TriggeredActionInstance.new()
+	new_triggered_action_data.user = user
 	await process_triggered_action(new_triggered_action_data)
 
 

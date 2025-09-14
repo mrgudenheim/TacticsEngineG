@@ -14,7 +14,8 @@ signal targeted_pre_action(this_unit: UnitData, action_instance: ActionInstance)
 signal targeted_post_action(this_unit: UnitData, action_instance: ActionInstance)
 signal reached_tile()
 signal completed_move(this_unit: UnitData, tile_moved: int)
-signal turn_ended()
+signal turn_started(this_unit: UnitData)
+signal turn_ended(this_unit: UnitData)
 signal unit_input_event(unit_data: UnitData, event: InputEvent)
 signal paths_updated()
 
@@ -597,6 +598,8 @@ func start_turn(battle_manager: BattleManager) -> void:
 	# set CT
 	stats[StatType.CT].add_value(-100)
 	
+	turn_started.emit(self)
+
 	await update_actions(battle_manager)
 
 

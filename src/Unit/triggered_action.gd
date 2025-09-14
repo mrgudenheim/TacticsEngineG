@@ -53,6 +53,7 @@ enum ActionType {
 @export var only_trigger_if_usable: bool = true
 @export var allow_valid_targets_only: bool = true
 @export var user_mp_threshold: int = 0 # will only trigger if user's current MP is >= this value
+@export var user_stat_thresholds: Dictionary[UnitData.StatType, int] = {} # will only trigger if each of user's stat (modified_value) is >= the threshold - ex. MP >= 0
 @export var action_hp_damage_threshold: int = 0 # will only trigger if HP damage caused by action is >= this value
 @export var excessive_hp_recovery_threshold: int = 0 # will only trigger if HP recovered by action would exceed units max by this value
 

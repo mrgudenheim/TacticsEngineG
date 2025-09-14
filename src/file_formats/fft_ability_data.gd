@@ -247,6 +247,16 @@ func set_action() -> void:
 	ability_action.trigger_counter_flood = trigger_counter_flood
 	ability_action.trigger_counter_magic = trigger_counter_magic
 	ability_action.trigger_counter_grasp = trigger_counter_grasp
+	if trigger_counter_grasp:
+		ability_action.trigger_types.append(TriggeredAction.TriggerType.PHYSICAL)
+	if trigger_counter_magic:
+		ability_action.trigger_types.append(TriggeredAction.TriggerType.COUNTER_MAGIC)
+	if trigger_counter_flood:
+		ability_action.trigger_types.append(TriggeredAction.TriggerType.COUNTER_FLOOD)
+	if is_reflectable:
+		ability_action.trigger_types.append(TriggeredAction.TriggerType.REFLECTABLE)
+	if not cant_mimic:
+		ability_action.trigger_types.append(TriggeredAction.TriggerType.MIMIC)
 	
 	ability_action.can_target = not no_targeting
 	

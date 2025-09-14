@@ -22,6 +22,7 @@ enum TriggerType {
 	COUNTER_MAGIC,
 	COUNTER_FLOOD,
 	REFLECTABLE,
+	MIMIC,
 }
 
 @export var action_idx: int = -1 # -1 is attack_action, -2 is iniating action

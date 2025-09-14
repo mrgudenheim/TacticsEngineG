@@ -198,6 +198,9 @@ func _init(idx: int = 0) -> void:
 		weapon_attack_action.blocked_by_golem = true
 		weapon_attack_action.trigger_counter_flood = true
 		weapon_attack_action.trigger_counter_grasp = true
+		weapon_attack_action.trigger_types.append(TriggeredAction.TriggerType.PHYSICAL)
+		weapon_attack_action.trigger_types.append(TriggeredAction.TriggerType.COUNTER_FLOOD)
+		weapon_attack_action.trigger_types.append(TriggeredAction.TriggerType.MIMIC)
 		
 		weapon_attack_action.targeting_type = Action.TargetingTypes.RANGE
 		# weapon_attack_action.targeting_strategy = Utilities.targeting_strategies[Utilities.TargetingTypes.RANGE] # set weapon targeting strategy to TargetingRange by default

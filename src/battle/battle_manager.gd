@@ -319,6 +319,10 @@ func add_test_teams_to_map() -> void:
 	test_triggered_action.trigger_chance_formula.formula = FormulaData.Formulas.V1
 	test_triggered_action.targeting = TriggeredAction.TargetingTypes.SELF
 
+	var json_file = FileAccess.open("user://overrides/move-hp-up.json", FileAccess.WRITE)
+	json_file.store_line(test_triggered_action.to_json())
+	json_file.close()
+
 	# Counter Attack
 	test_triggered_action.trigger = TriggeredAction.TriggerTiming.TARGETTED_POST_ACTION
 	test_triggered_action.action_idx = -1 # primary attack special case
@@ -326,6 +330,9 @@ func add_test_teams_to_map() -> void:
 	test_triggered_action.trigger_chance_formula.formula = FormulaData.Formulas.BRAVExV1
 	test_triggered_action.targeting = TriggeredAction.TargetingTypes.INITIATOR
 	
+	json_file = FileAccess.open("user://overrides/counter.json", FileAccess.WRITE)
+	json_file.store_line(test_triggered_action.to_json())
+	json_file.close()
 
 	for unit in units:
 		unit.equip_ability(unit.ability_slots[4], test_ability)

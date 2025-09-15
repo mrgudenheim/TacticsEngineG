@@ -203,3 +203,36 @@ func get_action(triggered_action_data: TriggeredActionInstance) -> Action:
 		push_error("Action idx: " + str(action_idx) + " not in valid range of actions (" + str(RomReader.actions.size() - 1) + "). Using weapon attack.")
 	
 	return action
+
+
+func to_json() -> String:
+	var properties_to_exclude: PackedStringArray = [
+		"RefCounted",
+		"Resource",
+		"resource_local_to_scene",
+		"resource_path",
+		"resource_name",
+		"resource_scene_unique_id",
+		"script",
+	]
+	return Utilities.object_properties_to_json(self, properties_to_exclude)
+
+
+static func create_from_json(json_string: String) -> TriggeredAction:
+	var property_dict: Dictionary = JSON.parse_string(json_string)
+	var new_triggered_action: TriggeredAction = create_from_dictonary(property_dict)
+	
+	return new_triggered_action
+
+
+static func create_from_dictonary(property_dict: Dictionary) -> TriggeredAction:
+	var new_triggered_action: TriggeredAction = TriggeredAction.new()
+	for property_name in property_dict.keys():
+		if property_name == "trigger_chance_formula":
+			var new_formula_data: FormulaData = FormulaData.create_from_dictionary(property_dict[property_name])
+			new_triggered_action.set(property_name, new_formula_data)
+		else:
+			new_triggered_action.set(property_name, property_dict[property_name])
+
+	new_triggered_action.emit_changed()
+	return new_triggered_action

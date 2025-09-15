@@ -140,9 +140,9 @@ func process_rom() -> void:
 		#seq.set_data_from_seq_bytes(get_file_data(seq.file_name))
 		#seq.write_wiki_table()
 	
-	# var file = FileAccess.open("user://overrides/action2_to_json.json", FileAccess.WRITE)
-	# file.store_line(abilities[2].ability_action.to_json())
-	# file.close()
+	# var json_file = FileAccess.open("user://overrides/action2_to_json.json", FileAccess.WRITE)
+	# json_file.store_line(abilities[2].ability_action.to_json())
+	# json_file.close()
 	
 	# Load custom actions
 	var dir_path: String = "res://src/actions/custom_actions/"

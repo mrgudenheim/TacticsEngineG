@@ -318,6 +318,7 @@ func add_test_teams_to_map() -> void:
 	test_triggered_action.trigger_chance_formula.values = [100.0]
 	test_triggered_action.trigger_chance_formula.formula = FormulaData.Formulas.V1
 	test_triggered_action.targeting = TriggeredAction.TargetingTypes.SELF
+	test_triggered_action.name = "Triggered " + RomReader.actions[test_triggered_action.action_idx].action_name
 
 	var json_file = FileAccess.open("user://overrides/move-hp-up.json", FileAccess.WRITE)
 	json_file.store_line(test_triggered_action.to_json())
@@ -329,7 +330,8 @@ func add_test_teams_to_map() -> void:
 	test_triggered_action.trigger_chance_formula.values = [1.0]
 	test_triggered_action.trigger_chance_formula.formula = FormulaData.Formulas.BRAVExV1
 	test_triggered_action.targeting = TriggeredAction.TargetingTypes.INITIATOR
-	
+	test_triggered_action.name = "Triggered Attack"
+
 	json_file = FileAccess.open("user://overrides/counter.json", FileAccess.WRITE)
 	json_file.store_line(test_triggered_action.to_json())
 	json_file.close()

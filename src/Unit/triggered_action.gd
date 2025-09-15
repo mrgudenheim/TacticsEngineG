@@ -25,6 +25,7 @@ enum TriggerType {
 	MIMIC,
 }
 
+@export var name: String = "[Triggered Action]"
 @export var action_idx: int = -1 # -1 is attack_action, -2 is iniating action
 @export var trigger: TriggerTiming = TriggerTiming.TARGETTED_POST_ACTION
 @export var targeting: TargetingTypes = TargetingTypes.SELF
@@ -48,7 +49,7 @@ enum TriggerType {
 # requirements to trigger - initiator action data
 @export var required_trigger_type: Array[TriggerType] = [] # will not trigger if action does not have any of these flags (can trigger if empty)
 @export var action_mp_cost_threshold: int = 0 # will not trigger if action mp cost is not >= this value
-@export var is_hit: bool = false # will only trigger if action successfully hit this unit
+@export var requries_hit: int = 0 # 0 - does not require anything specific, 1 - require hit, 2 - require miss, 3+ - require specific evade type? will only trigger if action successfully hit this unit
 @export var required_action_type: Array[Action.ActionType] = [] # will not trigger if action does not have any of these flags
 @export var action_hp_damage_threshold: int = 0 # will only trigger if HP damage caused by action is >= this value
 @export var excessive_hp_recovery_threshold: int = 0 # will only trigger if HP recovered by action would exceed units max by this value
@@ -107,7 +108,7 @@ func process_triggered_action(triggered_action_data: TriggeredActionInstance) ->
 	var needs_initiator: bool = (action_idx == -2
 			or not required_trigger_type.is_empty()
 			or action_mp_cost_threshold != 0
-			or is_hit == true
+			or requries_hit != 0
 			or not required_action_type.is_empty()
 			or action_hp_damage_threshold != 0
 			or excessive_hp_recovery_threshold != 0)
@@ -128,7 +129,7 @@ func process_triggered_action(triggered_action_data: TriggeredActionInstance) ->
 			return
 		
 		# TODO store if action hit, miss, guarded?, evade type source?, element nullified?
-		# if not action_instance? hit_type == is_hit:
+		# if not action_instance? hit_type == requries_hit:
 		# 	return
 
 		# TODO store action types?

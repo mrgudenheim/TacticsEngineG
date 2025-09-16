@@ -218,6 +218,34 @@ func to_json() -> String:
 	]
 	return Utilities.object_properties_to_json(self, properties_to_exclude)
 
+func to_csv_row(delimeter: String = "|") -> String:
+	var properties_to_exclude: PackedStringArray = [
+		"RefCounted",
+		"Resource",
+		"resource_local_to_scene",
+		"resource_path",
+		"resource_name",
+		"resource_scene_unique_id",
+		"script",
+	]
+	var property_dict: Dictionary = Utilities.object_properties_to_dictionary(self, properties_to_exclude)
+	var entries: String = delimeter.join(property_dict.values())
+	return entries
+
+
+func get_csv_headers(delimeter: String = "|") -> String:
+	var properties_to_exclude: PackedStringArray = [
+		"RefCounted",
+		"Resource",
+		"resource_local_to_scene",
+		"resource_path",
+		"resource_name",
+		"resource_scene_unique_id",
+		"script",
+	]
+	var property_dict: Dictionary = Utilities.object_properties_to_dictionary(self, properties_to_exclude)
+	var headers: String = delimeter.join(property_dict.keys())
+	return headers
 
 static func create_from_json(json_string: String) -> TriggeredAction:
 	var property_dict: Dictionary = JSON.parse_string(json_string)

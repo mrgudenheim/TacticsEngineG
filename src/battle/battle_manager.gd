@@ -353,6 +353,13 @@ func add_test_teams_to_map() -> void:
 	var json_text: String = json_file.get_as_text()
 	test_triggered_action = TriggeredAction.create_from_json(json_text)
 	test_ability.triggered_actions = [test_triggered_action]
+	
+	var csv_row = test_triggered_action.to_csv_row()
+	
+	json_file = FileAccess.open("user://overrides/triggered_actions_db.txt", FileAccess.WRITE)
+	json_file.store_line(test_triggered_action.get_csv_headers())
+	json_file.store_line(csv_row)
+	json_file.close()
 
 	for unit in units:
 		unit.equip_ability(unit.ability_slots[4], test_ability)

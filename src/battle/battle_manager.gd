@@ -335,6 +335,24 @@ func add_test_teams_to_map() -> void:
 	json_file = FileAccess.open("user://overrides/counter.json", FileAccess.WRITE)
 	json_file.store_line(test_triggered_action.to_json())
 	json_file.close()
+	
+	# Test Trigger
+	#test_triggered_action.trigger = TriggeredAction.TriggerTiming.TARGETTED_POST_ACTION
+	#test_triggered_action.action_idx = -1 # primary attack special case
+	#test_triggered_action.trigger_chance_formula.values = [1.0]
+	#test_triggered_action.trigger_chance_formula.formula = FormulaData.Formulas.BRAVExV1
+	#test_triggered_action.user_stat_thresholds = { UnitData.StatType.HP : 5 }
+	#test_triggered_action.targeting = TriggeredAction.TargetingTypes.INITIATOR
+	#test_triggered_action.name = "Test Trigger"
+	#
+	#json_file = FileAccess.open("user://overrides/test_trigger.json", FileAccess.WRITE)
+	#json_file.store_line(test_triggered_action.to_json())
+	#json_file.close()
+	
+	json_file = FileAccess.open("user://overrides/test_trigger.json", FileAccess.READ)
+	var json_text: String = json_file.get_as_text()
+	test_triggered_action = TriggeredAction.create_from_json(json_text)
+	test_ability.triggered_actions = [test_triggered_action]
 
 	for unit in units:
 		unit.equip_ability(unit.ability_slots[4], test_ability)

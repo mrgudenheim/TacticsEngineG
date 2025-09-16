@@ -85,6 +85,7 @@ is_mimicable = false
 blocked_by_golem = false
 repeat_use = false
 vfx_on_empty = false
+allow_triggered_actions = true
 trigger_counter_flood = false
 trigger_counter_magic = false
 trigger_counter_grasp = false

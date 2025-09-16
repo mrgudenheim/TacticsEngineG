@@ -232,6 +232,13 @@ static func create_from_dictonary(property_dict: Dictionary) -> TriggeredAction:
 		if property_name == "trigger_chance_formula":
 			var new_formula_data: FormulaData = FormulaData.create_from_dictionary(property_dict[property_name])
 			new_triggered_action.set(property_name, new_formula_data)
+		elif property_name == "user_stat_thresholds":
+			var new_dictionary: Dictionary[UnitData.StatType, int] = {}
+			var json_dict: Dictionary = property_dict[property_name]
+			for key: String in json_dict.keys():
+				new_dictionary[key.to_int()] = roundi(json_dict[key])
+			
+			new_triggered_action.set(property_name, new_dictionary)
 		else:
 			new_triggered_action.set(property_name, property_dict[property_name])
 

@@ -13,7 +13,7 @@
 	"required_trigger_type": [],
 	"requries_hit": 0,
 	"targeting": 2,
-	"trigger": 2,
+	"trigger_timing": 2,
 	"trigger_chance_formula": {
 		"formula": 35,
 		"is_modified_by_element": false,

@@ -27,7 +27,7 @@ enum TriggerType {
 
 @export var name: String = "[Triggered Action]"
 @export var action_idx: int = -1 # -1 is attack_action, -2 is iniating action
-@export var trigger: TriggerTiming = TriggerTiming.TARGETTED_POST_ACTION
+@export var trigger_timing: TriggerTiming = TriggerTiming.TARGETTED_POST_ACTION
 @export var targeting: TargetingTypes = TargetingTypes.SELF
 @export var trigger_chance_formula: FormulaData = FormulaData.new(
 	FormulaData.Formulas.BRAVExV1, [1.0],
@@ -63,7 +63,7 @@ class TriggeredActionInstance:
 
 
 func connect_trigger(unit: UnitData) -> void:
-	match trigger:
+	match trigger_timing:
 		TriggerTiming.MOVED:
 			unit.completed_move.connect(moved_trigger)
 		TriggerTiming.TARGETTED_PRE_ACTION:

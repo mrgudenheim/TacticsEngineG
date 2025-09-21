@@ -8,7 +8,7 @@ extends Resource
 #@export var is_modified_by_undead: bool = false
 
 @export var formula: Formulas = Formulas.V1
-@export var values: PackedFloat64Array = [100.0, 0.0]
+@export var values: PackedFloat64Array = [100.0, 1.0]
 @export var reverse_sign: bool = true
 @export var user_faith_modifier: FaithModifier = FaithModifier.NONE
 @export var target_faith_modifier: FaithModifier = FaithModifier.NONE
@@ -82,7 +82,7 @@ enum Formulas {
 }
 
 
-func _init(new_formula: Formulas = Formulas.V1, new_values: PackedFloat64Array = [1, 1], 
+func _init(new_formula: Formulas = Formulas.V1, new_values: PackedFloat64Array = [100.0, 1.0], 
 		new_user_faith_modifier: FaithModifier = FaithModifier.NONE, new_target_faith_modifier: FaithModifier = FaithModifier.NONE, 
 		new_modified_by_element: bool = true, new_modified_by_zodiac: bool = true, 
 		new_reverse_sign = true) -> void:

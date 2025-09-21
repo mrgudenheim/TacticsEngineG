@@ -599,17 +599,18 @@ func instantiate_map(map_idx: int, mirror_chunks: bool, offset: Vector3 = Vector
 	new_map.mesh.name = map_name
 	
 	
-	var imported_mesh = GltfManagerNode.import_gltf(new_map.mesh.name)
-	if imported_mesh != null:
-		new_map.mesh.queue_free()
-		new_map.add_child(imported_mesh)
-		new_map.mesh = imported_mesh
-		new_map.mesh.name = map_name
-		new_map.mesh.scale.y = -1
-		#imported_mesh.scale = imported_mesh.scale * 0.001 # only needed if Blender scale is set to non-default
-		push_warning("Loaded external map: " + new_map.mesh.name + ".glb")
-	else:
-		GltfManagerNode.save_node(new_map.mesh)
+	var imported_mesh: MeshInstance3D = null
+	#var imported_mesh = GltfManagerNode.import_gltf(new_map.mesh.name)
+	#if imported_mesh != null:
+		#new_map.mesh.queue_free()
+		#new_map.add_child(imported_mesh)
+		#new_map.mesh = imported_mesh
+		#new_map.mesh.name = map_name
+		#new_map.mesh.scale.y = -1
+		##imported_mesh.scale = imported_mesh.scale * 0.001 # only needed if Blender scale is set to non-default
+		#push_warning("Loaded external map: " + new_map.mesh.name + ".glb")
+	#else:
+		#GltfManagerNode.save_node(new_map.mesh)
 	
 	map_holder.add_child(new_map)
 	

@@ -63,9 +63,9 @@ var stat_modifiers: Dictionary[UnitData.StatType, Modifier] = {}
 @export var move_modifier: int = 0
 @export var jump_modifier: int = 0
 
-@export var status_always: PackedInt32Array = []
-@export var status_immune: PackedInt32Array = []
-@export var status_start: PackedInt32Array = []
+@export var status_always: PackedStringArray = []
+@export var status_immune: PackedStringArray = []
+@export var status_start: PackedStringArray = []
 
 @export var elemental_absorb: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
 @export var elemental_cancel: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
@@ -298,18 +298,29 @@ func _init(idx: int = 0) -> void:
 		elif weapon_is_direct:
 			weapon_attack_action.targeting_los = true
 		
-		var default_statuses_prevents_weapon_attacks: PackedInt32Array = [
-			1, # crystal
-			2, # dead
-			8, # petrify
-			13, # blood suck
-			15, # treasure
-			21, # chicken
-			22, # frog
-			30, # Stop
-			37, # dont act
+		# var default_statuses_prevents_weapon_attacks: PackedInt32Array = [
+		# 	1, # crystal
+		# 	2, # dead
+		# 	8, # petrify
+		# 	13, # blood suck
+		# 	15, # treasure
+		# 	21, # chicken
+		# 	22, # frog
+		# 	30, # Stop
+		# 	37, # dont act
+		# ]
+		var default_statuses_prevents_weapon_attacks: PackedStringArray = [
+			"crystal",
+			"dead",
+			"petrify",
+			"blood_suck",
+			"treasure",
+			"chicken",
+			"frog",
+			"stop",
+			"don't_act",
 		]
-		weapon_attack_action.status_prevents_use_any.append_array(default_statuses_prevents_weapon_attacks) # Don't Act, chicken, frog, blood suck status prevents weapon attack
+		weapon_attack_action.status_prevents_use_any.append_array(default_statuses_prevents_weapon_attacks)
 		
 		#weapon_attack_action.animation_executing_id = RomReader.battle_bin_data.weapon_animation_ids[item_type].y * 2
 		emit_changed()

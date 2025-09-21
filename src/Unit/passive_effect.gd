@@ -20,9 +20,9 @@ extends Resource
 @export var element_weakness: Array[Action.ElementTypes] = []
 @export var element_strengthen: Array[Action.ElementTypes] = []
 
-@export var status_always: PackedInt32Array = []
-@export var status_immune: PackedInt32Array = []
-@export var status_start: PackedInt32Array = []
+@export var status_always: PackedStringArray = []
+@export var status_immune: PackedStringArray = []
+@export var status_start: PackedStringArray = []
 
 @export var can_react: bool = true
 @export var target_can_react: bool = true

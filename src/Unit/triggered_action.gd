@@ -40,7 +40,7 @@ enum TriggerType {
 @export var deduct_action_points: bool = false
 
 # requirements to trigger - user data
-@export var required_status_id: PackedInt32Array = [] # will not trigger if unit does not have any of these flags (can trigger if empty)
+@export var required_status_id: PackedStringArray = [] # will not trigger if unit does not have any of these flags (can trigger if empty)
 @export var user_stat_thresholds: Dictionary[UnitData.StatType, int] = {} # will only trigger if each of user's stat (modified_value) is >= the threshold - ex. MP >= 0
 
 # requirements to trigger - action data

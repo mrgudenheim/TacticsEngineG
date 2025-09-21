@@ -3,6 +3,7 @@
 class_name StatusEffect
 extends Resource
 
+@export var unique_name: String = ""
 @export var status_id: int = 0
 @export var status_effect_name: String = "Status effect name"
 @export var description: String = "Status effect description"
@@ -16,8 +17,8 @@ extends Resource
 @export var status_cancels_flags: PackedByteArray = [] # 5 bytes of bitflags for up to 40 statuses 
 @export var status_cant_stack_flags: PackedByteArray = [] # 5 bytes of bitflags for up to 40 statuses
 
-@export var status_cancels: PackedInt32Array = [] 
-@export var status_cant_stack: PackedInt32Array = [] # TODO use bit index as index into StatusEffect array
+@export var status_cancels: PackedStringArray = [] 
+@export var status_cant_stack: PackedStringArray = [] # TODO use bit index as index into StatusEffect array
 
 enum DurationType {
 	TICKS,
@@ -67,6 +68,25 @@ var freezes_ct: bool = false:
 		freezes_ct = checks_01 & 0x80 == 0x80
 		return freezes_ct
 
+
+func add_to_master_list(will_overwrite: bool = false) -> void:
+	unique_name = status_effect_name.to_snake_case()
+	if RomReader.status_effects.keys().has(unique_name) and will_overwrite:
+		push_warning("Overwriting existing action: " + unique_name)
+	elif RomReader.status_effects.keys().has(unique_name) and not will_overwrite:
+		var num: int = 2
+		var formatted_num: String = "%02d" % num
+		var new_unique_name: String = unique_name + "_" + formatted_num
+		while RomReader.status_effects.keys().has(new_unique_name):
+			num += 1
+			formatted_num = "%02d" % num
+			new_unique_name = unique_name + "_" + formatted_num
+		
+		push_warning("Action list already contains: " + unique_name + ". Incrementing unique_name to: " + new_unique_name)
+		unique_name = new_unique_name
+	
+	RomReader.status_effects[unique_name] = self
+
 func set_data(status_effect_bytes: PackedByteArray) -> void:
 	byte_00 = status_effect_bytes.decode_u8(0)
 	byte_01 = status_effect_bytes.decode_u8(1)
@@ -100,8 +120,8 @@ func status_flags_to_status_array() -> void:
 	status_cant_stack = get_status_id_array(status_cant_stack_flags)
 
 
-static func get_status_id_array(status_bitflags: PackedByteArray) -> PackedInt32Array:
-	var status_array: PackedInt32Array = []
+static func get_status_id_array(status_bitflags: PackedByteArray) -> PackedStringArray:
+	var status_array: PackedStringArray = []
 	
 	#if RomReader.status_effects.is_empty():
 		#push_warning("Trying to get StatusEffects before they are loaded")
@@ -113,17 +133,17 @@ static func get_status_id_array(status_bitflags: PackedByteArray) -> PackedInt32
 			if byte & (2 ** bit_idx) != 0:
 				var status_index: int = (7 - bit_idx) + (byte_idx * 8)
 				#status_array.append(RomReader.scus_data.status_effects[status_index])
-				status_array.append(status_index)
+				status_array.append(RomReader.scus_data.status_effects[status_index].unique_name)
 	
 	return status_array
 
 
 func get_ai_score(user: UnitData, target: UnitData, remove: bool = false) -> float:
 	var score: float = 0.0
-	if not remove and target.immune_statuses.has(status_id):
+	if not remove and target.immune_statuses.has(unique_name):
 		return 0.0
 	
-	var current_statuses: Array[StatusEffect] = target.current_statuses.filter(func(status: StatusEffect): return status.status_id == status_id)
+	var current_statuses: Array[StatusEffect] = target.current_statuses.filter(func(status: StatusEffect): return status.unique_name == unique_name)
 	if remove and current_statuses.all(func(status: StatusEffect): return status.duration_type != StatusEffect.DurationType.PERMANENT):
 		return 0.0
 	

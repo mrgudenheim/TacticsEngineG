@@ -105,9 +105,9 @@ class ItemAttribute:
 	var sp_modifier: int = 0
 	var move_modifier: int = 0
 	var jump_modifier: int = 0
-	var status_always: PackedInt32Array = [] # 5 bytes of bitflags for up to 40 statuses # TODO use bit index as index into StatusEffect array
-	var status_immune: PackedInt32Array = [] # 5 bytes of bitflags for up to 40 statuses # TODO use bit index as index into StatusEffect array
-	var status_start: PackedInt32Array = [] # 5 bytes of bitflags for up to 40 statuses # TODO use bit index as index into StatusEffect array
+	var status_always: PackedStringArray = [] # 5 bytes of bitflags for up to 40 statuses # TODO use bit index as index into StatusEffect array
+	var status_immune: PackedStringArray = [] # 5 bytes of bitflags for up to 40 statuses # TODO use bit index as index into StatusEffect array
+	var status_start: PackedStringArray = [] # 5 bytes of bitflags for up to 40 statuses # TODO use bit index as index into StatusEffect array
 	var elemental_absorb: int = 0 # 1 byte of bitflags, elemental types
 	var elemental_cancel: int = 0 # 1 byte of bitflags, elemental types
 	var elemental_half: int = 0 # 1 byte of bitflags, elemental types
@@ -147,7 +147,7 @@ class InflictStatus:
 	var is_separate: bool = false
 	var will_cancel: bool = false
 	var status_flags: PackedByteArray = []
-	var status_list: PackedInt32Array = []
+	var status_list: PackedStringArray = []
 	
 	func set_data(inflict_status_bytes: PackedByteArray) -> void:
 		is_all = inflict_status_bytes.decode_u8(0) & 0x80 == 0x80
@@ -186,6 +186,7 @@ func init_from_scus() -> void:
 		var new_status_effect: StatusEffect = StatusEffect.new()
 		new_status_effect.set_data(new_status_effect_bytes)
 		new_status_effect.status_effect_name = RomReader.fft_text.status_names[id]
+		new_status_effect.add_to_master_list()
 		new_status_effect.status_id = id
 		status_effects[id] = new_status_effect
 		
@@ -201,6 +202,8 @@ func init_from_scus() -> void:
 		
 		if RomReader.battle_bin_data.status_idle_animations.has(id):
 			new_status_effect.idle_animation_id = RomReader.battle_bin_data.status_idle_animations[id]
+		
+		
 	
 	for status_effect: StatusEffect in status_effects:
 		status_effect.status_flags_to_status_array() # called after all StatusEffects have already been initialized since this indexes into the complete array
@@ -430,11 +433,14 @@ func init_statuses() -> void:
 	# https://ffhacktics.com/wiki/Target%27s_Status_Affecting_XA_(Magical)
 	# https://ffhacktics.com/wiki/Evasion_Changes_due_to_Statuses
 	# evade also affected by transparent, concentrate, dark or confuse, on user
+
+	for idx: int in status_effects.size():
+		status_effects[idx].ai_score_formula.values[0] = RomReader.battle_bin_data.ai_status_priorities[idx] / 128.0
 	
 	# haste
 	status_effects[28].passive_effect.ct_gain_modifier.value = 1.5
 	# slow
-	status_effects[28].passive_effect.ct_gain_modifier.value = 0.5
+	status_effects[29].passive_effect.ct_gain_modifier.value = 0.5
 	
 	# freeze ct flag
 	for status: StatusEffect in status_effects:
@@ -485,7 +491,7 @@ func init_statuses() -> void:
 	# blood suck
 	status_effects[13].passive_effect.ai_strategy = UnitAi.Strategy.BEST
 	status_effects[13].passive_effect.added_actions = [RomReader.abilities[0x0c8].ability_action] # blood suck action
-	RomReader.abilities[0x0c8].ability_action.status_prevents_use_any.erase(13) # can use blood suck
+	RomReader.abilities[0x0c8].ability_action.status_prevents_use_any.erase("blood_suck") # can use blood suck
 	
 	# faith
 	status_effects[32].passive_effect.stat_modifiers[UnitData.StatType.FAITH] = Modifier.new(100.0, Modifier.ModifierType.SET)
@@ -500,19 +506,19 @@ func init_statuses() -> void:
 	# frog
 	status_effects[22].passive_effect.added_actions = [RomReader.abilities[0x16f].ability_action] # frog attack action
 	status_effects[22].spritesheet_file_name = "OTHER.SPR"
-	status_effects[22].palette_idx_offset = 5 # TODO frog is actually palettes 5-9 depending on original palette
+	status_effects[22].palette_idx_offset = 5 # frog is actually palettes 5-9 depending on original palette
 	status_effects[22].other_type_index = 1
-	RomReader.abilities[0x16f].ability_action.status_prevents_use_any.erase(22) # can use frog attack
-	RomReader.abilities[0x01d].ability_action.status_prevents_use_any.erase(22) # can use Frog
+	RomReader.abilities[0x16f].ability_action.status_prevents_use_any.erase("frog") # can use frog attack
+	RomReader.abilities[0x01d].ability_action.status_prevents_use_any.erase("frog") # can use Frog
 	
 	# crystal
 	status_effects[1].spritesheet_file_name = "OTHER.SPR"
-	status_effects[1].palette_idx_offset = 10 # TODO crystal is actually palettes 10-14 depending on original palette
+	status_effects[1].palette_idx_offset = 10 # crystal is actually palettes 10-14 depending on original palette
 	status_effects[1].other_type_index = 2
 
 	# treasure
 	status_effects[15].spritesheet_file_name = "OTHER.SPR"
-	status_effects[15].palette_idx_offset = 16 # TODO treasure is actually palettes 16-20 depending on original palette
+	status_effects[15].palette_idx_offset = 16 # treasure is actually palettes 16-20 depending on original palette
 	status_effects[15].other_type_index = 0
 
 	# death sentence, dead

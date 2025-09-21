@@ -238,18 +238,18 @@ var jump_current: int = 3:
 	get:
 		return stats[StatType.JUMP].modified_value
 
-var always_statuses: PackedInt32Array = []
-var immune_statuses: PackedInt32Array = []
+var always_statuses: PackedStringArray = []
+var immune_statuses: PackedStringArray = []
 
 # TODO clean up unit status stuff
 var current_statuses: Array[StatusEffect] = [] # entry will be duplicate of status definition with modified values (duration_left, delayed action, etc)
-var current_status_ids: PackedInt32Array = []:
+var current_status_ids: PackedStringArray = []:
 	get:
-		var status_ids: PackedInt32Array = []
+		var status_unique_names: PackedStringArray = []
 		for status: StatusEffect in current_statuses:
-			if not status_ids.has(status.status_id):
-				status_ids.append(status.status_id)
-		return status_ids
+			if not status_unique_names.has(status.unique_name):
+				status_unique_names.append(status.unique_name)
+		return status_unique_names
 #var current_statuses2: Dictionary[StatusEffect, int] = {}
 
 var learned_abilities: Array = []
@@ -754,19 +754,19 @@ func end_turn():
 
 func hp_changed(clamped_value: ClampedValue) -> void:
 	if stats[StatType.HP].current_value == 0:
-		await add_status(RomReader.status_effects[2].duplicate()) # add dead
+		await add_status(RomReader.status_effects["dead"].duplicate()) # add dead
 	elif stats[StatType.HP].current_value < stats[StatType.HP].max_value / 5: # critical
-		await add_status(RomReader.status_effects[23].duplicate()) # add critical
+		await add_status(RomReader.status_effects["critical"].duplicate()) # add critical
 	elif stats[StatType.HP].current_value >= stats[StatType.HP].max_value / 5: # critical
-		remove_status_id(23) # remove critical
+		remove_status_id("critical") # remove critical
 
 
 func add_status(new_status: StatusEffect) -> void:
-	if immune_statuses.has(new_status.status_id): # prevent application based on immune statuses
+	if immune_statuses.has(new_status.unique_name): # prevent application based on immune statuses
 		return
 	
-	for status_prevents_id: int in new_status.status_cant_stack: # prevent application based on flags
-		if current_statuses.any(func(status: StatusEffect): return status.status_id == status_prevents_id):
+	for status_prevents_id: String in new_status.status_cant_stack: # prevent application based on flags
+		if current_statuses.any(func(status: StatusEffect): return status.unique_name == status_prevents_id):
 			return
 	
 	var existing_statuses: Array[StatusEffect] = current_statuses.filter(func(status: StatusEffect): return status.status_id == new_status.status_id) # TODO use filter to allow for multiple of the same status, ex. double charging
@@ -788,16 +788,16 @@ func add_status(new_status: StatusEffect) -> void:
 		stats[stat].add_modifier(new_status.passive_effect.stat_modifiers[stat])
 	
 	var statuses_to_cancel: Array[StatusEffect] = []
-	for status_cancelled_id: int in new_status.status_cancels:
+	for status_cancelled_id: String in new_status.status_cancels:
 		remove_status_id(status_cancelled_id)
 	
 	update_status_visuals()
 	update_elemental_affinity() # TODO update passives in general?
 
 
-func remove_status_id(status_removed_id: int) -> void:
+func remove_status_id(status_removed_unique_name: String) -> void:
 	var statuses_to_remove: Array[StatusEffect] = []
-	statuses_to_remove.append_array(current_statuses.filter(func(status: StatusEffect): return status.status_id == status_removed_id and status.duration_type != StatusEffect.DurationType.PERMANENT))
+	statuses_to_remove.append_array(current_statuses.filter(func(status: StatusEffect): return status.unique_name == status_removed_unique_name and status.duration_type != StatusEffect.DurationType.PERMANENT))
 	for status: StatusEffect in statuses_to_remove:
 		remove_status(status)
 
@@ -819,22 +819,22 @@ func get_nullify_statuses() -> Array[StatusEffect]:
 
 
 func update_permanent_statuses() -> void:
-	for status_id: int in RomReader.status_effects.size():
-		if immune_statuses.has(status_id):
+	for status_unique_name: String in RomReader.status_effects.keys():
+		if immune_statuses.has(status_unique_name):
 			continue
 		
 		# check passive sources: equipment, job, abilities, statuses
 		var num_should_have: int = 0
 		
 		for slot: EquipmentSlot in equip_slots:
-			num_should_have += slot.item.status_always.count(status_id)
+			num_should_have += slot.item.status_always.count(status_unique_name)
 		for slot: AbilitySlot in ability_slots:
-			num_should_have += slot.ability.passive_effect.status_always.count(status_id)
+			num_should_have += slot.ability.passive_effect.status_always.count(status_unique_name)
 		for status: StatusEffect in current_statuses:
-			num_should_have += status.passive_effect.status_always.count(status_id)
-		num_should_have += job_data.status_always.count(status_id)
+			num_should_have += status.passive_effect.status_always.count(status_unique_name)
+		num_should_have += job_data.status_always.count(status_unique_name)
 		
-		var current_permanent: Array[StatusEffect] = current_statuses.filter(func(status: StatusEffect): return status.status_id == status_id and status.duration_type == StatusEffect.DurationType.PERMANENT)
+		var current_permanent: Array[StatusEffect] = current_statuses.filter(func(status: StatusEffect): return status.unique_name == status_unique_name and status.duration_type == StatusEffect.DurationType.PERMANENT)
 		var num_has: int = current_permanent.size()
 		var change: int = num_should_have - num_has
 		
@@ -842,7 +842,7 @@ func update_permanent_statuses() -> void:
 			return
 		elif change > 0:
 			for counter: int in change:
-				var new_status: StatusEffect = RomReader.status_effects[status_id].duplicate()
+				var new_status: StatusEffect = RomReader.status_effects[status_unique_name].duplicate()
 				new_status.duration_type = StatusEffect.DurationType.PERMANENT
 				await add_status(new_status)
 		elif change < 0:
@@ -864,7 +864,7 @@ func update_immune_statuses() -> void:
 	immune_statuses.append_array(job_data.status_immune)
 	
 	for status: StatusEffect in current_statuses:
-		if immune_statuses.has(status.status_id):
+		if immune_statuses.has(status.unique_name):
 			remove_status(status, true)
 
 

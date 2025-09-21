@@ -25,9 +25,9 @@ extends Resource
 @export var evade_physical: int = 0
 @export var evade_datas: Array[EvadeData] = []
 
-@export var status_always: PackedInt32Array = [] # 5 bytes of bitflags for up to 40 statuses
-@export var status_immune: PackedInt32Array = [] # 5 bytes of bitflags for up to 40 statuses
-@export var status_start: PackedInt32Array = [] # 5 bytes of bitflags for up to 40 statuses
+@export var status_always: PackedStringArray = [] # 5 bytes of bitflags for up to 40 statuses
+@export var status_immune: PackedStringArray = [] # 5 bytes of bitflags for up to 40 statuses
+@export var status_start: PackedStringArray = [] # 5 bytes of bitflags for up to 40 statuses
 
 @export var element_absorb: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
 @export var element_cancel: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types

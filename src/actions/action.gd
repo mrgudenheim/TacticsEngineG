@@ -82,10 +82,10 @@ var inflict_status_id: int = 0
 
 @export var healing_damages_undead: bool = false
 # @export var ignores_statuses: Array[int] = []
-@export var ignores_statuses: PackedInt32Array = []
+@export var ignores_statuses: PackedStringArray = []
 
 # inflict status data
-@export var target_status_list: PackedInt32Array = []
+@export var target_status_list: PackedStringArray = []
 @export var status_chance: int = 100
 @export var will_remove_status: bool = false
 @export var target_status_list_type: StatusListType = StatusListType.EACH
@@ -93,11 +93,11 @@ var all_status: bool = false
 var random_status: bool = false
 var separate_status: bool = false
 
-@export var status_prevents_use_any: Array[int] = [] # silence, dont move, dont act, etc.
+@export var status_prevents_use_any: Array[String] = [] # silence, dont move, dont act, etc.
 @export var required_equipment_type: Array[ItemData.ItemType] = [] # sword, gun, etc.
 @export var required_equipment_idx: PackedInt32Array = [] # materia_blade, etc.
 @export var required_target_job_id: Array[int] = [] # dragon, etc.
-@export var required_target_status_id: Array[int] = [] # undead
+@export var required_target_status_id: Array[String] = [] # undead
 
 # animation data
 @export var animation_start_id: int = 0
@@ -234,7 +234,7 @@ func is_usable(action_instance: ActionInstance) -> bool:
 					user_has_equipment = true
 					break
 		
-		var action_not_prevented_by_status: bool = not action_instance.action.status_prevents_use_any.any(func(status_id: int): return action_instance.user.current_status_ids.has(status_id))
+		var action_not_prevented_by_status: bool = not action_instance.action.status_prevents_use_any.any(func(status_id: String): return action_instance.user.current_status_ids.has(status_id))
 		
 		action_is_usable = (user_has_enough_move_points 
 				and user_has_enough_action_points 
@@ -464,22 +464,22 @@ func apply_standard(action_instance: ActionInstance) -> void:
 	action_instance.action_completed.emit(action_instance.battle_manager)
 
 
-func apply_status(unit: UnitData, status_list: Array[int], status_list_type: StatusListType) -> void:
+func apply_status(unit: UnitData, status_list: Array[String], status_list_type: StatusListType) -> void:
 	if status_list_type == StatusListType.ALL:
 		var status_success: bool = randi_range(0, 99) < status_chance
 		if status_success:
-			for status_id: int in status_list:
-				if will_remove_status and unit.current_statuses.any(func(status: StatusEffect): status.status_id == status_id):
+			for status_id: String in status_list:
+				if will_remove_status and unit.current_statuses.any(func(status: StatusEffect): status.unique_name == status_id):
 					unit.remove_status_id(status_id)
 					unit.show_popup_text(RomReader.status_effects[status_id].status_effect_name) # TODO different text for removing status
 				elif not will_remove_status:
 					unit.show_popup_text(RomReader.status_effects[status_id].status_effect_name)
 					await unit.add_status(RomReader.status_effects[status_id].duplicate())
 	elif status_list_type == StatusListType.EACH:
-		for status_id: int in status_list:
+		for status_id: String in status_list:
 			var status_success: bool = randi_range(0, 99) < status_chance
 			if status_success:
-				if will_remove_status and unit.current_statuses.any(func(status: StatusEffect): status.status_id == status_id):
+				if will_remove_status and unit.current_statuses.any(func(status: StatusEffect): status.unique_name == status_id):
 					unit.remove_status_id(status_id)
 					unit.show_popup_text(RomReader.status_effects[status_id].status_effect_name) # TODO different text for removing status
 				elif not will_remove_status:
@@ -489,15 +489,15 @@ func apply_status(unit: UnitData, status_list: Array[int], status_list_type: Sta
 		var status_success: bool = randi_range(0, 99) < status_chance
 		if status_success:
 			if will_remove_status:
-				var removable_status_list: Array[int] = status_list.filter(func(status_id: int): return unit.current_status_ids.has(status_id))
+				var removable_status_list: Array[String] = status_list.filter(func(status_id: String): return unit.current_status_ids.has(status_id))
 				if not removable_status_list.is_empty():
-					var status_id: int = removable_status_list.pick_random()
+					var status_id: String = removable_status_list.pick_random()
 					unit.remove_status_id(status_id)
 					unit.show_popup_text(RomReader.status_effects[status_id].status_effect_name) # TODO different text for removing status
 			elif not will_remove_status:
-				var addable_status_list: Array[int] = status_list.filter(func(status_id: int): return not unit.current_status_ids.has(status_id))
+				var addable_status_list: Array[String] = status_list.filter(func(status_id: String): return not unit.current_status_ids.has(status_id))
 				if not addable_status_list.is_empty():
-					var status_id: int = addable_status_list.pick_random()
+					var status_id: String = addable_status_list.pick_random()
 					unit.show_popup_text(RomReader.status_effects[status_id].status_effect_name)
 					await unit.add_status(RomReader.status_effects[status_id].duplicate())
 
@@ -543,7 +543,7 @@ func get_action_types() -> Array[ActionType]:
 
 func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> void:
 	formula_id = new_formula_id
-	ignores_statuses.append_array([26, 27]) # protect and shell
+	ignores_statuses.append_array(["protect", "shell"]) # protect and shell
 	# https://ffhacktics.com/wiki/Target_XA_affecting_Statuses_(Physical)
 	# https://ffhacktics.com/wiki/Target%27s_Status_Affecting_XA_(Magical)
 	# https://ffhacktics.com/wiki/Evasion_Changes_due_to_Statuses

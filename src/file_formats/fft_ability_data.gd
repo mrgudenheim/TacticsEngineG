@@ -281,26 +281,38 @@ func set_action() -> void:
 	elif inflict_status_data.is_separate:
 		ability_action.target_status_list_type = Action.StatusListType.EACH
 	
+	#ability_action.status_prevents_use_any = [
+		#1, # crystal
+		#2, # dead
+		#8, # petrify
+		#13, # blood suck
+		#15, # treasure
+		#20, # berserk
+		#21, # chicken
+		#22, # frog
+		#30, # Stop
+		#37, # dont act
+	#]
 	ability_action.status_prevents_use_any = [
-		1, # crystal
-		2, # dead
-		8, # petrify
-		13, # blood suck
-		15, # treasure
-		20, # berserk
-		21, # chicken
-		22, # frog
-		30, # Stop
-		37, # dont act
+		"crystal",
+		"dead", # dead
+		"petrify", # petrify
+		"blood_suck", # blood suck
+		"treasure", # treasure
+		"berserk", # berserk
+		"chicken", # chicken
+		"frog", # frog
+		"stop", # Stop
+		"don't_act", # dont act
 	]
 	if affected_by_silence:
-		ability_action.status_prevents_use_any.append(12) # silence
+		ability_action.status_prevents_use_any.append("silence") # silence
 	if require_sword:
 		ability_action.required_equipment_type = [ItemData.ItemType.SWORD] # sword, gun, etc.
 	if require_materia_blade:
 		ability_action.required_equipment_idx = [0x20] # materia_blade, etc.
 	if not is_reflectable:
-		ability_action.ignores_statuses.append(38) # ignore reflect
+		ability_action.ignores_statuses.append("reflect") # ignore reflect # TODO ignoring Reflect is handled within TriggeredAction
 	
 	ability_action.set_data_from_formula_id(formula_id)
 	if not is_evadeable: # set after formula

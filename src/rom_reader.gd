@@ -39,7 +39,8 @@ var maps: Array[MapData] = []
 var vfx: Array[VisualEffectData] = []
 var abilities: Array[FftAbilityData] = []
 var items: Array[ItemData] = []
-var status_effects: Array[StatusEffect] = [] # TODO reference scus_data.status_effects
+# var status_effects: Array[StatusEffect] = [] # TODO reference scus_data.status_effects
+var status_effects: Dictionary[String, StatusEffect] = {}
 var job_data: Array[JobData] = [] # TODO reference scus_data.jobs
 # var actions: Array[Action] = []
 var actions: Dictionary[String, Action] = {} # [Action.unique_name, Action]
@@ -117,13 +118,13 @@ func process_rom() -> void:
 	for id: int in NUM_ITEMS:
 		items[id] = (ItemData.new(id))
 	
-	status_effects = scus_data.status_effects
+	# status_effects = scus_data.status_effects
 	
 	
 	
 	scus_data.init_statuses()
-	for idx: int in status_effects.size():
-		status_effects[idx].ai_score_formula.values[0] = battle_bin_data.ai_status_priorities[idx] / 128.0
+	# for status_: int in status_effects.size():
+		# status_effects[idx].ai_score_formula.values[0] = battle_bin_data.ai_status_priorities[idx] / 128.0
 		# TODO implement ai formulas that are modified by other statuses (ex. stop is worth zero if target is already confused/charm/blood suck) or action properties (ex. evadeable, silenceable)
 	
 	

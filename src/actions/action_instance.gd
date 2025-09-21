@@ -141,9 +141,9 @@ func get_target_units(target_tiles: Array[TerrainTile]) -> Array[UnitData]:
 				continue
 			
 			var action_ignores_all_null_statuses: bool = unit.get_nullify_statuses().all(
-				func(status: StatusEffect): return action.ignores_statuses.has(status.status_id))
+				func(status: StatusEffect): return action.ignores_statuses.has(status.unique_name))
 			var action_removes_null_status: bool = unit.get_nullify_statuses().any(
-				func(status: StatusEffect): return action.will_remove_status and action.target_status_list.has(status.status_id)) # ignore action unless it would remove nullify
+				func(status: StatusEffect): return action.will_remove_status and action.target_status_list.has(status.unique_name)) # ignore action unless it would remove nullify
 		
 			if action_ignores_all_null_statuses or action_removes_null_status:
 				target_units.append(unit)
@@ -186,7 +186,7 @@ func get_ai_score() -> int:
 		
 		# status scores
 		var total_status_score: float = 0.0
-		for status_id: int in action.target_status_list:
+		for status_id: String in action.target_status_list:
 			var status: StatusEffect = RomReader.status_effects[status_id]
 			var status_score: float = status.get_ai_score(user, target, action.will_remove_status)
 			if action.target_status_list_type == Action.StatusListType.ALL:
@@ -262,7 +262,7 @@ func get_statuses_text(target: UnitData) -> String:
 		status_group_type = "" # don't mention group type if 1 or less status
 	
 	var status_names: PackedStringArray = []
-	for status_id: int in action.target_status_list:
+	for status_id: String in action.target_status_list:
 		if not action.will_remove_status or target.current_status_ids.has(status_id): # don't show removing status the target does not have TODO don't show remove Always statuses
 			status_names.append(RomReader.status_effects[status_id].status_effect_name)
 	
@@ -317,7 +317,7 @@ func queue_use() -> void:
 		pay_action_point_costs()
 	face_target()
 	if action.ticks_charge_time > 0:
-		var charging_status: StatusEffect = RomReader.status_effects[4].duplicate() # charging
+		var charging_status: StatusEffect = RomReader.status_effects["charging"].duplicate() # charging
 		charging_status.delayed_action = self.duplicate()
 		charging_status.duration = action.ticks_charge_time
 		charging_status.duration_type = StatusEffect.DurationType.TICKS

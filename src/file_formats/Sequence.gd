@@ -8,7 +8,7 @@ var length: int = 0 # num bytes
 func duplicate() -> Sequence:
 	var new_sequence: Sequence = Sequence.new()
 	new_sequence.seq_name = seq_name
-	new_sequence.seq_parts = seq_parts.duplicate(true)
+	new_sequence.seq_parts = seq_parts.duplicate_deep(Resource.DEEP_DUPLICATE_ALL)
 	return new_sequence
 
 

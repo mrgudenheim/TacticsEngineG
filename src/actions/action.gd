@@ -555,7 +555,8 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			secondary_action_list_type = StatusListType.RANDOM
 			
 			for secondary_action_idx: int in secondary_action_ids.size():
-				var new_action: Action = RomReader.abilities[secondary_action_ids[secondary_action_idx]].ability_action.duplicate(true) # abilities need to be initialized before items
+				# var new_action: Action = RomReader.abilities[secondary_action_ids[secondary_action_idx]].ability_action.duplicate(true) # abilities need to be initialized before items
+				var new_action: Action = RomReader.abilities[secondary_action_ids[secondary_action_idx]].ability_action.duplicate_deep(DEEP_DUPLICATE_ALL) # abilities need to be initialized before items
 				new_action.area_of_effect_range = 0
 				new_action.target_effects[0].base_power_formula.formula = FormulaData.Formulas.WPxV1
 				new_action.mp_cost = 0

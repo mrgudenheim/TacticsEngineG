@@ -248,7 +248,8 @@ func _init(idx: int = 0) -> void:
 				weapon_attack_action.secondary_action_list_type = Action.StatusListType.RANDOM
 				
 				for secondary_action_idx: int in secondary_action_ids.size():
-					var new_secondary_action: Action = RomReader.abilities[secondary_action_ids[secondary_action_idx]].ability_action.duplicate(true) # abilities need to be initialized before items
+					# var new_secondary_action: Action = RomReader.abilities[secondary_action_ids[secondary_action_idx]].ability_action.duplicate(true) # abilities need to be initialized before items
+					var new_secondary_action: Action = RomReader.abilities[secondary_action_ids[secondary_action_idx]].ability_action.duplicate_deep(DEEP_DUPLICATE_ALL) # abilities need to be initialized before items
 					#new_secondary_action.area_of_effect_range = 0
 					#new_secondary_action.target_effects[0].base_power_formula.formula = FormulaData.Formulas.WPxV1
 					#new_secondary_action.mp_cost = 0

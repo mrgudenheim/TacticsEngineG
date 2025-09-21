@@ -1,10 +1,11 @@
 class_name Action
 extends Resource
 
-static var current_id: int = 0
+# static var current_id: int = 0
 
-@export var action_id: int = 0
-@export var action_idx: int = 0
+@export var unique_name: String = "unique_name" # "ATTACK" and "COPY" are special cases
+# @export var action_id: int = 0
+# @export var action_idx: int = 0
 @export var action_name: String = "Action Name"
 @export var description: String = "Action description"
 @export var quote: String = "Action quote"
@@ -108,13 +109,15 @@ var vfx_data: VisualEffectData
 
 class SecondaryAction:
 	var action_idx: int
+	var action_unique_name: String
 	var chance: int
 	
-	func _init(new_action_idx: int, new_chance: int) -> void:
-		action_idx = new_action_idx
+	func _init(new_unique_name: String, new_chance: int) -> void:
+		action_unique_name = new_unique_name
 		chance = new_chance
 
-@export var secondary_actions: Array[Action] = [] # skip right to applying ActionEffects to targets, but can use new FormulaData
+# @export var secondary_actions: Array[Action] = [] # skip right to applying ActionEffects to targets, but can use new FormulaData
+# @export var secondary_actions: PackedStringArray = [] # list of unique_names
 @export var secondary_actions_chances: PackedInt32Array = [100]
 @export var secondary_action_list_type: StatusListType = StatusListType.EACH
 var secondary_actions2: Array[SecondaryAction] = []
@@ -169,25 +172,50 @@ enum UseTypes {
 	MOVE,
 }
 
-func _init(new_idx: int = -1):
-	action_id = current_id
-	current_id += 1
+# func _init(new_unique_name: String = "unique_name"):
+	# unique_name = new_unique_name
+	
+	# if RomReader.actions.keys().has(new_unique_name):
+	# 	push_warning("Overwriting existing action: " + str(new_unique_name))
 
-	if new_idx < 0 or new_idx >= RomReader.actions.size():
-		if new_idx >= RomReader.actions.size():
-			push_warning("Action index (" + str(new_idx) + ") is beyond bounds. Setting action_idx to end of array: " + str(RomReader.actions.size()))
+	# RomReader.actions[unique_name] = self
+	# action_id = current_id
+	# current_id += 1
+
+	# if new_idx < 0 or new_idx >= RomReader.actions.size():
+	# 	if new_idx >= RomReader.actions.size():
+	# 		push_warning("Action index (" + str(new_idx) + ") is beyond bounds. Setting action_idx to end of array: " + str(RomReader.actions.size()))
 		
-		action_idx = RomReader.actions.size()
-		RomReader.actions.append(self)
-	else:
-		action_idx = new_idx
-		RomReader.actions[action_idx] = self
+	# 	action_idx = RomReader.actions.size()
+	# 	RomReader.actions.append(self)
+	# else:
+	# 	action_idx = new_idx
+	# 	RomReader.actions[action_idx] = self
 		
-	emit_changed()
+	# emit_changed()
 
 
 func _to_string() -> String:
 	return action_name
+
+
+func add_to_master_list(will_overwrite: bool = false) -> void:
+	unique_name = action_name.to_snake_case()
+	if RomReader.actions.keys().has(unique_name) and will_overwrite:
+		push_warning("Overwriting existing action: " + unique_name)
+	elif RomReader.actions.keys().has(unique_name) and not will_overwrite:
+		var num: int = 2
+		var formatted_num: String = "%02d" % num
+		var new_unique_name: String = unique_name + "_" + formatted_num
+		while RomReader.actions.keys().has(new_unique_name):
+			num += 1
+			formatted_num = "%02d" % num
+			new_unique_name = unique_name + "_" + formatted_num
+		
+		push_warning("Action list already contains: " + unique_name + ". Incrementing unique_name to: " + new_unique_name)
+		unique_name = new_unique_name
+	
+	RomReader.actions[unique_name] = self
 
 
 func is_usable(action_instance: ActionInstance) -> bool:
@@ -392,7 +420,7 @@ func apply_standard(action_instance: ActionInstance) -> void:
 				for secondary_action: SecondaryAction in secondary_actions2:
 					if rng < secondary_action.chance:
 						var secondary_action_instance: ActionInstance = action_instance.duplicate()
-						secondary_action_instance.action = RomReader.actions[secondary_action.action_idx]
+						secondary_action_instance.action = RomReader.actions[secondary_action.action_unique_name]
 						await secondary_action_instance.use() # TODO do not use unit animations, don't check for hit again (when using magic gun)
 						break
 					else:
@@ -529,10 +557,10 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			ignores_statuses.remove_at(0)
 		2:
 			use_weapon_damage = true
-			secondary_actions.append(RomReader.abilities[inflict_status_id].ability_action)
+			# secondary_actions.append(RomReader.abilities[inflict_status_id].ability_action)
 			status_chance = 19
-			secondary_actions_chances = [19]
-			secondary_actions2.append(SecondaryAction.new(RomReader.abilities[inflict_status_id].ability_action.action_idx, status_chance))
+			# secondary_actions_chances = [19]
+			secondary_actions2.append(SecondaryAction.new(RomReader.abilities[inflict_status_id].ability_action.unique_name, status_chance))
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
 			ignores_statuses.remove_at(0)
 		3: # weapon_power * weapon_power
@@ -542,27 +570,30 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			ignores_statuses.remove_at(0)
 		4:
 			applicable_evasion = EvadeData.EvadeType.NONE
-			var secondary_action_ids: PackedInt32Array = []
+			var secondary_action_unique_names: PackedStringArray = []
 			match element:
 				ElementTypes.FIRE:
-					secondary_action_ids = [0x10, 0x11, 0x12]
+					secondary_action_unique_names = ["fire", "fire_2", "fire_3"]
 				ElementTypes.LIGHTNING:
-					secondary_action_ids = [0x14, 0x15, 0x16]
+					secondary_action_unique_names = ["bolt", "bolt_2", "bolt_3"]
 				ElementTypes.ICE:
-					secondary_action_ids = [0x18, 0x19, 0x1a]
+					secondary_action_unique_names = ["ice", "ice_2", "ice_3"]
 			
 			secondary_actions_chances = [60, 30, 10]
 			secondary_action_list_type = StatusListType.RANDOM
 			
-			for secondary_action_idx: int in secondary_action_ids.size():
+			for secondary_action_idx: int in secondary_action_unique_names.size():
 				# var new_action: Action = RomReader.abilities[secondary_action_ids[secondary_action_idx]].ability_action.duplicate(true) # abilities need to be initialized before items
-				var new_action: Action = RomReader.abilities[secondary_action_ids[secondary_action_idx]].ability_action.duplicate_deep(DEEP_DUPLICATE_ALL) # abilities need to be initialized before items
+				var reference_action_unique_name: String = secondary_action_unique_names[secondary_action_idx]
+				var new_action: Action = RomReader.actions[reference_action_unique_name].duplicate_deep() # abilities need to be initialized before items
+				new_action.action_name = "Magic Gun " + new_action.action_name
+				new_action.add_to_master_list()
 				new_action.area_of_effect_range = 0
 				new_action.target_effects[0].base_power_formula.formula = FormulaData.Formulas.WPxV1
 				new_action.mp_cost = 0
 				var chance: int = secondary_actions_chances[secondary_action_idx]
-				secondary_actions.append(new_action)
-				secondary_actions2.append(SecondaryAction.new(new_action.action_idx, chance))
+				# secondary_actions.append(new_action)
+				secondary_actions2.append(SecondaryAction.new(new_action.unique_name, chance))
 			
 			# TODO damage formula is WP (instead of MA) * ability Y
 			# TODO magic gun should probably use totally new Actions?, with WP*V1 formula, EvadeType.NONE, no costs, animation_ids = 0, etc., but where V1 and vfx are from the original action

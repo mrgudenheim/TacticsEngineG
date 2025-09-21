@@ -318,7 +318,7 @@ func add_test_teams_to_map() -> void:
 	test_triggered_action.trigger_chance_formula.values = [100.0]
 	test_triggered_action.trigger_chance_formula.formula = FormulaData.Formulas.V1
 	test_triggered_action.targeting = TriggeredAction.TargetingTypes.SELF
-	test_triggered_action.name = "Triggered " + RomReader.actions[test_triggered_action.action_idx].action_name
+	test_triggered_action.name = "Triggered " + RomReader.actions[test_triggered_action.unique_name].action_name
 
 	var json_file = FileAccess.open("user://overrides/move-hp-up.json", FileAccess.WRITE)
 	json_file.store_line(test_triggered_action.to_json())
@@ -455,7 +455,7 @@ func process_clock_tick() -> void:
 				if status.duration <= 0:
 					#unit.current_statuses.erase(status)
 					statuses_to_remove.append(status)
-					if status.action_on_complete >= 0: # process potential removal if ticks_left == 0
+					if status.action_on_complete != "": # process potential removal if ticks_left == 0
 						var status_action_instance: ActionInstance = ActionInstance.new(RomReader.actions[status.action_on_complete], unit, self)
 						status_action_instance.submitted_targets.append(unit.tile_position) # TODO get targets for status action
 						# RomReader.actions[status.action_on_complete].use(status_action_instance)

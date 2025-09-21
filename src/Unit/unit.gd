@@ -590,7 +590,7 @@ func start_turn(battle_manager: BattleManager) -> void:
 	is_ending_turn = false
 
 	for status_effect: StatusEffect in current_statuses:
-		if status_effect.action_on_turn_start >= 0:
+		if status_effect.action_on_turn_start != "":
 			var action_instance: ActionInstance = ActionInstance.new(RomReader.actions[status_effect.action_on_turn_start], self, battle_manager)
 			action_instance.submitted_targets = [tile_position] # TODO allow other targeting for status actions on turn start
 			await action_instance.use()
@@ -724,14 +724,14 @@ func end_turn():
 		active_action.stop_targeting()
 	
 	for status_effect: StatusEffect in current_statuses:
-		if status_effect.action_on_turn_end >= 0:
+		if status_effect.action_on_turn_end != "":
 			var action_instance: ActionInstance = ActionInstance.new(RomReader.actions[status_effect.action_on_turn_end], self, global_battle_manager)
 			action_instance.submitted_targets = [tile_position] # TODO allow other targeting for status actions on turn end
 			await action_instance.use()
 		
 		if status_effect.duration_type == StatusEffect.DurationType.TURNS:
 			status_effect.duration -= 1
-			if status_effect.duration < 0 and status_effect.action_on_complete >= 0:
+			if status_effect.duration < 0 and status_effect.action_on_complete != "":
 				var status_action_instance: ActionInstance = ActionInstance.new(RomReader.actions[status_effect.action_on_complete], self, global_battle_manager)
 				status_action_instance.submitted_targets.append(tile_position) # TODO get targets for status action
 				global_battle_manager.game_state_label.text = job_nickname + "-" + unit_nickname + " processing " + status_effect.status_effect_name + " completing"
@@ -779,7 +779,7 @@ func add_status(new_status: StatusEffect) -> void:
 	
 	current_statuses.append(new_status)
 	# use action_on_apply
-	if new_status.action_on_apply >= 0:
+	if new_status.action_on_apply != "":
 		var action_instance: ActionInstance = ActionInstance.new(RomReader.actions[new_status.action_on_apply], self, global_battle_manager)
 		action_instance.submitted_targets = [tile_position] # TODO allow other targeting for status actions on turn end
 		await action_instance.use()

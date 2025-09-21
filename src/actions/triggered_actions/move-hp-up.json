@@ -1,4 +1,5 @@
 {
+	"action_unique_name": "regen_heal",
 	"action_hp_damage_threshold": 0,
 	"action_idx": 597,
 	"action_mp_cost_threshold": 0,

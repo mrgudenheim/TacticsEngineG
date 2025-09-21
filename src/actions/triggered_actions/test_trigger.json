@@ -1,4 +1,5 @@
 {
+	"action_unique_name": "ATTACK",
 	"action_hp_damage_threshold": 0,
 	"action_idx": -1,
 	"action_mp_cost_threshold": 0,

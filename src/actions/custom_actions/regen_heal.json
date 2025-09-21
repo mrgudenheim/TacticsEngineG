@@ -1,4 +1,5 @@
 {
+	"unique_name": "regen_heal",
 	"action_id": -1,
 	"action_idx": -1,
 	"action_name": "Regen Healing",

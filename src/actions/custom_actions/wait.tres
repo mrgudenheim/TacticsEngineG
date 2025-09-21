@@ -13,7 +13,7 @@ metadata/_custom_type_script = "uid://2y1mi77a2isp"
 
 [sub_resource type="Resource" id="Resource_jmljt"]
 script = ExtResource("5_22o4i")
-values = [20.0, 0.0]
+values = [20.0, 1.0]
 reverse_sign = false
 is_modified_by_element = false
 is_modified_by_zodiac = false
@@ -27,8 +27,7 @@ metadata/_custom_type_script = "uid://cpa42ca48we8h"
 
 [resource]
 script = ExtResource("2_22o4i")
-action_id = -1
-action_idx = -1
+unique_name = "wait"
 action_name = "Wait"
 description = "Ends turn"
 display_action_name = false

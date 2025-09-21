@@ -521,17 +521,17 @@ func init_statuses() -> void:
 		status_effects[idx].duration_type = StatusEffect.DurationType.TURNS
 	
 	# dead actions
-	status_effects[2].action_on_apply = 593 # dead damage
-	status_effects[2].action_on_complete = 594 # dead to crystal/treasure
+	status_effects[2].action_on_apply = "dead_damage" # dead damage
+	status_effects[2].action_on_complete = "dead_to_crystal" # dead to crystal/treasure
 
 	# poison action
-	status_effects[24].action_on_turn_end = 596
+	status_effects[24].action_on_turn_end = "poison_damage"
 
 	# regen action
-	status_effects[25].action_on_turn_end = 597
+	status_effects[25].action_on_turn_end = "regen_heal"
 
 	# reraise action
-	status_effects[18].action_on_turn_start = 598
+	status_effects[18].action_on_turn_start = "reraise_cancels_dead"
 
 	# death sentence action
-	status_effects[39].action_on_complete = 595
+	status_effects[39].action_on_complete = "death_sentence_to_dead"

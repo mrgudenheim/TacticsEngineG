@@ -26,7 +26,8 @@ enum TriggerType {
 }
 
 @export var name: String = "[Triggered Action]"
-@export var action_idx: int = -1 # -1 is attack_action, -2 is iniating action
+# @export var action_idx: int = -1 # -1 is attack_action, -2 is iniating action
+@export var action_unique_name: String = "" # "ATTACK" is user attack_action, "COPY" is iniating action
 @export var trigger_timing: TriggerTiming = TriggerTiming.TARGETTED_POST_ACTION
 @export var targeting: TargetingTypes = TargetingTypes.SELF
 @export var trigger_chance_formula: FormulaData = FormulaData.new(
@@ -105,7 +106,7 @@ func process_triggered_action(triggered_action_data: TriggeredActionInstance) ->
 		if user.stats[stat_type].modified_value < user_stat_thresholds[stat_type]:
 			return
 
-	var needs_initiator: bool = (action_idx == -2
+	var needs_initiator: bool = (action_unique_name == "COPY"
 			or not required_trigger_type.is_empty()
 			or action_mp_cost_threshold != 0
 			or requries_hit != 0
@@ -194,14 +195,14 @@ func get_action_instance(triggered_action_data: TriggeredActionInstance) -> Acti
 
 func get_action(triggered_action_data: TriggeredActionInstance) -> Action:
 	var action: Action = triggered_action_data.user.attack_action
-	if action_idx >=0 and action_idx < RomReader.actions.size():
-		action = RomReader.actions[action_idx]
-	elif action_idx == -1: # special case to use weapon attack
+	if RomReader.actions.keys().has(action_unique_name):
+		action = RomReader.actions[action_unique_name]
+	elif action_unique_name == "ATTACK": # special case to use weapon attack
 		action = triggered_action_data.user.attack_action
-	elif action_idx == -1: # special case to use initiator action
+	elif action_unique_name == "COPY": # special case to use initiator action
 		action = triggered_action_data.initiating_action_instance.action
 	else:
-		push_error("Action idx: " + str(action_idx) + " not in valid range of actions (" + str(RomReader.actions.size() - 1) + "). Using weapon attack.")
+		push_error("Action unique_name: " + action_unique_name + " not in Action dictionary. Using weapon attack.")
 	
 	return action
 

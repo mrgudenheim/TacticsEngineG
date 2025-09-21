@@ -1,4 +1,5 @@
 {
+	"unique_name": "reraise_cancels_dead",
 	"action_id": -1,
 	"action_idx": -1,
 	"action_name": "Reraise cancels dead",

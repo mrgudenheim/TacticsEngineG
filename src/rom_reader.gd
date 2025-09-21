@@ -41,7 +41,8 @@ var abilities: Array[FftAbilityData] = []
 var items: Array[ItemData] = []
 var status_effects: Array[StatusEffect] = [] # TODO reference scus_data.status_effects
 var job_data: Array[JobData] = [] # TODO reference scus_data.jobs
-var actions: Array[Action] = []
+# var actions: Array[Action] = []
+var actions: Dictionary[String, Action] = {} # [Action.unique_name, Action]
 
 # BATTLE.BIN tables
 var battle_bin_data: BattleBinData = BattleBinData.new()
@@ -108,6 +109,9 @@ func process_rom() -> void:
 	for ability_id: int in NUM_ACTIVE_ABILITIES:
 		abilities.append(FftAbilityData.new(ability_id))
 	
+	for ability: FftAbilityData in abilities:
+		ability.set_action()
+
 	# must be after abilities to set secondary actions
 	items.resize(NUM_ITEMS)
 	for id: int in NUM_ITEMS:
@@ -115,9 +119,7 @@ func process_rom() -> void:
 	
 	status_effects = scus_data.status_effects
 	
-	# must be after items and status effects to reference requirements
-	for ability: FftAbilityData in abilities:
-		ability.set_action()
+	
 	
 	scus_data.init_statuses()
 	for idx: int in status_effects.size():
@@ -159,7 +161,8 @@ func process_rom() -> void:
 					var file := FileAccess.open(file_path, FileAccess.READ)
 					var file_text = file.get_as_text()
 
-					var new_action: Action = Action.create_from_json(file_text) # implicitly added RomReader.actions
+					var new_action: Action = Action.create_from_json(file_text)
+					new_action.add_to_master_list()
 			file_name = dir.get_next()
 		dir.list_dir_end()
 	else:

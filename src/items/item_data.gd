@@ -188,6 +188,7 @@ func _init(idx: int = 0) -> void:
 		weapon_attack_action.use_weapon_animation = true
 		
 		weapon_attack_action.action_name = "Attack (" + name + ")"
+		weapon_attack_action.add_to_master_list()
 		weapon_attack_action.display_action_name = false
 		weapon_attack_action.min_targeting_range = 0
 		weapon_attack_action.max_targeting_range = max_range
@@ -235,27 +236,29 @@ func _init(idx: int = 0) -> void:
 			4: # TODO proc ability for Formula 04 (magic gun)
 				weapon_attack_action.applicable_evasion = EvadeData.EvadeType.NONE
 				weapon_attack_action.target_effects.clear()
-				var secondary_action_ids: PackedInt32Array = []
+				var secondary_action_unique_names: PackedStringArray = []
 				match weapon_element:
 					Action.ElementTypes.FIRE:
-						secondary_action_ids = [0x10, 0x11, 0x12]
+						secondary_action_unique_names = ["fire", "fire_2", "fire_3"]
 					Action.ElementTypes.LIGHTNING:
-						secondary_action_ids = [0x14, 0x15, 0x16]
+						secondary_action_unique_names = ["bolt", "bolt_2", "bolt_3"]
 					Action.ElementTypes.ICE:
-						secondary_action_ids = [0x18, 0x19, 0x1a]
+						secondary_action_unique_names = ["ice", "ice_2", "ice_3"]
 				
 				weapon_attack_action.secondary_actions_chances = [60, 30, 10]
 				weapon_attack_action.secondary_action_list_type = Action.StatusListType.RANDOM
 				
-				for secondary_action_idx: int in secondary_action_ids.size():
+				for secondary_action_idx: int in secondary_action_unique_names.size():
 					# var new_secondary_action: Action = RomReader.abilities[secondary_action_ids[secondary_action_idx]].ability_action.duplicate(true) # abilities need to be initialized before items
-					var new_secondary_action: Action = RomReader.abilities[secondary_action_ids[secondary_action_idx]].ability_action.duplicate_deep(DEEP_DUPLICATE_ALL) # abilities need to be initialized before items
-					#new_secondary_action.area_of_effect_range = 0
-					#new_secondary_action.target_effects[0].base_power_formula.formula = FormulaData.Formulas.WPxV1
-					#new_secondary_action.mp_cost = 0
+					var new_secondary_action: Action = RomReader.actions[secondary_action_unique_names[secondary_action_idx]].duplicate_deep(DEEP_DUPLICATE_ALL) # abilities need to be initialized before items
+					new_secondary_action.action_name = "Magic Gun " + new_secondary_action.action_name
+					new_secondary_action.add_to_master_list()
+					new_secondary_action.area_of_effect_range = 0
+					new_secondary_action.target_effects[0].base_power_formula.formula = FormulaData.Formulas.WPxV1
+					new_secondary_action.mp_cost = 0
 					var chance: int = weapon_attack_action.secondary_actions_chances[secondary_action_idx]
-					weapon_attack_action.secondary_actions.append(new_secondary_action)
-					weapon_attack_action.secondary_actions2.append(Action.SecondaryAction.new(new_secondary_action.action_idx, chance))
+					# weapon_attack_action.secondary_actions.append(new_secondary_action)
+					weapon_attack_action.secondary_actions2.append(Action.SecondaryAction.new(new_secondary_action.unique_name, chance))
 				
 				# TODO damage formula is WP (instead of MA) * ability Y
 				# TODO magic gun should probably use totally new Actions?, with WP*V1 formula, EvadeType.NONE, no costs, animation_ids = 0, etc., but where V1 and vfx are from the original action
@@ -266,10 +269,10 @@ func _init(idx: int = 0) -> void:
 				weapon_attack_action.target_effects[0].base_power_formula.reverse_sign = false # positive action power is healing when false
 		
 		if weapon_formula_id == 2: # proc ability for Formula 02
-			weapon_attack_action.secondary_actions.append(RomReader.abilities[weapon_inflict_status_spell_id].ability_action)
-			weapon_attack_action.status_chance = 19
-			weapon_attack_action.secondary_actions_chances = [19]
-			weapon_attack_action.secondary_actions2.append(Action.SecondaryAction.new(RomReader.abilities[weapon_inflict_status_spell_id].ability_action.action_idx, 19))
+			# weapon_attack_action.secondary_actions.append(RomReader.abilities[weapon_inflict_status_spell_id].ability_action)
+			# weapon_attack_action.status_chance = 19
+			# weapon_attack_action.secondary_actions_chances = [19]
+			weapon_attack_action.secondary_actions2.append(Action.SecondaryAction.new(RomReader.abilities[weapon_inflict_status_spell_id].ability_action.unique_name, 19))
 		else: # inflict status data
 			weapon_attack_action.inflict_status_id = weapon_inflict_status_spell_id
 			var inflict_status: ScusData.InflictStatus = RomReader.scus_data.inflict_statuses[weapon_inflict_status_spell_id]

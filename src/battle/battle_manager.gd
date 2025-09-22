@@ -292,6 +292,7 @@ func add_test_teams_to_map() -> void:
 		#0x76, # juravis
 		#0x4a, # squire
 		0x50, # black mage
+		0x53, # thief
 		0x4f, # white mage
 		#0x52, # summoner
 		#0x51, # time mage
@@ -314,11 +315,11 @@ func add_test_teams_to_map() -> void:
 
 	# Move Hp Up
 	test_triggered_action.trigger_timing = TriggeredAction.TriggerTiming.MOVED
-	test_triggered_action.action_idx = 597 # Regen
+	test_triggered_action.action_unique_name = "regen_heal" # Regen
 	test_triggered_action.trigger_chance_formula.values = [100.0]
 	test_triggered_action.trigger_chance_formula.formula = FormulaData.Formulas.V1
 	test_triggered_action.targeting = TriggeredAction.TargetingTypes.SELF
-	test_triggered_action.name = "Triggered " + RomReader.actions[test_triggered_action.unique_name].action_name
+	test_triggered_action.name = "Triggered " + RomReader.actions[test_triggered_action.action_unique_name].action_name
 
 	var json_file = FileAccess.open("user://overrides/move-hp-up.json", FileAccess.WRITE)
 	json_file.store_line(test_triggered_action.to_json())
@@ -326,7 +327,7 @@ func add_test_teams_to_map() -> void:
 
 	# Counter Attack
 	test_triggered_action.trigger_timing = TriggeredAction.TriggerTiming.TARGETTED_POST_ACTION
-	test_triggered_action.action_idx = -1 # primary attack special case
+	test_triggered_action.action_unique_name = "ATTACK" # primary attack special case
 	test_triggered_action.trigger_chance_formula.values = [1.0]
 	test_triggered_action.trigger_chance_formula.formula = FormulaData.Formulas.BRAVExV1
 	test_triggered_action.targeting = TriggeredAction.TargetingTypes.INITIATOR

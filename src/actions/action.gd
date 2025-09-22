@@ -200,7 +200,8 @@ func _to_string() -> String:
 
 
 func add_to_master_list(will_overwrite: bool = false) -> void:
-	unique_name = action_name.to_snake_case()
+	if ["", "unique_name"].has(unique_name):
+		unique_name = action_name.to_snake_case()
 	if RomReader.actions.keys().has(unique_name) and will_overwrite:
 		push_warning("Overwriting existing action: " + unique_name)
 	elif RomReader.actions.keys().has(unique_name) and not will_overwrite:

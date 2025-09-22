@@ -38,6 +38,7 @@ auto_target = true
 aoe_has_vertical_tolerance = false
 target_effects = Array[ExtResource("4_ltkoj")]([SubResource("Resource_ltkoj")])
 applicable_evasion = 0
+allow_triggered_actions = false
 can_target = false
 base_hit_formula = SubResource("Resource_22o4i")
 animation_executing_id = -1

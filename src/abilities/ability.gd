@@ -1,7 +1,15 @@
 class_name Ability
 extends Resource
 
+enum SlotType {
+	SKILLSET,
+	REACTION,
+	SUPPORT,
+	MOVEMENT,
+}
+
 @export var id: int = 0
+@export var unique_name: String = "unique_name.ability"
 @export var name: String = "[Ability Name]"
 @export var slot_type: SlotType = SlotType.SKILLSET
 
@@ -14,10 +22,3 @@ extends Resource
 
 @export var passive_effect: PassiveEffect = PassiveEffect.new()
 @export var triggered_actions: Array[TriggeredAction] = []
-
-enum SlotType {
-	SKILLSET,
-	REACTION,
-	SUPPORT,
-	MOVEMENT,
-}

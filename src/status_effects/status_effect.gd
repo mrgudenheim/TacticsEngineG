@@ -3,7 +3,7 @@
 class_name StatusEffect
 extends Resource
 
-@export var unique_name: String = ""
+@export var unique_name: String = "unique_name"
 @export var status_id: int = 0
 @export var status_effect_name: String = "Status effect name"
 @export var description: String = "Status effect description"

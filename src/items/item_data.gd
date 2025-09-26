@@ -3,6 +3,7 @@ extends Resource
 
 # https://ffhacktics.com/wiki/Item_Data
 
+@export var unique_name: String = "unique_name"
 @export var name: String = "Item name"
 @export var item_idx: int = 0
 @export var item_graphic_id: int = 0

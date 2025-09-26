@@ -8,6 +8,7 @@ extends Resource
 @export var evade_modifier_user: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
 @export var evade_modifier_targeted: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
 @export var ct_gain_modifier: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
+# TODO generalize to target or user Stat effective modifier
 
 @export var ai_strategy: UnitAi.Strategy = UnitAi.Strategy.PLAYER
 @export var added_actions: Array[Action] = []

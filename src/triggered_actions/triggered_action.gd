@@ -25,6 +25,7 @@ enum TriggerType {
 	MIMIC,
 }
 
+@export var unique_name: String = "unique_name.triggered"
 @export var name: String = "[Triggered Action]"
 # @export var action_idx: int = -1 # -1 is attack_action, -2 is iniating action
 @export var action_unique_name: String = "" # "ATTACK" is user attack_action, "COPY" is iniating action
@@ -180,7 +181,7 @@ func check_if_triggered(user: UnitData, target: UnitData, element: Action.Elemen
 	var is_triggered: bool = false
 	var trigger_chance: float = trigger_chance_formula.get_result(user, target, element)
 	is_triggered = randi() % 100 < trigger_chance
-
+	
 	return is_triggered
 
 
@@ -189,7 +190,7 @@ func get_action_instance(triggered_action_data: TriggeredActionInstance) -> Acti
 	var new_action_instance: ActionInstance = ActionInstance.new(action, triggered_action_data.user, triggered_action_data.user.global_battle_manager)
 	new_action_instance.allow_triggering_actions = allow_triggering_actions
 	new_action_instance.deduct_action_points = deduct_action_points
-
+	
 	return new_action_instance
 
 
@@ -218,6 +219,7 @@ func to_json() -> String:
 		"script",
 	]
 	return Utilities.object_properties_to_json(self, properties_to_exclude)
+
 
 func to_csv_row(delimeter: String = "|") -> String:
 	var properties_to_exclude: PackedStringArray = [
@@ -248,6 +250,7 @@ func get_csv_headers(delimeter: String = "|") -> String:
 	var headers: String = delimeter.join(property_dict.keys())
 	return headers
 
+
 static func create_from_json(json_string: String) -> TriggeredAction:
 	var property_dict: Dictionary = JSON.parse_string(json_string)
 	var new_triggered_action: TriggeredAction = create_from_dictonary(property_dict)
@@ -270,6 +273,6 @@ static func create_from_dictonary(property_dict: Dictionary) -> TriggeredAction:
 			new_triggered_action.set(property_name, new_dictionary)
 		else:
 			new_triggered_action.set(property_name, property_dict[property_name])
-
+	
 	new_triggered_action.emit_changed()
 	return new_triggered_action

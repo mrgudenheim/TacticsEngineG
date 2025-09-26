@@ -308,11 +308,10 @@ func add_test_teams_to_map() -> void:
 	
 	units[3].set_primary_weapon(0x4a) # blaze gun
 	
-
 	var test_ability: Ability = Ability.new()
 	var test_triggered_action: TriggeredAction = TriggeredAction.new()
 	test_ability.triggered_actions.append(test_triggered_action)
-
+	
 	# Move Hp Up
 	test_triggered_action.trigger_timing = TriggeredAction.TriggerTiming.MOVED
 	test_triggered_action.action_unique_name = "regen_heal" # Regen
@@ -320,11 +319,12 @@ func add_test_teams_to_map() -> void:
 	test_triggered_action.trigger_chance_formula.formula = FormulaData.Formulas.V1
 	test_triggered_action.targeting = TriggeredAction.TargetingTypes.SELF
 	test_triggered_action.name = "Triggered " + RomReader.actions[test_triggered_action.action_unique_name].action_name
-
-	var json_file = FileAccess.open("user://overrides/move-hp-up.json", FileAccess.WRITE)
+	test_triggered_action.unique_name = test_triggered_action.name.to_snake_case() + ".triggered"
+	
+	var json_file = FileAccess.open("user://overrides/triggered_actions/move-hp-up.json", FileAccess.WRITE)
 	json_file.store_line(test_triggered_action.to_json())
 	json_file.close()
-
+	
 	# Counter Attack
 	test_triggered_action.trigger_timing = TriggeredAction.TriggerTiming.TARGETTED_POST_ACTION
 	test_triggered_action.action_unique_name = "ATTACK" # primary attack special case
@@ -332,8 +332,9 @@ func add_test_teams_to_map() -> void:
 	test_triggered_action.trigger_chance_formula.formula = FormulaData.Formulas.BRAVExV1
 	test_triggered_action.targeting = TriggeredAction.TargetingTypes.INITIATOR
 	test_triggered_action.name = "Triggered Attack"
-
-	json_file = FileAccess.open("user://overrides/counter.json", FileAccess.WRITE)
+	test_triggered_action.unique_name = test_triggered_action.name.to_snake_case() + ".triggered"
+	
+	json_file = FileAccess.open("user://overrides/triggered_actions/counter.json", FileAccess.WRITE)
 	json_file.store_line(test_triggered_action.to_json())
 	json_file.close()
 	
@@ -350,17 +351,17 @@ func add_test_teams_to_map() -> void:
 	#json_file.store_line(test_triggered_action.to_json())
 	#json_file.close()
 	
-	json_file = FileAccess.open("user://overrides/test_trigger.json", FileAccess.READ)
+	json_file = FileAccess.open("user://overrides/triggered_actions/test_trigger.json", FileAccess.READ)
 	var json_text: String = json_file.get_as_text()
 	test_triggered_action = TriggeredAction.create_from_json(json_text)
 	test_ability.triggered_actions = [test_triggered_action]
 	
-	var csv_row = test_triggered_action.to_csv_row()
-	
-	json_file = FileAccess.open("user://overrides/triggered_actions_db.txt", FileAccess.WRITE)
-	json_file.store_line(test_triggered_action.get_csv_headers())
-	json_file.store_line(csv_row)
-	json_file.close()
+	#var csv_row = test_triggered_action.to_csv_row()
+	#
+	#json_file = FileAccess.open("user://overrides/triggered_actions/triggered_actions_db.txt", FileAccess.WRITE)
+	#json_file.store_line(test_triggered_action.get_csv_headers())
+	#json_file.store_line(csv_row)
+	#json_file.close()
 
 	for unit in units:
 		unit.equip_ability(unit.ability_slots[4], test_ability)

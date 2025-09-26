@@ -490,8 +490,8 @@ func init_statuses() -> void:
 	status_effects[1].other_type_index = 0
 	# blood suck
 	status_effects[13].passive_effect.ai_strategy = UnitAi.Strategy.BEST
-	status_effects[13].passive_effect.added_actions = [RomReader.abilities[0x0c8].ability_action] # blood suck action
-	RomReader.abilities[0x0c8].ability_action.status_prevents_use_any.erase("blood_suck") # can use blood suck
+	status_effects[13].passive_effect.added_actions = [RomReader.fft_abilities[0x0c8].ability_action] # blood suck action
+	RomReader.fft_abilities[0x0c8].ability_action.status_prevents_use_any.erase("blood_suck") # can use blood suck
 	
 	# faith
 	status_effects[32].passive_effect.stat_modifiers[UnitData.StatType.FAITH] = Modifier.new(100.0, Modifier.ModifierType.SET)
@@ -504,12 +504,12 @@ func init_statuses() -> void:
 	status_effects[16].passive_effect.element_weakness = [Action.ElementTypes.FIRE] # TODO oil is in addition to fire weakness
 	
 	# frog
-	status_effects[22].passive_effect.added_actions = [RomReader.abilities[0x16f].ability_action] # frog attack action
+	status_effects[22].passive_effect.added_actions = [RomReader.fft_abilities[0x16f].ability_action] # frog attack action
 	status_effects[22].spritesheet_file_name = "OTHER.SPR"
 	status_effects[22].palette_idx_offset = 5 # frog is actually palettes 5-9 depending on original palette
 	status_effects[22].other_type_index = 1
-	RomReader.abilities[0x16f].ability_action.status_prevents_use_any.erase("frog") # can use frog attack
-	RomReader.abilities[0x01d].ability_action.status_prevents_use_any.erase("frog") # can use Frog
+	RomReader.fft_abilities[0x16f].ability_action.status_prevents_use_any.erase("frog") # can use frog attack
+	RomReader.fft_abilities[0x01d].ability_action.status_prevents_use_any.erase("frog") # can use Frog
 	
 	# crystal
 	status_effects[1].spritesheet_file_name = "OTHER.SPR"

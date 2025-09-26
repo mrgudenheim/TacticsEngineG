@@ -198,7 +198,7 @@ func set_normal_flags(flag_bytes: PackedInt32Array) -> void:
 
 func set_action() -> void:
 	ability_action.action_name = name
-	ability_action.add_to_master_list()
+	ability_action.add_to_global_list()
 	ability_action.description = RomReader.fft_text.ability_descriptions[id]
 	ability_action.quote = spell_quote
 	ability_action.display_action_name = show_quote

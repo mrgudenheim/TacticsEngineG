@@ -199,7 +199,7 @@ func _to_string() -> String:
 	return action_name
 
 
-func add_to_master_list(will_overwrite: bool = false) -> void:
+func add_to_global_list(will_overwrite: bool = false) -> void:
 	if ["", "unique_name"].has(unique_name):
 		unique_name = action_name.to_snake_case()
 	if RomReader.actions.keys().has(unique_name) and will_overwrite:
@@ -561,7 +561,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			# secondary_actions.append(RomReader.abilities[inflict_status_id].ability_action)
 			status_chance = 19
 			# secondary_actions_chances = [19]
-			secondary_actions2.append(SecondaryAction.new(RomReader.abilities[inflict_status_id].ability_action.unique_name, status_chance))
+			secondary_actions2.append(SecondaryAction.new(RomReader.fft_abilities[inflict_status_id].ability_action.unique_name, status_chance))
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
 			ignores_statuses.remove_at(0)
 		3: # weapon_power * weapon_power
@@ -588,7 +588,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 				var reference_action_unique_name: String = secondary_action_unique_names[secondary_action_idx]
 				var new_action: Action = RomReader.actions[reference_action_unique_name].duplicate_deep() # abilities need to be initialized before items
 				new_action.action_name = "Magic Gun " + new_action.action_name
-				new_action.add_to_master_list()
+				new_action.add_to_global_list()
 				new_action.area_of_effect_range = 0
 				new_action.target_effects[0].base_power_formula.formula = FormulaData.Formulas.WPxV1
 				new_action.mp_cost = 0

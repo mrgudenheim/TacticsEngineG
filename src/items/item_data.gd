@@ -189,7 +189,7 @@ func _init(idx: int = 0) -> void:
 		weapon_attack_action.use_weapon_animation = true
 		
 		weapon_attack_action.action_name = "Attack (" + name + ")"
-		weapon_attack_action.add_to_master_list()
+		weapon_attack_action.add_to_global_list()
 		weapon_attack_action.display_action_name = false
 		weapon_attack_action.min_targeting_range = 0
 		weapon_attack_action.max_targeting_range = max_range
@@ -253,7 +253,7 @@ func _init(idx: int = 0) -> void:
 					# var new_secondary_action: Action = RomReader.abilities[secondary_action_ids[secondary_action_idx]].ability_action.duplicate(true) # abilities need to be initialized before items
 					var new_secondary_action: Action = RomReader.actions[secondary_action_unique_names[secondary_action_idx]].duplicate_deep(DEEP_DUPLICATE_ALL) # abilities need to be initialized before items
 					new_secondary_action.action_name = "Magic Gun " + new_secondary_action.action_name
-					new_secondary_action.add_to_master_list()
+					new_secondary_action.add_to_global_list()
 					new_secondary_action.area_of_effect_range = 0
 					new_secondary_action.target_effects[0].base_power_formula.formula = FormulaData.Formulas.WPxV1
 					new_secondary_action.mp_cost = 0
@@ -273,7 +273,7 @@ func _init(idx: int = 0) -> void:
 			# weapon_attack_action.secondary_actions.append(RomReader.abilities[weapon_inflict_status_spell_id].ability_action)
 			# weapon_attack_action.status_chance = 19
 			# weapon_attack_action.secondary_actions_chances = [19]
-			weapon_attack_action.secondary_actions2.append(Action.SecondaryAction.new(RomReader.abilities[weapon_inflict_status_spell_id].ability_action.unique_name, 19))
+			weapon_attack_action.secondary_actions2.append(Action.SecondaryAction.new(RomReader.fft_abilities[weapon_inflict_status_spell_id].ability_action.unique_name, 19))
 		else: # inflict status data
 			weapon_attack_action.inflict_status_id = weapon_inflict_status_spell_id
 			var inflict_status: ScusData.InflictStatus = RomReader.scus_data.inflict_statuses[weapon_inflict_status_spell_id]

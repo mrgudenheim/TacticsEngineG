@@ -318,8 +318,8 @@ func add_test_teams_to_map() -> void:
 	test_triggered_action.trigger_chance_formula.values = [100.0]
 	test_triggered_action.trigger_chance_formula.formula = FormulaData.Formulas.V1
 	test_triggered_action.targeting = TriggeredAction.TargetingTypes.SELF
-	test_triggered_action.name = "Triggered " + RomReader.actions[test_triggered_action.action_unique_name].action_name
-	test_triggered_action.unique_name = test_triggered_action.name.to_snake_case() + ".triggered"
+	test_triggered_action.triggered_action_name = "Triggered " + RomReader.actions[test_triggered_action.action_unique_name].action_name
+	test_triggered_action.unique_name = test_triggered_action.triggered_action_name.to_snake_case() + ".triggered"
 	
 	var json_file = FileAccess.open("user://overrides/triggered_actions/move-hp-up.json", FileAccess.WRITE)
 	json_file.store_line(test_triggered_action.to_json())
@@ -331,8 +331,8 @@ func add_test_teams_to_map() -> void:
 	test_triggered_action.trigger_chance_formula.values = [1.0]
 	test_triggered_action.trigger_chance_formula.formula = FormulaData.Formulas.BRAVExV1
 	test_triggered_action.targeting = TriggeredAction.TargetingTypes.INITIATOR
-	test_triggered_action.name = "Triggered Attack"
-	test_triggered_action.unique_name = test_triggered_action.name.to_snake_case() + ".triggered"
+	test_triggered_action.triggered_action_name = "Triggered Attack"
+	test_triggered_action.unique_name = test_triggered_action.triggered_action_name.to_snake_case() + ".triggered"
 	
 	json_file = FileAccess.open("user://overrides/triggered_actions/counter.json", FileAccess.WRITE)
 	json_file.store_line(test_triggered_action.to_json())

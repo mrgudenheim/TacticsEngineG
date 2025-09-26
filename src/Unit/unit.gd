@@ -114,7 +114,7 @@ class AbilitySlot:
 		ability = new_ability
 	
 	func _to_string() -> String:
-		return ability_slot_name + ": " + ability.name
+		return ability_slot_name + ": " + ability.ability_name
 
 
 enum StatBasis {
@@ -669,7 +669,7 @@ func get_skillset_actions() -> Array[Action]:
 	for skillset: ScusData.SkillsetData in skillsets:
 		for ability_id: int in skillset.action_ability_ids:
 			if ability_id != 0:
-				var new_action: Action = RomReader.abilities[ability_id].ability_action
+				var new_action: Action = RomReader.fft_abilities[ability_id].ability_action
 				action_list.append(new_action)
 	return action_list
 
@@ -1253,7 +1253,7 @@ func set_job_id(new_job_id: int) -> void:
 
 func set_ability(new_ability_id: int) -> void:
 	active_ability_id = new_ability_id
-	ability_data = RomReader.abilities[new_ability_id]
+	ability_data = RomReader.fft_abilities[new_ability_id]
 	
 	if not ability_data.vfx_data.is_initialized:
 		ability_data.vfx_data.init_from_file()

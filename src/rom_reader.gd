@@ -37,13 +37,15 @@ var shps: Array[Shp] = []
 var seqs: Array[Seq] = []
 var maps: Array[MapData] = []
 var vfx: Array[VisualEffectData] = []
-var abilities: Array[FftAbilityData] = []
+var fft_abilities: Array[FftAbilityData] = []
 var items: Array[ItemData] = []
 # var status_effects: Array[StatusEffect] = [] # TODO reference scus_data.status_effects
-var status_effects: Dictionary[String, StatusEffect] = {}
+var status_effects: Dictionary[String, StatusEffect] = {} # [unique_name, StatusEffect]
 var job_data: Array[JobData] = [] # TODO reference scus_data.jobs
 # var actions: Array[Action] = []
-var actions: Dictionary[String, Action] = {} # [Action.unique_name, Action]
+var actions: Dictionary[String, Action] = {} # [unique_name, Action]
+var triggered_actions: Dictionary[String, TriggeredAction] = {} # [unique_name, TriggeredAction]
+var abilities: Dictionary[String, Ability] = {} # [unique_name, Ability]
 
 # BATTLE.BIN tables
 var battle_bin_data: BattleBinData = BattleBinData.new()
@@ -81,7 +83,7 @@ func clear_data() -> void:
 	seqs.clear()
 	maps.clear()
 	vfx.clear()
-	abilities.clear()
+	fft_abilities.clear()
 	items.clear()
 	status_effects.clear()
 	job_data.clear()
@@ -108,12 +110,12 @@ func process_rom() -> void:
 	cache_associated_files()
 	
 	for ability_id: int in NUM_ACTIVE_ABILITIES:
-		abilities.append(FftAbilityData.new(ability_id))
+		fft_abilities.append(FftAbilityData.new(ability_id))
 	
-	for ability: FftAbilityData in abilities:
+	for ability: FftAbilityData in fft_abilities:
 		ability.set_action()
 
-	# must be after abilities to set secondary actions
+	# must be after fft_abilities to set secondary actions
 	items.resize(NUM_ITEMS)
 	for id: int in NUM_ITEMS:
 		items[id] = (ItemData.new(id))
@@ -130,9 +132,9 @@ func process_rom() -> void:
 	
 	# testing vfx vram data
 	#for ability_id: int in NUM_ACTIVE_ABILITIES:
-		#if not abilities[ability_id].vfx_data.is_initialized:
-			#abilities[ability_id].vfx_data.init_from_file()
-		#var ability: FftAbilityData = abilities[ability_id]
+		#if not fft_abilities[ability_id].vfx_data.is_initialized:
+			#fft_abilities[ability_id].vfx_data.init_from_file()
+		#var ability: FftAbilityData = fft_abilities[ability_id]
 		#for frameset_idx: int in ability.vfx_data.frame_sets.size():
 			#for frame_idx: int in ability.vfx_data.frame_sets[frameset_idx].frame_set.size():
 				#var frame_data: VisualEffectData.VfxFrame = ability.vfx_data.frame_sets[frameset_idx].frame_set[frame_idx]
@@ -144,7 +146,7 @@ func process_rom() -> void:
 		#seq.write_wiki_table()
 	
 	# var json_file = FileAccess.open("user://overrides/action2_to_json.json", FileAccess.WRITE)
-	# json_file.store_line(abilities[2].ability_action.to_json())
+	# json_file.store_line(fft_abilities[2].ability_action.to_json())
 	# json_file.close()
 	
 	# Load custom actions
@@ -163,7 +165,7 @@ func process_rom() -> void:
 					var file_text = file.get_as_text()
 
 					var new_action: Action = Action.create_from_json(file_text)
-					new_action.add_to_master_list()
+					new_action.add_to_global_list()
 			file_name = dir.get_next()
 		dir.list_dir_end()
 	else:
@@ -316,7 +318,7 @@ func get_spr_file_idx(sprite_id: int) -> int:
 
 func init_abilities() -> void:
 	for ability_id: int in NUM_ABILITIES:
-		abilities[ability_id] = FftAbilityData.new(ability_id)
+		fft_abilities[ability_id] = FftAbilityData.new(ability_id)
 
 
 func process_frame_bin() -> void:

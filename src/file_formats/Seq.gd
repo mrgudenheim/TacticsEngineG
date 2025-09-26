@@ -228,7 +228,7 @@ func set_sequence_names() -> void:
 			job_type_name = RomReader.fft_text.job_names[0x5e + ((job.monster_type - 1) * 3)]
 		
 		for ability_id: int in RomReader.scus_data.skillsets_data[job.skillset_id].action_ability_ids:
-			var ability: FftAbilityData = RomReader.abilities[ability_id]
+			var ability: FftAbilityData = RomReader.fft_abilities[ability_id]
 			if ability_id == 0: # skip empty abilities
 				continue
 			

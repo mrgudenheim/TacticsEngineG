@@ -149,70 +149,7 @@ func process_rom() -> void:
 	# json_file.store_line(fft_abilities[2].ability_action.to_json())
 	# json_file.close()
 	
-	# Load custom actions
-	var dir_path: String = "res://src/actions/custom_actions/"
-	var dir := DirAccess.open(dir_path)
-
-	if dir:
-		dir.list_dir_begin()
-		var file_name: String = dir.get_next()
-		while file_name != "":
-			if not file_name.begins_with("."): # Exclude hidden files
-				push_warning("Found file: " + file_name)
-				if file_name.ends_with(".json"):
-					var file_path: String = dir_path + file_name
-					var file := FileAccess.open(file_path, FileAccess.READ)
-					var file_text = file.get_as_text()
-
-					var new_action: Action = Action.create_from_json(file_text)
-					new_action.add_to_global_list()
-			file_name = dir.get_next()
-		dir.list_dir_end()
-	else:
-		push_warning("Could not open directory: " + dir_path)
-	
-
-	dir_path = "res://src/triggered_actions/triggered_actions/"
-	dir = DirAccess.open(dir_path)
-
-	if dir:
-		dir.list_dir_begin()
-		var file_name: String = dir.get_next()
-		while file_name != "":
-			if not file_name.begins_with("."): # Exclude hidden files
-				push_warning("Found file: " + file_name)
-				if file_name.ends_with(".json"):
-					var file_path: String = dir_path + file_name
-					var file := FileAccess.open(file_path, FileAccess.READ)
-					var file_text = file.get_as_text()
-
-					var new_triggered_action: TriggeredAction = TriggeredAction.create_from_json(file_text)
-					new_triggered_action.add_to_global_list()
-			file_name = dir.get_next()
-		dir.list_dir_end()
-	else:
-		push_warning("Could not open directory: " + dir_path)
-	
-	dir_path = "res://src/abilities/"
-	dir = DirAccess.open(dir_path)
-
-	if dir:
-		dir.list_dir_begin()
-		var file_name: String = dir.get_next()
-		while file_name != "":
-			if not file_name.begins_with("."): # Exclude hidden files
-				push_warning("Found file: " + file_name)
-				if file_name.ends_with(".json"):
-					var file_path: String = dir_path + file_name
-					var file := FileAccess.open(file_path, FileAccess.READ)
-					var file_text = file.get_as_text()
-
-					var new_ability: Ability = Ability.create_from_json(file_text)
-					new_ability.add_to_global_list()
-			file_name = dir.get_next()
-		dir.list_dir_end()
-	else:
-		push_warning("Could not open directory: " + dir_path)
+	import_custom_data()
 
 	is_ready = true
 	rom_loaded.emit()
@@ -449,3 +386,71 @@ func process_frame_bin() -> void:
 			image.set_pixel(x,y, color8) # spr stores pixel data left to right, top to bottm
 	
 	frame_bin_texture = ImageTexture.create_from_image(image)
+
+
+func import_custom_data() -> void:
+	# Load custom actions
+	var dir_path: String = "res://src/actions/custom_actions/"
+	var dir := DirAccess.open(dir_path)
+
+	if dir:
+		dir.list_dir_begin()
+		var file_name: String = dir.get_next()
+		while file_name != "":
+			if not file_name.begins_with("."): # Exclude hidden files
+				push_warning("Found file: " + file_name)
+				if file_name.ends_with(".json"):
+					var file_path: String = dir_path + file_name
+					var file := FileAccess.open(file_path, FileAccess.READ)
+					var file_text = file.get_as_text()
+
+					var new_action: Action = Action.create_from_json(file_text)
+					new_action.add_to_global_list()
+			file_name = dir.get_next()
+		dir.list_dir_end()
+	else:
+		push_warning("Could not open directory: " + dir_path)
+	
+	# Load custom triggered actions
+	dir_path = "res://src/triggered_actions/triggered_actions/"
+	dir = DirAccess.open(dir_path)
+
+	if dir:
+		dir.list_dir_begin()
+		var file_name: String = dir.get_next()
+		while file_name != "":
+			if not file_name.begins_with("."): # Exclude hidden files
+				push_warning("Found file: " + file_name)
+				if file_name.ends_with(".json"):
+					var file_path: String = dir_path + file_name
+					var file := FileAccess.open(file_path, FileAccess.READ)
+					var file_text = file.get_as_text()
+
+					var new_triggered_action: TriggeredAction = TriggeredAction.create_from_json(file_text)
+					new_triggered_action.add_to_global_list()
+			file_name = dir.get_next()
+		dir.list_dir_end()
+	else:
+		push_warning("Could not open directory: " + dir_path)
+	
+	# Load custom abilities
+	dir_path = "res://src/abilities/"
+	dir = DirAccess.open(dir_path)
+
+	if dir:
+		dir.list_dir_begin()
+		var file_name: String = dir.get_next()
+		while file_name != "":
+			if not file_name.begins_with("."): # Exclude hidden files
+				push_warning("Found file: " + file_name)
+				if file_name.ends_with(".json"):
+					var file_path: String = dir_path + file_name
+					var file := FileAccess.open(file_path, FileAccess.READ)
+					var file_text = file.get_as_text()
+
+					var new_ability: Ability = Ability.create_from_json(file_text)
+					new_ability.add_to_global_list()
+			file_name = dir.get_next()
+		dir.list_dir_end()
+	else:
+		push_warning("Could not open directory: " + dir_path)

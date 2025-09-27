@@ -50,6 +50,13 @@ func object_properties_to_json(object, exclude_property_names: PackedStringArray
 	return JSON.stringify(property_dict, "\t")
 
 
+func save_json(object) -> void:
+	# var json_file = FileAccess.open("user://overrides/triggered_actions/" + object.unique_name + file_suffix, FileAccess.WRITE)
+	var json_file = FileAccess.open(object.SAVE_DIRECTORY_PATH + object.unique_name + "." + object.FILE_SUFFIX + ".json", FileAccess.WRITE)
+	json_file.store_line(object.to_json())
+	json_file.close()
+
+
 ## returns true if array1 has any element in array2 or if arry2 is empty
 func has_any_elements(array1: Array, array2: Array) -> bool:
 	if array2.is_empty():

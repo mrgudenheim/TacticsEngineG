@@ -1,0 +1,34 @@
+{
+	"action_hp_damage_threshold": 0,
+	"action_mp_cost_threshold": 0,
+	"action_unique_name": "ATTACK",
+	"allow_triggering_actions": false,
+	"allow_valid_targets_only": true,
+	"deduct_action_points": false,
+	"display_name": "Hamedo",
+	"excessive_hp_recovery_threshold": 0,
+	"only_trigger_if_usable": true,
+	"required_action_type": [],
+	"required_status_id": [],
+	"required_trigger_type": [
+		0
+	],
+	"requries_hit": 0,
+	"targeting": 2,
+	"trigger_chance_formula": {
+		"formula": 35,
+		"is_modified_by_element": false,
+		"is_modified_by_zodiac": false,
+		"reverse_sign": false,
+		"target_faith_modifier": 0,
+		"user_faith_modifier": 0,
+		"values": [
+			1.0
+		]
+	},
+	"trigger_timing": 1,
+	"unique_name": "hamedo",
+	"user_stat_thresholds": {
+
+	}
+}

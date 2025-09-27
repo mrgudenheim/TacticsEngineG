@@ -11,7 +11,6 @@ enum SlotType {
 const SAVE_DIRECTORY_PATH: String = "user://overrides/abilities/"
 const FILE_SUFFIX: String = "ability"
 
-@export var id: int = 0
 @export var unique_name: String = "unique_name"
 @export var display_name: String = "[Ability Name]"
 @export var slot_type: SlotType = SlotType.SKILLSET

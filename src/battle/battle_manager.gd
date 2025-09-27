@@ -358,7 +358,11 @@ func add_test_teams_to_map() -> void:
 	# test_triggered_action = TriggeredAction.create_from_json(json_text)
 	# test_ability.triggered_actions = [test_triggered_action]
 	
-
+	test_ability.triggered_actions_names.append("attack")
+	test_ability.triggered_actions_names.append("regen_heal")
+	test_ability.display_name = "Counter Attack"
+	test_ability.unique_name = "counter"
+	Utilities.save_json(test_ability)
 
 
 	#var csv_row = test_triggered_action.to_csv_row()

@@ -2,7 +2,7 @@
 	"unique_name": "dead_damage",
 	"action_id": -1,
 	"action_idx": -1,
-	"action_name": "Dead Damage",
+	"display_name": "Dead Damage",
 	"action_points_cost": 0,
 	"animation_charging_id": 0,
 	"animation_executing_id": -1,

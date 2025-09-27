@@ -2,7 +2,7 @@
 	"unique_name": "critical_quick",
 	"action_id": -1,
 	"action_idx": -1,
-	"action_name": "Critical Quick",
+	"display_name": "Critical Quick",
 	"action_points_cost": 0,
 	"animation_charging_id": 0,
 	"animation_executing_id": -1,

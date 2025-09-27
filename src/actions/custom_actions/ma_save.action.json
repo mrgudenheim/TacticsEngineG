@@ -2,7 +2,7 @@
 	"unique_name": "ma_save",
 	"action_id": -1,
 	"action_idx": -1,
-	"action_name": "MA Save",
+	"display_name": "MA Save",
 	"action_points_cost": 0,
 	"animation_charging_id": 0,
 	"animation_executing_id": -1,

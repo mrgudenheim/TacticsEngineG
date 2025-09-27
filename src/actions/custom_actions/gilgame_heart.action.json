@@ -2,7 +2,7 @@
 	"unique_name": "gilgame_heart",
 	"action_id": -1,
 	"action_idx": -1,
-	"action_name": "Gilgame Heart",
+	"display_name": "Gilgame Heart",
 	"action_points_cost": 0,
 	"animation_charging_id": 0,
 	"animation_executing_id": -1,

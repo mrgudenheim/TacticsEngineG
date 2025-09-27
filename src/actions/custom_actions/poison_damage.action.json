@@ -67,7 +67,12 @@
 	],
 	"set_target_animation_on_hit": true,
 	"status_chance": 100,
-	"status_prevents_use_any": [],
+	"status_prevents_use_any": [
+		"crystal",
+		"dead",
+		"petrify",
+		"treasure"
+	],
 	"target_effects": [
 		{
 			"apply_to_user": false,

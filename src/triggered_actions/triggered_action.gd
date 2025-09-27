@@ -208,6 +208,26 @@ func get_action(triggered_action_data: TriggeredActionInstance) -> Action:
 	return action
 
 
+func add_to_global_list(will_overwrite: bool = false) -> void:
+	if ["", "unique_name"].has(unique_name):
+		unique_name = triggered_action_name.to_snake_case()
+	if RomReader.triggered_actions.keys().has(unique_name) and will_overwrite:
+		push_warning("Overwriting existing action: " + unique_name)
+	elif RomReader.triggered_actions.keys().has(unique_name) and not will_overwrite:
+		var num: int = 2
+		var formatted_num: String = "%02d" % num
+		var new_unique_name: String = unique_name + "_" + formatted_num
+		while RomReader.triggered_actions.keys().has(new_unique_name):
+			num += 1
+			formatted_num = "%02d" % num
+			new_unique_name = unique_name + "_" + formatted_num
+		
+		push_warning("TriggeredAction list already contains: " + unique_name + ". Incrementing unique_name to: " + new_unique_name)
+		unique_name = new_unique_name
+	
+	RomReader.triggered_actions[unique_name] = self
+
+
 func to_json() -> String:
 	var properties_to_exclude: PackedStringArray = [
 		"RefCounted",
@@ -276,23 +296,3 @@ static func create_from_dictonary(property_dict: Dictionary) -> TriggeredAction:
 	
 	new_triggered_action.emit_changed()
 	return new_triggered_action
-
-
-func add_to_global_list(will_overwrite: bool = false) -> void:
-	if ["", "unique_name"].has(unique_name):
-		unique_name = triggered_action_name.to_snake_case()
-	if RomReader.triggered_actions.keys().has(unique_name) and will_overwrite:
-		push_warning("Overwriting existing action: " + unique_name)
-	elif RomReader.triggered_actions.keys().has(unique_name) and not will_overwrite:
-		var num: int = 2
-		var formatted_num: String = "%02d" % num
-		var new_unique_name: String = unique_name + "_" + formatted_num
-		while RomReader.triggered_actions.keys().has(new_unique_name):
-			num += 1
-			formatted_num = "%02d" % num
-			new_unique_name = unique_name + "_" + formatted_num
-		
-		push_warning("TriggeredAction list already contains: " + unique_name + ". Incrementing unique_name to: " + new_unique_name)
-		unique_name = new_unique_name
-	
-	RomReader.triggered_actions[unique_name] = self

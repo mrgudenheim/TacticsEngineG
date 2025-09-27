@@ -27,7 +27,7 @@
 		]
 	},
 	"trigger_timing": 2,
-	"unique_name": "counter",
+	"unique_name": "counter_attack",
 	"user_stat_thresholds": {
 
 	}

@@ -8,7 +8,7 @@
 	"slot_type": 1,
 	"spell_quote": "spell quote",
 	"triggered_actions_names": [
-		"attack"
+		"counter_attack"
 	],
-	"unique_name": "counter"
+	"unique_name": "counter_attack"
 }

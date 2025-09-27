@@ -93,7 +93,7 @@
 					1.0
 				]
 			},
-			"effect_stat_type": 7,
+			"effect_stat_type": 0,
 			"label": "",
 			"set_value": false,
 			"show_ui": true,

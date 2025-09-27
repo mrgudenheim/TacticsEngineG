@@ -21,8 +21,9 @@ enum SlotType {
 @export var learn_on_hit: bool = false
 
 @export var passive_effect: PassiveEffect = PassiveEffect.new()
-@export var triggered_actions: Array[TriggeredAction] = []
 
+@export var triggered_actions_names: PackedStringArray = []
+var triggered_actions: Array[TriggeredAction] = []
 
 func add_to_global_list(will_overwrite: bool = false) -> void:
 	if ["", "unique_name"].has(unique_name):
@@ -42,3 +43,36 @@ func add_to_global_list(will_overwrite: bool = false) -> void:
 		unique_name = new_unique_name
 	
 	RomReader.abilities[unique_name] = self
+
+
+func to_json() -> String:
+	var properties_to_exclude: PackedStringArray = [
+		"RefCounted",
+		"Resource",
+		"resource_local_to_scene",
+		"resource_path",
+		"resource_name",
+		"resource_scene_unique_id",
+		"script",
+	]
+	return Utilities.object_properties_to_json(self, properties_to_exclude)
+
+
+static func create_from_json(json_string: String) -> Ability:
+	var property_dict: Dictionary = JSON.parse_string(json_string)
+	var new_ability: Ability = create_from_dictonary(property_dict)
+	
+	return new_ability
+
+
+static func create_from_dictonary(property_dict: Dictionary) -> Ability:
+	var new_ability: Ability = Ability.new()
+	for property_name in property_dict.keys():
+		# TODO handle passive_effects
+		new_ability.set(property_name, property_dict[property_name])
+	
+	for triggered_action_unique_name: String in new_ability.triggered_actions_names:
+		new_ability.triggered_actions.append(RomReader.triggered_actions[triggered_action_unique_name])
+	
+	new_ability.emit_changed()
+	return new_ability

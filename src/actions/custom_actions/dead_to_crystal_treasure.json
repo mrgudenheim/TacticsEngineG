@@ -42,9 +42,9 @@
 	"healing_damages_undead": false,
 	"hit_chance_modified_by_passive": false,
 	"ignores_statuses": [
-		26,
-		27,
-		2
+		"dead",
+		"protect",
+		"shell"
 	],
 	"is_math_usable": false,
 	"is_mimicable": false,

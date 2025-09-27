@@ -70,7 +70,7 @@
 	"status_prevents_use_any": [],
 	"target_effects": [],
 	"target_status_list": [
-		2
+		"dead"
 	],
 	"target_status_list_type": 2,
 	"targeting_linear": false,

@@ -1,0 +1,14 @@
+{
+	"chance_to_learn": 100.0,
+	"display_ability_name": true,
+	"display_name": "Gilgame Heart",
+	"jp_cost": 0,
+	"learn_on_hit": false,
+	"learn_with_jp": true,
+	"slot_type": 1,
+	"spell_quote": "spell quote",
+	"triggered_actions_names": [
+		"gilgame_heart"
+	],
+	"unique_name": "gilgame_heart"
+}

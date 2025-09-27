@@ -170,6 +170,49 @@ func process_rom() -> void:
 		dir.list_dir_end()
 	else:
 		push_warning("Could not open directory: " + dir_path)
+	
+
+	dir_path = "res://src/triggered_actions/triggered_actions/"
+	dir = DirAccess.open(dir_path)
+
+	if dir:
+		dir.list_dir_begin()
+		var file_name: String = dir.get_next()
+		while file_name != "":
+			if not file_name.begins_with("."): # Exclude hidden files
+				push_warning("Found file: " + file_name)
+				if file_name.ends_with(".json"):
+					var file_path: String = dir_path + file_name
+					var file := FileAccess.open(file_path, FileAccess.READ)
+					var file_text = file.get_as_text()
+
+					var new_triggered_action: TriggeredAction = TriggeredAction.create_from_json(file_text)
+					new_triggered_action.add_to_global_list()
+			file_name = dir.get_next()
+		dir.list_dir_end()
+	else:
+		push_warning("Could not open directory: " + dir_path)
+	
+	dir_path = "res://src/abilities/"
+	dir = DirAccess.open(dir_path)
+
+	if dir:
+		dir.list_dir_begin()
+		var file_name: String = dir.get_next()
+		while file_name != "":
+			if not file_name.begins_with("."): # Exclude hidden files
+				push_warning("Found file: " + file_name)
+				if file_name.ends_with(".json"):
+					var file_path: String = dir_path + file_name
+					var file := FileAccess.open(file_path, FileAccess.READ)
+					var file_text = file.get_as_text()
+
+					var new_ability: Ability = Ability.create_from_json(file_text)
+					new_ability.add_to_global_list()
+			file_name = dir.get_next()
+		dir.list_dir_end()
+	else:
+		push_warning("Could not open directory: " + dir_path)
 
 	is_ready = true
 	rom_loaded.emit()

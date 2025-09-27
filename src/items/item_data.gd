@@ -139,8 +139,8 @@ enum ItemType {
 func _init(idx: int = 0) -> void:
 	display_name = RomReader.fft_text.item_names[idx]
 	item_idx = idx
-	item_type = RomReader.scus_data.item_types[idx]
-	slot_type = RomReader.scus_data.item_slot_types[idx] & 0xfc # skip rare flag
+	item_type = RomReader.scus_data.item_types[idx] as ItemType
+	slot_type = RomReader.scus_data.item_slot_types[idx] & 0xfc as SlotType # skip rare flag
 	is_rare = RomReader.scus_data.item_slot_types[idx] & 0x02 == 0x02 # rare flag
 	
 	item_graphic_id = RomReader.scus_data.item_sprite_ids[idx]
@@ -169,7 +169,7 @@ func _init(idx: int = 0) -> void:
 		weapon_evade = RomReader.scus_data.weapon_evade[idx]
 		evade_datas.append(EvadeData.new(weapon_evade, EvadeData.EvadeSource.WEAPON, EvadeData.EvadeType.PHYSICAL))
 		
-		weapon_element = RomReader.scus_data.weapon_element[idx]
+		weapon_element = RomReader.scus_data.weapon_element[idx] as Action.ElementTypes
 		weapon_inflict_status_spell_id = RomReader.scus_data.weapon_inflict_status_cast_id[idx]
 		
 		# weapon targeting types based on weapon_flags

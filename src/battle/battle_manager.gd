@@ -318,7 +318,7 @@ func add_test_teams_to_map() -> void:
 	test_triggered_action.trigger_chance_formula.values = [100.0]
 	test_triggered_action.trigger_chance_formula.formula = FormulaData.Formulas.V1
 	test_triggered_action.targeting = TriggeredAction.TargetingTypes.SELF
-	test_triggered_action.display_name = RomReader.actions[test_triggered_action.action_unique_name].unique_name
+	test_triggered_action.display_name = "Move Get HP"
 	test_triggered_action.unique_name = test_triggered_action.display_name.to_snake_case()
 	
 	Utilities.save_json(test_triggered_action)

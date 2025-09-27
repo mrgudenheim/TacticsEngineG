@@ -5,8 +5,8 @@
 	"allow_triggering_actions": false,
 	"allow_valid_targets_only": true,
 	"deduct_action_points": false,
+	"display_name": "Move Get HP",
 	"excessive_hp_recovery_threshold": 0,
-	"name": "Triggered Regen Healing",
 	"only_trigger_if_usable": true,
 	"required_action_type": [],
 	"required_status_id": [],
@@ -25,7 +25,7 @@
 		]
 	},
 	"trigger_timing": 0,
-	"unique_name": "triggered_regen_healing.triggered",
+	"unique_name": "move_get_hp",
 	"user_stat_thresholds": {
 
 	}

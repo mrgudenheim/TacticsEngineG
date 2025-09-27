@@ -5,8 +5,8 @@
 	"allow_triggering_actions": false,
 	"allow_valid_targets_only": true,
 	"deduct_action_points": false,
+	"display_name": "Reraise Remove Dead",
 	"excessive_hp_recovery_threshold": 0,
-	"name": "Reraise Remove Dead",
 	"only_trigger_if_usable": false,
 	"required_action_type": [],
 	"required_status_id": ["dead"],
@@ -25,7 +25,7 @@
 		]
 	},
 	"trigger_timing": 3,
-	"unique_name": "reraise_remove_dead.triggered",
+	"unique_name": "reraise_remove_dead",
 	"user_stat_thresholds": {
 
 	}

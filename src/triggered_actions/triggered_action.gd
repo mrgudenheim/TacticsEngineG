@@ -25,6 +25,12 @@ enum TriggerType {
 	MIMIC,
 }
 
+enum HitRequirement {
+	NONE,
+	HIT,
+	MISS,
+} # TODO other hit requirements for specific evade types?
+
 const SAVE_DIRECTORY_PATH: String = "user://overrides/triggered_actions/"
 const FILE_SUFFIX: String = "triggered_action"
 
@@ -54,7 +60,7 @@ const FILE_SUFFIX: String = "triggered_action"
 # requirements to trigger - initiator action data
 @export var required_trigger_type: Array[TriggerType] = [] # will not trigger if action does not have any of these flags (can trigger if empty)
 @export var action_mp_cost_threshold: int = 0 # will not trigger if action mp cost is not >= this value
-@export var requries_hit: int = 0 # 0 - does not require anything specific, 1 - require hit, 2 - require miss, 3+ - require specific evade type? will only trigger if action successfully hit this unit
+@export var requries_hit: HitRequirement = HitRequirement.NONE # 0 - does not require anything specific, 1 - require hit, 2 - require miss, 3+ - require specific evade type? will only trigger if action successfully hit this unit
 @export var required_action_type: Array[Action.ActionType] = [] # will not trigger if action does not have any of these flags
 @export var action_hp_damage_threshold: int = 0 # will only trigger if HP damage caused by action is >= this value
 @export var excessive_hp_recovery_threshold: int = 0 # will only trigger if HP recovered by action would exceed units max by this value

@@ -318,12 +318,13 @@ func add_test_teams_to_map() -> void:
 	test_triggered_action.trigger_chance_formula.values = [100.0]
 	test_triggered_action.trigger_chance_formula.formula = FormulaData.Formulas.V1
 	test_triggered_action.targeting = TriggeredAction.TargetingTypes.SELF
-	test_triggered_action.triggered_action_name = "Triggered " + RomReader.actions[test_triggered_action.action_unique_name].action_name
-	test_triggered_action.unique_name = test_triggered_action.triggered_action_name.to_snake_case() + ".triggered"
+	test_triggered_action.display_name = RomReader.actions[test_triggered_action.action_unique_name].unique_name
+	test_triggered_action.unique_name = test_triggered_action.display_name.to_snake_case()
 	
-	var json_file = FileAccess.open("user://overrides/triggered_actions/move-hp-up.json", FileAccess.WRITE)
-	json_file.store_line(test_triggered_action.to_json())
-	json_file.close()
+	Utilities.save_json(test_triggered_action)
+	# var json_file = FileAccess.open("user://overrides/triggered_actions/move-hp-up.json", FileAccess.WRITE)
+	# json_file.store_line(test_triggered_action.to_json())
+	# json_file.close()
 	
 	# Counter Attack
 	test_triggered_action.trigger_timing = TriggeredAction.TriggerTiming.TARGETTED_POST_ACTION
@@ -331,12 +332,13 @@ func add_test_teams_to_map() -> void:
 	test_triggered_action.trigger_chance_formula.values = [1.0]
 	test_triggered_action.trigger_chance_formula.formula = FormulaData.Formulas.BRAVExV1
 	test_triggered_action.targeting = TriggeredAction.TargetingTypes.INITIATOR
-	test_triggered_action.triggered_action_name = "Triggered Attack"
-	test_triggered_action.unique_name = test_triggered_action.triggered_action_name.to_snake_case() + ".triggered"
+	test_triggered_action.display_name = "attack"
+	test_triggered_action.unique_name = test_triggered_action.display_name.to_snake_case()
 	
-	json_file = FileAccess.open("user://overrides/triggered_actions/counter.json", FileAccess.WRITE)
-	json_file.store_line(test_triggered_action.to_json())
-	json_file.close()
+	Utilities.save_json(test_triggered_action)
+	# json_file = FileAccess.open("user://overrides/triggered_actions/counter.json", FileAccess.WRITE)
+	# json_file.store_line(test_triggered_action.to_json())
+	# json_file.close()
 	
 	# Test Trigger
 	#test_triggered_action.trigger = TriggeredAction.TriggerTiming.TARGETTED_POST_ACTION
@@ -351,11 +353,14 @@ func add_test_teams_to_map() -> void:
 	#json_file.store_line(test_triggered_action.to_json())
 	#json_file.close()
 	
-	json_file = FileAccess.open("user://overrides/triggered_actions/test_trigger.json", FileAccess.READ)
-	var json_text: String = json_file.get_as_text()
-	test_triggered_action = TriggeredAction.create_from_json(json_text)
-	test_ability.triggered_actions = [test_triggered_action]
+	# var json_file = FileAccess.open("user://overrides/triggered_actions/test_trigger.json", FileAccess.READ)
+	# var json_text: String = json_file.get_as_text()
+	# test_triggered_action = TriggeredAction.create_from_json(json_text)
+	# test_ability.triggered_actions = [test_triggered_action]
 	
+
+
+
 	#var csv_row = test_triggered_action.to_csv_row()
 	#
 	#json_file = FileAccess.open("user://overrides/triggered_actions/triggered_actions_db.txt", FileAccess.WRITE)
@@ -472,7 +477,7 @@ func process_clock_tick() -> void:
 						#status.delayed_action.show_targets_highlights(status.delayed_action.preview_targets_highlights) # show submitted targets TODO retain preview highlight nodes?
 						#await unit.get_tree().create_timer(0.5).timeout
 						camera_controller.follow_node = unit.char_body
-						game_state_label.text = unit.job_nickname + "-" + unit.unit_nickname + " processing delayed " + status.delayed_action.action.action_name
+						game_state_label.text = unit.job_nickname + "-" + unit.unit_nickname + " processing delayed " + status.delayed_action.action.display_name
 						await status.delayed_action.use()
 						#await status.delayed_action.action_completed
 						if check_end_conditions():

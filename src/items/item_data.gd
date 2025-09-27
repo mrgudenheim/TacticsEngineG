@@ -3,8 +3,11 @@ extends Resource
 
 # https://ffhacktics.com/wiki/Item_Data
 
+const SAVE_DIRECTORY_PATH: String = "user://overrides/items/"
+const FILE_SUFFIX: String = "item"
+
 @export var unique_name: String = "unique_name"
-@export var name: String = "Item name"
+@export var display_name: String = "Item display_name"
 @export var item_idx: int = 0
 @export var item_graphic_id: int = 0
 @export var item_palette_id: int = 0
@@ -134,7 +137,7 @@ enum ItemType {
 
 # In SCUS data tables
 func _init(idx: int = 0) -> void:
-	name = RomReader.fft_text.item_names[idx]
+	display_name = RomReader.fft_text.item_names[idx]
 	item_idx = idx
 	item_type = RomReader.scus_data.item_types[idx]
 	slot_type = RomReader.scus_data.item_slot_types[idx] & 0xfc # skip rare flag
@@ -188,9 +191,9 @@ func _init(idx: int = 0) -> void:
 		weapon_attack_action.element = weapon_element
 		weapon_attack_action.use_weapon_animation = true
 		
-		weapon_attack_action.action_name = "Attack (" + name + ")"
+		weapon_attack_action.display_name = "Attack (" + display_name + ")"
 		weapon_attack_action.add_to_global_list()
-		weapon_attack_action.display_action_name = false
+		weapon_attack_action.name_will_display = false
 		weapon_attack_action.min_targeting_range = 0
 		weapon_attack_action.max_targeting_range = max_range
 		weapon_attack_action.area_of_effect_range = 0
@@ -252,7 +255,7 @@ func _init(idx: int = 0) -> void:
 				for secondary_action_idx: int in secondary_action_unique_names.size():
 					# var new_secondary_action: Action = RomReader.abilities[secondary_action_ids[secondary_action_idx]].ability_action.duplicate(true) # abilities need to be initialized before items
 					var new_secondary_action: Action = RomReader.actions[secondary_action_unique_names[secondary_action_idx]].duplicate_deep(DEEP_DUPLICATE_ALL) # abilities need to be initialized before items
-					new_secondary_action.action_name = "Magic Gun " + new_secondary_action.action_name
+					new_secondary_action.display_name = "Magic Gun " + new_secondary_action.display_name
 					new_secondary_action.add_to_global_list()
 					new_secondary_action.area_of_effect_range = 0
 					new_secondary_action.target_effects[0].base_power_formula.formula = FormulaData.Formulas.WPxV1

@@ -1,15 +1,17 @@
 class_name Action
 extends Resource
 
+const SAVE_DIRECTORY_PATH: String = "user://overrides/actions/"
+const FILE_SUFFIX: String = "action"
 # static var current_id: int = 0
 
 @export var unique_name: String = "unique_name" # "ATTACK" and "COPY" are special cases
 # @export var action_id: int = 0
 # @export var action_idx: int = 0
-@export var action_name: String = "Action Name"
+@export var display_name: String = "Action Name"
 @export var description: String = "Action description"
 @export var quote: String = "Action quote"
-@export var display_action_name: bool = true
+@export var name_will_display: bool = true
 
 @export var useable_strategy: UseableStrategy
 @export var targeting_type: TargetingTypes = TargetingTypes.RANGE
@@ -196,12 +198,12 @@ enum UseTypes {
 
 
 func _to_string() -> String:
-	return action_name
+	return display_name
 
 
 func add_to_global_list(will_overwrite: bool = false) -> void:
 	if ["", "unique_name"].has(unique_name):
-		unique_name = action_name.to_snake_case()
+		unique_name = display_name.to_snake_case()
 	if RomReader.actions.keys().has(unique_name) and will_overwrite:
 		push_warning("Overwriting existing action: " + unique_name)
 	elif RomReader.actions.keys().has(unique_name) and not will_overwrite:
@@ -430,7 +432,7 @@ func apply_standard(action_instance: ActionInstance) -> void:
 			animate_evade(target_unit, evade_direction, action_instance.user.tile_position.location)
 			
 			target_unit.show_popup_text("Missed!") # TODO or "Guarded"
-			#push_warning(action_name + " missed")
+			#push_warning(display_name + " missed")
 	
 	# apply effects to user
 	for effect: ActionEffect in user_effects:
@@ -438,7 +440,7 @@ func apply_standard(action_instance: ActionInstance) -> void:
 		effect.apply(action_instance.user, action_instance.user, effect_value)
 	
 	# wait for applying effect animation
-	action_instance.user.global_battle_manager.game_state_label.text = "Waiting for " + action_name + " vfx" 
+	action_instance.user.global_battle_manager.game_state_label.text = "Waiting for " + display_name + " vfx" 
 	if vfx_data != null and target_units.size() > 0:
 		while vfx_locations.any(func(vfx_location): return vfx_location != null): # wait until vfx is completed
 			await action_instance.user.get_tree().process_frame
@@ -587,7 +589,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 				# var new_action: Action = RomReader.abilities[secondary_action_ids[secondary_action_idx]].ability_action.duplicate(true) # abilities need to be initialized before items
 				var reference_action_unique_name: String = secondary_action_unique_names[secondary_action_idx]
 				var new_action: Action = RomReader.actions[reference_action_unique_name].duplicate_deep() # abilities need to be initialized before items
-				new_action.action_name = "Magic Gun " + new_action.action_name
+				new_action.display_name = "Magic Gun " + new_action.display_name
 				new_action.add_to_global_list()
 				new_action.area_of_effect_range = 0
 				new_action.target_effects[0].base_power_formula.formula = FormulaData.Formulas.WPxV1

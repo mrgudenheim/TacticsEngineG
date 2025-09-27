@@ -109,7 +109,7 @@ func get_tile_highlights(tiles: Array[TerrainTile], highlight_material: Material
 
 
 func start_targeting() -> void:
-	user.global_battle_manager.game_state_label.text = user.job_nickname + "-" + user.unit_nickname + " targeting " + action.action_name
+	user.global_battle_manager.game_state_label.text = user.job_nickname + "-" + user.unit_nickname + " targeting " + action.display_name
 	
 	# cancel any current targeting
 	if is_instance_valid(user.active_action):
@@ -286,7 +286,7 @@ func get_secondary_actions_text(target: UnitData) -> String:
 	for secondary_action: Action.SecondaryAction in action.secondary_actions2:
 		var secondary_action_chance: String = str(secondary_action.chance) + "%"
 		#var secondary_action_effect_text: String = secondary_action.ac # TODO get effect text of secondary action?
-		var secondary_action_text: String = secondary_action_chance + " " + RomReader.actions[secondary_action.action_unique_name].action_name
+		var secondary_action_text: String = secondary_action_chance + " " + RomReader.actions[secondary_action.action_unique_name].display_name
 		all_secondary_action_text.append(secondary_action_text)
 	
 	total_secondary_action_text += "\n".join(all_secondary_action_text)
@@ -311,7 +311,7 @@ func on_unit_hovered(unit: UnitData, event: InputEvent):
 
 
 func queue_use() -> void:
-	battle_manager.game_state_label.text = user.job_nickname + "-" + user.unit_nickname + " using " + action.action_name
+	battle_manager.game_state_label.text = user.job_nickname + "-" + user.unit_nickname + " using " + action.display_name
 	user.clear_action_buttons(battle_manager)
 	if deduct_action_points:
 		pay_action_point_costs()
@@ -344,7 +344,7 @@ func pay_action_point_costs() -> void:
 
 func face_target() -> void:
 	if submitted_targets.is_empty():
-		push_warning(action.action_name + ": no submitted targets")
+		push_warning(action.display_name + ": no submitted targets")
 		return
 	
 	if submitted_targets[0] != user.tile_position:

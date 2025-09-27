@@ -8,9 +8,12 @@ enum SlotType {
 	MOVEMENT,
 }
 
+const SAVE_DIRECTORY_PATH: String = "user://overrides/abilities/"
+const FILE_SUFFIX: String = "ability"
+
 @export var id: int = 0
 @export var unique_name: String = "unique_name"
-@export var ability_name: String = "[Ability Name]"
+@export var display_name: String = "[Ability Name]"
 @export var slot_type: SlotType = SlotType.SKILLSET
 
 @export var spell_quote: String = "spell quote"
@@ -27,7 +30,7 @@ var triggered_actions: Array[TriggeredAction] = []
 
 func add_to_global_list(will_overwrite: bool = false) -> void:
 	if ["", "unique_name"].has(unique_name):
-		unique_name = ability_name.to_snake_case()
+		unique_name = display_name.to_snake_case()
 	if RomReader.abilities.keys().has(unique_name) and will_overwrite:
 		push_warning("Overwriting existing action: " + unique_name)
 	elif RomReader.abilities.keys().has(unique_name) and not will_overwrite:

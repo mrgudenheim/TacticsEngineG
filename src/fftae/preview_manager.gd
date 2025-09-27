@@ -38,7 +38,7 @@ func initialize() -> void:
 		var equipment_type_name: String = ""
 		if RomReader.items[weapon_index].item_type < RomReader.fft_text.equipment_types.size():
 			equipment_type_name = " (" + RomReader.fft_text.equipment_types[RomReader.items[weapon_index].item_type] + ")"
-		weapon_options.add_item(str(weapon_index) + " - " + RomReader.items[weapon_index].name + equipment_type_name)
+		weapon_options.add_item(str(weapon_index) + " - " + RomReader.items[weapon_index].display_name + equipment_type_name)
 	
 	weapon_options.select(unit.primary_weapon.item_idx)
 	
@@ -47,7 +47,7 @@ func initialize() -> void:
 		var type_name: String = ""
 		if RomReader.items[item_index].item_type < RomReader.fft_text.equipment_types.size():
 			type_name = " (" + RomReader.fft_text.equipment_types[RomReader.items[item_index].item_type] + ")"
-		item_options.add_item(str(item_index) + " - " + RomReader.items[item_index].name + type_name )
+		item_options.add_item(str(item_index) + " - " + RomReader.items[item_index].display_name + type_name )
 	item_options.item_selected.connect(unit.animation_manager.set_item)
 	
 	is_playing_check.button_pressed = true

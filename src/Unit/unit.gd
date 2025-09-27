@@ -100,7 +100,7 @@ class EquipmentSlot:
 		item_idx = new_item_idx
 	
 	func _to_string() -> String:
-		return equipment_slot_name + ": " + item.name
+		return equipment_slot_name + ": " + item.display_name
 
 class AbilitySlot:
 	var ability_slot_name: String = "[Ability Slot]"
@@ -114,7 +114,7 @@ class AbilitySlot:
 		ability = new_ability
 	
 	func _to_string() -> String:
-		return ability_slot_name + ": " + ability.ability_name
+		return ability_slot_name + ": " + ability.display_name
 
 
 enum StatBasis {
@@ -938,7 +938,7 @@ func update_status_visuals() -> void:
 
 func use_attack() -> void:
 	can_move = false
-	push_warning("using attack: " + primary_weapon.name)
+	push_warning("using attack: " + primary_weapon.display_name)
 	#push_warning("Animations: " + str(PackedInt32Array([ability_data.animation_start_id, ability_data.animation_charging_id, ability_data.animation_executing_id])))
 	#if ability_data.animation_start_id != 0:
 		#debug_menu.anim_id_spin.value = ability_data.animation_start_id + int(is_back_facing)

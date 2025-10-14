@@ -338,6 +338,8 @@ func create_frame_grid(anim_ptr_idx: int = 0, other_idx: int = 0, wep_v_offset: 
 	if different_shp_name == "":
 		different_shp_name = shp_name
 	var shp: Shp = RomReader.shps[RomReader.file_records[different_shp_name].type_index]
+	if not shp.is_initialized:
+		shp.set_data_from_shp_bytes(RomReader.get_file_data(shp_name))
 	var num_cells_wide: int = 16
 	var num_cells_tall: int = 16 + (16 * sp2s.size())
 	if shp.frames.size() > 256: # WEP has more frames (related to the frame offsets per item type)

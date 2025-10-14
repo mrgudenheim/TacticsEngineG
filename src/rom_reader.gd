@@ -149,8 +149,92 @@ func process_rom() -> void:
 	# json_file.store_line(fft_abilities[2].ability_action.to_json())
 	# json_file.close()
 	
+	var generic_jobs: PackedInt32Array = range(0x4a, 0x5d) # all generics
+	var special_jobs: PackedInt32Array = [
+		0x16, 0x0c, # engineer male, female
+		0x04, 0x07, # paladin male, female
+		0x28, 0x1e, # spellblade male, female
+		0x11, 0x21, # warlock male, female
+		0x12, 0x19, # blood mage male, female
+	]
+	
+	var standard_monsters: PackedInt32Array = range(0x5e, 0x8e, 3) # all standard monster families
+	var specific_jobs: PackedInt32Array = []
+	#specific_jobs.append_array(generic_jobs)
+	#specific_jobs.append_array(special_jobs)
+	#specific_jobs.append_array(standard_monsters)
+	
+	var sprite_id_list: PackedInt32Array = []
+	
+	var spr_name_to_idx: Dictionary[String, int] = {}
+	for index: int in sprs.size():
+		spr_name_to_idx[sprs[index].file_name] = index
+	
+	var job_spr_id_dict: Dictionary[String, int] = {}
+	for index: int in scus_data.jobs_data.size():
+		job_spr_id_dict[scus_data.jobs_data[index].job_name] = scus_data.jobs_data[index].sprite_id
+	
+	var generic_job_spr_idxs: PackedInt32Array = []
+	for job_id: int in generic_jobs:
+		generic_job_spr_idxs.append(spr_id_file_idxs[scus_data.jobs_data[job_id].sprite_id]) # male
+		generic_job_spr_idxs.append(spr_id_file_idxs[scus_data.jobs_data[job_id].sprite_id + 1]) # female
+		
+		specific_jobs.append_array([job_id, job_id])
+	
+	
+	var special_job_spr_idxs: PackedInt32Array = []
+	for job_id: int in special_jobs:
+		special_job_spr_idxs.append(spr_id_file_idxs[scus_data.jobs_data[job_id].sprite_id])
+		specific_jobs.append(job_id)
+	
+	var standard_monster_spr_idxs: PackedInt32Array = []
+	for job_id: int in standard_monsters:
+		standard_monster_spr_idxs.append(spr_id_file_idxs[scus_data.jobs_data[job_id].sprite_id])
+		specific_jobs.append(job_id)
+	
+	var spr_idx_list: PackedInt32Array = []
+	spr_idx_list.append_array(generic_job_spr_idxs)
+	spr_idx_list.append_array(special_job_spr_idxs)
+	spr_idx_list.append_array(standard_monster_spr_idxs)
+	
+	
+	for job_id: int in specific_jobs:
+		sprite_id_list.append(scus_data.jobs_data[job_id].sprite_id)
+	
+	var num_palettes: int = 8
+	var cell_width: int = 40
+	var cell_height: int = 50
+	var grid_cell: Vector2i = Vector2i(2, 0) # (2, 0) - standing pose, (1,1) - monster damage pose, (9,1) - monster critical pose
+	var grid_cell_offset: Vector2i = grid_cell * 120
+	
+	var overview_image: Image = Image.create_empty((spr_idx_list.size() * cell_width) + 10, (num_palettes * cell_height) + 10, false, Image.FORMAT_RGBA8)
+	for idx: int in spr_idx_list.size():
+		var spr_idx: int = spr_idx_list[idx]
+		var spr: Spr = sprs[spr_idx]
+		spr.set_data()
+		spr.set_spritesheet_data(sprite_id_list[idx])
+	
+		for palette_idx: int in num_palettes:
+			#if palette_idx != 0:
+				#continue
+			
+			#spr.set_pixel_colors(palette_idx)
+			#var spr_image: Image = spr.get_rgba8_image()
+			#var src_rect: Rect2i = Rect2i(Vector2i(40, 0), Vector2i(20, 40))
+			
+			var spr_image: Image = spr.create_frame_grid_texture(palette_idx).get_image()
+			var src_rect: Rect2i = Rect2i(Vector2i(grid_cell_offset.x + 40, grid_cell_offset.y + 40), Vector2i(40, 45))
+			#var job_name: String = scus_data.jobs_data[specific_jobs[idx]].job_name
+			#var test_file_name: String =  job_name + "_" + str(spr_idx) + "_palette_" + str(palette_idx)
+			#spr_image.save_png("user://" + test_file_name + ".png")
+			
+			overview_image.blit_rect(spr_image, src_rect, Vector2i((cell_width * idx) + 5, (cell_height * palette_idx) + 5))
+	
+	overview_image.save_png("user://_sprites_overview.png")
+	return
+	
 	import_custom_data()
-
+	
 	is_ready = true
 	rom_loaded.emit()
 

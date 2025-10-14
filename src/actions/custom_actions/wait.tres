@@ -28,9 +28,8 @@ metadata/_custom_type_script = "uid://cpa42ca48we8h"
 [resource]
 script = ExtResource("2_22o4i")
 unique_name = "wait"
-action_name = "Wait"
+display_name = "Wait"
 description = "Ends turn"
-display_action_name = false
 action_points_cost = 0
 max_targeting_range = 0
 has_vertical_tolerance_from_user = true

@@ -286,7 +286,7 @@ func add_test_teams_to_map() -> void:
 	var new_unit3: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x11, teams[1]) # 0x11 is Gafgorian dark knight
 	new_unit3.set_primary_weapon(0x17) # blood sword
 	
-	var specific_jobs = [
+	var specific_jobs: PackedInt32Array = [
 		#0x65, # grenade
 		#0x67, # panther
 		#0x76, # juravis
@@ -302,6 +302,14 @@ func add_test_teams_to_map() -> void:
 		0x7b, # wildbow
 		0x8D, # tiamat
 		]
+	
+	#var generic_jobs: PackedInt32Array = range(0x4a, 0x5d) # all generics
+	#var special_jobs: PackedInt32Array = []
+	#var standard_monsters: PackedInt32Array = range(0x5e, 0x8e) # all standard monsters
+	#var specific_jobs: PackedInt32Array = []
+	#specific_jobs.append_array(generic_jobs)
+	#specific_jobs.append_array(special_jobs)
+	#specific_jobs.append_array(standard_monsters)
 	
 	for specific_job: int in specific_jobs:
 		spawn_unit(get_random_stand_terrain_tile(), specific_job, teams[0])

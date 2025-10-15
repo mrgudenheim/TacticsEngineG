@@ -208,6 +208,7 @@ func decompress(compressed_bytes: PackedByteArray) -> PackedByteArray:
 				# TODO fix decompression of sprites expanded from ShiShi
 				# handle expanded sprite format from ShiShi that has extra 0s at end of file
 				if half_byte_index + 2 >= half_byte_data.size():
+					push_error("trying to get out of bounds bytes")
 					break
 				#elif half_byte_data[half_byte_index + 2] == 0:
 					#break
@@ -215,10 +216,16 @@ func decompress(compressed_bytes: PackedByteArray) -> PackedByteArray:
 				decompressed_full_byte_index += num_zeroes
 				half_byte_index += 3
 			elif next_half == 7:
+				if half_byte_index + 3 >= half_byte_data.size():
+					push_error("trying to get out of bounds bytes")
+					break
 				num_zeroes = half_byte_data[half_byte_index + 2] + (half_byte_data[half_byte_index + 3] << 4)
 				decompressed_full_byte_index += num_zeroes
 				half_byte_index += 4
 			elif next_half == 8:
+				if half_byte_index + 4 >= half_byte_data.size():
+					push_error("trying to get out of bounds bytes")
+					break
 				num_zeroes = half_byte_data[half_byte_index + 2] + (half_byte_data[half_byte_index + 3] << 4) + (half_byte_data[half_byte_index + 4] << 8)
 				decompressed_full_byte_index += num_zeroes
 				half_byte_index += 5

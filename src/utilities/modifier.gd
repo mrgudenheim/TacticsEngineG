@@ -29,3 +29,32 @@ func apply(to_value: int) -> int:
 		_:
 			push_warning("Modifier type unknown: " + str(type))
 			return -1
+
+
+func to_dictionary() -> Dictionary:
+	var properties_to_exclude: PackedStringArray = [
+		"RefCounted",
+		"Resource",
+		"resource_local_to_scene",
+		"resource_path",
+		"resource_name",
+		"resource_scene_unique_id",
+		"script",
+	]
+	return Utilities.object_properties_to_dictionary(self, properties_to_exclude)
+
+
+static func create_from_json(json_string: String) -> Modifier:
+	var property_dict: Dictionary = JSON.parse_string(json_string)
+	var new_modifier: Modifier = create_from_dictionary(property_dict)
+	
+	return new_modifier
+
+
+static func create_from_dictionary(property_dict: Dictionary) -> Modifier:
+	var new_modifier: Modifier = Modifier.new()
+	for property_name in property_dict.keys():
+		new_modifier.set(property_name, property_dict[property_name])
+
+	new_modifier.emit_changed()
+	return new_modifier

@@ -29,6 +29,41 @@ extends Resource
 @export var target_can_react: bool = true
 @export var nullify_targeted: bool = false # ignore_attacks flag
 
+
+func to_dictionary() -> Dictionary:
+	var properties_to_exclude: PackedStringArray = [
+		"RefCounted",
+		"Resource",
+		"resource_local_to_scene",
+		"resource_path",
+		"resource_name",
+		"resource_scene_unique_id",
+		"script",
+	]
+	return Utilities.object_properties_to_dictionary(self, properties_to_exclude)
+
+
+static func create_from_json(json_string: String) -> PassiveEffect:
+	var property_dict: Dictionary = JSON.parse_string(json_string)
+	var new_passive_effect: PassiveEffect = create_from_dictionary(property_dict)
+	
+	return new_passive_effect
+
+
+static func create_from_dictionary(property_dict: Dictionary) -> PassiveEffect:
+	var new_passive_effect: PassiveEffect = PassiveEffect.new()
+	for property_name in property_dict.keys():
+		if property_name == "stat_modifiers":
+			pass # TODOO correctly read dictionary of modifiers
+		elif property_name.contains("modifier"):
+			var new_modifier: Modifier = Modifier.create_from_dictionary(property_dict[property_name])
+			new_passive_effect.set(property_name, new_modifier)
+		else:	
+			new_passive_effect.set(property_name, property_dict[property_name])
+
+	new_passive_effect.emit_changed()
+	return new_passive_effect
+
 # TODO affects targeting - float - can attack 1 higher, jump 1 higher, ignore depth and terrain cost, counts as 1 higher when being targeted, chicken/frog counts as further? maybe targeting just checks sprite height var
 # TODO reflect
 # TODO undead healing -> damage

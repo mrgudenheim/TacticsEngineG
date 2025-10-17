@@ -148,6 +148,183 @@ func process_rom() -> void:
 	# var json_file = FileAccess.open("user://overrides/action2_to_json.json", FileAccess.WRITE)
 	# json_file.store_line(fft_abilities[2].ability_action.to_json())
 	# json_file.close()
+
+	var spr_file_list: PackedStringArray = [
+		"MINA_M.SPR",
+		"MINA_W.SPR",
+		"ITEM_M.SPR",
+		"ITEM_W.SPR",
+		"KNIGHT_M.SPR",
+		"KNIGHT_W.SPR",
+		"YUMI_M.SPR",
+		"YUMI_W.SPR",
+		"MONK_M.SPR",
+		"MONK_W.SPR",
+		"SIRO_M.SPR",
+		"SIRO_W.SPR",
+		"KURO_M.SPR",
+		"KURO_W.SPR",
+		"TOKI_M.SPR",
+		"TOKI_W.SPR",
+		"SYOU_M.SPR",
+		"SYOU_W.SPR",
+		"THIEF_M.SPR",
+		"THIEF_W.SPR",
+		"WAJU_M.SPR",
+		"WAJU_W.SPR",
+		"ONMYO_M.SPR",
+		"ONMYO_W.SPR",
+		"FUSUI_M.SPR",
+		"FUSUI_W.SPR",
+		"RYU_M.SPR",
+		"RYU_W.SPR",
+		"SAMU_M.SPR",
+		"SAMU_W.SPR",
+		"NINJA_M.SPR",
+		"NINJA_W.SPR",
+		"SAN_M.SPR",
+		"SAN_W.SPR",
+		"GIN_M.SPR",
+		"ODORI_W.SPR",
+		"MONO_M.SPR",
+		"MONO_W.SPR",
+	]
+	
+	var unit_bin_palette_offset: Dictionary[String, int] = {}
+	var i: int = 0
+	for spr_file_name: String in spr_file_list:
+		unit_bin_palette_offset[spr_file_name] = 0xf300 + (i * 32)
+		i += 1
+	
+	unit_bin_palette_offset["RAMUZA.SPR"] = 0xf000
+	unit_bin_palette_offset["RAMUZA2.SPR"] = 0xf020
+	unit_bin_palette_offset["RAMUZA3.SPR"] = 0xf040
+	unit_bin_palette_offset["KANBA.SPR"] = 0xf2e0
+	
+	var wldface_bin_palette_offset: Dictionary[String, int] = {}
+	i = 0
+	var initial_offset: int = 0x7b20
+	var i_reset: int = 0
+	for spr_file_name: String in spr_file_list:
+		if i == 15:
+			initial_offset = 0xf800
+			i_reset = 15
+		wldface_bin_palette_offset[spr_file_name] = initial_offset + ((i - i_reset) * 32)
+		i += 1
+	
+	wldface_bin_palette_offset["RAMUZA.SPR"] = 0x7800
+	wldface_bin_palette_offset["RAMUZA2.SPR"] = 0x7820
+	wldface_bin_palette_offset["RAMUZA3.SPR"] = 0x7840
+	wldface_bin_palette_offset["KANBA.SPR"] = 0x7ae0
+	
+	var palette_index_predominant_color: PackedStringArray = [
+		"Black",
+		"Blue",
+		"Red",
+		"Green",
+		"White",
+		"Purple",
+		"Yellow",
+		"Brown",
+	]
+	
+	#spr_file_list = [
+		#"MINA_M.SPR",
+		##"MINA_W.SPR",
+		##"ITEM_M.SPR",
+		##"ITEM_W.SPR",
+		##"KNIGHT_M.SPR",
+		##"KNIGHT_W.SPR",
+		##"YUMI_M.SPR",
+		##"YUMI_W.SPR",
+		##"MONK_M.SPR",
+		##"MONK_W.SPR",
+		#"SIRO_M.SPR",
+		#"SIRO_W.SPR",
+		#"KURO_M.SPR",
+		#"KURO_W.SPR",
+		#"TOKI_M.SPR",
+		#"TOKI_W.SPR",
+		#"SYOU_M.SPR",
+		#"SYOU_W.SPR",
+		#"THIEF_M.SPR",
+		#"THIEF_W.SPR",
+		##"WAJU_M.SPR",
+		#"WAJU_W.SPR",
+		##"ONMYO_M.SPR",
+		##"ONMYO_W.SPR",
+		##"FUSUI_M.SPR",
+		##"FUSUI_W.SPR",
+		#"RYU_M.SPR",
+		##"RYU_W.SPR",
+		#"SAMU_M.SPR",
+		##"SAMU_W.SPR",
+		##"NINJA_M.SPR",
+		#"NINJA_W.SPR",
+		##"SAN_M.SPR",
+		##"SAN_W.SPR",
+		##"GIN_M.SPR",
+		#"ODORI_W.SPR",
+		#"MONO_M.SPR",
+		#"MONO_W.SPR",
+	#]
+	
+	#spr_file_list = ["KANBA.SPR"]
+	
+	var xml_line1_0: String = '\t<Location offset="0" file="BATTLE_'
+	var xml_line1_1: String = '" mode="DATA"> <!-- Unit palette 0 -->\n\t'
+	var xml_line34: String = '\t</Location>\n\t<Location offset="100" mode="DATA"> <!-- Portrait palette 0 -->\n\t'
+	var xml_line6: String = '\t</Location>\n'
+	var xml_line7_0: String = '\t<Location offset="'
+	var xml_line7_1: String = '" file="EVENT_UNIT_BIN" mode="DATA"> <!-- Unit Palette in UNIT.BIN -->\n\t'
+	var xml_line9: String = '\t</Location>\n'
+	var xml_line10_0: String = '\t<Location offset="'
+	var xml_line10_1: String = '" file="EVENT_WLDFACE_BIN" mode="DATA"> <!-- Portrait Palette in WLDFACE.BIN -->\n\t'
+	var xml_line11: String = '\t</Location>\n\n'
+	
+	var full_xml: String = ""
+	var palettes_to_include: PackedInt32Array = range(8)
+	#palettes_to_include = [1]
+	for pallete_idx: int in palettes_to_include:
+		full_xml += '<Patch name="Generic Jobs Palette 0 - ' + palette_index_predominant_color[pallete_idx] + '">'
+		#full_xml += '<Patch name="Agrias Palette Swap - ' + palette_index_predominant_color[pallete_idx] + '">'
+		full_xml += '\n\t<Contributors>'
+		full_xml += '\n\t\tAjorably - palette creator'
+		full_xml += '\n\t\tMrGudenheim - xml patch'
+		full_xml += '\n\t</Contributors>'
+		full_xml += '\n\t<Description>'
+		full_xml += '\n\t\tReplaces generic job sprites palette 0 (aka the Players team) to be predominantly ' + palette_index_predominant_color[pallete_idx]
+		#full_xml += '\n\t\tReplaces the Agrias palette to be predominantly ' + palette_index_predominant_color[pallete_idx]
+		full_xml += '\n\t</Description>\n\n'
+		
+		for spr_file_name: String in spr_file_list:
+			var spr_data = file_records[spr_file_name].get_file_data(rom)
+			var unit_palette_bytes_start: int = 32 * pallete_idx
+			var unit_palette_bytes: PackedByteArray = spr_data.slice(unit_palette_bytes_start, unit_palette_bytes_start + 32)
+			var portrait_palette_bytes_start: int = 0x100 + (32 * pallete_idx)
+			var portrait_palette_bytes: PackedByteArray = spr_data.slice(portrait_palette_bytes_start, portrait_palette_bytes_start + 32)
+			
+			var unit_bin_offset_string: String = '%04x' % unit_bin_palette_offset[spr_file_name]
+			var wldface_bin_offset_string: String = '%04x' % wldface_bin_palette_offset[spr_file_name]
+			
+			full_xml += xml_line1_0 + spr_file_name.replace(".SPR", "_SPR") + xml_line1_1 
+			full_xml += unit_palette_bytes.hex_encode() + "\n" 
+			full_xml += xml_line34
+			full_xml += portrait_palette_bytes.hex_encode() + "\n"
+			full_xml += xml_line6
+			full_xml += xml_line7_0 + unit_bin_offset_string + xml_line7_1
+			full_xml += unit_palette_bytes.hex_encode() + "\n" 
+			full_xml += xml_line9
+			full_xml += xml_line10_0 + wldface_bin_offset_string + xml_line10_1
+			full_xml += portrait_palette_bytes.hex_encode() + "\n"
+			full_xml += xml_line11
+		
+		full_xml += '</Patch>\n\n'
+	
+	var xml_file = FileAccess.open("user://palette.xml", FileAccess.WRITE)
+	xml_file.store_line(full_xml)
+	xml_file.close()
+	return
 	
 	var generic_jobs: PackedInt32Array = range(0x4a, 0x5d) # all generics
 	var special_jobs: PackedInt32Array = [

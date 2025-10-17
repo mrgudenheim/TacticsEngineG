@@ -85,8 +85,18 @@ func init_map() -> void:
 
 func init_map_data(gns_bytes: PackedByteArray) -> void:
 	map_file_records = get_associated_files(gns_bytes)
-	push_warning("Map Mesh File: " + primary_mesh_data_record.file_name)
-	push_warning("Map Texture File: " + primary_texture_record.file_name)
+	if primary_mesh_data_record != null:
+		push_warning("Map Mesh File: " + primary_mesh_data_record.file_name)
+	else:
+		push_error(file_name + ": no mesh data file record. Cannot create map.")
+		return
+	
+	if primary_texture_record != null:
+		push_warning("Map Texture File: " + primary_texture_record.file_name)
+	else:
+		push_error(file_name + ": no texture file record. Cannot create map.")
+		return
+	
 	create_map(RomReader.get_file_data(primary_mesh_data_record.file_name), 
 			RomReader.get_file_data(primary_texture_record.file_name))
 

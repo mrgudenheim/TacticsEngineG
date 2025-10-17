@@ -148,7 +148,69 @@ func process_rom() -> void:
 	# var json_file = FileAccess.open("user://overrides/action2_to_json.json", FileAccess.WRITE)
 	# json_file.store_line(fft_abilities[2].ability_action.to_json())
 	# json_file.close()
-
+	
+	var all_colors: PackedColorArray = []
+	var spr_names: PackedStringArray = []
+	for spr: Spr in sprs:
+		spr.set_data()
+		if ["WEP.SPR", "EFF.SPR", "ITEM.BIN"].has(spr.file_name):
+			continue
+		var palette_cutoff: int = 128
+		if spr.file_name == "OTHER.SPR":
+			palette_cutoff = 9999
+		all_colors.append_array(spr.color_palette.slice(0, palette_cutoff))
+		spr_names.append(spr.file_name)
+	
+	var width: int = 16
+	var all_palettes_image: Image = Image.create_empty(width, all_colors.size() / 16, false, Image.FORMAT_RGBA8)
+	for idx: int in all_colors.size():
+		var color: Color = all_colors[idx]
+		if color.a8 == 0:
+			color.a8 = 255
+		var x_pos: int = idx % width
+		var y_pos: int = idx / width
+		all_palettes_image.set_pixel(x_pos, y_pos, color)
+	
+	var resize_scale: int = 1
+	all_palettes_image.resize(all_palettes_image.get_width() * resize_scale, all_palettes_image.get_height() * resize_scale, Image.INTERPOLATE_NEAREST)
+	all_palettes_image.save_png("user://_all_spr_unit_palettes_" + str(resize_scale) + "x.png")
+	
+	var spr_names_file = FileAccess.open("user://spr_names.txt", FileAccess.WRITE)
+	spr_names_file.store_line("\n".join(spr_names))
+	spr_names_file.close()
+	get_tree().quit()
+	
+	#var all_colors: PackedColorArray = []
+	#var map_names: PackedStringArray = []
+	#for map: MapData in maps:
+		#map.init_map()
+		#all_colors.append_array(map.texture_palettes)
+		#var map_name: String = map.file_name
+		#if file_records[map.file_name].type_index != 0 and file_records[map.file_name].type_index <= RomReader.fft_text.map_names.size():
+				#map_name += "_" + RomReader.fft_text.map_names[file_records[map.file_name].type_index - 1]
+		#map_names.append(map_name)
+	#
+	#var width: int = 16
+	#var all_palettes_image: Image = Image.create_empty(width, all_colors.size() / 16, false, Image.FORMAT_RGBA8)
+	#for idx: int in all_colors.size():
+		#var color: Color = all_colors[idx]
+		#if color.a8 == 0:
+			#color.a8 = 255
+		#var x_pos: int = idx % width
+		#var y_pos: int = idx / width
+		#all_palettes_image.set_pixel(x_pos, y_pos, color)
+	#
+	#var resize_scale: int = 1
+	#all_palettes_image.resize(all_palettes_image.get_width() * resize_scale, all_palettes_image.get_height() * resize_scale, Image.INTERPOLATE_NEAREST)
+	#all_palettes_image.save_png("user://_all_map_texture_palettes_" + str(resize_scale) + "x.png")
+	#
+	#var map_names_file = FileAccess.open("user://map_names.txt", FileAccess.WRITE)
+	#map_names_file.store_line("\n".join(map_names))
+	#map_names_file.close()
+	#get_tree().quit()
+	
+	
+	
 	var spr_file_list: PackedStringArray = [
 		"MINA_M.SPR",
 		"MINA_W.SPR",

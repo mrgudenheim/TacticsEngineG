@@ -545,4 +545,4 @@ func init_statuses() -> void:
 	for status: StatusEffect in status_effects:
 		if status.passive_effect != null:
 			status.passive_effect.unique_name = status.unique_name
-			Utilities.save_json(status.passive_effect)
+			#Utilities.save_json(status.passive_effect)

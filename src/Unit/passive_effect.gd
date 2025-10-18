@@ -1,6 +1,10 @@
 class_name PassiveEffect
 extends Resource
 
+const SAVE_DIRECTORY_PATH: String = "user://overrides/passive_effects/"
+const FILE_SUFFIX: String = "passive_effect"
+@export var unique_name: String = "unique_name"
+
 @export var hit_chance_modifier_user: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
 @export var hit_chance_modifier_targeted: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
 @export var power_modifier_user: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
@@ -30,7 +34,7 @@ extends Resource
 @export var nullify_targeted: bool = false # ignore_attacks flag
 
 
-func to_dictionary() -> Dictionary:
+func to_json() -> String:
 	var properties_to_exclude: PackedStringArray = [
 		"RefCounted",
 		"Resource",
@@ -40,7 +44,7 @@ func to_dictionary() -> Dictionary:
 		"resource_scene_unique_id",
 		"script",
 	]
-	return Utilities.object_properties_to_dictionary(self, properties_to_exclude)
+	return Utilities.object_properties_to_json(self, properties_to_exclude)
 
 
 static func create_from_json(json_string: String) -> PassiveEffect:

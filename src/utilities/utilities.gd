@@ -33,8 +33,19 @@ func object_properties_to_dictionary(object: Object, exclude_property_names: Pac
 					elif not element.has_method("to_dictionary"):
 						new_array.append(element)
 					else:
-						new_array.append(element.to_dictionary())
+						new_array.append(element.to_dictionary()) # handle array elements that are resources
 				property_dict[property["name"]] = new_array
+			elif property["type"] == 27: # TYPE_DICTIONARY 
+				var new_dict: Dictionary = {}
+				for key in object.get(property["name"]).keys():
+					var value = object.get(property["name"])[key]
+					if not value is Object:
+						new_dict[key] = value
+					elif not value.has_method("to_dictionary"):
+						new_dict[key] = value
+					else:
+						new_dict[key] = value.to_dictionary() # handle dictionary values that are resources
+				property_dict[property["name"]] = new_dict
 			else:
 				property_dict[property["name"]] = object.get(property["name"])
 		elif object.get(property["name"]).has_method("to_dictionary"):
@@ -51,7 +62,6 @@ func object_properties_to_json(object, exclude_property_names: PackedStringArray
 
 
 func save_json(object) -> void:
-	# var json_file = FileAccess.open("user://overrides/triggered_actions/" + object.unique_name + file_suffix, FileAccess.WRITE)
 	var json_file = FileAccess.open(object.SAVE_DIRECTORY_PATH + object.unique_name + "." + object.FILE_SUFFIX + ".json", FileAccess.WRITE)
 	json_file.store_line(object.to_json())
 	json_file.close()

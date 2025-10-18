@@ -150,7 +150,7 @@ func process_rom() -> void:
 	# json_file.close()
 	
 	import_custom_data()
-
+	
 	is_ready = true
 	rom_loaded.emit()
 

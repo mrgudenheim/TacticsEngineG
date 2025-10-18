@@ -541,3 +541,8 @@ func init_statuses() -> void:
 
 	# death sentence action
 	status_effects[39].action_on_complete = "death_sentence_to_dead"
+	
+	for status: StatusEffect in status_effects:
+		if status.passive_effect != null:
+			status.passive_effect.unique_name = status.unique_name
+			Utilities.save_json(status.passive_effect)

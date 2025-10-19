@@ -210,8 +210,6 @@ static func create_from_dictionary(property_dict: Dictionary) -> StatusEffect:
 	for property_name in property_dict.keys():
 		new_status_effect.set(property_name, property_dict[property_name])
 
-	new_status_effect.passive_effect = RomReader.passive_effects[new_status_effect.passive_effect_name]
-
 	new_status_effect.emit_changed()
 	return new_status_effect
 

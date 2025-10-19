@@ -455,7 +455,7 @@ func connect_data_references() -> void:
 		if RomReader.passive_effect.has(status_effect.passive_effect_name):
 			status_effect.passive_effect = passive_effects[status_effect.passive_effect_name]
 
-	for ability: StatusEffect in abilities.values():
+	for ability: Ability in abilities.values():
 		if RomReader.passive_effect.has(ability.passive_effect_name):
 			ability.passive_effect = passive_effects[ability.passive_effect_name]
 		

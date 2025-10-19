@@ -71,13 +71,7 @@ static func create_from_json(json_string: String) -> Ability:
 static func create_from_dictonary(property_dict: Dictionary) -> Ability:
 	var new_ability: Ability = Ability.new()
 	for property_name in property_dict.keys():
-		# TODO handle passive_effects
 		new_ability.set(property_name, property_dict[property_name])
-	
-	for triggered_action_unique_name: String in new_ability.triggered_actions_names:
-		new_ability.triggered_actions.append(RomReader.triggered_actions[triggered_action_unique_name])
-	
-	new_ability.passive_effect = RomReader.passive_effects[new_ability.passive_effect_name]
 
 	new_ability.emit_changed()
 	return new_ability

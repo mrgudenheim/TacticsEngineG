@@ -90,8 +90,6 @@ static func create_from_dictionary(property_dict: Dictionary) -> PassiveEffect:
 		else:
 			new_passive_effect.set(property_name, property_dict[property_name])
 
-	for new_action_name: String in new_passive_effect.added_actions_names:
-		new_passive_effect.added_actions.append(RomReader.actions[new_action_name])
 	new_passive_effect.emit_changed()
 	return new_passive_effect
 

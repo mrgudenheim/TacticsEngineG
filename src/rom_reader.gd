@@ -113,8 +113,9 @@ func process_rom() -> void:
 	for ability_id: int in NUM_ACTIVE_ABILITIES:
 		fft_abilities.append(FftAbilityData.new(ability_id))
 	
-	for ability: FftAbilityData in fft_abilities:
-		ability.set_action()
+	for fft_ability: FftAbilityData in fft_abilities:
+		if fft_ability.ability_type == FftAbilityData.AbilityType.NORMAL:
+			fft_ability.set_action()
 
 	# must be after fft_abilities to set secondary actions
 	items_array.resize(NUM_ITEMS)
@@ -390,109 +391,53 @@ func process_frame_bin() -> void:
 
 
 func import_custom_data() -> void:
-	# Load custom actions
-	var dir_path: String = "res://src/_content/actions/"
-	var dir := DirAccess.open(dir_path)
+	# order of loading matters. Triggered Actions, PassiveEffect reference actions. Abilities, StatusEffect reference PassiveEffect. Items reference a lot.
+	var folder_names: PackedStringArray = [
+		"actions",
+		"passive_effects",
+		"triggered_actions",
+		"status_effects",
+		"items",
+		"abilities",
+	]
 
-	if dir:
-		dir.list_dir_begin()
-		var file_name: String = dir.get_next()
-		while file_name != "":
-			if not file_name.begins_with("."): # Exclude hidden files
-				push_warning("Found file: " + file_name)
-				if file_name.ends_with(".json"):
-					var file_path: String = dir_path + file_name
-					var file := FileAccess.open(file_path, FileAccess.READ)
-					var file_text = file.get_as_text()
+	for content_folder: String in folder_names:
+		var dir_path: String = "res://src/_content/" + content_folder + "/"
+		var dir := DirAccess.open(dir_path)
 
-					var new_action: Action = Action.create_from_json(file_text)
-					new_action.add_to_global_list()
-			file_name = dir.get_next()
-		dir.list_dir_end()
-	else:
-		push_warning("Could not open directory: " + dir_path)
-	
-	# Load custom triggered actions
-	dir_path = "res://src/_content/triggered_actions/"
-	dir = DirAccess.open(dir_path)
+		if dir:
+			dir.list_dir_begin()
+			var file_name: String = dir.get_next()
+			while file_name != "":
+				if not file_name.begins_with("."): # Exclude hidden files
+					push_warning("Found file: " + file_name)
+					if file_name.ends_with(".json"):
+						var file_path: String = dir_path + file_name
+						var file := FileAccess.open(file_path, FileAccess.READ)
+						var file_text = file.get_as_text()
 
-	if dir:
-		dir.list_dir_begin()
-		var file_name: String = dir.get_next()
-		while file_name != "":
-			if not file_name.begins_with("."): # Exclude hidden files
-				push_warning("Found file: " + file_name)
-				if file_name.ends_with(".json"):
-					var file_path: String = dir_path + file_name
-					var file := FileAccess.open(file_path, FileAccess.READ)
-					var file_text = file.get_as_text()
+						var data_type: String = file_name.split(".")[-2]
 
-					var new_triggered_action: TriggeredAction = TriggeredAction.create_from_json(file_text)
-					new_triggered_action.add_to_global_list()
-			file_name = dir.get_next()
-		dir.list_dir_end()
-	else:
-		push_warning("Could not open directory: " + dir_path)
-	
-	# Load custom abilities
-	dir_path = "res://src/_content/abilities/"
-	dir = DirAccess.open(dir_path)
-
-	if dir:
-		dir.list_dir_begin()
-		var file_name: String = dir.get_next()
-		while file_name != "":
-			if not file_name.begins_with("."): # Exclude hidden files
-				push_warning("Found file: " + file_name)
-				if file_name.ends_with(".json"):
-					var file_path: String = dir_path + file_name
-					var file := FileAccess.open(file_path, FileAccess.READ)
-					var file_text = file.get_as_text()
-
-					var new_ability: Ability = Ability.create_from_json(file_text)
-					new_ability.add_to_global_list()
-			file_name = dir.get_next()
-		dir.list_dir_end()
-	else:
-		push_warning("Could not open directory: " + dir_path)
-	
-	# Load custom abilities
-	dir_path = "res://src/_content/"
-	dir = DirAccess.open(dir_path)
-
-	if dir:
-		dir.list_dir_begin()
-		var file_name: String = dir.get_next()
-		while file_name != "":
-			if not file_name.begins_with("."): # Exclude hidden files
-				push_warning("Found file: " + file_name)
-				if file_name.ends_with(".json"):
-					var file_path: String = dir_path + file_name
-					var file := FileAccess.open(file_path, FileAccess.READ)
-					var file_text = file.get_as_text()
-
-					var data_type: String = file_name.split(".")[-2]
-
-					match data_type:
-						"action":
-							var new_content: Action = Action.create_from_json(file_text)
-							new_content.add_to_global_list()
-						"ability":
-							var new_content: Ability = Ability.create_from_json(file_text)
-							new_content.add_to_global_list()
-						"triggered_action":
-							var new_content: TriggeredAction = TriggeredAction.create_from_json(file_text)
-							new_content.add_to_global_list()
-						"passive_effect":
-							var new_content: PassiveEffect = PassiveEffect.create_from_json(file_text)
-							new_content.add_to_global_list()
-						"status_effect":
-							var new_content: StatusEffect = StatusEffect.create_from_json(file_text)
-							new_content.add_to_global_list()
-						"item":
-							var new_content: ItemData = ItemData.create_from_json(file_text)
-							new_content.add_to_global_list()
-			file_name = dir.get_next()
-		dir.list_dir_end()
-	else:
-		push_warning("Could not open directory: " + dir_path)
+						match data_type:
+							"action":
+								var new_content: Action = Action.create_from_json(file_text)
+								new_content.add_to_global_list()
+							"ability":
+								var new_content: Ability = Ability.create_from_json(file_text)
+								new_content.add_to_global_list()
+							"triggered_action":
+								var new_content: TriggeredAction = TriggeredAction.create_from_json(file_text)
+								new_content.add_to_global_list()
+							"passive_effect":
+								var new_content: PassiveEffect = PassiveEffect.create_from_json(file_text)
+								new_content.add_to_global_list()
+							"status_effect":
+								var new_content: StatusEffect = StatusEffect.create_from_json(file_text)
+								new_content.add_to_global_list()
+							"item":
+								var new_content: ItemData = ItemData.create_from_json(file_text)
+								new_content.add_to_global_list()
+				file_name = dir.get_next()
+			dir.list_dir_end()
+		else:
+			push_warning("Could not open directory: " + dir_path)

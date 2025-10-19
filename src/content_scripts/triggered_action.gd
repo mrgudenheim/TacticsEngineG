@@ -38,6 +38,7 @@ const FILE_SUFFIX: String = "triggered_action"
 @export var display_name: String = "[Triggered Action]"
 # @export var action_idx: int = -1 # -1 is attack_action, -2 is iniating action
 @export var action_unique_name: String = "" # "ATTACK" is user attack_action, "COPY" is iniating action
+var action: Action
 @export var trigger_timing: TriggerTiming = TriggerTiming.TARGETTED_POST_ACTION
 @export var targeting: TargetingTypes = TargetingTypes.SELF
 @export var trigger_chance_formula: FormulaData = FormulaData.new(

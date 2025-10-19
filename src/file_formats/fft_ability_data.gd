@@ -120,37 +120,39 @@ func _init(new_id: int = 0) -> void:
 	display_name = RomReader.fft_text.ability_names[id]
 	spell_quote = RomReader.fft_text.spell_quotes[id]
 	
-	animation_charging_set_id = RomReader.battle_bin_data.ability_animation_charging_set_ids[new_id]
-	animation_start_id = RomReader.battle_bin_data.ability_animation_start_ids[animation_charging_set_id] * 2
-	animation_charging_id = RomReader.battle_bin_data.ability_animation_charging_ids[animation_charging_set_id] * 2
-	animation_executing_id = RomReader.battle_bin_data.ability_animation_executing_ids[new_id] * 2
-	animation_text_id = RomReader.battle_bin_data.ability_animation_text_ids[new_id]
-	effect_text = RomReader.fft_text.battle_effect_text[animation_text_id]
-	vfx_id = RomReader.battle_bin_data.ability_vfx_ids[new_id]
-	if [0x11d, 0x11f].has(vfx_id): # Ball
-		vfx_data = RomReader.vfx[0] # TODO handle special cases without vfx files, 0x11d (Ball), 0x11f (ability 0x2d)
-	elif vfx_id < RomReader.NUM_VFX:
-		RomReader.vfx[vfx_id].ability_names += display_name + " "
-		vfx_data = RomReader.vfx[vfx_id]
-	elif vfx_id == 0xffff:
-		vfx_data = RomReader.vfx[0] # TODO handle when vfx_id is 0xffff
-	else:
-		vfx_data = RomReader.vfx[0]
-		#push_warning(vfx_id)
+	if new_id <= 0x1c5:
+		animation_charging_set_id = RomReader.battle_bin_data.ability_animation_charging_set_ids[new_id]
+		animation_start_id = RomReader.battle_bin_data.ability_animation_start_ids[animation_charging_set_id] * 2
+		animation_charging_id = RomReader.battle_bin_data.ability_animation_charging_ids[animation_charging_set_id] * 2
+		animation_executing_id = RomReader.battle_bin_data.ability_animation_executing_ids[new_id] * 2
+		animation_text_id = RomReader.battle_bin_data.ability_animation_text_ids[new_id]
+		effect_text = RomReader.fft_text.battle_effect_text[animation_text_id]
+		vfx_id = RomReader.battle_bin_data.ability_vfx_ids[new_id]
+		if [0x11d, 0x11f].has(vfx_id): # Ball
+			vfx_data = RomReader.vfx[0] # TODO handle special cases without vfx files, 0x11d (Ball), 0x11f (ability 0x2d)
+		elif vfx_id < RomReader.NUM_VFX:
+			RomReader.vfx[vfx_id].ability_names += display_name + " "
+			vfx_data = RomReader.vfx[vfx_id]
+		elif vfx_id == 0xffff:
+			vfx_data = RomReader.vfx[0] # TODO handle when vfx_id is 0xffff
+		else:
+			vfx_data = RomReader.vfx[0]
+			#push_warning(vfx_id)
 	
 	jp_cost = RomReader.scus_data.jp_costs[new_id]
 	chance_to_learn = RomReader.scus_data.chance_to_learn[new_id]
 	ability_type = RomReader.scus_data.ability_types[new_id]
-	formula_id = RomReader.scus_data.formula_id[new_id]
-	formula_x = RomReader.scus_data.formula_x[new_id]
-	formula_y = RomReader.scus_data.formula_y[new_id]
-	max_targeting_range = RomReader.scus_data.ranges[new_id]
-	area_of_effect_radius = RomReader.scus_data.area_of_effect_radius[new_id]
-	vertical_tolerance = RomReader.scus_data.vertical_tolerance[new_id]
-	inflict_status_id = RomReader.scus_data.ability_inflict_status_id[new_id]
-	ticks_charge_time = RomReader.scus_data.ct[new_id]
-	
+
 	if ability_type == AbilityType.NORMAL:
+		formula_id = RomReader.scus_data.formula_id[new_id]
+		formula_x = RomReader.scus_data.formula_x[new_id]
+		formula_y = RomReader.scus_data.formula_y[new_id]
+		max_targeting_range = RomReader.scus_data.ranges[new_id]
+		area_of_effect_radius = RomReader.scus_data.area_of_effect_radius[new_id]
+		vertical_tolerance = RomReader.scus_data.vertical_tolerance[new_id]
+		inflict_status_id = RomReader.scus_data.ability_inflict_status_id[new_id]
+		ticks_charge_time = RomReader.scus_data.ct[new_id]
+	
 		normal_flags_1 = RomReader.scus_data.flags1[id]
 		normal_flags_2 = RomReader.scus_data.flags2[id]
 		normal_flags_3 = RomReader.scus_data.flags3[id]
@@ -334,6 +336,28 @@ func create_ability() -> Ability:
 	var new_ability: Ability = Ability.new()
 
 	new_ability.display_name = display_name
+
+	# name changes
+	if display_name == "Equip Knife":
+		new_ability.display_name = "Equip Katana"
+	elif display_name == "A Save":
+		new_ability.display_name = "PA Save"
+	elif display_name == "Counter":
+		new_ability.display_name = "Counter Attack"
+	elif display_name == "Counter Flood":
+		new_ability.display_name = "Counter Geomancy"
+	elif display_name == "Face Up":
+		new_ability.display_name = "Faith Up"
+	elif display_name == "Move-Get Exp":
+		new_ability.display_name = "Move Get Exp"
+	elif display_name == "Move-Get Jp":
+		new_ability.display_name = "Move Get Jp"
+	elif display_name == "Move-HP Up":
+		new_ability.display_name = "Move Get HP"
+	elif display_name == "Move-MP Up":
+		new_ability.display_name = "Move Get MP"
+	elif display_name == "Move-Find Item":
+		new_ability.display_name = "Move Find Item"
 	
 	match ability_type:
 		AbilityType.REACTION:

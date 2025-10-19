@@ -36,7 +36,8 @@ var weapon_is_direct: bool = false
 var weapon_is_arc: bool = false
 #@export var weapon_targeting_strategy: TargetingStrategy
 
-@export var weapon_attack_action: Action
+@export var weapon_attack_action_name: String = ""
+var weapon_attack_action: Action
 @export var is_dual_wieldable: bool = false
 @export var is_two_handable: bool = false
 @export var is_throwable: bool = false

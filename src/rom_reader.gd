@@ -42,9 +42,9 @@ var items: Array[ItemData] = []
 # var status_effects: Array[StatusEffect] = [] # TODO reference scus_data.status_effects
 var status_effects: Dictionary[String, StatusEffect] = {} # [unique_name, StatusEffect]
 var job_data: Array[JobData] = [] # TODO reference scus_data.jobs
-# var actions: Array[Action] = []
 var actions: Dictionary[String, Action] = {} # [unique_name, Action]
 var triggered_actions: Dictionary[String, TriggeredAction] = {} # [unique_name, TriggeredAction]
+var passive_effects: Dictionary[String, PassiveEffect] = {} # [unique_name, TriggeredAction]
 var abilities: Dictionary[String, Ability] = {} # [unique_name, Ability]
 
 # BATTLE.BIN tables

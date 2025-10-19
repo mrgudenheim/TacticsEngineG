@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="MoveTargeting" load_steps=2 format=3 uid="uid://dbptiq6hf5new"]
 
-[ext_resource type="Script" uid="uid://dvx8v2xwbiwmi" path="res://src/actions/targeting_move.gd" id="1_cr37e"]
+[ext_resource type="Script" uid="uid://dvx8v2xwbiwmi" path="res://src/content_scripts/actions/targeting_move.gd" id="1_cr37e"]
 
 [resource]
 script = ExtResource("1_cr37e")

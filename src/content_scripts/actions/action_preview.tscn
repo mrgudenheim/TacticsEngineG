@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://c8f4elqq81b37"]
 
-[ext_resource type="Script" uid="uid://bwbencebp0rew" path="res://src/actions/action_preview.gd" id="1_qexfa"]
+[ext_resource type="Script" uid="uid://bwbencebp0rew" path="res://src/content_scripts/actions/action_preview.gd" id="1_qexfa"]
 
 [node name="ActionPreview" type="Control" node_paths=PackedStringArray("label")]
 layout_mode = 3

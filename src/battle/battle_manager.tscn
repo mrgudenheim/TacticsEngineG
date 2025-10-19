@@ -11,7 +11,7 @@
 [ext_resource type="Script" uid="uid://cl143w048iago" path="res://src/Unit/character_controller_realtime.gd" id="10_d5yoq"]
 [ext_resource type="Material" uid="uid://emgoiswtrorw" path="res://src/content_scripts/Map/tile_highlight_blue.material" id="11_1os5c"]
 [ext_resource type="PackedScene" uid="uid://7tn6b6eup5na" path="res://src/camera_controller.tscn" id="12_l2dig"]
-[ext_resource type="Script" uid="uid://cectjl7guvpqa" path="res://src/actions/action_button.gd" id="16_l2dig"]
+[ext_resource type="Script" uid="uid://cectjl7guvpqa" path="res://src/content_scripts/actions/action_button.gd" id="16_l2dig"]
 
 [sub_resource type="Environment" id="Environment_njvnp"]
 background_mode = 3

@@ -15,8 +15,9 @@ const FILE_SUFFIX: String = "passive_effect"
 # TODO generalize to target or user Stat effective modifier
 
 @export var ai_strategy: UnitAi.Strategy = UnitAi.Strategy.PLAYER
-@export var added_actions: Array[Action] = []
-@export var added_equipment_type_proficiencies: Array[int] = [] # equip x support abilities
+@export var added_actions_names: PackedStringArray = []
+var added_actions: Array[Action] = []
+@export var added_equipment_types_equipable: PackedInt32Array = [] # equip_x support abilities
 @export var stat_modifiers: Dictionary[UnitData.StatType, Modifier] = {}
 
 @export var element_absorb: Array[Action.ElementTypes] = []
@@ -86,9 +87,11 @@ static func create_from_dictionary(property_dict: Dictionary) -> PassiveEffect:
 		elif property_name.contains("modifier"):
 			var new_modifier: Modifier = Modifier.create_from_dictionary(property_dict[property_name])
 			new_passive_effect.set(property_name, new_modifier)
-		else:	
+		else:
 			new_passive_effect.set(property_name, property_dict[property_name])
 
+	for new_action_name: String in new_passive_effect.added_actions_names:
+		new_passive_effect.added_actions.append(RomReader.actions[new_action_name])
 	new_passive_effect.emit_changed()
 	return new_passive_effect
 

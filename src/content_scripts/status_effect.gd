@@ -3,6 +3,8 @@
 class_name StatusEffect
 extends Resource
 
+const SAVE_DIRECTORY_PATH: String = "user://overrides/status_effects/"
+const FILE_SUFFIX: String = "status_effect"
 @export var unique_name: String = "unique_name"
 @export var status_id: int = 0
 @export var status_effect_name: String = "Status effect name"
@@ -56,7 +58,8 @@ var visual_effect # TODO icons, sprite coloring, spritesheet, animation (haste, 
 
 @export var idle_animation_id: int = -1
 
-@export var passive_effect: PassiveEffect = PassiveEffect.new()
+@export var passive_effect_name: String = ""
+var passive_effect: PassiveEffect = PassiveEffect.new()
 
 
 var counts_as_ko: bool = false:
@@ -160,6 +163,57 @@ func get_ai_score(user: UnitData, target: UnitData, remove: bool = false) -> flo
 			score = score * ticking_statuses[0].duration * duration
 	
 	return score
+
+
+func add_to_global_list(will_overwrite: bool = false) -> void:
+	if ["", "unique_name"].has(unique_name):
+		push_warning("needs unique name added")
+	if RomReader.status_effects.keys().has(unique_name) and will_overwrite:
+		push_warning("Overwriting existing status effect: " + unique_name)
+	elif RomReader.status_effects.keys().has(unique_name) and not will_overwrite:
+		var num: int = 2
+		var formatted_num: String = "%02d" % num
+		var new_unique_name: String = unique_name + "_" + formatted_num
+		while RomReader.status_effects.keys().has(new_unique_name):
+			num += 1
+			formatted_num = "%02d" % num
+			new_unique_name = unique_name + "_" + formatted_num
+		
+		push_warning("StatusEffect list already contains: " + unique_name + ". Incrementing unique_name to: " + new_unique_name)
+		unique_name = new_unique_name
+	
+	RomReader.status_effects[unique_name] = self
+
+
+func to_json() -> String:
+	var properties_to_exclude: PackedStringArray = [
+		"RefCounted",
+		"Resource",
+		"resource_local_to_scene",
+		"resource_path",
+		"resource_name",
+		"resource_scene_unique_id",
+		"script",
+	]
+	return Utilities.object_properties_to_json(self, properties_to_exclude)
+
+
+static func create_from_json(json_string: String) -> StatusEffect:
+	var property_dict: Dictionary = JSON.parse_string(json_string)
+	var new_status_effect: StatusEffect = create_from_dictionary(property_dict)
+	
+	return new_status_effect
+
+
+static func create_from_dictionary(property_dict: Dictionary) -> StatusEffect:
+	var new_status_effect: StatusEffect = StatusEffect.new()
+	for property_name in property_dict.keys():
+		new_status_effect.set(property_name, property_dict[property_name])
+
+	new_status_effect.passive_effect = RomReader.passive_effects[new_status_effect.passive_effect_name]
+
+	new_status_effect.emit_changed()
+	return new_status_effect
 
 
 #Status Set 1

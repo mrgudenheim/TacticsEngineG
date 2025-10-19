@@ -1,0 +1,55 @@
+{
+	"added_actions": [],
+	"added_equipment_type_proficiencies": [
+		19
+	],
+	"ai_strategy": 0,
+	"can_react": false,
+	"ct_gain_modifier": {
+		"order": 1,
+		"type": 1,
+		"value": 1.0
+	},
+	"element_absorb": [],
+	"element_cancel": [],
+	"element_half": [],
+	"element_strengthen": [],
+	"element_weakness": [],
+	"evade_modifier_targeted": {
+		"order": 1,
+		"type": 1,
+		"value": 1.0
+	},
+	"evade_modifier_user": {
+		"order": 1,
+		"type": 1,
+		"value": 1.0
+	},
+	"hit_chance_modifier_targeted": {
+		"order": 1,
+		"type": 1,
+		"value": 1.0
+	},
+	"hit_chance_modifier_user": {
+		"order": 1,
+		"type": 1,
+		"value": 1.0
+	},
+	"nullify_targeted": false,
+	"power_modifier_targeted": {
+		"order": 1,
+		"type": 1,
+		"value": 1.0
+	},
+	"power_modifier_user": {
+		"order": 1,
+		"type": 1,
+		"value": 1.0
+	},
+	"stat_modifiers": { },
+	"status_always": [],
+	"status_immune": [],
+	"status_start": [],
+	"target_can_react": true,
+	"unique_name": "equip_shield"
+}

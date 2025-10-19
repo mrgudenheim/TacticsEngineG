@@ -237,7 +237,7 @@ func set_sequence_names() -> void:
 				continue
 			
 			var sequence_id: int = sequence_pointers[animation_ptr_id]
-			if sequences[sequence_id].seq_name.contains(ability.name): # skip if ability name is already listed
+			if sequences[sequence_id].seq_name.contains(ability.display_name): # skip if ability name is already listed
 				continue
 			if sequences[sequence_id].seq_name != "":
 				sequences[sequence_id].seq_name += "\n"
@@ -250,8 +250,8 @@ func set_sequence_names() -> void:
 				sequences[sequence_id].seq_name += "-" + job_type_name + "-\n"
 				sequences[sequence_pointers[animation_ptr_id + 1]].seq_name += "-" + job_type_name + "-\n"
 			
-			sequences[sequence_id].seq_name += ability.name
-			sequences[sequence_pointers[animation_ptr_id + 1]].seq_name += ability.name
+			sequences[sequence_id].seq_name += ability.display_name
+			sequences[sequence_pointers[animation_ptr_id + 1]].seq_name += ability.display_name
 
 
 func get_sequence_data(bytes: PackedByteArray) -> Sequence:

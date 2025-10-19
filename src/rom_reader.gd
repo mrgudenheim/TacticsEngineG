@@ -42,7 +42,7 @@ var items_array: Array[ItemData] = []
 # var status_effects: Array[StatusEffect] = [] # TODO reference scus_data.status_effects
 var items: Dictionary[String, ItemData] = {} # [unique_name, ItemData]
 var status_effects: Dictionary[String, StatusEffect] = {} # [unique_name, StatusEffect]
-var job_data: Array[JobData] = [] # TODO reference scus_data.jobs
+var jobs_data: Dictionary[String, JobData] = {} # [unique_name, JobData]
 var actions: Dictionary[String, Action] = {} # [unique_name, Action]
 var triggered_actions: Dictionary[String, TriggeredAction] = {} # [unique_name, TriggeredAction]
 var passive_effects: Dictionary[String, PassiveEffect] = {} # [unique_name, TriggeredAction]
@@ -87,7 +87,7 @@ func clear_data() -> void:
 	fft_abilities.clear()
 	items_array.clear()
 	status_effects.clear()
-	job_data.clear()
+	jobs_data.clear()
 
 
 func process_rom() -> void:
@@ -455,6 +455,13 @@ func connect_data_references() -> void:
 	for status_effect: StatusEffect in status_effects.values():
 		if passive_effects.has(status_effect.passive_effect_name):
 			status_effect.passive_effect = passive_effects[status_effect.passive_effect_name]
+	
+	for job_data: JobData in jobs_data.values():
+		if passive_effects.has(job_data.passive_effect_name):
+			job_data.passive_effect = passive_effects[job_data.passive_effect_name]
+		elif job_data.passive_effect_name == "" and passive_effects.has(job_data.unique_name):
+			job_data.passive_effect_name = job_data.unique_name
+			job_data.passive_effect = passive_effects[job_data.passive_effect_name]
 
 	for ability: Ability in abilities.values():
 		if passive_effects.has(ability.passive_effect_name):

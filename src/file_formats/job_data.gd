@@ -1,9 +1,13 @@
 class_name JobData
 extends Resource
 
+const SAVE_DIRECTORY_PATH: String = "user://overrides/jobs/"
+const FILE_SUFFIX: String = "job"
+@export var unique_name: String = "unique_name" # "ATTACK" and "COPY" are special cases
+
 # Job Data # 800610b8 in RAM
 @export var job_id = 0
-@export var job_name: String = "Job Name"
+@export var display_name: String = "Job Name"
 @export var skillset_id: int = 0
 @export var innate_abilities: PackedInt32Array = []
 @export var equippable_item_types: Array[ItemData.ItemType] # 4 bytes of bitflags, 32 total
@@ -35,17 +39,22 @@ extends Resource
 @export var element_weakness: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
 @export var element_strengthen: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
 
-@export var passive_effect: PassiveEffect = PassiveEffect.new() # TODO job_data move element affinities, stat modifiers, and status arrays to passive_effect
+@export var passive_effect_name: String = ""
+var passive_effect: PassiveEffect = PassiveEffect.new() # TODO job_data move element affinities, stat modifiers, and status arrays to passive_effect
 
 @export var monster_portrait_id: int = 0
 @export var monster_palette_id: int = 0
 @export var monster_type: int = 0 # monster type sprite? sprite_id = 0x85 + this
 @export var sprite_id: int = 0
 
-func _init(new_job_id: int, job_bytes: PackedByteArray) -> void:
+func _init(new_job_id: int = -1, job_bytes: PackedByteArray = []) -> void:
+	if new_job_id == -1 or job_bytes.is_empty():
+		push_warning("creating empty job data")
+		return
+	
 	job_id = new_job_id
 	if job_id < 155:
-		job_name = RomReader.fft_text.job_names[job_id]
+		display_name = RomReader.fft_text.job_names[job_id]
 	skillset_id = job_bytes.decode_u8(0)
 	monster_portrait_id = job_bytes.decode_u8(0x2d)
 	monster_palette_id = job_bytes.decode_u8(0x2e)
@@ -99,4 +108,55 @@ func _init(new_job_id: int, job_bytes: PackedByteArray) -> void:
 	element_half = Action.get_element_types_array([job_bytes.decode_u8(0x2b)])
 	element_weakness = Action.get_element_types_array([job_bytes.decode_u8(0x2c)])
 	#element_strengthen = Action.get_element_types_array([job_bytes.decode_u8(0x29)])
+
+	add_to_global_list()
+
+
+func add_to_global_list(will_overwrite: bool = false) -> void:
+	if ["", "unique_name"].has(unique_name):
+		unique_name = display_name.to_snake_case()
 	
+	if RomReader.jobs_data.keys().has(unique_name) and will_overwrite:
+		push_warning("Overwriting existing JobData: " + unique_name)
+	elif RomReader.jobs_data.keys().has(unique_name) and not will_overwrite:
+		var num: int = 2
+		var formatted_num: String = "%02d" % num
+		var new_unique_name: String = unique_name + "_" + formatted_num
+		while RomReader.jobs_data.keys().has(new_unique_name):
+			num += 1
+			formatted_num = "%02d" % num
+			new_unique_name = unique_name + "_" + formatted_num
+		
+		push_warning("JobData list already contains: " + unique_name + ". Incrementing unique_name to: " + new_unique_name)
+		unique_name = new_unique_name
+	
+	RomReader.jobs_data[unique_name] = self
+
+
+func to_json() -> String:
+	var properties_to_exclude: PackedStringArray = [
+		"RefCounted",
+		"Resource",
+		"resource_local_to_scene",
+		"resource_path",
+		"resource_name",
+		"resource_scene_unique_id",
+		"script",
+	]
+	return Utilities.object_properties_to_json(self, properties_to_exclude)
+
+
+static func create_from_json(json_string: String) -> JobData:
+	var property_dict: Dictionary = JSON.parse_string(json_string)
+	var new_job_data: JobData = create_from_dictonary(property_dict)
+	
+	return new_job_data
+
+
+static func create_from_dictonary(property_dict: Dictionary) -> JobData:
+	var new_job_data: JobData = JobData.new()
+	for property_name in property_dict.keys():
+		new_job_data.set(property_name, property_dict[property_name])
+
+	new_job_data.emit_changed()
+	return new_job_data

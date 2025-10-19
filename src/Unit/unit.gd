@@ -1238,7 +1238,7 @@ func set_job_id(new_job_id: int) -> void:
 	skillsets.clear()
 	skillsets.append(RomReader.scus_data.skillsets_data[job_data.skillset_id])
 	
-	job_nickname = job_data.job_name
+	job_nickname = job_data.display_name
 	
 	if animation_manager.global_spr.flying_flag:
 		idle_walk_animation_id = 0x0c

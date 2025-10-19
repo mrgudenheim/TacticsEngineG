@@ -223,7 +223,7 @@ func set_sequence_names() -> void:
 		if spr.seq_name != file_name:
 			continue
 		
-		var job_type_name: String = job.job_name
+		var job_type_name: String = job.display_name
 		if job.job_id >= 0x5e and job.job_id <= 0x8d: # generic monsters
 			job_type_name = RomReader.fft_text.job_names[0x5e + ((job.monster_type - 1) * 3)]
 		

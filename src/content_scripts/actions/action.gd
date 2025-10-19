@@ -399,6 +399,7 @@ func apply_standard(action_instance: ActionInstance) -> void:
 			for effect: ActionEffect in target_effects:
 				var effect_value: int = roundi(effect.base_power_formula.get_result(action_instance.user, target_unit, element))
 				if power_modified_by_passive:
+					# TODO check all passive_effects on user and target
 					for status: StatusEffect in action_instance.user.current_statuses:
 						effect_value = status.passive_effect.power_modifier_user.apply(effect_value)
 					for status: StatusEffect in target_unit.current_statuses:

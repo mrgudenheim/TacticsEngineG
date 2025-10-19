@@ -60,7 +60,7 @@ var weapon_is_arc: bool = false
 @export var mp_modifier: int = 0
 
 # attribute data
-var stat_modifiers: Dictionary[UnitData.StatType, Modifier] = {}
+@export var stat_modifiers: Dictionary[UnitData.StatType, Modifier] = {}
 @export var pa_modifier: int = 0
 @export var ma_modifier: int = 0
 @export var sp_modifier: int = 0
@@ -86,7 +86,8 @@ var stat_modifiers: Dictionary[UnitData.StatType, Modifier] = {}
 
 @export var evade_datas: Array[EvadeData] = []
 
-@export var passive_effect: PassiveEffect = PassiveEffect.new() # TODO item move element affinities, stat modifiers, and status arrays to passive_effect
+@export var passive_effect_name: String = ""
+var passive_effect: PassiveEffect = PassiveEffect.new() # TODO item move element affinities, stat modifiers, and status arrays to passive_effect
 
 enum SlotType {
 	WEAPON = 0x80,
@@ -388,3 +389,60 @@ func set_item_attributes(item_attribute: ScusData.ItemAttribute) -> void:
 	elemental_strengthen = Action.get_element_types_array([item_attribute.elemental_strengthen])
 
 	emit_changed()
+
+
+func add_to_global_list(will_overwrite: bool = false) -> void:
+	if ["", "unique_name"].has(unique_name):
+		unique_name = display_name.to_snake_case()
+	
+	if RomReader.items.keys().has(unique_name) and will_overwrite:
+		push_warning("Overwriting existing item: " + unique_name)
+	elif RomReader.items.keys().has(unique_name) and not will_overwrite:
+		var num: int = 2
+		var formatted_num: String = "%02d" % num
+		var new_unique_name: String = unique_name + "_" + formatted_num
+		while RomReader.items.keys().has(new_unique_name):
+			num += 1
+			formatted_num = "%02d" % num
+			new_unique_name = unique_name + "_" + formatted_num
+		
+		push_warning("Items list already contains: " + unique_name + ". Incrementing unique_name to: " + new_unique_name)
+		unique_name = new_unique_name
+	
+	RomReader.items[unique_name] = self
+
+
+func to_json() -> String:
+	var properties_to_exclude: PackedStringArray = [
+		"RefCounted",
+		"Resource",
+		"resource_local_to_scene",
+		"resource_path",
+		"resource_name",
+		"resource_scene_unique_id",
+		"script",
+	]
+	return Utilities.object_properties_to_json(self, properties_to_exclude)
+
+
+static func create_from_json(json_string: String) -> ItemData:
+	var property_dict: Dictionary = JSON.parse_string(json_string)
+	var new_item: ItemData = create_from_dictionary(property_dict)
+	
+	return new_item
+
+
+static func create_from_dictionary(property_dict: Dictionary) -> ItemData:
+	var new_item: ItemData = ItemData.new()
+	for property_name in property_dict.keys():
+		if property_name == "stat_modifiers":
+			var new_stat_modifiers: Dictionary[UnitData.StatType, Modifier] = {}
+			var temp_dict = property_dict[property_name]
+			for key in temp_dict:
+				new_stat_modifiers[int(key)] = Modifier.create_from_dictionary(temp_dict[key])
+			new_item.set(property_name, new_stat_modifiers)
+		else:	
+			new_item.set(property_name, property_dict[property_name])
+
+	new_item.emit_changed()
+	return new_item

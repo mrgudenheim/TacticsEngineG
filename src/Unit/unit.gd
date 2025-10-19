@@ -92,7 +92,7 @@ class EquipmentSlot:
 	var item_idx: int = 0
 	var item: ItemData:
 		get:
-			return RomReader.items[item_idx]
+			return RomReader.items_array[item_idx]
 	
 	func _init(new_name: String = "", new_slot_types: Array[ItemData.SlotType] = [], new_item_idx: int = 0) -> void:
 		equipment_slot_name = new_name
@@ -517,7 +517,7 @@ func update_passive_modifiers() -> void:
 
 func get_item_idx_for_slot(slot_type: ItemData.SlotType, item_level: int, random: bool = false) -> int:
 	var valid_items: Array[ItemData] = []
-	valid_items.assign(RomReader.items.filter(func(item: ItemData): 
+	valid_items.assign(RomReader.items_array.filter(func(item: ItemData): 
 		var slot_type_is_valid: bool = item.slot_type == slot_type
 		var level_is_valid: bool = item.min_level <= item_level
 		var type_is_valid: bool = job_data.equippable_item_types.has(item.item_type) # TODO allow forcing specifc type based on ability requirements
@@ -1265,7 +1265,7 @@ func set_ability(new_ability_id: int) -> void:
 
 func set_primary_weapon(new_weapon_id: int) -> void:
 	equip_slots[0].item_idx = new_weapon_id
-	primary_weapon = RomReader.items[new_weapon_id]
+	primary_weapon = RomReader.items_array[new_weapon_id]
 	#animation_manager.weapon_id = new_weapon_id
 	#var weapon_palette_id = RomReader.battle_bin_data.weapon_graphic_palettes_1[primary_weapon.id]
 	animation_manager.unit_sprites_manager.sprite_weapon.texture = animation_manager.wep_spr.create_frame_grid_texture(
@@ -1330,7 +1330,7 @@ func get_evade(evade_source: EvadeData.EvadeSource, evade_type: EvadeData.EvadeT
 			evade += evade_data.value
 	
 	for equip_slot: EquipmentSlot in equip_slots:
-		for evade_data: EvadeData in RomReader.items[equip_slot.item_idx].evade_datas:
+		for evade_data: EvadeData in RomReader.items_array[equip_slot.item_idx].evade_datas:
 			if (evade_data.source == evade_source 
 					and evade_data.type == evade_type
 					and evade_data.directions.has(evade_direction)):

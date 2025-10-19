@@ -38,8 +38,9 @@ var seqs: Array[Seq] = []
 var maps: Array[MapData] = []
 var vfx: Array[VisualEffectData] = []
 var fft_abilities: Array[FftAbilityData] = []
-var items: Array[ItemData] = []
+var items_array: Array[ItemData] = []
 # var status_effects: Array[StatusEffect] = [] # TODO reference scus_data.status_effects
+var items: Dictionary[String, ItemData] = {} # [unique_name, ItemData]
 var status_effects: Dictionary[String, StatusEffect] = {} # [unique_name, StatusEffect]
 var job_data: Array[JobData] = [] # TODO reference scus_data.jobs
 var actions: Dictionary[String, Action] = {} # [unique_name, Action]
@@ -84,7 +85,7 @@ func clear_data() -> void:
 	maps.clear()
 	vfx.clear()
 	fft_abilities.clear()
-	items.clear()
+	items_array.clear()
 	status_effects.clear()
 	job_data.clear()
 
@@ -116,9 +117,9 @@ func process_rom() -> void:
 		ability.set_action()
 
 	# must be after fft_abilities to set secondary actions
-	items.resize(NUM_ITEMS)
+	items_array.resize(NUM_ITEMS)
 	for id: int in NUM_ITEMS:
-		items[id] = (ItemData.new(id))
+		items_array[id] = (ItemData.new(id))
 	
 	# status_effects = scus_data.status_effects
 	
@@ -390,7 +391,7 @@ func process_frame_bin() -> void:
 
 func import_custom_data() -> void:
 	# Load custom actions
-	var dir_path: String = "res://src/actions/custom_actions/"
+	var dir_path: String = "res://src/_content/actions/"
 	var dir := DirAccess.open(dir_path)
 
 	if dir:
@@ -412,7 +413,7 @@ func import_custom_data() -> void:
 		push_warning("Could not open directory: " + dir_path)
 	
 	# Load custom triggered actions
-	dir_path = "res://src/triggered_actions/triggered_actions/"
+	dir_path = "res://src/_content/triggered_actions/"
 	dir = DirAccess.open(dir_path)
 
 	if dir:
@@ -434,7 +435,7 @@ func import_custom_data() -> void:
 		push_warning("Could not open directory: " + dir_path)
 	
 	# Load custom abilities
-	dir_path = "res://src/abilities/"
+	dir_path = "res://src/_content/abilities/"
 	dir = DirAccess.open(dir_path)
 
 	if dir:
@@ -450,6 +451,47 @@ func import_custom_data() -> void:
 
 					var new_ability: Ability = Ability.create_from_json(file_text)
 					new_ability.add_to_global_list()
+			file_name = dir.get_next()
+		dir.list_dir_end()
+	else:
+		push_warning("Could not open directory: " + dir_path)
+	
+	# Load custom abilities
+	dir_path = "res://src/_content/"
+	dir = DirAccess.open(dir_path)
+
+	if dir:
+		dir.list_dir_begin()
+		var file_name: String = dir.get_next()
+		while file_name != "":
+			if not file_name.begins_with("."): # Exclude hidden files
+				push_warning("Found file: " + file_name)
+				if file_name.ends_with(".json"):
+					var file_path: String = dir_path + file_name
+					var file := FileAccess.open(file_path, FileAccess.READ)
+					var file_text = file.get_as_text()
+
+					var data_type: String = file_name.split(".")[-2]
+
+					match data_type:
+						"action":
+							var new_content: Action = Action.create_from_json(file_text)
+							new_content.add_to_global_list()
+						"ability":
+							var new_content: Ability = Ability.create_from_json(file_text)
+							new_content.add_to_global_list()
+						"triggered_action":
+							var new_content: TriggeredAction = TriggeredAction.create_from_json(file_text)
+							new_content.add_to_global_list()
+						"passive_effect":
+							var new_content: PassiveEffect = PassiveEffect.create_from_json(file_text)
+							new_content.add_to_global_list()
+						"status_effect":
+							var new_content: StatusEffect = StatusEffect.create_from_json(file_text)
+							new_content.add_to_global_list()
+						"item":
+							var new_content: ItemData = ItemData.create_from_json(file_text)
+							new_content.add_to_global_list()
 			file_name = dir.get_next()
 		dir.list_dir_end()
 	else:

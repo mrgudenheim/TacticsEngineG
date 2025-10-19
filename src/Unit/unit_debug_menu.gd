@@ -43,16 +43,16 @@ func populate_options() -> void:
 	weapon_options.clear()
 	for weapon_index: int in RomReader.NUM_WEAPONS:
 		var equipment_type_name: String = ""
-		if RomReader.items[weapon_index].item_type < RomReader.fft_text.equipment_types.size():
-			equipment_type_name = " (" + RomReader.fft_text.equipment_types[RomReader.items[weapon_index].item_type] + ")"
-		weapon_options.add_item(str(weapon_index) + " - " + RomReader.items[weapon_index].display_name + equipment_type_name)
+		if RomReader.items_array[weapon_index].item_type < RomReader.fft_text.equipment_types.size():
+			equipment_type_name = " (" + RomReader.fft_text.equipment_types[RomReader.items_array[weapon_index].item_type] + ")"
+		weapon_options.add_item(str(weapon_index) + " - " + RomReader.items_array[weapon_index].display_name + equipment_type_name)
 	
 	item_options.clear()
 	for item_index: int in RomReader.NUM_ITEMS:
 		var type_name: String = ""
-		if RomReader.items[item_index].item_type < RomReader.fft_text.equipment_types.size():
-			type_name = " (" + RomReader.fft_text.equipment_types[RomReader.items[item_index].item_type] + ")"
-		item_options.add_item(str(item_index) + " - " + RomReader.items[item_index].display_name + type_name )
+		if RomReader.items_array[item_index].item_type < RomReader.fft_text.equipment_types.size():
+			type_name = " (" + RomReader.fft_text.equipment_types[RomReader.items_array[item_index].item_type] + ")"
+		item_options.add_item(str(item_index) + " - " + RomReader.items_array[item_index].display_name + type_name )
 	
 	
 	sprite_options.clear()

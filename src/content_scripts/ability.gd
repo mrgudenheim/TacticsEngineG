@@ -22,7 +22,8 @@ const FILE_SUFFIX: String = "ability"
 @export var display_ability_name: bool = true
 @export var learn_on_hit: bool = false
 
-@export var passive_effect: PassiveEffect = PassiveEffect.new()
+@export var passive_effect_name: String = ""
+var passive_effect: PassiveEffect = PassiveEffect.new()
 
 @export var triggered_actions_names: PackedStringArray = []
 var triggered_actions: Array[TriggeredAction] = []
@@ -77,5 +78,7 @@ static func create_from_dictonary(property_dict: Dictionary) -> Ability:
 	for triggered_action_unique_name: String in new_ability.triggered_actions_names:
 		new_ability.triggered_actions.append(RomReader.triggered_actions[triggered_action_unique_name])
 	
+	new_ability.passive_effect = RomReader.passive_effects[new_ability.passive_effect_name]
+
 	new_ability.emit_changed()
 	return new_ability

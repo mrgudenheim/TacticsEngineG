@@ -151,6 +151,7 @@ func process_rom() -> void:
 	# json_file.close()
 	
 	import_custom_data()
+	connect_data_references()
 	
 	is_ready = true
 	rom_loaded.emit()
@@ -448,28 +449,36 @@ func connect_data_references() -> void:
 	# for action: Action in actions:
 		
 	for triggered_action: TriggeredAction in triggered_actions.values():
-		if RomReader.actions.has(triggered_action.action_unique_name):
-			triggered_action.action = RomReader.actions[triggered_action.action_unique_name]
+		if actions.has(triggered_action.action_unique_name):
+			triggered_action.action = actions[triggered_action.action_unique_name]
 
 	for status_effect: StatusEffect in status_effects.values():
-		if RomReader.passive_effect.has(status_effect.passive_effect_name):
+		if passive_effects.has(status_effect.passive_effect_name):
 			status_effect.passive_effect = passive_effects[status_effect.passive_effect_name]
 
 	for ability: Ability in abilities.values():
-		if RomReader.passive_effect.has(ability.passive_effect_name):
+		if passive_effects.has(ability.passive_effect_name):
+			ability.passive_effect = passive_effects[ability.passive_effect_name]
+		elif ability.passive_effect_name == "" and passive_effects.has(ability.unique_name):
+			ability.passive_effect_name = ability.unique_name
 			ability.passive_effect = passive_effects[ability.passive_effect_name]
 		
-		for triggered_action_name: String in ability.trigtriggered_actions_names:
-			if RomReader.triggered_actions.has(triggered_action_name):
+		for triggered_action_name: String in ability.triggered_actions_names:
+			if triggered_actions.has(triggered_action_name):
 				ability.triggered_actions.append(triggered_actions[triggered_action_name])
+		
+		if ability.triggered_actions_names.is_empty():
+			if triggered_actions.has(ability.unique_name):
+				ability.triggered_actions_names = [ability.unique_name]
+				ability.triggered_actions.append(triggered_actions[ability.unique_name])
 
 	for passive_effect: PassiveEffect in passive_effects.values():
 		for action_name: String in passive_effect.added_actions_names:
-			if RomReader.actions.has(action_name):
+			if actions.has(action_name):
 				passive_effect.added_actions.append(actions[action_name])
 
 	for item: ItemData in items.values():
-		if RomReader.passive_effect.has(item.passive_effect_name):
+		if passive_effects.has(item.passive_effect_name):
 			item.passive_effect = passive_effects[item.passive_effect_name]
-		if RomReader.actions.has(item.weapon_attack_action_name):
+		if actions.has(item.weapon_attack_action_name):
 			item.weapon_attack_action = actions[item.weapon_attack_action_name]

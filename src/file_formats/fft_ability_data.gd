@@ -24,7 +24,7 @@ enum AbilityType {
 }
 
 var id: int = 0
-var name: String = "ability name"
+var display_name: String = "ability display_name"
 var spell_quote: String = "spell quote"
 var jp_cost: int = 0
 var chance_to_learn: float = 100 # percent
@@ -117,7 +117,7 @@ var ability_action: Action = Action.new()
 func _init(new_id: int = 0) -> void:
 	id = new_id
 	
-	name = RomReader.fft_text.ability_names[id]
+	display_name = RomReader.fft_text.ability_names[id]
 	spell_quote = RomReader.fft_text.spell_quotes[id]
 	
 	animation_charging_set_id = RomReader.battle_bin_data.ability_animation_charging_set_ids[new_id]
@@ -130,7 +130,7 @@ func _init(new_id: int = 0) -> void:
 	if [0x11d, 0x11f].has(vfx_id): # Ball
 		vfx_data = RomReader.vfx[0] # TODO handle special cases without vfx files, 0x11d (Ball), 0x11f (ability 0x2d)
 	elif vfx_id < RomReader.NUM_VFX:
-		RomReader.vfx[vfx_id].ability_names += name + " "
+		RomReader.vfx[vfx_id].ability_names += display_name + " "
 		vfx_data = RomReader.vfx[vfx_id]
 	elif vfx_id == 0xffff:
 		vfx_data = RomReader.vfx[0] # TODO handle when vfx_id is 0xffff
@@ -197,7 +197,7 @@ func set_normal_flags(flag_bytes: PackedInt32Array) -> void:
 
 
 func set_action() -> void:
-	ability_action.display_name = name
+	ability_action.display_name = display_name
 	ability_action.add_to_global_list()
 	ability_action.description = RomReader.fft_text.ability_descriptions[id]
 	ability_action.quote = spell_quote
@@ -328,6 +328,29 @@ func set_action() -> void:
 	
 	ability_action.vfx_data = vfx_data
 	ability_action.vfx_id = vfx_data.vfx_id
+
+
+func create_ability() -> Ability:
+	var new_ability: Ability = Ability.new()
+
+	new_ability.display_name = display_name
+	
+	match ability_type:
+		AbilityType.REACTION:
+			new_ability.slot_type = Ability.SlotType.REACTION
+		AbilityType.SUPPORT:
+			new_ability.slot_type = Ability.SlotType.SUPPORT
+		AbilityType.MOVEMENT:
+			new_ability.slot_type = Ability.SlotType.MOVEMENT
+
+	new_ability.jp_cost = jp_cost
+	new_ability.chance_to_learn = chance_to_learn
+	new_ability.learn_with_jp = learn_with_jp
+	new_ability.display_ability_name = display_ability_name
+	new_ability.learn_on_hit = learn_on_hit
+
+	return new_ability
+
 
 
 func display_stasis_sword_vfx(location: Node3D) -> void:

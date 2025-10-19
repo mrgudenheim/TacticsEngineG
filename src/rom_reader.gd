@@ -392,6 +392,7 @@ func process_frame_bin() -> void:
 
 func import_custom_data() -> void:
 	# order of loading matters. Triggered Actions, PassiveEffect reference actions. Abilities, StatusEffect reference PassiveEffect. Items reference a lot.
+	# TODO break into 2 steps: 1) load all json for all types, 2) connect cross references
 	var folder_names: PackedStringArray = [
 		"actions",
 		"passive_effects",

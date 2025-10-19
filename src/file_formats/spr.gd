@@ -96,16 +96,16 @@ func set_palette_data(palette_bytes: PackedByteArray) -> void:
 		var color_bits: int = palette_bytes.decode_u16(palette_data_start + (i*2))
 		var alpha_bit: int = (color_bits & 0b1000_0000_0000_0000) >> 15 # first bit is alpha
 		#color.a8 = 1 - () # first bit is alpha (if bit is zero, color is opaque)
-		color.b8 = (color_bits & 0b0111_1100_0000_0000) >> 10 # then 5 bits each: blue, green, red
-		color.g8 = (color_bits & 0b0000_0011_1110_0000) >> 5
-		color.r8 = color_bits & 0b0000_0000_0001_1111
+		var b5: int = (color_bits & 0b0111_1100_0000_0000) >> 10 # then 5 bits each: blue, green, red
+		var g5: int = (color_bits & 0b0000_0011_1110_0000) >> 5
+		var r5: int = color_bits & 0b0000_0000_0001_1111
 		
 		# convert 5 bit channels to 8 bit
 		#color.a8 = 255 * color.a8 # first bit is alpha (if bit is zero, color is opaque)
 		color.a8 = 255 # TODO use alpha correctly
-		color.b8 = roundi(255 * (color.b8 / float(31))) # then 5 bits each: blue, green, red
-		color.g8 = roundi(255 * (color.g8 / float(31)))
-		color.r8 = roundi(255 * (color.r8 / float(31)))
+		color.b8 = roundi(255 * (b5 / 31.0)) # then 5 bits each: blue, green, red
+		color.g8 = roundi(255 * (g5 / 31.0))
+		color.r8 = roundi(255 * (r5 / 31.0))
 		
 		# psx transparency: https://www.psxdev.net/forum/viewtopic.php?t=953
 		# TODO use Material3D blend mode Add for mode 1 or 3, where brightness builds up from a dark background instead of normal "mix" transparency

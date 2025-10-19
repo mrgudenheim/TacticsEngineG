@@ -38,7 +38,7 @@ enum Directions {
 	}
 
 
-func _init(new_value: int, new_source: EvadeSource, new_type: EvadeType, new_directions: Array[Directions] = []) -> void:
+func _init(new_value: int = 5, new_source: EvadeSource = EvadeSource.SHIELD, new_type: EvadeType = EvadeType.PHYSICAL, new_directions: Array[Directions] = []) -> void:
 	value = new_value
 	source = new_source
 	type = new_type
@@ -60,3 +60,32 @@ func set_default_directions() -> void:
 				directions = [Directions.FRONT, Directions.SIDE]
 			EvadeSource.ACCESSORY:
 				directions = [Directions.FRONT, Directions.SIDE, Directions.BACK]
+
+
+func to_dictionary() -> Dictionary:
+	var properties_to_exclude: PackedStringArray = [
+		"RefCounted",
+		"Resource",
+		"resource_local_to_scene",
+		"resource_path",
+		"resource_name",
+		"resource_scene_unique_id",
+		"script",
+	]
+	return Utilities.object_properties_to_dictionary(self, properties_to_exclude)
+
+
+static func create_from_json(json_string: String) -> EvadeData:
+	var property_dict: Dictionary = JSON.parse_string(json_string)
+	var new_evade_data: EvadeData = create_from_dictionary(property_dict)
+	
+	return new_evade_data
+
+
+static func create_from_dictionary(property_dict: Dictionary) -> EvadeData:
+	var new_evade_data: EvadeData = EvadeData.new()
+	for property_name in property_dict.keys():
+		new_evade_data.set(property_name, property_dict[property_name])
+
+	new_evade_data.emit_changed()
+	return new_evade_data

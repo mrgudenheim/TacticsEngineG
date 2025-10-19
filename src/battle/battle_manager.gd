@@ -275,6 +275,8 @@ func add_test_teams_to_map() -> void:
 	new_unit.is_ai_controlled = false
 	new_unit.set_primary_weapon(0x1d) # ice brand
 	
+	var new_ramza: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x01, teams[0])
+	
 	# add non-player unit
 	var new_unit2: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x07, teams[1]) # 0x07 is Algus
 	new_unit2.set_primary_weapon(0x4e) # crossbow

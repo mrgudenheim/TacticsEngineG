@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://buljw4afjva1d"]
 
-[ext_resource type="Script" uid="uid://2xnqb0s2njm6" path="res://src/Map/map.gd" id="1_htm1s"]
-[ext_resource type="Shader" uid="uid://cq4x76xn7qnvi" path="res://src/Map/map_shader.gdshader" id="2_7bf38"]
+[ext_resource type="Script" uid="uid://2xnqb0s2njm6" path="res://src/content_scripts/Map/map.gd" id="1_htm1s"]
+[ext_resource type="Shader" uid="uid://cq4x76xn7qnvi" path="res://src/content_scripts/Map/map_shader.gdshader" id="2_7bf38"]
 
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_vqavv"]
 backface_collision = true

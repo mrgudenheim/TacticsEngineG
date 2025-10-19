@@ -30,6 +30,7 @@ var triggered_actions: Array[TriggeredAction] = []
 func add_to_global_list(will_overwrite: bool = false) -> void:
 	if ["", "unique_name"].has(unique_name):
 		unique_name = display_name.to_snake_case()
+	
 	if RomReader.abilities.keys().has(unique_name) and will_overwrite:
 		push_warning("Overwriting existing action: " + unique_name)
 	elif RomReader.abilities.keys().has(unique_name) and not will_overwrite:

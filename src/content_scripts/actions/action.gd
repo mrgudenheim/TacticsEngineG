@@ -96,8 +96,8 @@ var separate_status: bool = false
 @export var status_prevents_use_any: Array[String] = [] # silence, dont move, dont act, etc.
 @export var required_equipment_type: Array[ItemData.ItemType] = [] # sword, gun, etc.
 @export var required_equipment_idx: PackedInt32Array = [] # materia_blade, etc.
-@export var required_target_job_id: Array[int] = [] # dragon, etc.
-@export var required_target_status_id: Array[String] = [] # undead
+@export var required_target_job_uname: PackedStringArray = [] # dragon, etc.
+@export var required_target_status_uname: PackedStringArray = [] # undead
 
 # animation data
 @export var animation_start_id: int = 0
@@ -268,6 +268,13 @@ func use(action_instance: ActionInstance) -> void:
 
 
 func get_total_hit_chance(user: UnitData, target: UnitData, evade_direction: EvadeData.Directions) -> int:
+	if not required_target_job_uname.is_empty() and not required_target_job_uname.has(target.job_data.unique_name):
+		return 0
+	
+	if not Utilities.has_any_elements(target.current_status_ids, required_target_status_uname):
+		return 0
+	
+	
 	var base_hit_chance: float = base_hit_formula.get_result(user, target, element)
 	var modified_hit_chance: float = base_hit_chance
 	# TODO check ignores_statuses, other passives
@@ -1213,11 +1220,14 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.formula = FormulaData.Formulas.SP_plus_V1
 			base_hit_formula.values[0] = formula_x
 			base_hit_formula.is_modified_by_zodiac = true
-			# TODO only hit undead? or chosen status?
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
 			ignores_statuses.remove_at(0)
 			passive_power_modifier_applies_to_hit_chance = true
+
+			required_target_status_uname = [
+				"undead"
+			]
 		0x41:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
@@ -1456,16 +1466,32 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			passive_power_modifier_applies_to_hit_chance = true
 		0x5a:
 			status_chance = 100
-			# TODO miss if target is not Dragon type
+			
+			required_target_job_uname = [
+				"dragon",
+				"blue_dragon",
+				"red_dragon",
+				"hyudra",
+				"hydra",
+				"tiamat",
+			]
 		0x5b:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
 			status_chance = 100
-			# TODO miss if target is not Dragon type
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
 			target_effects[0].base_power_formula.values[0] = formula_y
+
+			required_target_job_uname = [
+				"dragon",
+				"blue_dragon",
+				"red_dragon",
+				"hyudra",
+				"hydra",
+				"tiamat",
+			]
 		0x5c:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
@@ -1478,7 +1504,14 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[1].base_power_formula.values[0] = formula_y
 			target_effects[1].base_power_formula.reverse_sign = false
 			
-			# TODO miss if target is not Dragon type
+			required_target_job_uname = [
+				"dragon",
+				"blue_dragon",
+				"red_dragon",
+				"hyudra",
+				"hydra",
+				"tiamat",
+			]
 		0x5d:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
@@ -1486,8 +1519,15 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.V1
 			target_effects[0].base_power_formula.values[0] = 100
 			target_effects[0].set_value = true
-			
-			# TODO miss if target is not Dragon type
+
+			required_target_job_uname = [
+				"dragon",
+				"blue_dragon",
+				"red_dragon",
+				"hyudra",
+				"hydra",
+				"tiamat",
+			]
 		0x5e:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			status_chance = 19

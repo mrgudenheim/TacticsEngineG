@@ -445,7 +445,7 @@ func import_custom_data() -> void:
 
 
 func connect_data_references() -> void:
-	# actions have no directy references, stores StatusEffect names in several places
+	# actions have no direct references, stores StatusEffect names in several places
 	# for action: Action in actions:
 		
 	for triggered_action: TriggeredAction in triggered_actions.values():

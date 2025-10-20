@@ -83,8 +83,6 @@ var inflict_status_id: int = 0
 @export var base_hit_formula: FormulaData = FormulaData.new(FormulaData.Formulas.V1, [100, 0], FormulaData.FaithModifier.NONE, FormulaData.FaithModifier.NONE, false, false, false)
 
 @export var healing_damages_undead: bool = false
-# @export var ignores_statuses: Array[int] = []
-@export var ignores_statuses: PackedStringArray = []
 
 # inflict status data
 @export var target_status_list: PackedStringArray = []
@@ -127,8 +125,9 @@ var secondary_actions2: Array[SecondaryAction] = []
 @export var set_target_animation_on_hit: bool = true
 @export var ends_turn: bool = false
 
-@export var hit_chance_modified_by_passive: bool = false
-@export var power_modified_by_passive: bool = true
+@export var passive_power_modifier_applies_to_hit_chance: bool = false
+@export var ignores_statuses: PackedStringArray = [] # unique names
+@export var ignores_passives: PackedStringArray = [] # unique names
 
 @export var trigger_types: Array[TriggeredAction.TriggerType] = []
 
@@ -271,7 +270,13 @@ func use(action_instance: ActionInstance) -> void:
 func get_total_hit_chance(user: UnitData, target: UnitData, evade_direction: EvadeData.Directions) -> int:
 	var base_hit_chance: float = base_hit_formula.get_result(user, target, element)
 	var modified_hit_chance: float = base_hit_chance
-	if hit_chance_modified_by_passive:
+	# TODO check ignores_statuses, other passives
+	if passive_power_modifier_applies_to_hit_chance:
+		for status: StatusEffect in user.current_statuses:
+			modified_hit_chance = status.passive_effect.power_modifier_user.apply(modified_hit_chance)
+		for status: StatusEffect in target.current_statuses:
+			modified_hit_chance = status.passive_effect.power_modifier_targeted.apply(modified_hit_chance)
+	else:
 		for status: StatusEffect in user.current_statuses:
 			modified_hit_chance = status.passive_effect.hit_chance_modifier_user.apply(modified_hit_chance)
 		for status: StatusEffect in target.current_statuses:
@@ -398,8 +403,9 @@ func apply_standard(action_instance: ActionInstance) -> void:
 		if hit_success:
 			for effect: ActionEffect in target_effects:
 				var effect_value: int = roundi(effect.base_power_formula.get_result(action_instance.user, target_unit, element))
-				if power_modified_by_passive:
+				if not passive_power_modifier_applies_to_hit_chance:
 					# TODO check all passive_effects on user and target
+					# TODO check ignores_statuses
 					for status: StatusEffect in action_instance.user.current_statuses:
 						effect_value = status.passive_effect.power_modifier_user.apply(effect_value)
 					for status: StatusEffect in target_unit.current_statuses:
@@ -649,7 +655,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			ignores_statuses.remove_at(1)
-			hit_chance_modified_by_passive = true
+			passive_power_modifier_applies_to_hit_chance = true
 		0x0a:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
@@ -662,7 +668,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			ignores_statuses.remove_at(1)
-			hit_chance_modified_by_passive = true
+			passive_power_modifier_applies_to_hit_chance = true
 		0x0b:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
@@ -696,7 +702,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.values[0] = formula_y / 100.0
 			target_effects[0].base_power_formula.reverse_sign = false
 		0x0e:
-			applicable_evasion = EvadeData.EvadeType.MAGICAL # Does this use magic evade?
+			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
 			# TODO apply status first? if target is immune to status, no damage
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
@@ -714,7 +720,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			ignores_statuses.remove_at(1)
-			hit_chance_modified_by_passive = true
+			passive_power_modifier_applies_to_hit_chance = true
 		0x0f:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
@@ -732,7 +738,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			ignores_statuses.remove_at(1)
-			hit_chance_modified_by_passive = true
+			passive_power_modifier_applies_to_hit_chance = true
 		0x10:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
@@ -750,7 +756,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			ignores_statuses.remove_at(1)
-			hit_chance_modified_by_passive = true
+			passive_power_modifier_applies_to_hit_chance = true
 		0x11:
 			pass
 		0x12:
@@ -795,7 +801,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			ignores_statuses.remove_at(1)
-			hit_chance_modified_by_passive = true
+			passive_power_modifier_applies_to_hit_chance = true
 		0x16:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
@@ -812,7 +818,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			ignores_statuses.remove_at(1)
-			hit_chance_modified_by_passive = true
+			passive_power_modifier_applies_to_hit_chance = true
 		0x17:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
@@ -829,7 +835,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			ignores_statuses.remove_at(1)
-			hit_chance_modified_by_passive = true
+			passive_power_modifier_applies_to_hit_chance = true
 		0x18, 0x19:
 			pass
 		0x1a:
@@ -848,7 +854,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			ignores_statuses.remove_at(1)
-			hit_chance_modified_by_passive = true
+			passive_power_modifier_applies_to_hit_chance = true
 		0x1b:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
@@ -865,7 +871,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			ignores_statuses.remove_at(1)
-			hit_chance_modified_by_passive = true
+			passive_power_modifier_applies_to_hit_chance = true
 		0x1c:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
@@ -953,7 +959,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			# TODO set equipement slod id based on ability id?
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
 			ignores_statuses.remove_at(0)
-			hit_chance_modified_by_passive = true
+			passive_power_modifier_applies_to_hit_chance = true
 		0x26:
 			base_hit_formula.formula = FormulaData.Formulas.SP_plus_V1
 			base_hit_formula.values[0] = formula_x
@@ -965,7 +971,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
 			ignores_statuses.remove_at(0)
-			hit_chance_modified_by_passive = true
+			passive_power_modifier_applies_to_hit_chance = true
 		0x27:
 			base_hit_formula.formula = FormulaData.Formulas.SP_plus_V1
 			base_hit_formula.values[0] = formula_x
@@ -978,7 +984,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
 			ignores_statuses.remove_at(0)
-			hit_chance_modified_by_passive = true
+			passive_power_modifier_applies_to_hit_chance = true
 		0x28:
 			base_hit_formula.formula = FormulaData.Formulas.SP_plus_V1
 			base_hit_formula.values[0] = formula_x
@@ -991,7 +997,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
 			ignores_statuses.remove_at(0)
-			hit_chance_modified_by_passive = true
+			passive_power_modifier_applies_to_hit_chance = true
 		0x29:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
@@ -1023,7 +1029,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
 			ignores_statuses.remove_at(0)
-			hit_chance_modified_by_passive = true
+			passive_power_modifier_applies_to_hit_chance = true
 		0x2c:
 			base_hit_formula.formula = FormulaData.Formulas.PA_plus_V1
 			base_hit_formula.values[0] = formula_y
@@ -1035,7 +1041,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
 			ignores_statuses.remove_at(0)
-			hit_chance_modified_by_passive = true
+			passive_power_modifier_applies_to_hit_chance = true
 		0x2d:
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PAxWP_plus_V1
@@ -1184,7 +1190,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			ignores_statuses.remove_at(1)
-			hit_chance_modified_by_passive = true
+			passive_power_modifier_applies_to_hit_chance = true
 		0x3e:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
@@ -1200,7 +1206,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
 			ignores_statuses.remove_at(0)
-			hit_chance_modified_by_passive = true
+			passive_power_modifier_applies_to_hit_chance = true
 		0x40:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
@@ -1211,7 +1217,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
 			ignores_statuses.remove_at(0)
-			hit_chance_modified_by_passive = true
+			passive_power_modifier_applies_to_hit_chance = true
 		0x41:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
@@ -1221,7 +1227,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			ignores_statuses.remove_at(1)
-			hit_chance_modified_by_passive = true
+			passive_power_modifier_applies_to_hit_chance = true
 		0x42:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
@@ -1320,7 +1326,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
 			ignores_statuses.remove_at(0)
-			hit_chance_modified_by_passive = true
+			passive_power_modifier_applies_to_hit_chance = true
 		0x4e:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
@@ -1341,8 +1347,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
 			ignores_statuses.remove_at(0)
-			hit_chance_modified_by_passive = true
-			power_modified_by_passive = false
+			passive_power_modifier_applies_to_hit_chance = true
 		0x50:
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.values[0] = formula_x
@@ -1350,7 +1355,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
 			ignores_statuses.remove_at(0)
-			hit_chance_modified_by_passive = true
+			passive_power_modifier_applies_to_hit_chance = true
 		0x51:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
@@ -1383,7 +1388,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			ignores_statuses.remove_at(1)
-			hit_chance_modified_by_passive = true
+			passive_power_modifier_applies_to_hit_chance = true
 		0x54:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
@@ -1404,7 +1409,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			ignores_statuses.remove_at(1)
-			hit_chance_modified_by_passive = true
+			passive_power_modifier_applies_to_hit_chance = true
 		0x56:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			
@@ -1418,7 +1423,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			ignores_statuses.remove_at(1)
-			hit_chance_modified_by_passive = true
+			passive_power_modifier_applies_to_hit_chance = true
 		0x57:
 			applicable_evasion = EvadeData.EvadeType.NONE
 			
@@ -1448,7 +1453,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			ignores_statuses.remove_at(1)
-			hit_chance_modified_by_passive = true
+			passive_power_modifier_applies_to_hit_chance = true
 		0x5a:
 			status_chance = 100
 			# TODO miss if target is not Dragon type
@@ -1528,7 +1533,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
 			ignores_statuses.remove_at(1)
-			hit_chance_modified_by_passive = true
+			passive_power_modifier_applies_to_hit_chance = true
 		0x62:
 			applicable_evasion = EvadeData.EvadeType.MAGICAL
 			

@@ -186,7 +186,7 @@ func init_from_scus() -> void:
 		var new_status_effect: StatusEffect = StatusEffect.new()
 		new_status_effect.set_data(new_status_effect_bytes)
 		new_status_effect.status_effect_name = RomReader.fft_text.status_names[id]
-		new_status_effect.add_to_master_list()
+		new_status_effect.add_to_global_list()
 		new_status_effect.status_id = id
 		status_effects[id] = new_status_effect
 		
@@ -449,8 +449,8 @@ func init_statuses() -> void:
 		status.passive_effect.can_react = status.checks_02 & 0x80 == 0x80 # cant react flag
 		status.passive_effect.nullify_targeted = status.checks_02 & 0x20 == 0x20 # ignore attacks flag
 	
-	# reflect
-	status_effects[38].passive_effect.hit_chance_modifier_targeted.value = 0.0
+	# reflect - handled as a triggered action
+	# status_effects[38].passive_effect.hit_chance_modifier_targeted.value = 0.0
 	
 	# defending
 	status_effects[6].passive_effect.hit_chance_modifier_targeted.value = 0.5

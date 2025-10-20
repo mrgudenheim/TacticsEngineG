@@ -72,24 +72,6 @@ var freezes_ct: bool = false:
 		return freezes_ct
 
 
-func add_to_master_list(will_overwrite: bool = false) -> void:
-	unique_name = status_effect_name.to_snake_case()
-	if RomReader.status_effects.keys().has(unique_name) and will_overwrite:
-		push_warning("Overwriting existing action: " + unique_name)
-	elif RomReader.status_effects.keys().has(unique_name) and not will_overwrite:
-		var num: int = 2
-		var formatted_num: String = "%02d" % num
-		var new_unique_name: String = unique_name + "_" + formatted_num
-		while RomReader.status_effects.keys().has(new_unique_name):
-			num += 1
-			formatted_num = "%02d" % num
-			new_unique_name = unique_name + "_" + formatted_num
-		
-		push_warning("Action list already contains: " + unique_name + ". Incrementing unique_name to: " + new_unique_name)
-		unique_name = new_unique_name
-	
-	RomReader.status_effects[unique_name] = self
-
 func set_data(status_effect_bytes: PackedByteArray) -> void:
 	byte_00 = status_effect_bytes.decode_u8(0)
 	byte_01 = status_effect_bytes.decode_u8(1)
@@ -167,7 +149,7 @@ func get_ai_score(user: UnitData, target: UnitData, remove: bool = false) -> flo
 
 func add_to_global_list(will_overwrite: bool = false) -> void:
 	if ["", "unique_name"].has(unique_name):
-		push_warning("needs unique name added")
+		unique_name = status_effect_name.to_snake_case()
 	if RomReader.status_effects.keys().has(unique_name) and will_overwrite:
 		push_warning("Overwriting existing status effect: " + unique_name)
 	elif RomReader.status_effects.keys().has(unique_name) and not will_overwrite:

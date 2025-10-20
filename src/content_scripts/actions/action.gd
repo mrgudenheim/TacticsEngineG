@@ -96,8 +96,10 @@ var separate_status: bool = false
 @export var status_prevents_use_any: Array[String] = [] # silence, dont move, dont act, etc.
 @export var required_equipment_type: Array[ItemData.ItemType] = [] # sword, gun, etc.
 @export var required_equipment_idx: PackedInt32Array = [] # materia_blade, etc.
+
 @export var required_target_job_uname: PackedStringArray = [] # dragon, etc.
 @export var required_target_status_uname: PackedStringArray = [] # undead
+@export var required_target_stat_basis: Array[UnitData.StatBasis] = [] # monster, etc.
 
 # animation data
 @export var animation_start_id: int = 0
@@ -268,11 +270,17 @@ func use(action_instance: ActionInstance) -> void:
 
 
 func get_total_hit_chance(user: UnitData, target: UnitData, evade_direction: EvadeData.Directions) -> int:
+	# TODO apply passive effects that change action required targets
+	
 	if not required_target_job_uname.is_empty() and not required_target_job_uname.has(target.job_data.unique_name):
 		return 0
 	
 	if not Utilities.has_any_elements(target.current_status_ids, required_target_status_uname):
 		return 0
+
+	if not required_target_stat_basis.is_empty() and not required_target_stat_basis.has(target.stat_basis):
+		return 0
+	
 	
 	
 	var base_hit_chance: float = base_hit_formula.get_result(user, target, element)
@@ -1024,6 +1032,13 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.values[0] = formula_y
 			target_effects[0].base_power_formula.reverse_sign = false
 			# TODO set effects based on ability id
+
+			# only work on non-monsters
+			required_target_stat_basis = [
+				UnitData.StatBasis.MALE,
+				UnitData.StatBasis.FEMALE,
+				UnitData.StatBasis.OTHER,
+			]
 		0x2b:
 			base_hit_formula.formula = FormulaData.Formulas.PA_plus_V1
 			base_hit_formula.values[0] = formula_y

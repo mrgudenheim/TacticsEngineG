@@ -316,6 +316,8 @@ func queue_use() -> void:
 	if deduct_action_points:
 		pay_action_point_costs()
 	face_target()
+	
+	# TODO check for passive_effects that modify charge time? Or Maybe charge time should be modified earlier than this so AI can consider the modified value
 	if action.ticks_charge_time > 0:
 		var charging_status: StatusEffect = RomReader.status_effects["charging"].duplicate() # charging
 		charging_status.delayed_action = self.duplicate()

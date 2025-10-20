@@ -12,6 +12,7 @@ const FILE_SUFFIX: String = "passive_effect"
 @export var evade_modifier_user: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
 @export var evade_modifier_targeted: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
 @export var ct_gain_modifier: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
+@export var ticks_charge_time_modifier: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
 # TODO generalize to target or user Stat effective modifier
 
 @export var ai_strategy: UnitAi.Strategy = UnitAi.Strategy.PLAYER
@@ -33,6 +34,10 @@ var added_actions: Array[Action] = []
 @export var can_react: bool = true
 @export var target_can_react: bool = true
 @export var nullify_targeted: bool = false # ignore_attacks flag
+
+@export var add_applicable_target_jobs: PackedStringArray = [] # job unique names
+@export var add_applicable_target_statuses: PackedStringArray = [] # status unique names
+@export var add_applicable_target_stat_bases: Array[UnitData.StatBasis] = []
 
 
 func add_to_global_list(will_overwrite: bool = false) -> void:

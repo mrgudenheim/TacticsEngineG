@@ -283,21 +283,30 @@ func get_total_hit_chance(user: UnitData, target: UnitData, evade_direction: Eva
 	if not required_target_stat_basis.is_empty() and not required_target_stat_basis.has(target.stat_basis):
 		return 0
 	
-	
-	
 	var base_hit_chance: float = base_hit_formula.get_result(user, target, element)
 	var modified_hit_chance: float = base_hit_chance
 	# TODO check ignores_statuses, other passives - target.get_all_passive_effects()
 	if passive_power_modifier_applies_to_hit_chance:
-		for status: StatusEffect in user.current_statuses:
-			modified_hit_chance = status.passive_effect.power_modifier_user.apply(modified_hit_chance)
-		for status: StatusEffect in target.current_statuses:
-			modified_hit_chance = status.passive_effect.power_modifier_targeted.apply(modified_hit_chance)
+		for passive_effect: PassiveEffect in user_passive_effects:
+			modified_hit_chance = passive_effect.power_modifier_user.apply(modified_hit_chance, user)
+		for passive_effect: PassiveEffect in target_passive_effects:
+			modified_hit_chance = passive_effect.power_modifier_targeted.apply(modified_hit_chance, target)
+		
+		
+		# for status: StatusEffect in user.current_statuses:
+		# 	modified_hit_chance = status.passive_effect.power_modifier_user.apply(modified_hit_chance)
+		# for status: StatusEffect in target.current_statuses:
+		# 	modified_hit_chance = status.passive_effect.power_modifier_targeted.apply(modified_hit_chance)
 	else:
-		for status: StatusEffect in user.current_statuses:
-			modified_hit_chance = status.passive_effect.hit_chance_modifier_user.apply(modified_hit_chance)
-		for status: StatusEffect in target.current_statuses:
-			modified_hit_chance = status.passive_effect.hit_chance_modifier_targeted.apply(modified_hit_chance)
+		for passive_effect: PassiveEffect in user_passive_effects:
+			modified_hit_chance = passive_effect.hit_chance_modifier_user.apply(modified_hit_chance, user)
+		for passive_effect: PassiveEffect in target_passive_effects:
+			modified_hit_chance = passive_effect.hit_chance_modifier_targeted.apply(modified_hit_chance, target)
+		
+		# for status: StatusEffect in user.current_statuses:
+		# 	modified_hit_chance = status.passive_effect.hit_chance_modifier_user.apply(modified_hit_chance)
+		# for status: StatusEffect in target.current_statuses:
+		# 	modified_hit_chance = status.passive_effect.hit_chance_modifier_targeted.apply(modified_hit_chance)
 	
 	#var evade_direction: EvadeData.EvadeDirections = get_evade_direction(user, target)
 	var evade_values: Dictionary[EvadeData.EvadeSource, int] = get_evade_values(target, evade_direction)
@@ -312,6 +321,10 @@ func get_total_hit_chance(user: UnitData, target: UnitData, evade_direction: Eva
 				for passive_effect: PassiveEffect in user_passive_effects:
 					if passive_effect.evade_source_modifiers_user.has(evade_source):
 						evade_value = passive_effect.evade_source_modifiers_user[evade_source].apply(evade_value)
+				
+				for passive_effect: PassiveEffect in target_passive_effects:
+					if passive_effect.evade_source_modifiers_user.has(evade_source):
+						evade_value = passive_effect.evade_source_modifiers_targeted[evade_source].apply(evade_value)
 				
 				var evade_factor: float = max(0.0, 1 - (evade_value / 100.0))
 

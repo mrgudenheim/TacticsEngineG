@@ -132,7 +132,7 @@ func get_ai_score(user: UnitData, target: UnitData, remove: bool = false) -> flo
 	if remove and current_statuses.all(func(status: StatusEffect): return status.duration_type != StatusEffect.DurationType.PERMANENT):
 		return 0.0
 	
-	score = ai_score_formula.get_base_value(ai_score_formula.formula, user, target)
+	score = ai_score_formula.get_base_value(user, target)
 	if target.team == user.team:
 		score = -score
 	

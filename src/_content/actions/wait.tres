@@ -13,7 +13,7 @@ metadata/_custom_type_script = "uid://2y1mi77a2isp"
 
 [sub_resource type="Resource" id="Resource_jmljt"]
 script = ExtResource("5_22o4i")
-values = [20.0, 1.0]
+values = [20.0]
 reverse_sign = false
 is_modified_by_element = false
 is_modified_by_zodiac = false
@@ -36,7 +36,7 @@ has_vertical_tolerance_from_user = true
 auto_target = true
 aoe_has_vertical_tolerance = false
 target_effects = Array[ExtResource("4_ltkoj")]([SubResource("Resource_ltkoj")])
-applicable_evasion = 0
+applicable_evasion_type = 0
 allow_triggered_actions = false
 can_target = false
 base_hit_formula = SubResource("Resource_22o4i")

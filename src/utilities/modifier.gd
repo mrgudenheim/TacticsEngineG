@@ -8,24 +8,43 @@ enum ModifierType {
 }
 
 @export var type: ModifierType = ModifierType.ADD
-@export var value: float = 1.0
+@export var value_formula: FormulaData = FormulaData.new(FormulaData.Formulas.V1)
 @export var order: int = 1 # order to be appliede
 # TODO track modifier source?
 
 func _init(new_value: float = 1.0, new_type: ModifierType = ModifierType.ADD, new_order: int = 1) -> void:
-	value = new_value
 	type = new_type
 	order = new_order
 
+	value_formula = FormulaData.new(FormulaData.Formulas.V1, [new_value])
+	value_formula.reverse_sign = false
+	value_formula.is_modified_by_element = false
+	value_formula.is_modified_by_zodiac = false
 
-func apply(to_value: int) -> int:
+
+# func apply(to_value: int) -> int:
+# 	match type:
+# 		ModifierType.ADD:
+# 			return roundi(to_value + value)
+# 		ModifierType.MULT:
+# 			return roundi(to_value * value)
+# 		ModifierType.SET:
+# 			return roundi(value)
+# 		_:
+# 			push_warning("Modifier type unknown: " + str(type))
+# 			return -1
+
+
+func apply(to_value: int, user: UnitData = null, target: UnitData = null) -> int:
+	var formula_result: float = value_formula.get_base_value(user, target)
+
 	match type:
 		ModifierType.ADD:
-			return roundi(to_value + value)
+			return roundi(to_value + formula_result)
 		ModifierType.MULT:
-			return roundi(to_value * value)
+			return roundi(to_value * formula_result)
 		ModifierType.SET:
-			return roundi(value)
+			return roundi(formula_result)
 		_:
 			push_warning("Modifier type unknown: " + str(type))
 			return -1

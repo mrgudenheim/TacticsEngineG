@@ -5,6 +5,10 @@ const SAVE_DIRECTORY_PATH: String = "user://overrides/passive_effects/"
 const FILE_SUFFIX: String = "passive_effect"
 @export var unique_name: String = "unique_name"
 
+# checks if passive_effect should be applied
+@export var requires_weapon_action: bool = false # checks any Action use_weapon_XX flags (range, targeting, damage, animation)
+@export var requires_user_item_type: PackedStringArray = [] # item unique names
+
 @export var hit_chance_modifier_user: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
 @export var hit_chance_modifier_targeted: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
 @export var evade_source_modifiers_user: Dictionary[EvadeData.EvadeSource, Modifier] = {}
@@ -43,8 +47,6 @@ var added_actions: Array[Action] = []
 @export var add_applicable_target_statuses: PackedStringArray = [] # status unique names
 @export var add_applicable_target_stat_bases: Array[UnitData.StatBasis] = []  # male, female, monsters
 
-@export var requires_weapon_action: bool = false # checks any Action use_weapon_XX flags (range, targeting, damage, animation)
-@export var requires_user_item: PackedStringArray = [] # item unique names
 @export var include_evade_sources: Array[EvadeData.EvadeSource] = []
 
 func add_to_global_list(will_overwrite: bool = false) -> void:

@@ -361,7 +361,7 @@ func _init(idx: int = 0) -> void:
 	
 	# remove empty modifiers
 	for key: UnitData.StatType in stat_modifiers.keys():
-		if stat_modifiers[key].value == 0:
+		if stat_modifiers[key].value_formula.values[0] == 0:
 			stat_modifiers.erase(key)
 	
 	emit_changed()

@@ -25,7 +25,6 @@ extends Resource
 
 # TODO default description of "Formula description could not be found"
 static var formula_descriptions: Dictionary[Formulas, String] = {
-	Formulas.ZERO: "0",
 	Formulas.PAxV1: "PAxWP",
 	Formulas.MAxV1: "MAxWP",
 	Formulas.AVG_PA_MAxV1: "AVG_PA_MAxWP",
@@ -44,7 +43,6 @@ enum FaithModifier {
 
 enum Formulas {
 	V1,
-	ZERO,
 	PAxV1,
 	MAxV1,
 	WPxV1,
@@ -96,7 +94,7 @@ func _init(new_formula: Formulas = Formulas.V1, new_values: PackedFloat64Array =
 
 
 func get_result(user: UnitData, target: UnitData, element: Action.ElementTypes) -> float:
-	var result: float = get_base_value(formula, user, target)
+	var result: float = get_base_value(user, target)
 	
 	match user_faith_modifier:
 		FaithModifier.FAITH:
@@ -124,15 +122,15 @@ func get_result(user: UnitData, target: UnitData, element: Action.ElementTypes) 
 
 
 
-func get_base_value(formula: Formulas, user: UnitData, target: UnitData) -> float:
+func get_base_value(user: UnitData, target: UnitData) -> float:
 	var base_value: float = values[0]
-	var wp = user.primary_weapon.weapon_power
+	var wp: int 
+	if not user == null:
+		wp = user.primary_weapon.weapon_power
 	
 	match formula:
 		Formulas.V1:
 			base_value = values[0]
-		Formulas.ZERO:
-			base_value = 0
 		Formulas.PAxV1:
 			base_value = user.physical_attack_current * values[0]
 		Formulas.MAxV1:

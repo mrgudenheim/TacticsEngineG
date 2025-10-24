@@ -438,14 +438,14 @@ func init_statuses() -> void:
 		status_effects[idx].ai_score_formula.values[0] = RomReader.battle_bin_data.ai_status_priorities[idx] / 128.0
 	
 	# haste
-	status_effects[28].passive_effect.ct_gain_modifier.value = 1.5
+	status_effects[28].passive_effect.ct_gain_modifier.value_formula.values = [1.5]
 	# slow
-	status_effects[29].passive_effect.ct_gain_modifier.value = 0.5
+	status_effects[29].passive_effect.ct_gain_modifier.value_formula.values = [0.5]
 	
 	# freeze ct flag
 	for status: StatusEffect in status_effects:
 		if status.freezes_ct:
-			status.passive_effect.ct_gain_modifier.value = 0.0
+			status.passive_effect.ct_gain_modifier.value_formula.values = [0.0]
 		status.passive_effect.can_react = status.checks_02 & 0x80 == 0x80 # cant react flag
 		status.passive_effect.nullify_targeted = status.checks_02 & 0x20 == 0x20 # ignore attacks flag
 	
@@ -453,21 +453,21 @@ func init_statuses() -> void:
 	# status_effects[38].passive_effect.hit_chance_modifier_targeted.value = 0.0
 	
 	# defending
-	status_effects[6].passive_effect.hit_chance_modifier_targeted.value = 0.5
+	status_effects[6].passive_effect.hit_chance_modifier_targeted.value_formula.values = [0.5]
 	
 	# protect, shell
 	for idx: int in [26, 27]:
-		status_effects[idx].passive_effect.hit_chance_modifier_targeted.value = 0.66
-		status_effects[idx].passive_effect.power_modifier_targeted.value = 0.66
+		#status_effects[idx].passive_effect.hit_chance_modifier_targeted.value_formula.values = [0.66]
+		status_effects[idx].passive_effect.power_modifier_targeted.value_formula.values = [0.66]
 	
 	# chicken, frog, sleeping, charging
 	for idx: int in [21, 22, 35, 4]:
-		status_effects[idx].passive_effect.hit_chance_modifier_targeted.value = 1.5
-		status_effects[idx].passive_effect.power_modifier_targeted.value = 1.5
+		#status_effects[idx].passive_effect.hit_chance_modifier_targeted.value_formula.values = [1.5]
+		status_effects[idx].passive_effect.power_modifier_targeted.value_formula.values = [1.5]
 	
 	# dark, confuse
 	for idx: int in [10, 11]:
-		status_effects[idx].passive_effect.hit_chance_modifier_user.value = 0.5
+		status_effects[idx].passive_effect.hit_chance_modifier_user.value_formula.values = [0.5]
 	
 	# dont act, sleep, stop, confuse, charging, performing
 	for idx: int in [37, 35, 30, 11, 4, 7]:

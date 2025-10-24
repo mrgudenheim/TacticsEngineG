@@ -274,6 +274,9 @@ var can_move: bool = true
 
 #var map_position: Vector2i
 var tile_position: TerrainTile
+@export var prohibited_terrain: Array = []
+@export var terrain_cost: Dictionary = {} # TileTerrain.surface_type_id
+
 var map_paths: Dictionary[TerrainTile, TerrainTile]
 var path_costs: Dictionary[TerrainTile, float]
 var paths_set: bool = false
@@ -1344,26 +1347,46 @@ func get_evade(evade_source: EvadeData.EvadeSource, evade_type: EvadeData.EvadeT
 
 func get_all_passive_effects(exclude_passives: PackedStringArray = []) -> Array[PassiveEffect]:
 	var all_passive_effects: Array[PassiveEffect] = []
+	
+	var native_passive_effects: Array[PassiveEffect] = get_native_passive_effects(exclude_passives)
+	var other_passive_effects: Array[PassiveEffect] = get_passive_effects_from_others(exclude_passives)
+	all_passive_effects.append_array(native_passive_effects)
+	all_passive_effects.append_array(other_passive_effects)
+	
+	all_passive_effects.filter(func(passive_effect): return not exclude_passives.has(passive_effect.unique_name))
+
+	return all_passive_effects
+
+
+func get_native_passive_effects(exclude_passives: PackedStringArray = []) -> Array[PassiveEffect]:
+	var native_passive_effects: Array[PassiveEffect] = []
 	# TODO should all Objects that have PassiveEffect be changed to store Array[PassiveEffect]
 	# all_passive_effects.append_array(job_data.passive_effect) 
 	
-	all_passive_effects.append(job_data.passive_effect)
+	native_passive_effects.append(job_data.passive_effect)
 	for ability_slot: AbilitySlot in ability_slots:
-		all_passive_effects.append(ability_slot.ability.passive_effect)
+		native_passive_effects.append(ability_slot.ability.passive_effect)
 	
 	for equipment_slot: EquipmentSlot in equip_slots:
-		all_passive_effects.append(equipment_slot.item.passive_effect)
+		native_passive_effects.append(equipment_slot.item.passive_effect)
 	
 	for status: StatusEffect in current_statuses:
-		all_passive_effects.append(status.item.passive_effect)
+		native_passive_effects.append(status.item.passive_effect)
 	
-	# get passive effects from other units
+	native_passive_effects.filter(func(passive_effect): return not exclude_passives.has(passive_effect.unique_name))
+	
+	return native_passive_effects
+
+
+func get_passive_effects_from_others(exclude_passives: PackedStringArray = []) -> Array[PassiveEffect]:
+	var shared_passive_effects: Array[PassiveEffect] = []
+	
 	if global_battle_manager != null:
 		for unit: UnitData in global_battle_manager.units:
 			if unit == self:
 				continue
 			
-			var unit_passives: Array[PassiveEffect] = unit.get_all_passive_effects()
+			var unit_passives: Array[PassiveEffect] = unit.get_native_passive_effects()
 			for passive_effect: PassiveEffect in unit_passives:
 				if passive_effect.effect_range == 0:
 					continue
@@ -1387,13 +1410,11 @@ func get_all_passive_effects(exclude_passives: PackedStringArray = []) -> Array[
 				if relative_height > passive_effect.vertical_tolerance:
 					continue
 				
-				all_passive_effects.append(passive_effect)
-				
-				
-
-	all_passive_effects.filter(func(passive_effect): return not exclude_passives.has(passive_effect.unique_name))
-
-	return all_passive_effects
+				shared_passive_effects.append(passive_effect)
+	
+	shared_passive_effects.filter(func(passive_effect): return not exclude_passives.has(passive_effect.unique_name))
+	
+	return shared_passive_effects
 
 
 func show_popup_text(text: String) -> void:

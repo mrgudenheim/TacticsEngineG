@@ -1368,10 +1368,15 @@ func get_all_passive_effects(exclude_passives: PackedStringArray = []) -> Array[
 				if passive_effect.effect_range == 0:
 					continue
 				
-				if not passive_effect.unit_filter.has(PassiveEffect.FilterType.FRIENDLY) and unit.team == self.team:
-					continue
-				elif not passive_effect.unit_filter.has(PassiveEffect.FilterType.ENEMY) and unit.team != self.team:
-					continue
+				if not passive_effect.unit_team_filter.is_empty():
+					if not passive_effect.unit_team_filter.has(PassiveEffect.FilterTeam.FRIENDLY) and unit.team == self.team:
+						continue
+					elif not passive_effect.unit_team_filter.has(PassiveEffect.FilterTeam.ENEMY) and unit.team != self.team:
+						continue
+				
+				if not passive_effect.unit_basis_filter.is_empty():
+					if not passive_effect.unit_basis_filter.has(stat_basis):
+						continue
 				
 				var relative_position: Vector2i = (tile_position.location - unit.tile_position.location).abs()
 				var distance_to_unit: int = relative_position.x + relative_position.y

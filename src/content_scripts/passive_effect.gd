@@ -51,9 +51,10 @@ var added_actions: Array[Action] = []
 # properties to give passive effects to other units
 @export var effect_range: int = 0
 @export var vertical_tolerance: float = 3
-@export var unit_filter: Array[FilterType] = [FilterType.FRIENDLY]
+@export var unit_team_filter: Array[FilterTeam] = [FilterTeam.FRIENDLY]
+@export var unit_basis_filter: Array[UnitData.StatBasis] = []
 
-enum FilterType {
+enum FilterTeam {
 	FRIENDLY,
 	ENEMY,
 }

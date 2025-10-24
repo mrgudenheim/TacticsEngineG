@@ -471,13 +471,26 @@ func init_statuses() -> void:
 	
 	# dont act, sleep, stop, confuse, charging, performing
 	for idx: int in [37, 35, 30, 11, 4, 7]:
-		status_effects[idx].passive_effect.evade_modifier_targeted.type = Modifier.ModifierType.SET
-		status_effects[idx].passive_effect.evade_modifier_targeted.value = 1.0
+		# status_effects[idx].passive_effect.evade_modifier_targeted.type = Modifier.ModifierType.SET
+		# status_effects[idx].passive_effect.evade_modifier_targeted.value = 1.0
+		status_effects[idx].passive_effect.evade_source_modifiers_targeted = {
+			EvadeData.EvadeSource.JOB: Modifier.new(0, Modifier.ModifierType.SET),
+			EvadeData.EvadeSource.SHIELD: Modifier.new(0, Modifier.ModifierType.SET),
+			EvadeData.EvadeSource.ACCESSORY: Modifier.new(0, Modifier.ModifierType.SET),
+			EvadeData.EvadeSource.WEAPON: Modifier.new(0, Modifier.ModifierType.SET),
+		}
 	
 	# user is transparent
-	status_effects[19].passive_effect.evade_modifier_user.type = Modifier.ModifierType.SET
-	status_effects[19].passive_effect.evade_modifier_user.value = 1.0
 	status_effects[19].passive_effect.target_can_react = false
+	# status_effects[19].passive_effect.evade_modifier_user.type = Modifier.ModifierType.SET
+	# status_effects[19].passive_effect.evade_modifier_user.value = 1.0
+	status_effects[19].passive_effect.evade_source_modifiers_user = {
+		EvadeData.EvadeSource.JOB: Modifier.new(0, Modifier.ModifierType.SET),
+		EvadeData.EvadeSource.SHIELD: Modifier.new(0, Modifier.ModifierType.SET),
+		EvadeData.EvadeSource.ACCESSORY: Modifier.new(0, Modifier.ModifierType.SET),
+		EvadeData.EvadeSource.WEAPON: Modifier.new(0, Modifier.ModifierType.SET),
+	}
+	
 	
 	# confuse
 	status_effects[11].passive_effect.ai_strategy = UnitAi.Strategy.CONFUSED

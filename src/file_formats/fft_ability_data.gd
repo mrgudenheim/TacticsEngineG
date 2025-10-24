@@ -318,7 +318,7 @@ func set_action() -> void:
 	
 	ability_action.set_data_from_formula_id(formula_id)
 	if not is_evadeable: # set after formula
-		ability_action.applicable_evasion = EvadeData.EvadeType.NONE
+		ability_action.applicable_evasion_type = EvadeData.EvadeType.NONE
 	
 	if inflict_status_data.is_separate:
 		ability_action.status_chance = roundi(ability_action.status_chance * 0.24)

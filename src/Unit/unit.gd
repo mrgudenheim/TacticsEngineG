@@ -1330,13 +1330,33 @@ func get_evade(evade_source: EvadeData.EvadeSource, evade_type: EvadeData.EvadeT
 			evade += evade_data.value
 	
 	for equip_slot: EquipmentSlot in equip_slots:
-		for evade_data: EvadeData in RomReader.items_array[equip_slot.item_idx].evade_datas:
+		for evade_data: EvadeData in equip_slot.item.evade_datas:
 			if (evade_data.source == evade_source 
 					and evade_data.type == evade_type
 					and evade_data.directions.has(evade_direction)):
 				evade += evade_data.value
 	
+	# TODO evade from passive effects (Statuses, R/S/M)
+
 	return evade
+
+
+func get_all_passive_effects() -> Array[PassiveEffect]:
+	var all_passive_effects: Array[PassiveEffect] = []
+	# TODO should all Objects that have PassiveEffect be changed to store Array[PassiveEffect]
+	# all_passive_effects.append_array(job_data.passive_effect) 
+	
+	all_passive_effects.append(job_data.passive_effect)
+	for ability_slot: AbilitySlot in ability_slots:
+		all_passive_effects.append(ability_slot.ability.passive_effect)
+	
+	for equipment_slot: EquipmentSlot in equip_slots:
+		all_passive_effects.append(equipment_slot.item.passive_effect)
+	
+	for status: StatusEffect in current_statuses:
+		all_passive_effects.append(status.item.passive_effect)
+
+	return all_passive_effects
 
 
 func show_popup_text(text: String) -> void:

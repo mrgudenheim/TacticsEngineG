@@ -109,6 +109,15 @@ func _init(new_job_id: int = -1, job_bytes: PackedByteArray = []) -> void:
 	element_weakness = Action.get_element_types_array([job_bytes.decode_u8(0x2c)])
 	#element_strengthen = Action.get_element_types_array([job_bytes.decode_u8(0x29)])
 
+	passive_effect = PassiveEffect.new()
+	passive_effect.unique_name = unique_name
+	passive_effect.include_evade_sources = [
+		EvadeData.EvadeSource.JOB,
+		EvadeData.EvadeSource.SHIELD,
+		EvadeData.EvadeSource.ACCESSORY,
+	]
+	passive_effect_name = unique_name
+
 	add_to_global_list()
 
 

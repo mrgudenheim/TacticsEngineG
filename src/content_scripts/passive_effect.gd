@@ -7,12 +7,15 @@ const FILE_SUFFIX: String = "passive_effect"
 
 @export var hit_chance_modifier_user: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
 @export var hit_chance_modifier_targeted: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
+@export var evade_source_modifiers_user: Dictionary[EvadeData.EvadeSource, Modifier] = {}
+@export var evade_source_modifiers_targeted: Dictionary[EvadeData.EvadeSource, Modifier] = {}
 @export var power_modifier_user: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
 @export var power_modifier_targeted: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
-@export var evade_modifier_user: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
-@export var evade_modifier_targeted: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
-@export var ct_gain_modifier: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
+# @export var evade_modifier_user: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
+# @export var evade_modifier_targeted: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
 @export var ticks_charge_time_modifier: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
+
+@export var ct_gain_modifier: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
 # TODO generalize to target or user Stat effective modifier
 
 @export var ai_strategy: UnitAi.Strategy = UnitAi.Strategy.PLAYER
@@ -35,14 +38,19 @@ var added_actions: Array[Action] = []
 @export var target_can_react: bool = true
 @export var nullify_targeted: bool = false # ignore_attacks flag
 
+# used to modify Action required_target_job_uname, required_target_status_uname, required_target_stat_basis
 @export var add_applicable_target_jobs: PackedStringArray = [] # job unique names
 @export var add_applicable_target_statuses: PackedStringArray = [] # status unique names
-@export var add_applicable_target_stat_bases: Array[UnitData.StatBasis] = []
+@export var add_applicable_target_stat_bases: Array[UnitData.StatBasis] = []  # male, female, monsters
 
+@export var requires_weapon_action: bool = false # checks any Action use_weapon_XX flags (range, targeting, damage, animation)
+@export var requires_user_item: PackedStringArray = [] # item unique names
+@export var include_evade_sources: Array[EvadeData.EvadeSource] = []
 
 func add_to_global_list(will_overwrite: bool = false) -> void:
 	if ["", "unique_name"].has(unique_name):
 		push_warning("needs unique name added")
+	
 	if RomReader.passive_effects.keys().has(unique_name) and will_overwrite:
 		push_warning("Overwriting existing passive effect: " + unique_name)
 	elif RomReader.passive_effects.keys().has(unique_name) and not will_overwrite:

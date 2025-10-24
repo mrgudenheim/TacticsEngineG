@@ -29,6 +29,7 @@ var total_map_tiles: Dictionary[Vector2i, Array] = {} # Array[TerrainTile]
 @export var map_tscn: PackedScene
 var current_tile_hover: TerrainTile
 @export var tile_highlights: Dictionary[Color, Material] = {}
+@export var global_passive_effects: Array[PassiveEffect] = []
 
 @export var action_menu: Control
 @export var action_button_list: BoxContainer

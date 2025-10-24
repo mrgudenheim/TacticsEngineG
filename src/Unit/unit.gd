@@ -1373,6 +1373,8 @@ func get_native_passive_effects(exclude_passives: PackedStringArray = []) -> Arr
 	for status: StatusEffect in current_statuses:
 		native_passive_effects.append(status.item.passive_effect)
 	
+	native_passive_effects.append_array(global_battle_manager.global_passive_effects)
+
 	native_passive_effects.filter(func(passive_effect): return not exclude_passives.has(passive_effect.unique_name))
 	
 	return native_passive_effects

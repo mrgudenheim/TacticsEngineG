@@ -34,6 +34,13 @@ var added_actions: Array[Action] = []
 @export var stat_modifiers: Dictionary[UnitData.StatType, Modifier] = {}
 @export var ct_gain_modifier: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
 
+# move modifiers
+@export var ignore_height: bool = false
+@export var terrain_move_penalty: Dictionary[int, Modifier] = {} # [TerrainTile.surface_type_id, modifier]
+@export var add_prohibited_terrain: PackedStringArray = [] # TerrainTile.surface_type_id
+@export var remove_prohibited_terrain: PackedStringArray = [] # TerrainTile.surface_type_id
+@export var depth_modifier: Modifier # TODO handle depth
+
 @export var element_absorb: Array[Action.ElementTypes] = []
 @export var element_cancel: Array[Action.ElementTypes] = []
 @export var element_half: Array[Action.ElementTypes] = []
@@ -58,6 +65,12 @@ enum FilterTeam {
 	FRIENDLY,
 	ENEMY,
 }
+
+# const TeamFilters: Dictionary[String, String] = {
+# 	"FRIENDLY": "FRIENDLY",
+# 	"ENEMY": "ENEMY",
+# }
+# var team_filters: PackedStringArray = [TeamFilters.FRIENDLY]
 
 func add_to_global_list(will_overwrite: bool = false) -> void:
 	if ["", "unique_name"].has(unique_name):

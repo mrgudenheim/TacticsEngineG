@@ -1357,6 +1357,35 @@ func get_all_passive_effects(exclude_passives: PackedStringArray = []) -> Array[
 	for status: StatusEffect in current_statuses:
 		all_passive_effects.append(status.item.passive_effect)
 	
+	# get passive effects from other units
+	if global_battle_manager != null:
+		for unit: UnitData in global_battle_manager.units:
+			if unit == self:
+				continue
+			
+			var unit_passives: Array[PassiveEffect] = unit.get_all_passive_effects()
+			for passive_effect: PassiveEffect in unit_passives:
+				if passive_effect.effect_range == 0:
+					continue
+				
+				if not passive_effect.unit_filter.has(PassiveEffect.FilterType.FRIENDLY) and unit.team == self.team:
+					continue
+				elif not passive_effect.unit_filter.has(PassiveEffect.FilterType.ENEMY) and unit.team != self.team:
+					continue
+				
+				var relative_position: Vector2i = (tile_position.location - unit.tile_position.location).abs()
+				var distance_to_unit: int = relative_position.x + relative_position.y
+				if distance_to_unit > passive_effect.effect_range:
+					continue
+				
+				var relative_height: float = absf(tile_position.height_mid - unit.tile_position.height_mid)
+				if relative_height > passive_effect.vertical_tolerance:
+					continue
+				
+				all_passive_effects.append(passive_effect)
+				
+				
+
 	all_passive_effects.filter(func(passive_effect): return not exclude_passives.has(passive_effect.unique_name))
 
 	return all_passive_effects

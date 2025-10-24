@@ -108,10 +108,6 @@ func get_result(user: UnitData, target: UnitData, element: Action.ElementTypes) 
 		FaithModifier.UNFAITH:
 			result = unfaith_modify(result, target)
 	
-	result = support_modify(result, user, target)
-	
-	result = status_modify(result, user, target)
-	
 	if is_modified_by_element:
 		result = element_modify(result, user, target, element)
 	
@@ -217,18 +213,6 @@ func faith_modify(value: float, unit: UnitData) -> float:
 
 func unfaith_modify(value: float, unit: UnitData) -> float:
 	return value * (100 - unit.faith_current) / 100.0
-
-
-func support_modify(value: float, user: UnitData, target: UnitData) -> float:
-	# TODO AttackUp, DefendUp, MartialArts, etc.
-	
-	return value
-
-
-func status_modify(value: float, user: UnitData, target: UnitData) -> float:
-	# TODO Oil, Undead?, Charging, etc.
-	
-	return value
 
 
 func zodiac_modify(value: float, user: UnitData, target: UnitData) -> float:

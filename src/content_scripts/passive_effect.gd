@@ -48,6 +48,15 @@ var added_actions: Array[Action] = []
 @export var target_can_react: bool = true
 @export var nullify_targeted: bool = false # ignore_attacks flag
 
+# properties to give passive effects to other units
+@export var effect_range: int = 0
+@export var vertical_tolerance: float = 3
+@export var unit_filter: Array[FilterType] = [FilterType.FRIENDLY]
+
+enum FilterType {
+	FRIENDLY,
+	ENEMY,
+}
 
 func add_to_global_list(will_overwrite: bool = false) -> void:
 	if ["", "unique_name"].has(unique_name):

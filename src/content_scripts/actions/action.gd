@@ -1643,6 +1643,19 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 	
 	emit_changed()
 
+
+static func get_modified_action(action_to_modify: Action, user: UnitData) -> Action:
+	var modified_action: Action = action_to_modify.duplicate()
+	var all_passive_effects = user.get_all_passive_effects(action_to_modify.ignores_passives)
+
+	for passive_effect: PassiveEffect in all_passive_effects:
+		modified_action.ticks_charge_time = passive_effect.action_charge_time_modifier.apply(modified_action.ticks_charge_time)
+		modified_action.mp_cost = passive_effect.action_mp_modifier.apply(modified_action.mp_cost)
+		modified_action.max_targeting_range = passive_effect.action_max_range_modifier.apply(modified_action.max_targeting_range)
+
+	return modified_action
+
+
 func to_json() -> String:
 	var properties_to_exclude: PackedStringArray = [
 		"RefCounted",

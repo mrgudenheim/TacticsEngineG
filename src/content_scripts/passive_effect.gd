@@ -9,24 +9,30 @@ const FILE_SUFFIX: String = "passive_effect"
 @export var requires_weapon_action: bool = false # checks any Action use_weapon_XX flags (range, targeting, damage, animation)
 @export var requires_user_item_type: PackedStringArray = [] # item unique names
 
+# Action modifiers
 @export var hit_chance_modifier_user: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
 @export var hit_chance_modifier_targeted: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
 @export var evade_source_modifiers_user: Dictionary[EvadeData.EvadeSource, Modifier] = {}
 @export var evade_source_modifiers_targeted: Dictionary[EvadeData.EvadeSource, Modifier] = {}
 @export var power_modifier_user: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
 @export var power_modifier_targeted: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
-# @export var evade_modifier_user: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
-# @export var evade_modifier_targeted: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
-@export var ticks_charge_time_modifier: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
+@export var action_charge_time_modifier: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
+@export var action_mp_modifier: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
+@export var action_max_range_modifier: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
+# used to modify Action required_target_job_uname, required_target_status_uname, required_target_stat_basis
+@export var add_applicable_target_jobs: PackedStringArray = [] # job unique names
+@export var add_applicable_target_statuses: PackedStringArray = [] # status unique names
+@export var add_applicable_target_stat_bases: Array[UnitData.StatBasis] = []  # male, female, monsters
+@export var include_evade_sources: Array[EvadeData.EvadeSource] = []
 
-@export var ct_gain_modifier: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
 # TODO generalize to target or user Stat effective modifier
-
+# Unit modifiers
 @export var ai_strategy: UnitAi.Strategy = UnitAi.Strategy.PLAYER
 @export var added_actions_names: PackedStringArray = []
 var added_actions: Array[Action] = []
 @export var added_equipment_types_equipable: PackedInt32Array = [] # equip_x support abilities
 @export var stat_modifiers: Dictionary[UnitData.StatType, Modifier] = {}
+@export var ct_gain_modifier: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
 
 @export var element_absorb: Array[Action.ElementTypes] = []
 @export var element_cancel: Array[Action.ElementTypes] = []
@@ -42,12 +48,6 @@ var added_actions: Array[Action] = []
 @export var target_can_react: bool = true
 @export var nullify_targeted: bool = false # ignore_attacks flag
 
-# used to modify Action required_target_job_uname, required_target_status_uname, required_target_stat_basis
-@export var add_applicable_target_jobs: PackedStringArray = [] # job unique names
-@export var add_applicable_target_statuses: PackedStringArray = [] # status unique names
-@export var add_applicable_target_stat_bases: Array[UnitData.StatBasis] = []  # male, female, monsters
-
-@export var include_evade_sources: Array[EvadeData.EvadeSource] = []
 
 func add_to_global_list(will_overwrite: bool = false) -> void:
 	if ["", "unique_name"].has(unique_name):

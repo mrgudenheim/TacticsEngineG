@@ -623,8 +623,9 @@ func update_actions(battle_manager: BattleManager) -> void:
 	
 	# show list UI for selecting an action TODO should action list be toggle/button group?
 	for action: Action in actions:
-		var new_action_instance: ActionInstance = ActionInstance.new(action, self, battle_manager)
-		actions_data[action] = new_action_instance
+		var modified_action: Action = Action.get_modified_action(action, self)
+		var new_action_instance: ActionInstance = ActionInstance.new(modified_action, self, battle_manager)
+		actions_data[modified_action] = new_action_instance
 		
 		if new_action_instance.is_usable():
 			await new_action_instance.update_potential_targets()

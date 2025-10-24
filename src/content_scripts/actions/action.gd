@@ -270,8 +270,8 @@ func use(action_instance: ActionInstance) -> void:
 
 
 func get_total_hit_chance(user: UnitData, target: UnitData, evade_direction: EvadeData.Directions) -> int:
-	var user_passive_effects: Array[PassiveEffect] = user.get_all_passive_effects()
-	var target_passive_effects: Array[PassiveEffect] = target.get_all_passive_effects()
+	var user_passive_effects: Array[PassiveEffect] = user.get_all_passive_effects(ignores_passives)
+	var target_passive_effects: Array[PassiveEffect] = target.get_all_passive_effects(ignores_passives)
 	# TODO apply passive effects that change action required targets
 	
 	if not required_target_job_uname.is_empty() and not required_target_job_uname.has(target.job_data.unique_name):
@@ -285,36 +285,22 @@ func get_total_hit_chance(user: UnitData, target: UnitData, evade_direction: Eva
 	
 	var base_hit_chance: float = base_hit_formula.get_result(user, target, element)
 	var modified_hit_chance: float = base_hit_chance
-	# TODO check ignores_statuses, other passives - target.get_all_passive_effects()
 	if passive_power_modifier_applies_to_hit_chance:
 		for passive_effect: PassiveEffect in user_passive_effects:
 			modified_hit_chance = passive_effect.power_modifier_user.apply(modified_hit_chance, user)
 		for passive_effect: PassiveEffect in target_passive_effects:
 			modified_hit_chance = passive_effect.power_modifier_targeted.apply(modified_hit_chance, target)
-		
-		
-		# for status: StatusEffect in user.current_statuses:
-		# 	modified_hit_chance = status.passive_effect.power_modifier_user.apply(modified_hit_chance)
-		# for status: StatusEffect in target.current_statuses:
-		# 	modified_hit_chance = status.passive_effect.power_modifier_targeted.apply(modified_hit_chance)
 	else:
 		for passive_effect: PassiveEffect in user_passive_effects:
 			modified_hit_chance = passive_effect.hit_chance_modifier_user.apply(modified_hit_chance, user)
 		for passive_effect: PassiveEffect in target_passive_effects:
 			modified_hit_chance = passive_effect.hit_chance_modifier_targeted.apply(modified_hit_chance, target)
-		
-		# for status: StatusEffect in user.current_statuses:
-		# 	modified_hit_chance = status.passive_effect.hit_chance_modifier_user.apply(modified_hit_chance)
-		# for status: StatusEffect in target.current_statuses:
-		# 	modified_hit_chance = status.passive_effect.hit_chance_modifier_targeted.apply(modified_hit_chance)
-	
-	#var evade_direction: EvadeData.EvadeDirections = get_evade_direction(user, target)
+
 	var evade_values: Dictionary[EvadeData.EvadeSource, int] = get_evade_values(target, evade_direction)
 	
 	var target_total_evade_factor: float = 1.0
 	var evade_factors: Dictionary[EvadeData.EvadeSource, float] = {}
 	if applicable_evasion_type != EvadeData.EvadeType.NONE:
-		# TODO loop over all EvadeData.EvadeSource possibilites?
 		for evade_source: EvadeData.EvadeSource in evade_values.keys():
 			if target_passive_effects.any(func(passive_effect): return passive_effect.include_evade_sources.has(evade_source)):
 				var evade_value: float = evade_values[evade_source]
@@ -331,12 +317,6 @@ func get_total_hit_chance(user: UnitData, target: UnitData, evade_direction: Eva
 				evade_factors[evade_source] = evade_factor
 				target_total_evade_factor = target_total_evade_factor * evade_factor
 
-		# var job_evade_factor: float = max(0.0, 1 - (target.get_evade(EvadeData.EvadeSource.JOB, applicable_evasion_type, evade_direction) / 100.0)) # job/class evade factor - only front facing?
-		# var shield_evade_factor: float = max(0.0, 1 - (target.get_evade(EvadeData.EvadeSource.SHIELD, applicable_evasion_type, evade_direction) / 100.0)) # shield evade factor - only front and side facing?
-		# var accessory_factor: float = max(0.0, 1 - (target.get_evade(EvadeData.EvadeSource.ACCESSORY, applicable_evasion_type, evade_direction) / 100.0)) # accessory evade factor
-		# var weapon_evade_factor: float = max(0.0, 1 - (target.get_evade(EvadeData.EvadeSource.WEAPON, applicable_evasion_type, evade_direction) / 100.0)) # TODO weapon evade factor - only front and side facing? and only with "Weapon Guard" ability
-	
-		# target_total_evade_factor = job_evade_factor * shield_evade_factor * accessory_factor * weapon_evade_factor
 		target_total_evade_factor = max(0, target_total_evade_factor) # prevent negative evasion
 	
 	var total_hit_chance: int = roundi(modified_hit_chance * target_total_evade_factor)

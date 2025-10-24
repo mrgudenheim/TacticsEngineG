@@ -1341,7 +1341,7 @@ func get_evade(evade_source: EvadeData.EvadeSource, evade_type: EvadeData.EvadeT
 	return evade
 
 
-func get_all_passive_effects() -> Array[PassiveEffect]:
+func get_all_passive_effects(exclude_passives: PackedStringArray = []) -> Array[PassiveEffect]:
 	var all_passive_effects: Array[PassiveEffect] = []
 	# TODO should all Objects that have PassiveEffect be changed to store Array[PassiveEffect]
 	# all_passive_effects.append_array(job_data.passive_effect) 
@@ -1355,6 +1355,8 @@ func get_all_passive_effects() -> Array[PassiveEffect]:
 	
 	for status: StatusEffect in current_statuses:
 		all_passive_effects.append(status.item.passive_effect)
+	
+	all_passive_effects.filter(func(passive_effect): return not exclude_passives.has(passive_effect.unique_name))
 
 	return all_passive_effects
 

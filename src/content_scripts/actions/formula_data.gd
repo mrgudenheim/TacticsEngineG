@@ -121,7 +121,6 @@ func get_result(user: UnitData, target: UnitData, element: Action.ElementTypes) 
 	return result
 
 
-
 func get_base_value(user: UnitData, target: UnitData) -> float:
 	var base_value: float = values[0]
 	var wp: int 

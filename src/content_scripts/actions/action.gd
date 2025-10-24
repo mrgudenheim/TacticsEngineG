@@ -272,16 +272,30 @@ func use(action_instance: ActionInstance) -> void:
 func get_total_hit_chance(user: UnitData, target: UnitData, evade_direction: EvadeData.Directions) -> int:
 	var user_passive_effects: Array[PassiveEffect] = user.get_all_passive_effects(ignores_passives)
 	var target_passive_effects: Array[PassiveEffect] = target.get_all_passive_effects(ignores_passives)
-	# TODO apply passive effects that change action required targets
 	
-	if not required_target_job_uname.is_empty() and not required_target_job_uname.has(target.job_data.unique_name):
-		return 0
-	
-	if not Utilities.has_any_elements(target.current_status_ids, required_target_status_uname):
-		return 0
+	if not required_target_job_uname.is_empty():
+		var required_jobs: PackedStringArray = required_target_job_uname.duplicate()
+		for passive_effect: PassiveEffect in user_passive_effects:
+			required_jobs.append_array(passive_effect.add_applicable_target_jobs)
 
-	if not required_target_stat_basis.is_empty() and not required_target_stat_basis.has(target.stat_basis):
-		return 0
+		if not required_jobs.has(target.job_data.unique_name):
+			return 0
+	
+	if not required_target_status_uname.is_empty():
+		var required_status: PackedStringArray = required_target_status_uname.duplicate()
+		for passive_effect: PassiveEffect in user_passive_effects:
+			required_status.append_array(passive_effect.add_applicable_target_statuses)
+		
+		if not Utilities.has_any_elements(target.current_status_ids, required_status):
+			return 0
+
+	if not required_target_stat_basis.is_empty():
+		var required_basis: Array[UnitData.StatBasis] = required_target_stat_basis.duplicate()
+		for passive_effect: PassiveEffect in user_passive_effects:
+			required_basis.append_array(passive_effect.add_applicable_target_stat_bases)
+
+		if not required_basis.has(target.stat_basis):
+			return 0
 	
 	var base_hit_chance: float = base_hit_formula.get_result(user, target, element)
 	var modified_hit_chance: float = base_hit_chance

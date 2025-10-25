@@ -16,8 +16,6 @@
 			1.0
 		]
 	},
-	"byte_00": 0,
-	"byte_01": 0,
 	"checks_01": 16,
 	"checks_02": 0,
 	"description": "Status effect description",
@@ -31,7 +29,12 @@
 	"duration_type": 0,
 	"icon_rects": [],
 	"idle_animation_id": -1,
-	"modulation_color": "(0.0824, 0.5882, 0.9059, 1.0)",
+	"modulation_color": [
+		0.0823529437184334,
+		0.588235318660736,
+		0.905882358551025,
+		1.0
+	],
 	"num_allowed": 1,
 	"num_icon_frames": 1,
 	"order": 12,
@@ -39,13 +42,17 @@
 	"palette_idx_offset": 0,
 	"passive_effect_name": "",
 	"removed_on_damaged": false,
-	"shading_color": "(0.0, 0.0, 0.0314, 1.0)",
+	"shading_color": [
+		0.0,
+		0.0,
+		0.0313725508749485,
+		1.0
+	],
 	"shading_type": 4,
 	"spritesheet_file_name": "",
 	"status_cancels": [
 		"poison"
 	],
-	"status_cancels_flags": "[0, 0, 0, 128, 0]",
 	"status_cant_stack": [
 		"crystal",
 		"dead",

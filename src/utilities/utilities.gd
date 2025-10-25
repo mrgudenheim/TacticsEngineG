@@ -25,7 +25,7 @@ func object_properties_to_dictionary(object: Object, exclude_property_names: Pac
 		if exclude_property_names.has(property["name"]) or property["name"].ends_with(".gd"):
 			continue
 		if property["class_name"] == '' or object.get(property["name"]) == null or not (object.get(property["name"]) is Object):
-			if property["type"] == 28: # TYPE_ARRAY
+			if property["type"] == TYPE_ARRAY:
 				var new_array: Array = []
 				for element in object.get(property["name"]):
 					if not element is Object:
@@ -35,7 +35,7 @@ func object_properties_to_dictionary(object: Object, exclude_property_names: Pac
 					else:
 						new_array.append(element.to_dictionary()) # handle array elements that are resources
 				property_dict[property["name"]] = new_array
-			elif property["type"] == 27: # TYPE_DICTIONARY 
+			elif property["type"] == TYPE_DICTIONARY: 
 				var new_dict: Dictionary = {}
 				for key in object.get(property["name"]).keys():
 					var value = object.get(property["name"])[key]
@@ -46,6 +46,10 @@ func object_properties_to_dictionary(object: Object, exclude_property_names: Pac
 					else:
 						new_dict[key] = value.to_dictionary() # handle dictionary values that are resources
 				property_dict[property["name"]] = new_dict
+			elif property["type"] == TYPE_COLOR:
+				var color: Color = object.get(property["name"])
+				var new_array: Array = [color.r, color.g, color.b, color.a]
+				property_dict[property["name"]] = new_array
 			else:
 				property_dict[property["name"]] = object.get(property["name"])
 		elif object.get(property["name"]).has_method("to_dictionary"):

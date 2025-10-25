@@ -16,8 +16,6 @@
 			1.0
 		]
 	},
-	"byte_00": 0,
-	"byte_01": 0,
 	"checks_01": 0,
 	"checks_02": 148,
 	"description": "Status effect description",
@@ -33,7 +31,12 @@
 		"[P: (72, 208), S: (14, 12)]"
 	],
 	"idle_animation_id": -1,
-	"modulation_color": "(1.0, 0.502, 0.502, 1.0)",
+	"modulation_color": [
+		1.0,
+		0.501960813999176,
+		0.501960813999176,
+		1.0
+	],
 	"num_allowed": 1,
 	"num_icon_frames": 1,
 	"order": 24,
@@ -41,7 +44,12 @@
 	"palette_idx_offset": 0,
 	"passive_effect_name": "berserk_status",
 	"removed_on_damaged": false,
-	"shading_color": "(0.0314, 0.0, 0.0, 1.0)",
+	"shading_color": [
+		0.0313725508749485,
+		0.0,
+		0.0,
+		1.0
+	],
 	"shading_type": 4,
 	"spritesheet_file_name": "",
 	"status_cancels": [
@@ -50,7 +58,6 @@
 		"defending",
 		"performing"
 	],
-	"status_cancels_flags": "[15, 0, 0, 0, 0]",
 	"status_cant_stack": [
 		"crystal",
 		"dead",

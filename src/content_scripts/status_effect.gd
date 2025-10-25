@@ -6,17 +6,18 @@ extends Resource
 const SAVE_DIRECTORY_PATH: String = "user://overrides/status_effects/"
 const FILE_SUFFIX: String = "status_effect"
 @export var unique_name: String = "unique_name"
+
 @export var status_id: int = 0
 @export var status_effect_name: String = "Status effect name"
 @export var description: String = "Status effect description"
 
-@export var byte_00: int = 0
-@export var byte_01: int = 0
+var byte_00: int = 0
+var byte_01: int = 0
 @export var order: int = 0
 @export var duration: int = 10
 @export_flags("Freeze CT", "(Crystal/Treasure)", "(Defend/Perform)", "(Poison/Regen)", "(Confusion/Transparent/Charm/Sleep)", "(Checks 3)", "(Checks 2)", "Counts as KO") var checks_01: int = 0
 @export_flags("Cant React", "Unknown", "Ignore Attcks", "(Checks 10)", "(Checks 9)", "(Checks 8)", "(Checks 7 - Cancelled by Immortal?)", "(Checks 6)") var checks_02: int = 0
-@export var status_cancels_flags: PackedByteArray = [] # 5 bytes of bitflags for up to 40 statuses 
+var status_cancels_flags: PackedByteArray = [] # 5 bytes of bitflags for up to 40 statuses 
 @export var status_cant_stack_flags: PackedByteArray = [] # 5 bytes of bitflags for up to 40 statuses
 
 @export var status_cancels: PackedStringArray = [] 
@@ -150,6 +151,7 @@ func get_ai_score(user: UnitData, target: UnitData, remove: bool = false) -> flo
 func add_to_global_list(will_overwrite: bool = false) -> void:
 	if ["", "unique_name"].has(unique_name):
 		unique_name = status_effect_name.to_snake_case()
+	
 	if RomReader.status_effects.keys().has(unique_name) and will_overwrite:
 		push_warning("Overwriting existing status effect: " + unique_name)
 	elif RomReader.status_effects.keys().has(unique_name) and not will_overwrite:
@@ -190,7 +192,17 @@ static func create_from_json(json_string: String) -> StatusEffect:
 static func create_from_dictionary(property_dict: Dictionary) -> StatusEffect:
 	var new_status_effect: StatusEffect = StatusEffect.new()
 	for property_name in property_dict.keys():
-		new_status_effect.set(property_name, property_dict[property_name])
+		if property_name.contains("color"):
+			var new_color: Color = Color.BLACK
+			var color_rgb_array: Array = property_dict[property_name]
+			new_color.r = color_rgb_array[0]
+			new_color.g = color_rgb_array[1]
+			new_color.b = color_rgb_array[2]
+			new_color.a = color_rgb_array[3]
+
+			new_status_effect.set(property_name, new_color)
+		else:
+			new_status_effect.set(property_name, property_dict[property_name])
 
 	new_status_effect.emit_changed()
 	return new_status_effect

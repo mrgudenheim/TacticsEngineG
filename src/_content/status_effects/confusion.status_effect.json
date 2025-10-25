@@ -16,8 +16,6 @@
 			1.0
 		]
 	},
-	"byte_00": 0,
-	"byte_01": 0,
 	"checks_01": 8,
 	"checks_02": 149,
 	"description": "Status effect description",
@@ -33,7 +31,12 @@
 		"[P: (16, 220), S: (14, 12)]"
 	],
 	"idle_animation_id": 74,
-	"modulation_color": "(0.0, 0.0, 0.0, 1.0)",
+	"modulation_color": [
+		0.0,
+		0.0,
+		0.0,
+		1.0
+	],
 	"num_allowed": 1,
 	"num_icon_frames": 1,
 	"order": 31,
@@ -41,7 +44,12 @@
 	"palette_idx_offset": 0,
 	"passive_effect_name": "confusion_status",
 	"removed_on_damaged": true,
-	"shading_color": "(0.0, 0.0, 0.0, 1.0)",
+	"shading_color": [
+		0.0,
+		0.0,
+		0.0,
+		1.0
+	],
 	"shading_type": 0,
 	"spritesheet_file_name": "",
 	"status_cancels": [
@@ -50,7 +58,6 @@
 		"defending",
 		"performing"
 	],
-	"status_cancels_flags": "[15, 0, 0, 0, 0]",
 	"status_cant_stack": [
 		"crystal",
 		"dead",

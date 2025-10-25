@@ -16,8 +16,6 @@
 			1.0
 		]
 	},
-	"byte_00": 0,
-	"byte_01": 0,
 	"checks_01": 0,
 	"checks_02": 0,
 	"description": "Status effect description",
@@ -33,7 +31,12 @@
 		"[P: (86, 232), S: (14, 12)]"
 	],
 	"idle_animation_id": -1,
-	"modulation_color": "(0.251, 0.251, 0.251, 1.0)",
+	"modulation_color": [
+		0.250980406999588,
+		0.250980406999588,
+		0.250980406999588,
+		1.0
+	],
 	"num_allowed": 1,
 	"num_icon_frames": 1,
 	"order": 23,
@@ -41,11 +44,15 @@
 	"palette_idx_offset": 0,
 	"passive_effect_name": "oil_status",
 	"removed_on_damaged": false,
-	"shading_color": "(-0.0157, -0.0157, -0.0157, 1.0)",
+	"shading_color": [
+		-0.0156862754374743,
+		-0.0156862754374743,
+		-0.0156862754374743,
+		1.0
+	],
 	"shading_type": 5,
 	"spritesheet_file_name": "",
 	"status_cancels": [],
-	"status_cancels_flags": "[0, 0, 0, 0, 0]",
 	"status_cant_stack": [
 		"crystal",
 		"dead",

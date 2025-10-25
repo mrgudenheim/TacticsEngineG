@@ -16,8 +16,6 @@
 			1.0
 		]
 	},
-	"byte_00": 0,
-	"byte_01": 0,
 	"checks_01": 129,
 	"checks_02": 171,
 	"description": "Status effect description",
@@ -31,7 +29,12 @@
 	"duration_type": 2,
 	"icon_rects": [],
 	"idle_animation_id": 4,
-	"modulation_color": "(0.1255, 0.1255, 0.1255, 1.0)",
+	"modulation_color": [
+		0.125490203499794,
+		0.125490203499794,
+		0.125490203499794,
+		1.0
+	],
 	"num_allowed": 1,
 	"num_icon_frames": 1,
 	"order": 36,
@@ -39,7 +42,12 @@
 	"palette_idx_offset": 0,
 	"passive_effect_name": "petrify_status",
 	"removed_on_damaged": false,
-	"shading_color": "(0.0, 0.0, 0.0, 1.0)",
+	"shading_color": [
+		0.0,
+		0.0,
+		0.0,
+		1.0
+	],
 	"shading_type": 6,
 	"spritesheet_file_name": "",
 	"status_cancels": [
@@ -55,7 +63,6 @@
 		"reflect",
 		"death_sentence"
 	],
-	"status_cancels_flags": "[15, 0, 88, 2, 19]",
 	"status_cant_stack": [
 		"crystal",
 		"dead",

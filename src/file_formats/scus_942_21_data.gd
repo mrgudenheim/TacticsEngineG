@@ -446,7 +446,7 @@ func init_statuses() -> void:
 	for status: StatusEffect in status_effects:
 		if status.freezes_ct:
 			status.passive_effect.ct_gain_modifier.value_formula.values = [0.0]
-		status.passive_effect.can_react = status.checks_02 & 0x80 == 0x80 # cant react flag
+		status.passive_effect.can_react = not (status.checks_02 & 0x80 == 0x80) # cant react flag
 		status.passive_effect.nullify_targeted = status.checks_02 & 0x20 == 0x20 # ignore attacks flag
 	
 	# reflect - handled as a triggered action

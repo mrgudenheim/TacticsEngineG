@@ -122,11 +122,7 @@ func _init(new_job_id: int = -1, job_bytes: PackedByteArray = []) -> void:
 		EvadeData.EvadeSource.ACCESSORY,
 	]
 	evade_passive_effect.include_evade_sources = standard_evade_sources
-	#evade_passive_effect.include_evade_sources = [
-		#EvadeData.EvadeSource.JOB,
-		#EvadeData.EvadeSource.SHIELD,
-		#EvadeData.EvadeSource.ACCESSORY,
-	#]
+	Utilities.save_json(evade_passive_effect)
 
 	var move_passive_effect = PassiveEffect.new()
 	move_passive_effect.unique_name = "standard_move"
@@ -144,14 +140,7 @@ func _init(new_job_id: int = -1, job_bytes: PackedByteArray = []) -> void:
 		0x2d : Modifier.new(1.0, Modifier.ModifierType.ADD),
 	}
 	move_passive_effect.terrain_cost_modifiers = standard_terrain_modifiers
-	#move_passive_effect.terrain_cost_modifiers = {
-		#0x0e : Modifier.new(1.0, Modifier.ModifierType.ADD),
-		#0x0f : Modifier.new(1.0, Modifier.ModifierType.ADD),
-		#0x10 : Modifier.new(1.0, Modifier.ModifierType.ADD),
-		#0x11 : Modifier.new(1.0, Modifier.ModifierType.ADD),
-		#0x2d : Modifier.new(1.0, Modifier.ModifierType.ADD),
-	#}
-	
+	Utilities.save_json(move_passive_effect)
 
 	add_to_global_list()
 

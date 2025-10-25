@@ -36,9 +36,9 @@ var added_actions: Array[Action] = []
 
 # move modifiers
 @export var ignore_height: bool = false
-@export var terrain_move_penalty: Dictionary[int, Modifier] = {} # [TerrainTile.surface_type_id, modifier]
-@export var add_prohibited_terrain: PackedStringArray = [] # TerrainTile.surface_type_id
-@export var remove_prohibited_terrain: PackedStringArray = [] # TerrainTile.surface_type_id
+@export var terrain_cost_modifiers: Dictionary[int, Modifier] = {} # [TerrainTile.surface_type_id, modifier]
+@export var add_prohibited_terrain: PackedInt32Array = [] # TerrainTile.surface_type_id
+@export var remove_prohibited_terrain: PackedInt32Array = [] # TerrainTile.surface_type_id
 @export var depth_modifier: Modifier # TODO handle depth
 
 @export var element_absorb: Array[Action.ElementTypes] = []

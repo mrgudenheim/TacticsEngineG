@@ -118,7 +118,7 @@ func get_map_paths(user: UnitData, map_tiles: Dictionary[Vector2i, Array], units
 			#break 
 		
 		for next: TerrainTile in get_map_path_neighbors(user, current, map_tiles, units):
-			var new_cost: float = cost_so_far[current] + get_move_cost(current, next)
+			var new_cost: float = cost_so_far[current] + get_move_cost(current, next, user.terrain_costs)
 			if new_cost > max_cost:
 				continue # break early
 			
@@ -186,7 +186,7 @@ func get_map_path_neighbors(user: UnitData, current_tile: TerrainTile, map_tiles
 			for tile: TerrainTile in map_tiles[potential_xy]:
 				if tile.no_walk == 1:
 					continue
-				elif tile.surface_type_id == 0x12: # lava TODO check movement abilities
+				elif user.prohibited_terrain.has(tile.surface_type_id): # lava, etc.
 					continue
 				elif abs(tile.height_mid - current_tile.height_mid) > user.jump_current: # restrict movement based on current jomp, TODO allow jump height as parameter?
 					continue
@@ -222,7 +222,7 @@ func get_leaping_neighbors(user: UnitData, current_tile: TerrainTile, map_tiles:
 			for tile: TerrainTile in map_tiles[potential_xy]:
 				if tile.no_walk == 1:
 					continue
-				elif tile.surface_type_id == 0x12: # lava TODO check movement abilities
+				elif user.prohibited_terrain.has(tile.surface_type_id): # lava, etc.
 					continue
 				elif abs(tile.height_mid - current_tile.height_mid) > user.jump_current: # restrict movement based on current jomp
 					continue
@@ -251,9 +251,10 @@ func get_leaping_neighbors(user: UnitData, current_tile: TerrainTile, map_tiles:
 	return leap_neighbors
 
 
-func get_move_cost(from_tile: TerrainTile, to_tile: TerrainTile) -> float:
+func get_move_cost(from_tile: TerrainTile, to_tile: TerrainTile, terrain_costs: Dictionary[int, int]) -> float:
 	var cost: float = 0
-	cost = from_tile.location.distance_to(to_tile.location)
+	cost = from_tile.location.distance_to(to_tile.location) # handle leaping cost
+	cost += terrain_costs[to_tile.surface_type_id] - 1 # subtract 1 because terrain_costs already includes cost for assumed distance of 1
 	
 	# https://ffhacktics.com/wiki/Movement_modifiers_Table
 	# TODO check depth or terrain type?

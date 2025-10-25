@@ -274,8 +274,8 @@ var can_move: bool = true
 
 #var map_position: Vector2i
 var tile_position: TerrainTile
-@export var prohibited_terrain: Array = []
-@export var terrain_cost: Dictionary = {} # TileTerrain.surface_type_id
+var prohibited_terrain: Array[int] = [] # TileTerrain.surface_type_id
+var terrain_costs: Dictionary[int, int] = {} # [TileTerrain.surface_type_id, cost]
 
 var map_paths: Dictionary[TerrainTile, TerrainTile]
 var path_costs: Dictionary[TerrainTile, float]
@@ -1541,8 +1541,45 @@ func on_sprite_idx_selected(index: int) -> void:
 		animation_manager._on_animation_changed()
 
 
+func update_prohibited_terrain() -> void:
+	var all_passive_effects: Array[PassiveEffect] = get_all_passive_effects()
+	var new_prohibited_terrain: Array[int] = []
+
+	for passive_effect: PassiveEffect in all_passive_effects:
+		for terrain_id: int in passive_effect.add_prohibited_terrain:
+			if not new_prohibited_terrain.has(terrain_id):
+				new_prohibited_terrain.append(terrain_id)
+	
+	for passive_effect: PassiveEffect in all_passive_effects:
+		for terrain_id: int in passive_effect.remove_prohibited_terrain:
+			if new_prohibited_terrain.has(terrain_id):
+				new_prohibited_terrain.erase(terrain_id)
+	
+	prohibited_terrain = new_prohibited_terrain
+
+
+func update_terrain_costs() -> void:
+	var all_passive_effects: Array[PassiveEffect] = get_all_passive_effects()
+	var new_terrain_costs: Dictionary[int, int] = {}
+
+	for passive_effect: PassiveEffect in all_passive_effects:
+		for terrain_id: int in passive_effect.terrain_cost_modifiers.keys():
+			var current_cost: int = 1
+			if new_terrain_costs.has(terrain_id):
+				current_cost = new_terrain_costs[terrain_id]
+			
+			new_terrain_costs[terrain_id] = passive_effect.terrain_cost_modifiers[terrain_id].apply(current_cost)
+	
+	for terrain_id: int in new_terrain_costs.keys():
+		new_terrain_costs[terrain_id] = max(0, new_terrain_costs[terrain_id]) # move is never negative
+
+	terrain_costs = new_terrain_costs
+
+
 func update_map_paths(map_tiles: Dictionary[Vector2i, Array], units: Array[UnitData], max_cost: int = 9999) -> void:
 	paths_set = false
+	update_prohibited_terrain()
+	update_terrain_costs()
 	
 	if move_action.targeting_strategy.has_method("get_map_paths"):
 		map_paths = await move_action.targeting_strategy.get_map_paths(self, map_tiles, units, max_cost)

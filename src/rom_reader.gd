@@ -359,6 +359,10 @@ func process_rom() -> void:
 	# # TODO create teleport_2 action
 	# Utilities.save_json(new_passive_effect)
 
+	# new_passive_effect = PassiveEffect.new()
+	# new_passive_effect.unique_name = "reflect"
+	# new_passive_effect.status_always = ["reflect"]
+	# Utilities.save_json(new_passive_effect)
 
 	is_ready = true
 	rom_loaded.emit()

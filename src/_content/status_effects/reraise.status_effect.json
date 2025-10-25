@@ -2,7 +2,7 @@
 	"action_on_apply": "",
 	"action_on_complete": "",
 	"action_on_turn_end": "",
-	"action_on_turn_start": "reraise_cancels_dead",
+	"action_on_turn_start": "",
 	"action_on_x_ticks": "",
 	"ai_score_formula": {
 		"formula": 32,
@@ -39,7 +39,7 @@
 	"order": 14,
 	"other_type_index": 0,
 	"palette_idx_offset": 0,
-	"passive_effect_name": "",
+	"passive_effect_name": "reraise_status",
 	"removed_on_damaged": false,
 	"shading_color": "(0.0, 0.0, 0.0, 1.0)",
 	"shading_type": 0,

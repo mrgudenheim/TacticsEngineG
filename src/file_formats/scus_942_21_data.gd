@@ -564,13 +564,19 @@ func init_statuses() -> void:
 	# regen action
 	status_effects[25].action_on_turn_end = "regen_heal"
 
-	# reraise action
-	status_effects[18].action_on_turn_start = "reraise_cancels_dead"
+	# reraise triggered action
+	status_effects[18].passive_effect.added_triggered_actions_names = ["reraise_remove_dead"]
+
+	# undead triggered action
+	status_effects[3].passive_effect.added_triggered_actions_names = ["undead_remove_dead"]
+
+	# reflect triggered action
+	status_effects[38].passive_effect.added_triggered_actions_names = ["reflect"]
 
 	# death sentence action
 	status_effects[39].action_on_complete = "death_sentence_to_dead"
 	
-	# TODO Undead, Invite, Reraise, Charm, Reflect
+	# TODO Invite, Charm
 
 	#for status: StatusEffect in status_effects:
 		#if status.passive_effect != null:

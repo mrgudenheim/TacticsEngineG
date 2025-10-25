@@ -37,7 +37,7 @@
 	"order": 22,
 	"other_type_index": 0,
 	"palette_idx_offset": 0,
-	"passive_effect_name": "",
+	"passive_effect_name": "undead_status",
 	"removed_on_damaged": false,
 	"shading_color": "(0.0157, 0.0, 0.0196, 1.0)",
 	"shading_type": 5,

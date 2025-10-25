@@ -358,6 +358,22 @@ func create_ability() -> Ability:
 		new_ability.display_name = "Move Get MP"
 	elif display_name == "Move-Find Item":
 		new_ability.display_name = "Move Find Item"
+	elif display_name == "Any Weather":
+		new_ability.display_name = "Ignore Weather"
+	elif display_name == "Any Ground":
+		new_ability.display_name = "Ignore Terrain"
+	elif display_name == "Move on Lava":
+		new_ability.display_name = "Walk on Lava"
+	elif display_name == "Move in Water":
+		new_ability.display_name = "Walk on Water"
+	elif display_name == "Walk on Water":
+		new_ability.display_name = "Swim"
+	elif display_name == "Move Undrwater":
+		new_ability.display_name = "Move Underwater"
+	
+	if id == 0x1f1:
+		display_name = "Cant enter depth"
+		new_ability.display_name = display_name
 	
 	match ability_type:
 		AbilityType.REACTION:

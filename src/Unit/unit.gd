@@ -660,7 +660,8 @@ func set_available_actions() -> void:
 			if not actions.has(action):
 				actions.append(action)
 	if job_data != null:
-		for action: Action in job_data.passive_effect.added_actions:
+		for passive_effect: PassiveEffect in job_data.passive_effects:
+			for action: Action in passive_effect.added_actions:
 				if not actions.has(action):
 					actions.append(action)
 	
@@ -1362,9 +1363,12 @@ func get_all_passive_effects(exclude_passives: PackedStringArray = []) -> Array[
 func get_native_passive_effects(exclude_passives: PackedStringArray = []) -> Array[PassiveEffect]:
 	var native_passive_effects: Array[PassiveEffect] = []
 	# TODO should all Objects that have PassiveEffect be changed to store Array[PassiveEffect]
-	# all_passive_effects.append_array(job_data.passive_effect) 
+	# all_passive_effects.append_array(ability.passive_effects) 
 	
-	native_passive_effects.append(job_data.passive_effect)
+	native_passive_effects.append_array(job_data.passive_effects)
+	for ability: Ability in job_data.innate_abilities:
+		native_passive_effects.append(ability.passive_effect)
+
 	for ability_slot: AbilitySlot in ability_slots:
 		native_passive_effects.append(ability_slot.ability.passive_effect)
 	

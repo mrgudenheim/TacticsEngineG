@@ -198,7 +198,6 @@ func get_map_path_neighbors(user: UnitData, current_tile: TerrainTile, map_tiles
 		
 		neighbors.append_array(get_leaping_neighbors(user, current_tile, map_tiles, units, offset, neighbors))
 	# TODO check other cases - leaping, teleport, map warps, fly, float, etc.
-	# TODO get costs
 	# TODO get animations - walking, jumping, etc.
 	
 	return neighbors
@@ -254,7 +253,9 @@ func get_leaping_neighbors(user: UnitData, current_tile: TerrainTile, map_tiles:
 func get_move_cost(from_tile: TerrainTile, to_tile: TerrainTile, terrain_costs: Dictionary[int, int]) -> float:
 	var cost: float = 0
 	cost = from_tile.location.distance_to(to_tile.location) # handle leaping cost
-	cost += terrain_costs[to_tile.surface_type_id] - 1 # subtract 1 because terrain_costs already includes cost for assumed distance of 1
+	
+	if terrain_costs.has(to_tile.surface_type_id):
+		cost += terrain_costs[to_tile.surface_type_id] - 1 # subtract 1 because terrain_costs already includes cost for assumed distance of 1
 	
 	# https://ffhacktics.com/wiki/Movement_modifiers_Table
 	# TODO check depth or terrain type?

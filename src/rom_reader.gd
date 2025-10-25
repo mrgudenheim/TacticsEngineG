@@ -457,11 +457,18 @@ func connect_data_references() -> void:
 			status_effect.passive_effect = passive_effects[status_effect.passive_effect_name]
 	
 	for job_data: JobData in jobs_data.values():
-		if passive_effects.has(job_data.passive_effect_name):
-			job_data.passive_effect = passive_effects[job_data.passive_effect_name]
-		elif job_data.passive_effect_name == "" and passive_effects.has(job_data.unique_name):
-			job_data.passive_effect_name = job_data.unique_name
-			job_data.passive_effect = passive_effects[job_data.passive_effect_name]
+		for passive_effect_name_idx: int in job_data.passive_effect_names.size():
+			var passive_effect_name: String = job_data.passive_effect_names[passive_effect_name_idx]
+			if passive_effects.has(passive_effect_name):
+				job_data.passive_effects.append(passive_effects[passive_effect_name])
+			elif passive_effect_name == "" and passive_effects.has(job_data.unique_name):
+				passive_effect_name = job_data.unique_name
+				job_data.passive_effect_names[passive_effect_name_idx] = passive_effect_name
+				job_data.passive_effects.append(passive_effects[passive_effect_name])
+		
+		for ability_name: String in job_data.innate_ability_names:
+			if abilities.has(ability_name):
+				job_data.innate_abilities.append(abilities[ability_name])
 
 	for ability: Ability in abilities.values():
 		if passive_effects.has(ability.passive_effect_name):

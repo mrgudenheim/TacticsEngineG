@@ -9,7 +9,9 @@ const FILE_SUFFIX: String = "job"
 @export var job_id = 0
 @export var display_name: String = "Job Name"
 @export var skillset_id: int = 0
-@export var innate_abilities: PackedInt32Array = []
+@export var innate_abilities_ids: PackedInt32Array = []
+@export var innate_ability_names: PackedStringArray = []
+var innate_abilities: Array[Ability] = []
 @export var equippable_item_types: Array[ItemData.ItemType] # 4 bytes of bitflags, 32 total
 @export var hp_growth: int = 1
 @export var mp_growth: int = 1
@@ -39,8 +41,8 @@ const FILE_SUFFIX: String = "job"
 @export var element_weakness: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
 @export var element_strengthen: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
 
-@export var passive_effect_name: String = ""
-var passive_effect: PassiveEffect = PassiveEffect.new() # TODO job_data move element affinities, stat modifiers, and status arrays to passive_effect
+@export var passive_effect_names: PackedStringArray = []
+var passive_effects: Array[PassiveEffect] = [] # TODO job_data move element affinities, stat modifiers, and status arrays to passive_effects
 
 @export var monster_portrait_id: int = 0
 @export var monster_palette_id: int = 0
@@ -70,7 +72,7 @@ func _init(new_job_id: int = -1, job_bytes: PackedByteArray = []) -> void:
 	for innate_slot: int in 4:
 		var innate_id: int = job_bytes.decode_u16(0x01 + (2 * innate_slot))
 		if innate_id != 0:
-			innate_abilities.append(innate_id) # TODO define non-action abilities
+			innate_abilities_ids.append(innate_id) # TODO define non-action abilities
 	
 	# equippable item types
 	var equipable_bytes: PackedByteArray = job_bytes.slice(0x09, 0x0d)
@@ -109,12 +111,47 @@ func _init(new_job_id: int = -1, job_bytes: PackedByteArray = []) -> void:
 	element_weakness = Action.get_element_types_array([job_bytes.decode_u8(0x2c)])
 	#element_strengthen = Action.get_element_types_array([job_bytes.decode_u8(0x29)])
 
-	passive_effect = PassiveEffect.new()
-	passive_effect.include_evade_sources = [
+	passive_effect_names.append("standard_move")
+	passive_effect_names.append("standard_evade")
+
+	var evade_passive_effect = PassiveEffect.new()
+	evade_passive_effect.unique_name = "standard_evade"
+	var standard_evade_sources: Array[EvadeData.EvadeSource] = [
 		EvadeData.EvadeSource.JOB,
 		EvadeData.EvadeSource.SHIELD,
 		EvadeData.EvadeSource.ACCESSORY,
 	]
+	evade_passive_effect.include_evade_sources = standard_evade_sources
+	#evade_passive_effect.include_evade_sources = [
+		#EvadeData.EvadeSource.JOB,
+		#EvadeData.EvadeSource.SHIELD,
+		#EvadeData.EvadeSource.ACCESSORY,
+	#]
+
+	var move_passive_effect = PassiveEffect.new()
+	move_passive_effect.unique_name = "standard_move"
+	move_passive_effect.add_prohibited_terrain = [
+		0x12,
+		0x19,
+		0x1c,
+		0x3f,
+	]
+	var standard_terrain_modifiers: Dictionary[int, Modifier] = {
+		0x0e : Modifier.new(1.0, Modifier.ModifierType.ADD),
+		0x0f : Modifier.new(1.0, Modifier.ModifierType.ADD),
+		0x10 : Modifier.new(1.0, Modifier.ModifierType.ADD),
+		0x11 : Modifier.new(1.0, Modifier.ModifierType.ADD),
+		0x2d : Modifier.new(1.0, Modifier.ModifierType.ADD),
+	}
+	move_passive_effect.terrain_cost_modifiers = standard_terrain_modifiers
+	#move_passive_effect.terrain_cost_modifiers = {
+		#0x0e : Modifier.new(1.0, Modifier.ModifierType.ADD),
+		#0x0f : Modifier.new(1.0, Modifier.ModifierType.ADD),
+		#0x10 : Modifier.new(1.0, Modifier.ModifierType.ADD),
+		#0x11 : Modifier.new(1.0, Modifier.ModifierType.ADD),
+		#0x2d : Modifier.new(1.0, Modifier.ModifierType.ADD),
+	#}
+	
 
 	add_to_global_list()
 
@@ -137,8 +174,8 @@ func add_to_global_list(will_overwrite: bool = false) -> void:
 		push_warning("JobData list already contains: " + unique_name + ". Incrementing unique_name to: " + new_unique_name)
 		unique_name = new_unique_name
 	
-	passive_effect_name = unique_name
-	passive_effect.unique_name = unique_name
+	# passive_effect_names = unique_name
+	# passive_effects.unique_name = unique_name
 	RomReader.jobs_data[unique_name] = self
 
 

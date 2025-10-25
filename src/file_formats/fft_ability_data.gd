@@ -348,6 +348,8 @@ func create_ability() -> Ability:
 		new_ability.display_name = "Counter Geomancy"
 	elif display_name == "Face Up":
 		new_ability.display_name = "Faith Up"
+	elif display_name == "Magic DefendUP":
+		new_ability.display_name = "Magic Defense Up"
 	elif display_name == "Move-Get Exp":
 		new_ability.display_name = "Move Get Exp"
 	elif display_name == "Move-Get Jp":
@@ -370,7 +372,7 @@ func create_ability() -> Ability:
 		new_ability.display_name = "Swim"
 	elif display_name == "Move Undrwater":
 		new_ability.display_name = "Move Underwater"
-	
+
 	if id == 0x1f1:
 		display_name = "Cant enter depth"
 		new_ability.display_name = display_name

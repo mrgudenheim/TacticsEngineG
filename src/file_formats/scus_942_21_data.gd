@@ -577,6 +577,7 @@ func init_statuses() -> void:
 	status_effects[39].action_on_complete = "death_sentence_to_dead"
 	
 	# TODO Invite, Charm
+	# TODO Undead reverse healing -> damage
 
 	#for status: StatusEffect in status_effects:
 		#if status.passive_effect != null:

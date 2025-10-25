@@ -129,7 +129,7 @@ var secondary_actions2: Array[SecondaryAction] = []
 
 @export var passive_power_modifier_applies_to_hit_chance: bool = false
 @export var ignores_statuses: PackedStringArray = [] # unique names
-@export var ignores_passives: PackedStringArray = [] # unique names
+@export var ignore_passives: PackedStringArray = [] # unique names
 
 @export var trigger_types: Array[TriggeredAction.TriggerType] = []
 
@@ -205,6 +205,7 @@ func _to_string() -> String:
 func add_to_global_list(will_overwrite: bool = false) -> void:
 	if ["", "unique_name"].has(unique_name):
 		unique_name = display_name.to_snake_case()
+	
 	if RomReader.actions.keys().has(unique_name) and will_overwrite:
 		push_warning("Overwriting existing action: " + unique_name)
 	elif RomReader.actions.keys().has(unique_name) and not will_overwrite:
@@ -270,8 +271,8 @@ func use(action_instance: ActionInstance) -> void:
 
 
 func get_total_hit_chance(user: UnitData, target: UnitData, evade_direction: EvadeData.Directions) -> int:
-	var user_passive_effects: Array[PassiveEffect] = user.get_all_passive_effects(ignores_passives)
-	var target_passive_effects: Array[PassiveEffect] = target.get_all_passive_effects(ignores_passives)
+	var user_passive_effects: Array[PassiveEffect] = user.get_all_passive_effects(ignore_passives)
+	var target_passive_effects: Array[PassiveEffect] = target.get_all_passive_effects(ignore_passives)
 	
 	if not required_target_job_uname.is_empty():
 		var required_jobs: PackedStringArray = required_target_job_uname.duplicate()
@@ -590,7 +591,20 @@ func get_action_types() -> Array[ActionType]:
 
 func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> void:
 	formula_id = new_formula_id
-	ignores_statuses.append_array(["protect", "shell"]) # protect and shell
+	# ignores_statuses.append_array(["protect", "shell"]) # protect and shell
+	ignore_passives = [
+		"protect_status",
+		"shell_status",
+		"attack_up",
+		"defense_up",
+		"magic_attack_up",
+		"magic_defense_up",
+		"martial_arts",
+		"throw_item",
+		"monster_talk",
+		"maintenance",
+		"finger_guard",
+	]
 	# https://ffhacktics.com/wiki/Target_XA_affecting_Statuses_(Physical)
 	# https://ffhacktics.com/wiki/Target%27s_Status_Affecting_XA_(Magical)
 	# https://ffhacktics.com/wiki/Evasion_Changes_due_to_Statuses
@@ -601,7 +615,10 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			use_weapon_damage = true
 			status_chance = 19
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
-			ignores_statuses.remove_at(0)
+			ignore_passives.erase("protect_status")
+			ignore_passives.erase("attack_up")
+			ignore_passives.erase("defense_up")
+			ignore_passives.erase("martial_arts")
 		2:
 			use_weapon_damage = true
 			# secondary_actions.append(RomReader.abilities[inflict_status_id].ability_action)
@@ -609,12 +626,18 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			# secondary_actions_chances = [19]
 			secondary_actions2.append(SecondaryAction.new(RomReader.fft_abilities[inflict_status_id].ability_action.unique_name, status_chance))
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
-			ignores_statuses.remove_at(0)
+			ignore_passives.erase("protect_status")
+			ignore_passives.erase("attack_up")
+			ignore_passives.erase("defense_up")
+			ignore_passives.erase("martial_arts")
 		3: # weapon_power * weapon_power
 			applicable_evasion_type = EvadeData.EvadeType.NONE
 			use_weapon_damage = true
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
-			ignores_statuses.remove_at(0)
+			ignore_passives.erase("protect_status")
+			ignore_passives.erase("attack_up")
+			ignore_passives.erase("defense_up")
+			ignore_passives.erase("martial_arts")
 		4:
 			applicable_evasion_type = EvadeData.EvadeType.NONE
 			var secondary_action_unique_names: PackedStringArray = []
@@ -647,13 +670,18 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			# TODO math skills, charge skills, etc. behave kind of similarly with using partial data from other actions
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken
-			ignores_statuses.remove_at(1)
+			ignore_passives.erase("shell_status")
+			ignore_passives.erase("magic_attack_up")
+			ignore_passives.erase("magic_defense_up")
 		6:
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].transfer_to_user = true # absorb hp
 			use_weapon_damage = true
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
-			ignores_statuses.remove_at(0)
+			ignore_passives.erase("protect_status")
+			ignore_passives.erase("attack_up")
+			ignore_passives.erase("defense_up")
+			ignore_passives.erase("martial_arts")
 		7:
 			applicable_evasion_type = EvadeData.EvadeType.NONE
 			use_weapon_damage = true
@@ -661,7 +689,10 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.reverse_sign = false # heal
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
-			ignores_statuses.remove_at(0)
+			ignore_passives.erase("protect_status")
+			ignore_passives.erase("attack_up")
+			ignore_passives.erase("defense_up")
+			ignore_passives.erase("martial_arts")
 		8:
 			applicable_evasion_type = EvadeData.EvadeType.MAGICAL
 			
@@ -674,7 +705,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.target_faith_modifier = FormulaData.FaithModifier.FAITH
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken
-			ignores_statuses.remove_at(1)
+			ignore_passives.erase("shell_status")
+			ignore_passives.erase("magic_attack_up")
+			ignore_passives.erase("magic_defense_up")
 		9:
 			applicable_evasion_type = EvadeData.EvadeType.MAGICAL
 			status_chance = 19
@@ -691,7 +724,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.values[0] = formula_y / 100.0
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
-			ignores_statuses.remove_at(1)
+			ignore_passives.erase("shell_status")
+			ignore_passives.erase("magic_attack_up")
+			ignore_passives.erase("magic_defense_up")
 			passive_power_modifier_applies_to_hit_chance = true
 		0x0a:
 			applicable_evasion_type = EvadeData.EvadeType.MAGICAL
@@ -704,7 +739,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.is_modified_by_zodiac = true
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
-			ignores_statuses.remove_at(1)
+			ignore_passives.erase("shell_status")
+			ignore_passives.erase("magic_attack_up")
+			ignore_passives.erase("magic_defense_up")
 			passive_power_modifier_applies_to_hit_chance = true
 		0x0b:
 			applicable_evasion_type = EvadeData.EvadeType.NONE
@@ -756,7 +793,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.values[0] = formula_y
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
-			ignores_statuses.remove_at(1)
+			ignore_passives.erase("shell_status")
+			ignore_passives.erase("magic_attack_up")
+			ignore_passives.erase("magic_defense_up")
 			passive_power_modifier_applies_to_hit_chance = true
 		0x0f:
 			applicable_evasion_type = EvadeData.EvadeType.MAGICAL
@@ -774,7 +813,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].transfer_to_user = true
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
-			ignores_statuses.remove_at(1)
+			ignore_passives.erase("shell_status")
+			ignore_passives.erase("magic_attack_up")
+			ignore_passives.erase("magic_defense_up")
 			passive_power_modifier_applies_to_hit_chance = true
 		0x10:
 			applicable_evasion_type = EvadeData.EvadeType.MAGICAL
@@ -792,7 +833,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].transfer_to_user = true
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
-			ignores_statuses.remove_at(1)
+			ignore_passives.erase("shell_status")
+			ignore_passives.erase("magic_attack_up")
+			ignore_passives.erase("magic_defense_up")
 			passive_power_modifier_applies_to_hit_chance = true
 		0x11:
 			pass
@@ -837,7 +880,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].set_value = true
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
-			ignores_statuses.remove_at(1)
+			ignore_passives.erase("shell_status")
+			ignore_passives.erase("magic_attack_up")
+			ignore_passives.erase("magic_defense_up")
 			passive_power_modifier_applies_to_hit_chance = true
 		0x16:
 			applicable_evasion_type = EvadeData.EvadeType.MAGICAL
@@ -854,7 +899,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.values[0] = 0
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
-			ignores_statuses.remove_at(1)
+			ignore_passives.erase("shell_status")
+			ignore_passives.erase("magic_attack_up")
+			ignore_passives.erase("magic_defense_up")
 			passive_power_modifier_applies_to_hit_chance = true
 		0x17:
 			applicable_evasion_type = EvadeData.EvadeType.MAGICAL
@@ -871,7 +918,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.values[0] = 1
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
-			ignores_statuses.remove_at(1)
+			ignore_passives.erase("shell_status")
+			ignore_passives.erase("magic_attack_up")
+			ignore_passives.erase("magic_defense_up")
 			passive_power_modifier_applies_to_hit_chance = true
 		0x18, 0x19:
 			pass
@@ -890,7 +939,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.values[0] = formula_x
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
-			ignores_statuses.remove_at(1)
+			ignore_passives.erase("shell_status")
+			ignore_passives.erase("magic_attack_up")
+			ignore_passives.erase("magic_defense_up")
 			passive_power_modifier_applies_to_hit_chance = true
 		0x1b:
 			applicable_evasion_type = EvadeData.EvadeType.MAGICAL
@@ -907,7 +958,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.values[0] = formula_y
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
-			ignores_statuses.remove_at(1)
+			ignore_passives.erase("shell_status")
+			ignore_passives.erase("magic_attack_up")
+			ignore_passives.erase("magic_defense_up")
 			passive_power_modifier_applies_to_hit_chance = true
 		0x1c:
 			applicable_evasion_type = EvadeData.EvadeType.NONE
@@ -932,7 +985,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			# TODO random number of hits within AoE
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken
-			ignores_statuses.remove_at(1)
+			ignore_passives.erase("shell_status")
+			ignore_passives.erase("magic_attack_up")
+			ignore_passives.erase("magic_defense_up")
 		0x1f:
 			applicable_evasion_type = EvadeData.EvadeType.MAGICAL
 			
@@ -944,7 +999,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			# TODO random number of hits within AoE
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken
-			ignores_statuses.remove_at(1)
+			ignore_passives.erase("shell_status")
+			ignore_passives.erase("magic_attack_up")
+			ignore_passives.erase("magic_defense_up")
 		0x20:
 			applicable_evasion_type = EvadeData.EvadeType.NONE
 			
@@ -954,7 +1011,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			# TODO chance to decrease inventory
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken
-			ignores_statuses.remove_at(1)
+			ignore_passives.erase("shell_status")
+			ignore_passives.erase("magic_attack_up")
+			ignore_passives.erase("magic_defense_up")
 		0x21:
 			applicable_evasion_type = EvadeData.EvadeType.NONE
 			
@@ -964,7 +1023,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			# TODO chance to decrease inventory
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken
-			ignores_statuses.remove_at(1)
+			ignore_passives.erase("shell_status")
+			ignore_passives.erase("magic_attack_up")
+			ignore_passives.erase("magic_defense_up")
 		0x22:
 			applicable_evasion_type = EvadeData.EvadeType.NONE
 			
@@ -986,7 +1047,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			# TODO usable based on terrain?
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken
-			ignores_statuses.remove_at(1)
+			ignore_passives.erase("shell_status")
+			ignore_passives.erase("magic_attack_up")
+			ignore_passives.erase("magic_defense_up")
 		0x25:
 			base_hit_formula.formula = FormulaData.Formulas.PA_plus_WP_plus_V1
 			base_hit_formula.values[0] = formula_x
@@ -995,7 +1058,11 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.REMOVE_EQUIPMENT))
 			# TODO set equipement slod id based on ability id?
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
-			ignores_statuses.remove_at(0)
+			ignore_passives.erase("protect_status")
+			ignore_passives.erase("attack_up")
+			ignore_passives.erase("defense_up")
+			ignore_passives.erase("martial_arts")
+			ignore_passives.erase("maintenance")
 			passive_power_modifier_applies_to_hit_chance = true
 		0x26:
 			base_hit_formula.formula = FormulaData.Formulas.SP_plus_V1
@@ -1007,7 +1074,11 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			# TODO set equipement slod id based on ability id?
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
-			ignores_statuses.remove_at(0)
+			ignore_passives.erase("protect_status")
+			ignore_passives.erase("attack_up")
+			ignore_passives.erase("defense_up")
+			ignore_passives.erase("martial_arts")
+			ignore_passives.erase("maintenance")
 			passive_power_modifier_applies_to_hit_chance = true
 		0x27:
 			base_hit_formula.formula = FormulaData.Formulas.SP_plus_V1
@@ -1020,7 +1091,10 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			# TODO add to user currency? user_effects.append(ActionEffect.new(ActionEffect.EffectType.CURRENCY))
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
-			ignores_statuses.remove_at(0)
+			ignore_passives.erase("protect_status")
+			ignore_passives.erase("attack_up")
+			ignore_passives.erase("defense_up")
+			ignore_passives.erase("martial_arts")
 			passive_power_modifier_applies_to_hit_chance = true
 		0x28:
 			base_hit_formula.formula = FormulaData.Formulas.SP_plus_V1
@@ -1033,7 +1107,10 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].transfer_to_user = true
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
-			ignores_statuses.remove_at(0)
+			ignore_passives.erase("protect_status")
+			ignore_passives.erase("attack_up")
+			ignore_passives.erase("defense_up")
+			ignore_passives.erase("martial_arts")
 			passive_power_modifier_applies_to_hit_chance = true
 		0x29:
 			applicable_evasion_type = EvadeData.EvadeType.NONE
@@ -1055,6 +1132,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.reverse_sign = false
 			# TODO set effects based on ability id
 
+			ignore_passives.erase("finger_guard")
+			ignore_passives.erase("monster_talk")
+
 			# only work on non-monsters
 			required_target_stat_basis = [
 				UnitData.StatBasis.MALE,
@@ -1072,7 +1152,10 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			# TODO set effects based on ability id
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
-			ignores_statuses.remove_at(0)
+			ignore_passives.erase("protect_status")
+			ignore_passives.erase("attack_up")
+			ignore_passives.erase("defense_up")
+			ignore_passives.erase("martial_arts")
 			passive_power_modifier_applies_to_hit_chance = true
 		0x2c:
 			base_hit_formula.formula = FormulaData.Formulas.PA_plus_V1
@@ -1084,7 +1167,10 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.values[0] = formula_y / 100.0
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
-			ignores_statuses.remove_at(0)
+			ignore_passives.erase("protect_status")
+			ignore_passives.erase("attack_up")
+			ignore_passives.erase("defense_up")
+			ignore_passives.erase("martial_arts")
 			passive_power_modifier_applies_to_hit_chance = true
 		0x2d:
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
@@ -1096,7 +1182,10 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_status_list_type = StatusListType.RANDOM
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
-			ignores_statuses.remove_at(0)
+			ignore_passives.erase("protect_status")
+			ignore_passives.erase("attack_up")
+			ignore_passives.erase("defense_up")
+			ignore_passives.erase("martial_arts")
 		0x2e:
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PAxWPxV1
@@ -1108,7 +1197,10 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			# TODO set equipement slod id based on ability id?
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
-			ignores_statuses.remove_at(0)
+			ignore_passives.erase("protect_status")
+			ignore_passives.erase("attack_up")
+			ignore_passives.erase("defense_up")
+			ignore_passives.erase("martial_arts")
 		0x2f:
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.MP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PAxWPxV1
@@ -1116,7 +1208,10 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].transfer_to_user = true
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
-			ignores_statuses.remove_at(0)
+			ignore_passives.erase("protect_status")
+			ignore_passives.erase("attack_up")
+			ignore_passives.erase("defense_up")
+			ignore_passives.erase("martial_arts")
 		0x30:
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PAxWPxV1
@@ -1124,14 +1219,20 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].transfer_to_user = true
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
-			ignores_statuses.remove_at(0)
+			ignore_passives.erase("protect_status")
+			ignore_passives.erase("attack_up")
+			ignore_passives.erase("defense_up")
+			ignore_passives.erase("martial_arts")
 		0x31:
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PAxPA_plus_V1_div_2
 			target_effects[0].base_power_formula.values[0] = formula_y
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
-			ignores_statuses.remove_at(0)
+			ignore_passives.erase("protect_status")
+			ignore_passives.erase("attack_up")
+			ignore_passives.erase("defense_up")
+			ignore_passives.erase("martial_arts")
 		0x32:
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.RANDOM_V1xPAx3_plus_V2_div_2
@@ -1139,7 +1240,10 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.values[1] = formula_y
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
-			ignores_statuses.remove_at(0)
+			ignore_passives.erase("protect_status")
+			ignore_passives.erase("attack_up")
+			ignore_passives.erase("defense_up")
+			ignore_passives.erase("martial_arts")
 		0x33:
 			applicable_evasion_type = EvadeData.EvadeType.NONE
 			
@@ -1182,7 +1286,10 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.values[0] = formula_y
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
-			ignores_statuses.remove_at(0)
+			ignore_passives.erase("protect_status")
+			ignore_passives.erase("attack_up")
+			ignore_passives.erase("defense_up")
+			ignore_passives.erase("martial_arts")
 		0x38:
 			applicable_evasion_type = EvadeData.EvadeType.NONE
 			
@@ -1233,7 +1340,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.is_modified_by_zodiac = true
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
-			ignores_statuses.remove_at(1)
+			ignore_passives.erase("shell_status")
+			ignore_passives.erase("magic_attack_up")
+			ignore_passives.erase("magic_defense_up")
 			passive_power_modifier_applies_to_hit_chance = true
 		0x3e:
 			applicable_evasion_type = EvadeData.EvadeType.NONE
@@ -1249,7 +1358,10 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.is_modified_by_zodiac = true
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
-			ignores_statuses.remove_at(0)
+			ignore_passives.erase("protect_status")
+			ignore_passives.erase("attack_up")
+			ignore_passives.erase("defense_up")
+			ignore_passives.erase("martial_arts")
 			passive_power_modifier_applies_to_hit_chance = true
 		0x40:
 			applicable_evasion_type = EvadeData.EvadeType.NONE
@@ -1259,7 +1371,10 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.is_modified_by_zodiac = true
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
-			ignores_statuses.remove_at(0)
+			ignore_passives.erase("protect_status")
+			ignore_passives.erase("attack_up")
+			ignore_passives.erase("defense_up")
+			ignore_passives.erase("martial_arts")
 			passive_power_modifier_applies_to_hit_chance = true
 
 			required_target_status_uname = [
@@ -1273,7 +1388,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.is_modified_by_zodiac = true
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
-			ignores_statuses.remove_at(1)
+			ignore_passives.erase("shell_status")
+			ignore_passives.erase("magic_attack_up")
+			ignore_passives.erase("magic_defense_up")
 			passive_power_modifier_applies_to_hit_chance = true
 		0x42:
 			applicable_evasion_type = EvadeData.EvadeType.NONE
@@ -1372,7 +1489,10 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].transfer_to_user = true
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
-			ignores_statuses.remove_at(0)
+			ignore_passives.erase("protect_status")
+			ignore_passives.erase("attack_up")
+			ignore_passives.erase("defense_up")
+			ignore_passives.erase("martial_arts")
 			passive_power_modifier_applies_to_hit_chance = true
 		0x4e:
 			applicable_evasion_type = EvadeData.EvadeType.MAGICAL
@@ -1382,7 +1502,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.values[0] = formula_y
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken
-			ignores_statuses.remove_at(1)
+			ignore_passives.erase("shell_status")
+			ignore_passives.erase("magic_attack_up")
+			ignore_passives.erase("magic_defense_up")
 		0x4f:
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.values[0] = formula_x
@@ -1393,7 +1515,10 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.values[0] = 1
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
-			ignores_statuses.remove_at(0)
+			ignore_passives.erase("protect_status")
+			ignore_passives.erase("attack_up")
+			ignore_passives.erase("defense_up")
+			ignore_passives.erase("martial_arts")
 			passive_power_modifier_applies_to_hit_chance = true
 		0x50:
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
@@ -1401,7 +1526,10 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.is_modified_by_zodiac = true
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken, hit chance
-			ignores_statuses.remove_at(0)
+			ignore_passives.erase("protect_status")
+			ignore_passives.erase("attack_up")
+			ignore_passives.erase("defense_up")
+			ignore_passives.erase("martial_arts")
 			passive_power_modifier_applies_to_hit_chance = true
 		0x51:
 			applicable_evasion_type = EvadeData.EvadeType.NONE
@@ -1434,7 +1562,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.values[0] = formula_y / 100.0
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
-			ignores_statuses.remove_at(1)
+			ignore_passives.erase("shell_status")
+			ignore_passives.erase("magic_attack_up")
+			ignore_passives.erase("magic_defense_up")
 			passive_power_modifier_applies_to_hit_chance = true
 		0x54:
 			applicable_evasion_type = EvadeData.EvadeType.NONE
@@ -1455,7 +1585,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.values[0] = formula_y
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
-			ignores_statuses.remove_at(1)
+			ignore_passives.erase("shell_status")
+			ignore_passives.erase("magic_attack_up")
+			ignore_passives.erase("magic_defense_up")
 			passive_power_modifier_applies_to_hit_chance = true
 		0x56:
 			applicable_evasion_type = EvadeData.EvadeType.MAGICAL
@@ -1469,7 +1601,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.values[0] = formula_y
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
-			ignores_statuses.remove_at(1)
+			ignore_passives.erase("shell_status")
+			ignore_passives.erase("magic_attack_up")
+			ignore_passives.erase("magic_defense_up")
 			passive_power_modifier_applies_to_hit_chance = true
 		0x57:
 			applicable_evasion_type = EvadeData.EvadeType.NONE
@@ -1499,7 +1633,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.values[0] = 1
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
-			ignores_statuses.remove_at(1)
+			ignore_passives.erase("shell_status")
+			ignore_passives.erase("magic_attack_up")
+			ignore_passives.erase("magic_defense_up")
 			passive_power_modifier_applies_to_hit_chance = true
 		0x5a:
 			status_chance = 100
@@ -1574,7 +1710,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.values[0] = formula_y
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken
-			ignores_statuses.remove_at(1)
+			ignore_passives.erase("shell_status")
+			ignore_passives.erase("magic_attack_up")
+			ignore_passives.erase("magic_defense_up")
 			# TODO x+1 hits at random target in AoE
 		0x5f:
 			applicable_evasion_type = EvadeData.EvadeType.MAGICAL
@@ -1584,7 +1722,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.values[0] = formula_y
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken
-			ignores_statuses.remove_at(1)
+			ignore_passives.erase("shell_status")
+			ignore_passives.erase("magic_attack_up")
+			ignore_passives.erase("magic_defense_up")
 		0x60:
 			applicable_evasion_type = EvadeData.EvadeType.NONE
 			
@@ -1593,7 +1733,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.values[0] = formula_y
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken
-			ignores_statuses.remove_at(1)
+			ignore_passives.erase("shell_status")
+			ignore_passives.erase("magic_attack_up")
+			ignore_passives.erase("magic_defense_up")
 		0x61:
 			applicable_evasion_type = EvadeData.EvadeType.MAGICAL
 			
@@ -1609,7 +1751,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.values[0] = formula_y
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
-			ignores_statuses.remove_at(1)
+			ignore_passives.erase("shell_status")
+			ignore_passives.erase("magic_attack_up")
+			ignore_passives.erase("magic_defense_up")
 			passive_power_modifier_applies_to_hit_chance = true
 		0x62:
 			applicable_evasion_type = EvadeData.EvadeType.MAGICAL
@@ -1623,14 +1767,19 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.values[0] = formula_y
 			
 			# ignores_statuses.erase(27) # affected by shell, frog, chicken, hit chance
-			ignores_statuses.remove_at(1)
+			ignore_passives.erase("shell_status")
+			ignore_passives.erase("magic_attack_up")
+			ignore_passives.erase("magic_defense_up")
 		0x63:
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PAxWPxV1 # TODO SPxWP
 			target_effects[0].base_power_formula.values[0] = 1
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
-			ignores_statuses.remove_at(0)
+			ignore_passives.erase("protect_status")
+			ignore_passives.erase("attack_up")
+			ignore_passives.erase("defense_up")
+			ignore_passives.erase("martial_arts")
 		0x64:
 			applicable_evasion_type = EvadeData.EvadeType.NONE
 			
@@ -1639,14 +1788,17 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.values[0] = 1 # TODO 1.5 if spear, PAxBRAVE if unarmed, else 1
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
-			ignores_statuses.remove_at(0)
+			ignore_passives.erase("protect_status")
+			ignore_passives.erase("attack_up")
+			ignore_passives.erase("defense_up")
+			ignore_passives.erase("martial_arts")
 	
 	emit_changed()
 
 
 static func get_modified_action(action_to_modify: Action, user: UnitData) -> Action:
 	var modified_action: Action = action_to_modify.duplicate()
-	var all_passive_effects = user.get_all_passive_effects(action_to_modify.ignores_passives)
+	var all_passive_effects = user.get_all_passive_effects(action_to_modify.ignore_passives)
 
 	for passive_effect: PassiveEffect in all_passive_effects:
 		modified_action.ticks_charge_time = passive_effect.action_charge_time_modifier.apply(modified_action.ticks_charge_time)

@@ -168,6 +168,7 @@ func process_rom() -> void:
 	# new_passive_effect = PassiveEffect.new()
 	# new_passive_effect.unique_name = "martial_arts"
 	# new_passive_effect.power_modifier_user = Modifier.new(1.5, Modifier.ModifierType.MULT)
+	# new_passive_effect.requires_user_item_type = ["FIST"]
 	# Utilities.save_json(new_passive_effect)
 
 	# new_passive_effect = PassiveEffect.new()

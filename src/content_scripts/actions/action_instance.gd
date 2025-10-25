@@ -136,7 +136,7 @@ func get_target_units(target_tiles: Array[TerrainTile]) -> Array[UnitData]:
 		var units_on_tile: Array[UnitData] = battle_manager.units.filter(func(unit: UnitData): return unit.tile_position == target_tile)
 		
 		for unit: UnitData in units_on_tile:
-			if unit.get_nullify_statuses().is_empty():
+			if unit.get_nullify_statuses().is_empty(): # TODO check all passives not just statuses
 				target_units.append(unit)
 				continue
 			

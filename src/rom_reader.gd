@@ -633,22 +633,28 @@ func import_custom_data() -> void:
 						match data_type:
 							"action":
 								var new_content: Action = Action.create_from_json(file_text)
-								new_content.add_to_global_list()
+								if not actions.keys().has(new_content.unique_name):
+									new_content.add_to_global_list()
 							"ability":
 								var new_content: Ability = Ability.create_from_json(file_text)
-								new_content.add_to_global_list()
+								if not abilities.keys().has(new_content.unique_name):
+									new_content.add_to_global_list()
 							"triggered_action":
 								var new_content: TriggeredAction = TriggeredAction.create_from_json(file_text)
-								new_content.add_to_global_list()
+								if not triggered_actions.keys().has(new_content.unique_name):
+									new_content.add_to_global_list()
 							"passive_effect":
 								var new_content: PassiveEffect = PassiveEffect.create_from_json(file_text)
-								new_content.add_to_global_list()
+								if not passive_effects.keys().has(new_content.unique_name):
+									new_content.add_to_global_list()
 							"status_effect":
 								var new_content: StatusEffect = StatusEffect.create_from_json(file_text)
-								new_content.add_to_global_list()
+								if not status_effects.keys().has(new_content.unique_name):
+									new_content.add_to_global_list()
 							"item":
 								var new_content: ItemData = ItemData.create_from_json(file_text)
-								new_content.add_to_global_list()
+								if not items.keys().has(new_content.unique_name):
+									new_content.add_to_global_list()
 				file_name = dir.get_next()
 			dir.list_dir_end()
 		else:

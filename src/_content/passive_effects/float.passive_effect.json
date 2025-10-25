@@ -50,6 +50,7 @@
 	"add_prohibited_terrain": [],
 	"added_actions_names": [],
 	"added_equipment_types_equipable": [],
+	"added_triggered_actions_names": [],
 	"ai_strategy": 0,
 	"can_react": true,
 	"ct_gain_modifier": {
@@ -163,86 +164,14 @@
 	"stat_modifiers": {
 
 	},
-	"status_always": [],
+	"status_always": [
+		"float"
+	],
 	"status_immune": [],
 	"status_start": [],
 	"target_can_react": true,
 	"terrain_cost_modifiers": {
-		"14": {
-			"order": 1,
-			"type": 2,
-			"value_formula": {
-				"formula": 0,
-				"is_modified_by_element": false,
-				"is_modified_by_zodiac": false,
-				"reverse_sign": false,
-				"target_faith_modifier": 0,
-				"user_faith_modifier": 0,
-				"values": [
-					1.0
-				]
-			}
-		},
-		"15": {
-			"order": 1,
-			"type": 2,
-			"value_formula": {
-				"formula": 0,
-				"is_modified_by_element": false,
-				"is_modified_by_zodiac": false,
-				"reverse_sign": false,
-				"target_faith_modifier": 0,
-				"user_faith_modifier": 0,
-				"values": [
-					1.0
-				]
-			}
-		},
-		"16": {
-			"order": 1,
-			"type": 2,
-			"value_formula": {
-				"formula": 0,
-				"is_modified_by_element": false,
-				"is_modified_by_zodiac": false,
-				"reverse_sign": false,
-				"target_faith_modifier": 0,
-				"user_faith_modifier": 0,
-				"values": [
-					1.0
-				]
-			}
-		},
-		"17": {
-			"order": 1,
-			"type": 2,
-			"value_formula": {
-				"formula": 0,
-				"is_modified_by_element": false,
-				"is_modified_by_zodiac": false,
-				"reverse_sign": false,
-				"target_faith_modifier": 0,
-				"user_faith_modifier": 0,
-				"values": [
-					1.0
-				]
-			}
-		},
-		"45": {
-			"order": 1,
-			"type": 2,
-			"value_formula": {
-				"formula": 0,
-				"is_modified_by_element": false,
-				"is_modified_by_zodiac": false,
-				"reverse_sign": false,
-				"target_faith_modifier": 0,
-				"user_faith_modifier": 0,
-				"values": [
-					1.0
-				]
-			}
-		}
+
 	},
 	"unique_name": "float",
 	"unit_basis_filter": [],

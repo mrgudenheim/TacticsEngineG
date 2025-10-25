@@ -39,7 +39,7 @@ var added_actions: Array[Action] = []
 @export var terrain_cost_modifiers: Dictionary[int, Modifier] = {} # [TerrainTile.surface_type_id, modifier]
 @export var add_prohibited_terrain: PackedInt32Array = [] # TerrainTile.surface_type_id
 @export var remove_prohibited_terrain: PackedInt32Array = [] # TerrainTile.surface_type_id
-@export var depth_modifier: Modifier # TODO handle depth
+@export var depth_modifier: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT) # TODO handle depth
 
 @export var element_absorb: Array[Action.ElementTypes] = []
 @export var element_cancel: Array[Action.ElementTypes] = []

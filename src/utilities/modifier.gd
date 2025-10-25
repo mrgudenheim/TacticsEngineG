@@ -73,7 +73,11 @@ static func create_from_json(json_string: String) -> Modifier:
 static func create_from_dictionary(property_dict: Dictionary) -> Modifier:
 	var new_modifier: Modifier = Modifier.new()
 	for property_name in property_dict.keys():
-		new_modifier.set(property_name, property_dict[property_name])
+		if property_name == "value_formula":
+			var new_formula: FormulaData = FormulaData.create_from_dictionary(property_dict[property_name])
+			new_modifier.set(property_name, new_formula)
+		else:
+			new_modifier.set(property_name, property_dict[property_name])
 
 	new_modifier.emit_changed()
 	return new_modifier

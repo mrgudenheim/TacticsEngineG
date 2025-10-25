@@ -512,7 +512,22 @@ func init_statuses() -> void:
 	status_effects[33].passive_effect.stat_modifiers[UnitData.StatType.FAITH] = Modifier.new(0.0, Modifier.ModifierType.SET)
 	
 	# float
+	# TODO handle ignore depth and add height
 	status_effects[17].passive_effect.element_cancel = [Action.ElementTypes.EARTH]
+	var terrain_modifier_dict: Dictionary[int, Modifier] = {
+		0x0e : Modifier.new(1, Modifier.ModifierType.SET),
+		0x0f: Modifier.new(1, Modifier.ModifierType.SET),
+		0x10 : Modifier.new(1, Modifier.ModifierType.SET),
+		0x11 : Modifier.new(1, Modifier.ModifierType.SET),
+		0x2d : Modifier.new(1, Modifier.ModifierType.SET),
+	}
+	status_effects[17].passive_effect.terrain_cost_modifiers = terrain_modifier_dict
+	status_effects[17].passive_effect.remove_prohibited_terrain = [
+		0x12,
+		0x19,
+		0x1c,
+	]
+
 	# oil
 	status_effects[16].passive_effect.element_weakness = [Action.ElementTypes.FIRE] # TODO oil is in addition to fire weakness
 	
@@ -555,7 +570,21 @@ func init_statuses() -> void:
 	# death sentence action
 	status_effects[39].action_on_complete = "death_sentence_to_dead"
 	
-	for status: StatusEffect in status_effects:
-		if status.passive_effect != null:
-			status.passive_effect.unique_name = status.unique_name
+	# TODO Undead, Invite, Reraise, Charm, Reflect
+
+	#for status: StatusEffect in status_effects:
+		#if status.passive_effect != null:
+			#status.passive_effect.unique_name = status.unique_name
 			#Utilities.save_json(status.passive_effect)
+
+	# var default_passive_json: String = PassiveEffect.new().to_json()
+	# # Utilities.save_json(PassiveEffect.new())
+	# for idx: int in status_effects.size():
+	# 	var status_passive_json: String = status_effects[idx].passive_effect.to_json()
+	# 	if not status_passive_json == default_passive_json:
+	# 		status_effects[idx].passive_effect.unique_name = status_effects[idx].unique_name + "_status"
+	# 		status_effects[idx].passive_effect_name = status_effects[idx].passive_effect.unique_name
+	# 		status_effects[idx].passive_effect.add_to_global_list()
+	# 		Utilities.save_json(status_effects[idx].passive_effect)
+		
+	# 	Utilities.save_json(status_effects[idx])

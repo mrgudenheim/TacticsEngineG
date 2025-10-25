@@ -276,6 +276,7 @@ var can_move: bool = true
 var tile_position: TerrainTile
 var prohibited_terrain: Array[int] = [] # TileTerrain.surface_type_id
 var terrain_costs: Dictionary[int, int] = {} # [TileTerrain.surface_type_id, cost]
+var ignore_height: bool = false
 
 var map_paths: Dictionary[TerrainTile, TerrainTile]
 var path_costs: Dictionary[TerrainTile, float]
@@ -1541,8 +1542,7 @@ func on_sprite_idx_selected(index: int) -> void:
 		animation_manager._on_animation_changed()
 
 
-func update_prohibited_terrain() -> void:
-	var all_passive_effects: Array[PassiveEffect] = get_all_passive_effects()
+func update_prohibited_terrain(all_passive_effects: Array[PassiveEffect]) -> void:
 	var new_prohibited_terrain: Array[int] = []
 
 	for passive_effect: PassiveEffect in all_passive_effects:
@@ -1558,8 +1558,7 @@ func update_prohibited_terrain() -> void:
 	prohibited_terrain = new_prohibited_terrain
 
 
-func update_terrain_costs() -> void:
-	var all_passive_effects: Array[PassiveEffect] = get_all_passive_effects()
+func update_terrain_costs(all_passive_effects: Array[PassiveEffect]) -> void:
 	var new_terrain_costs: Dictionary[int, int] = {}
 
 	for passive_effect: PassiveEffect in all_passive_effects:
@@ -1578,8 +1577,10 @@ func update_terrain_costs() -> void:
 
 func update_map_paths(map_tiles: Dictionary[Vector2i, Array], units: Array[UnitData], max_cost: int = 9999) -> void:
 	paths_set = false
-	update_prohibited_terrain()
-	update_terrain_costs()
+	var all_passive_effects: Array[PassiveEffect] = get_all_passive_effects()
+	update_prohibited_terrain(all_passive_effects)
+	update_terrain_costs(all_passive_effects)
+	ignore_height = all_passive_effects.any(func(passive_effect: PassiveEffect): return passive_effect.ignore_height)
 	
 	if move_action.targeting_strategy.has_method("get_map_paths"):
 		map_paths = await move_action.targeting_strategy.get_map_paths(self, map_tiles, units, max_cost)

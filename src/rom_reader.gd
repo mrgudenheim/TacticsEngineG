@@ -467,7 +467,9 @@ func connect_data_references() -> void:
 				job_data.passive_effects.append(passive_effects[passive_effect_name])
 		
 		for innate_ability_id: int in job_data.innate_abilities_ids:
-			var ability_uname: String = fft_abilities[innate_ability_id].display_name.to_snake_case()
+			# var ability_uname: String = fft_abilities[innate_ability_id].display_name.to_snake_case()
+			var ability_uname: String = abilities.values()[innate_ability_id].unique_name
+			
 			if not job_data.innate_ability_names.has(ability_uname):
 				job_data.innate_ability_names.append(ability_uname)
 

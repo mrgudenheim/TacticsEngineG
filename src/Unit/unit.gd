@@ -1355,7 +1355,7 @@ func get_all_passive_effects(exclude_passives: PackedStringArray = []) -> Array[
 	all_passive_effects.append_array(native_passive_effects)
 	all_passive_effects.append_array(other_passive_effects)
 	
-	all_passive_effects.filter(func(passive_effect): return not exclude_passives.has(passive_effect.unique_name))
+	# all_passive_effects.filter(func(passive_effect): return not exclude_passives.has(passive_effect.unique_name))
 
 	return all_passive_effects
 
@@ -1380,7 +1380,8 @@ func get_native_passive_effects(exclude_passives: PackedStringArray = []) -> Arr
 	
 	native_passive_effects.append_array(global_battle_manager.global_passive_effects)
 
-	native_passive_effects.filter(func(passive_effect): return not exclude_passives.has(passive_effect.unique_name))
+	native_passive_effects = native_passive_effects.filter(func(passive_effect: PassiveEffect): return passive_effect.effect_range == 0)
+	native_passive_effects = native_passive_effects.filter(func(passive_effect: PassiveEffect): return not exclude_passives.has(passive_effect.unique_name))
 	
 	return native_passive_effects
 
@@ -1390,9 +1391,6 @@ func get_passive_effects_from_others(exclude_passives: PackedStringArray = []) -
 	
 	if global_battle_manager != null:
 		for unit: UnitData in global_battle_manager.units:
-			if unit == self:
-				continue
-			
 			var unit_passives: Array[PassiveEffect] = unit.get_native_passive_effects()
 			for passive_effect: PassiveEffect in unit_passives:
 				if passive_effect.effect_range == 0:
@@ -1419,7 +1417,7 @@ func get_passive_effects_from_others(exclude_passives: PackedStringArray = []) -
 				
 				shared_passive_effects.append(passive_effect)
 	
-	shared_passive_effects.filter(func(passive_effect): return not exclude_passives.has(passive_effect.unique_name))
+	shared_passive_effects = shared_passive_effects.filter(func(passive_effect: PassiveEffect): return not exclude_passives.has(passive_effect.unique_name))
 	
 	return shared_passive_effects
 

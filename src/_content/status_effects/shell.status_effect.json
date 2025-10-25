@@ -1,0 +1,59 @@
+{
+	"action_on_apply": "",
+	"action_on_complete": "",
+	"action_on_turn_end": "",
+	"action_on_turn_start": "",
+	"action_on_x_ticks": "",
+	"ai_score_formula": {
+		"formula": 32,
+		"is_modified_by_element": true,
+		"is_modified_by_zodiac": true,
+		"reverse_sign": true,
+		"target_faith_modifier": 0,
+		"user_faith_modifier": 0,
+		"values": [
+			0.1953125,
+			1.0
+		]
+	},
+	"byte_00": 0,
+	"byte_01": 0,
+	"checks_01": 0,
+	"checks_02": 0,
+	"description": "Status effect description",
+	"duration": 32,
+	"duration_icons": [
+		"[P: (142, 232), S: (14, 12)]",
+		"[P: (128, 232), S: (14, 12)]",
+		"[P: (114, 232), S: (14, 12)]",
+		"[P: (100, 232), S: (14, 12)]"
+	],
+	"duration_type": 0,
+	"icon_rects": [
+		"[P: (86, 220), S: (14, 12)]"
+	],
+	"idle_animation_id": -1,
+	"modulation_color": "(0.0, 0.0, 0.0, 1.0)",
+	"num_allowed": 1,
+	"num_icon_frames": 1,
+	"order": 18,
+	"other_type_index": 0,
+	"palette_idx_offset": 0,
+	"passive_effect_name": "shell_status",
+	"removed_on_damaged": false,
+	"shading_color": "(0.0, 0.0, 0.0, 1.0)",
+	"shading_type": 0,
+	"spritesheet_file_name": "",
+	"status_cancels": [],
+	"status_cancels_flags": "[0, 0, 0, 0, 0]",
+	"status_cant_stack": [
+		"crystal",
+		"dead",
+		"jumping"
+	],
+	"status_cant_stack_flags": "[100, 0, 0, 0, 0]",
+	"status_effect_name": "Shell",
+	"status_id": 27,
+	"unique_name": "shell",
+	"x_ticks": -1
+}

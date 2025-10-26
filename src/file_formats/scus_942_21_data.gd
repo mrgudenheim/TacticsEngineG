@@ -178,7 +178,7 @@ var unit_base_stats_mods: Array[PackedInt32Array] = []
 var terrain_geomancy_start: int = 0x4f1d0
 var terrain_geomancy_entries: int = 0x2f # number of terrain types
 var terrain_geomancy_length: int = 0x01 # geomancy ability id
-var terrain_geomancy: Array[PackedInt32Array] = [] # idx is terrain type, entry is ability id
+var terrain_geomancy: Array[int] = [] # idx is terrain type, entry is ability id
 
 
 func init_from_scus() -> void:

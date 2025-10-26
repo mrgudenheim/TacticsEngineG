@@ -174,6 +174,13 @@ var unit_base_stats_mod_entries: int = 4
 var unit_base_stats_mod_length: int = 0x05 # hp, mp, sp, pa, ma
 var unit_base_stats_mods: Array[PackedInt32Array] = []
 
+# terrain geomancy type https://ffhacktics.com/wiki/Geomancy_tiles_type_to_ability_table
+var terrain_geomancy_start: int = 0x4f1d0
+var terrain_geomancy_entries: int = 0x2f # number of terrain types
+var terrain_geomancy_length: int = 0x01 # geomancy ability id
+var terrain_geomancy: Array[PackedInt32Array] = [] # idx is terrain type, entry is ability id
+
+
 func init_from_scus() -> void:
 	var scus_bytes: PackedByteArray = RomReader.get_file_data("SCUS_942.21")
 	
@@ -426,6 +433,11 @@ func init_from_scus() -> void:
 		for byte_idx: int in unit_base_stats_mod_length:
 			unit_stat_mods_data[byte_idx] = unit_base_stats_mod_bytes.decode_u8(byte_idx)
 		unit_base_stats_mods[idx] = unit_stat_mods_data
+	
+	var terrain_geomancy_bytes: PackedByteArray = scus_bytes.slice(terrain_geomancy_start, terrain_geomancy_start + (terrain_geomancy_entries * terrain_geomancy_length))
+	terrain_geomancy.resize(terrain_geomancy_entries)
+	for byte_idx: int in terrain_geomancy_bytes.size():
+		terrain_geomancy.append(terrain_geomancy_bytes.decode_u8(byte_idx))
 
 
 func init_statuses() -> void:

@@ -1396,7 +1396,7 @@ func get_native_passive_effects(exclude_passives: PackedStringArray = []) -> Arr
 		native_passive_effects.append(equipment_slot.item.passive_effect)
 	
 	for status: StatusEffect in current_statuses:
-		native_passive_effects.append(status.item.passive_effect)
+		native_passive_effects.append(status.passive_effect)
 	
 	native_passive_effects.append_array(global_battle_manager.global_passive_effects)
 

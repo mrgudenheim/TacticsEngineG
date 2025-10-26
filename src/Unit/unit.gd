@@ -723,7 +723,7 @@ func select_first_action() -> void:
 		return
 	
 	for action_instance: ActionInstance in actions_data.values():
-		if action_instance.is_usable() and action_instance.action != wait_action:
+		if action_instance.is_usable() and action_instance != actions_data[wait_action.unique_name]:
 			active_action = action_instance
 			#await active_action.update_potential_targets() # already initialized in update_actions
 			if not is_ai_controlled:

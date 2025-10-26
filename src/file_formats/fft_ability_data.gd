@@ -371,7 +371,7 @@ func create_ability() -> Ability:
 		new_ability.display_name = "Walk on Water"
 	elif display_name == "Walk on Water":
 		new_ability.display_name = "Swim"
-	elif display_name == "Move Undrwater":
+	elif display_name == "Move undrwater":
 		new_ability.display_name = "Move Underwater"
 
 	if id == 0x1f1:

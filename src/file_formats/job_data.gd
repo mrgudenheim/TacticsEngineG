@@ -10,8 +10,6 @@ const FILE_SUFFIX: String = "job"
 @export var display_name: String = "Job Name"
 @export var skillset_id: int = 0
 @export var innate_abilities_ids: PackedInt32Array = []
-@export var innate_ability_names: PackedStringArray = []
-var innate_abilities: Array[Ability] = []
 @export var equippable_item_types: Array[ItemData.ItemType] # 4 bytes of bitflags, 32 total
 @export var hp_growth: int = 1
 @export var mp_growth: int = 1
@@ -30,16 +28,6 @@ var innate_abilities: Array[Ability] = []
 @export var can_be_walked_on: bool = false
 @export var evade_physical: int = 0
 @export var evade_datas: Array[EvadeData] = []
-
-@export var status_always: PackedStringArray = [] # 5 bytes of bitflags for up to 40 statuses
-@export var status_immune: PackedStringArray = [] # 5 bytes of bitflags for up to 40 statuses
-@export var status_start: PackedStringArray = [] # 5 bytes of bitflags for up to 40 statuses
-
-@export var element_absorb: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
-@export var element_cancel: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
-@export var element_half: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
-@export var element_weakness: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
-@export var element_strengthen: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
 
 @export var passive_effect_names: PackedStringArray = []
 var passive_effects: Array[PassiveEffect] = [] # TODO job_data move element affinities, stat modifiers, and status arrays to passive_effects
@@ -101,18 +89,38 @@ func _init(new_job_id: int = -1, job_bytes: PackedByteArray = []) -> void:
 	evade_physical = job_bytes.decode_u8(0x19)
 	evade_datas.append(EvadeData.new(evade_physical, EvadeData.EvadeSource.JOB, EvadeData.EvadeType.PHYSICAL))
 	
-	status_always = StatusEffect.get_status_id_array(job_bytes.slice(0x1a, 0x1f))
-	status_immune = StatusEffect.get_status_id_array(job_bytes.slice(0x1f, 0x24))
-	status_start = StatusEffect.get_status_id_array(job_bytes.slice(0x24, 0x29))
-	
-	element_absorb = Action.get_element_types_array([job_bytes.decode_u8(0x29)])
-	element_cancel = Action.get_element_types_array([job_bytes.decode_u8(0x2a)])
-	element_half = Action.get_element_types_array([job_bytes.decode_u8(0x2b)])
-	element_weakness = Action.get_element_types_array([job_bytes.decode_u8(0x2c)])
-	#element_strengthen = Action.get_element_types_array([job_bytes.decode_u8(0x29)])
-
 	passive_effect_names.append("standard_move")
 	passive_effect_names.append("standard_evade")
+
+	var new_passive_effect: PassiveEffect = PassiveEffect.new()
+	new_passive_effect.status_always = StatusEffect.get_status_id_array(job_bytes.slice(0x1a, 0x1f))
+	new_passive_effect.status_immune = StatusEffect.get_status_id_array(job_bytes.slice(0x1f, 0x24))
+	new_passive_effect.status_start = StatusEffect.get_status_id_array(job_bytes.slice(0x24, 0x29))
+	
+	new_passive_effect.element_absorb = Action.get_element_types_array([job_bytes.decode_u8(0x29)])
+	new_passive_effect.element_cancel = Action.get_element_types_array([job_bytes.decode_u8(0x2a)])
+	new_passive_effect.element_half = Action.get_element_types_array([job_bytes.decode_u8(0x2b)])
+	new_passive_effect.element_weakness = Action.get_element_types_array([job_bytes.decode_u8(0x2c)])
+	# ROM job data does not have any element_strengthen
+	# new_passive_effect.element_strengthen = Action.get_element_types_array([job_bytes.decode_u8(___)])
+
+	new_passive_effect.added_equipment_types_equipable = equippable_item_types
+
+	for innate_ability_id: int in innate_abilities_ids:
+		new_passive_effect.added_ability_names.append(RomReader.fft_text.ability_names[innate_ability_id])
+	
+	if not (new_passive_effect.status_always.is_empty()
+			and new_passive_effect.status_immune.is_empty()
+			and new_passive_effect.status_start.is_empty()
+			and new_passive_effect.element_absorb.is_empty()
+			and new_passive_effect.element_cancel.is_empty()
+			and new_passive_effect.element_half.is_empty()
+			and new_passive_effect.element_weakness.is_empty()
+			and new_passive_effect.added_ability_names.is_empty()
+			):
+		new_passive_effect.unique_name = unique_name
+		new_passive_effect.add_to_global_list()
+		passive_effect_names.append(new_passive_effect.unique_name)
 
 	add_to_global_list()
 

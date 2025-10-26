@@ -65,11 +65,8 @@ var zodiac = "Ares"
 
 var innate_ability_ids: PackedInt32Array = []
 var skillsets: Array[ScusData.SkillsetData] = []
-var reaction_abilities: Array = []
-var support_ability: Array = []
-var movement_ability: Array = []
 
-var equipable_item_types: PackedInt32Array = []
+var equipable_item_types: Array[ItemData.ItemType] = []
 var primary_weapon: ItemData
 var equip_slots: Array[EquipmentSlot] = [
 	EquipmentSlot.new("RH", [ItemData.SlotType.WEAPON, ItemData.SlotType.SHIELD]),
@@ -241,6 +238,7 @@ var jump_current: int = 3:
 
 var always_statuses: PackedStringArray = []
 var immune_statuses: PackedStringArray = []
+var start_statuses: PackedStringArray = []
 
 # TODO clean up unit status stuff
 var current_statuses: Array[StatusEffect] = [] # entry will be duplicate of status definition with modified values (duration_left, delayed action, etc)
@@ -487,13 +485,13 @@ func generate_random_abilities() -> void:
 	ability_slots[3].ability = RomReader.abilities.values().filter(func(ability: Ability): return ability_slots[3].slot_types.has(ability.slot_type)).pick_random()
 	ability_slots[4].ability = RomReader.abilities.values().filter(func(ability: Ability): return ability_slots[4].slot_types.has(ability.slot_type)).pick_random()
 
-	update_equipable_item_types()
+	var all_passive_effects: Array[PassiveEffect] = get_all_passive_effects()
+	update_equipable_item_types(all_passive_effects)
 
 
-func update_equipable_item_types() -> void:
+func update_equipable_item_types(all_passive_effects: Array[PassiveEffect]) -> void:
 	equipable_item_types = []
 	
-	var all_passive_effects: Array[PassiveEffect] = get_all_passive_effects()
 	for passive_effect: PassiveEffect in all_passive_effects:
 		equipable_item_types.append_array(passive_effect.added_equipment_types_equipable)
 	
@@ -513,13 +511,9 @@ func generate_equipment() -> void:
 	
 	set_primary_weapon(equip_slots[0].item_idx)
 	
-	update_equipment_modifiers()
+	update_passive_effects()
 	stats[StatType.HP].set_value(stats[StatType.HP].max_value)
 	stats[StatType.MP].set_value(stats[StatType.MP].max_value)
-	
-	update_elemental_affinity()
-	update_immune_statuses()
-	update_permanent_statuses()
 
 
 func set_equipment_slot(slot: EquipmentSlot, item: ItemData):
@@ -528,14 +522,17 @@ func set_equipment_slot(slot: EquipmentSlot, item: ItemData):
 	# update passives
 
 
-func update_equipment_modifiers() -> void:
-	for slot: EquipmentSlot in equip_slots:
-		for stat_type: StatType in slot.item.stat_modifiers.keys():
-			stats[stat_type].add_modifier(slot.item.stat_modifiers[stat_type]) # TODO remove modifier if equipment is removed
+func update_stat_modifiers(all_passive_effects: Array[PassiveEffect]) -> void:
+	# remove all to start fresh
+	for stat_type: StatType in StatType.values():
+		if not stats[stat_type].modifiers.is_empty():
+			stats[stat_type].modifiers.clear()
+			stats[stat_type].changed.emit(stats[stat_type])
 
-
-func update_passive_modifiers() -> void:
-	pass
+	for passive_effect: PassiveEffect in all_passive_effects:
+		for stat_type: StatType in passive_effect.stat_modifiers.keys():
+			stats[stat_type].add_modifier(passive_effect.stat_modifiers[stat_type])
+	
 	# TODO implement updating passive modifiers: abilities, equipment, statuses, job
 
 
@@ -566,39 +563,19 @@ func equip_ability(slot: AbilitySlot, ability: Ability):
 	# update passives
 
 
-func update_elemental_affinity() -> void:
+func update_elemental_affinity(all_passive_effects: Array[PassiveEffect]) -> void:
 	elemental_absorb.clear()
 	elemental_cancel.clear()
 	elemental_half.clear()
 	elemental_strengthen.clear()
 	elemental_weakness.clear()
-	
-	for slot: EquipmentSlot in equip_slots:
-		elemental_absorb = append_element_array_unique(elemental_absorb, slot.item.elemental_absorb)
-		elemental_cancel = append_element_array_unique(elemental_cancel, slot.item.elemental_cancel)
-		elemental_half = append_element_array_unique(elemental_half, slot.item.elemental_half)
-		elemental_strengthen = append_element_array_unique(elemental_strengthen, slot.item.elemental_strengthen)
-		elemental_weakness = append_element_array_unique(elemental_weakness, slot.item.elemental_weakness)
-	
-	for slot: AbilitySlot in ability_slots:
-		elemental_absorb = append_element_array_unique(elemental_absorb, slot.ability.passive_effect.element_absorb)
-		elemental_cancel = append_element_array_unique(elemental_cancel, slot.ability.passive_effect.element_cancel)
-		elemental_half = append_element_array_unique(elemental_half, slot.ability.passive_effect.element_half)
-		elemental_strengthen = append_element_array_unique(elemental_strengthen, slot.ability.passive_effect.element_strengthen)
-		elemental_weakness = append_element_array_unique(elemental_weakness, slot.ability.passive_effect.element_weakness)
-	
-	for status: StatusEffect in current_statuses:
-		elemental_absorb = append_element_array_unique(elemental_absorb, status.passive_effect.element_absorb)
-		elemental_cancel = append_element_array_unique(elemental_cancel, status.passive_effect.element_cancel)
-		elemental_half = append_element_array_unique(elemental_half, status.passive_effect.element_half)
-		elemental_strengthen = append_element_array_unique(elemental_strengthen, status.passive_effect.element_strengthen)
-		elemental_weakness = append_element_array_unique(elemental_weakness, status.passive_effect.element_weakness)
-	
-	elemental_absorb = append_element_array_unique(elemental_absorb, job_data.element_absorb)
-	elemental_cancel = append_element_array_unique(elemental_cancel, job_data.element_cancel)
-	elemental_half = append_element_array_unique(elemental_half, job_data.element_half)
-	elemental_strengthen = append_element_array_unique(elemental_strengthen, job_data.element_strengthen)
-	elemental_weakness = append_element_array_unique(elemental_weakness, job_data.element_weakness)
+
+	for passive_effect: PassiveEffect in all_passive_effects:
+		elemental_absorb = append_element_array_unique(elemental_absorb, passive_effect.element_absorb)
+		elemental_cancel = append_element_array_unique(elemental_cancel, passive_effect.element_cancel)
+		elemental_half = append_element_array_unique(elemental_half, passive_effect.element_half)
+		elemental_strengthen = append_element_array_unique(elemental_strengthen, passive_effect.element_strengthen)
+		elemental_weakness = append_element_array_unique(elemental_weakness, passive_effect.element_weakness)
 
 
 func append_element_array_unique(current_array: Array[Action.ElementTypes], array_to_append: Array[Action.ElementTypes]) -> Array[Action.ElementTypes]:
@@ -660,32 +637,17 @@ func update_actions(battle_manager: BattleManager) -> void:
 	await select_first_action()
 
 
-func set_available_actions() -> void:
+func set_available_actions(all_passive_effects: Array[PassiveEffect]) -> void:
 	actions.clear()
 	actions.append(move_action)
 	actions.append(attack_action)
 	
 	actions.append_array(get_skillset_actions()) # TODO move to skillset ability
-	# add actions from statuses (frog, blood suck)
-	for slot: AbilitySlot in ability_slots:
-		for action: Action in slot.ability.passive_effect.added_actions:
+
+	for passive_effect: PassiveEffect in all_passive_effects:
+		for action: Action in passive_effect.added_actions:
 			if not actions.has(action):
 				actions.append(action)
-	for slot: EquipmentSlot in equip_slots:
-		for action: Action in slot.item.passive_effect.added_actions:
-			if not actions.has(action):
-				actions.append(action)
-	for status: StatusEffect in current_statuses:
-		for action: Action in status.passive_effect.added_actions:
-			if not actions.has(action):
-				actions.append(action)
-	if job_data != null:
-		for passive_effect: PassiveEffect in job_data.passive_effects:
-			for action: Action in passive_effect.added_actions:
-				if not actions.has(action):
-					actions.append(action)
-	
-	# TODO append all other potential actions, from jobs, equipment, etc.
 	
 	actions.append(wait_action)
 
@@ -818,7 +780,7 @@ func add_status(new_status: StatusEffect) -> void:
 		remove_status_id(status_cancelled_id)
 	
 	update_status_visuals()
-	update_elemental_affinity() # TODO update passives in general?
+	update_passive_effects()
 
 
 func remove_status_id(status_removed_unique_name: String) -> void:
@@ -837,28 +799,24 @@ func remove_status(status_removed: StatusEffect, remove_permanent: bool = false)
 		stats[stat].remove_modifier(status_removed.passive_effect.stat_modifiers[stat])
 	current_statuses.erase(status_removed)
 	update_status_visuals()
-	update_elemental_affinity() # TODO update passives in general?
+	update_passive_effects()
 
 
 func get_nullify_statuses() -> Array[StatusEffect]:
 	return current_statuses.filter(func(status: StatusEffect): return status.passive_effect.nullify_targeted)
 
 
-func update_permanent_statuses() -> void:
+func update_permanent_statuses(all_passive_effects: Array[PassiveEffect]) -> void:
 	for status_unique_name: String in RomReader.status_effects.keys():
 		if immune_statuses.has(status_unique_name):
 			continue
 		
-		# check passive sources: equipment, job, abilities, statuses
-		var num_should_have: int = 0
 		
-		for slot: EquipmentSlot in equip_slots:
-			num_should_have += slot.item.status_always.count(status_unique_name)
-		for slot: AbilitySlot in ability_slots:
-			num_should_have += slot.ability.passive_effect.status_always.count(status_unique_name)
-		for status: StatusEffect in current_statuses:
-			num_should_have += status.passive_effect.status_always.count(status_unique_name)
-		num_should_have += job_data.status_always.count(status_unique_name)
+		var num_should_have: int = 0
+
+		# check passive sources: equipment, job, abilities, statuses
+		for passive_effect: PassiveEffect in all_passive_effects:
+			num_should_have += passive_effect.status_always.count(status_unique_name)
 		
 		var current_permanent: Array[StatusEffect] = current_statuses.filter(func(status: StatusEffect): return status.unique_name == status_unique_name and status.duration_type == StatusEffect.DurationType.PERMANENT)
 		var num_has: int = current_permanent.size()
@@ -877,21 +835,22 @@ func update_permanent_statuses() -> void:
 				remove_status(status_to_remove, true)
 
 
-func update_immune_statuses() -> void:
-	# check passive sources: equipment, job, abilities, statuses
+func update_immune_statuses(all_passive_effects: Array[PassiveEffect]) -> void:
 	immune_statuses.clear()
-	
-	for slot: EquipmentSlot in equip_slots:
-		immune_statuses.append_array(slot.item.status_immune)
-	for slot: AbilitySlot in ability_slots:
-		immune_statuses.append_array(slot.ability.passive_effect.status_immune)
-	for status: StatusEffect in current_statuses:
-		immune_statuses.append_array(status.passive_effect.status_immune)
-	immune_statuses.append_array(job_data.status_immune)
+
+	for passive_effect: PassiveEffect in all_passive_effects:
+		immune_statuses.append_array(passive_effect.status_immune)
 	
 	for status: StatusEffect in current_statuses:
 		if immune_statuses.has(status.unique_name):
 			remove_status(status, true)
+
+
+func update_start_statuses(all_passive_effects: Array[PassiveEffect]) -> void:
+	start_statuses.clear()
+
+	for passive_effect: PassiveEffect in all_passive_effects:
+		start_statuses.append_array(passive_effect.status_start)
 
 
 func update_status_visuals() -> void:
@@ -1272,9 +1231,7 @@ func set_job_id(new_job_id: int) -> void:
 		current_idle_animation_id = idle_walk_animation_id
 		set_base_animation_ptr_id(idle_walk_animation_id)
 	
-	update_elemental_affinity()
-	update_immune_statuses()
-	update_permanent_statuses()
+	update_passive_effects()
 
 
 func set_ability(new_ability_id: int) -> void:
@@ -1298,7 +1255,8 @@ func set_primary_weapon(new_weapon_id: int) -> void:
 		primary_weapon.wep_frame_palette, 0, 0, primary_weapon.wep_frame_v_offset, 0, animation_manager.wep_shp.file_name)
 	
 	attack_action = primary_weapon.weapon_attack_action
-	set_available_actions()
+	var all_passive_effects: Array[PassiveEffect] = get_all_passive_effects()
+	set_available_actions(all_passive_effects)
 	primary_weapon_assigned.emit(new_weapon_id)
 
 
@@ -1367,6 +1325,19 @@ func get_evade(evade_source: EvadeData.EvadeSource, evade_type: EvadeData.EvadeT
 	return evade
 
 
+func update_passive_effects(exclude_passives: PackedStringArray = []) -> void:
+	var all_passive_effects: Array[PassiveEffect] = get_all_passive_effects(exclude_passives)
+
+	update_permanent_statuses(all_passive_effects)
+	update_immune_statuses(all_passive_effects)
+	update_start_statuses(all_passive_effects)
+
+	# update passives in case statuses changed
+	all_passive_effects = get_all_passive_effects(exclude_passives)
+	update_stat_modifiers(all_passive_effects)
+	update_elemental_affinity(all_passive_effects)
+
+
 func get_all_passive_effects(exclude_passives: PackedStringArray = []) -> Array[PassiveEffect]:
 	var all_passive_effects: Array[PassiveEffect] = []
 	
@@ -1385,10 +1356,9 @@ func get_native_passive_effects(exclude_passives: PackedStringArray = []) -> Arr
 	# TODO should all Objects that have PassiveEffect be changed to store Array[PassiveEffect]
 	# all_passive_effects.append_array(ability.passive_effects) 
 	
-	native_passive_effects.append_array(job_data.passive_effects)
-	for ability: Ability in job_data.innate_abilities:
-		native_passive_effects.append(ability.passive_effect)
-
+	if job_data != null:
+		native_passive_effects.append_array(job_data.passive_effects)
+	
 	for ability_slot: AbilitySlot in ability_slots:
 		native_passive_effects.append(ability_slot.ability.passive_effect)
 	

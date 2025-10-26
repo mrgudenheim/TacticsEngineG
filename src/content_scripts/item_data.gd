@@ -49,39 +49,28 @@ var weapon_attack_action: Action
 #@export var weapon_other_effects: Array = [] # TODO create data structure for other effects
 
 # shield data
-@export var shield_physical_evade: int = 0
-@export var shield_magical_evade: int = 0
+var shield_physical_evade: int = 0
+var shield_magical_evade: int = 0
 
 # accessory data
-@export var accessory_physical_evade: int = 0
-@export var accessory_magical_evade: int = 0
+var accessory_physical_evade: int = 0
+var accessory_magical_evade: int = 0
 
 # armour/helm data
-@export var hp_modifier: int = 0
-@export var mp_modifier: int = 0
+var hp_modifier: int = 0
+var mp_modifier: int = 0
 
 # attribute data
-@export var stat_modifiers: Dictionary[UnitData.StatType, Modifier] = {}
-@export var pa_modifier: int = 0
-@export var ma_modifier: int = 0
-@export var sp_modifier: int = 0
-@export var move_modifier: int = 0
-@export var jump_modifier: int = 0
-
-@export var status_always: PackedStringArray = []
-@export var status_immune: PackedStringArray = []
-@export var status_start: PackedStringArray = []
-
-@export var elemental_absorb: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
-@export var elemental_cancel: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
-@export var elemental_half: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
-@export var elemental_weakness: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
-@export var elemental_strengthen: Array[Action.ElementTypes] = [] # 1 byte of bitflags, elemental types
+var pa_modifier: int = 0
+var ma_modifier: int = 0
+var sp_modifier: int = 0
+var move_modifier: int = 0
+var jump_modifier: int = 0
 
 # chemist item data
-@export var consumable_formula_id: int = 0
-@export var consumable_item_z: int = 0
-@export var consumable_inflict_status_id: int = 0
+var consumable_formula_id: int = 0
+var consumable_item_z: int = 0
+var consumable_inflict_status_id: int = 0
 
 #@export var actions_granted: Array[Action] = []
 
@@ -343,8 +332,8 @@ func _init(idx: int = 0) -> void:
 		sub_index = idx - 0x90
 		hp_modifier = RomReader.scus_data.armour_hp_modifier[sub_index]
 		mp_modifier = RomReader.scus_data.armour_mp_modifier[sub_index]
-		stat_modifiers[UnitData.StatType.HP_MAX] = Modifier.new(hp_modifier)
-		stat_modifiers[UnitData.StatType.MP_MAX] = Modifier.new(mp_modifier)
+		passive_effect.stat_modifiers[UnitData.StatType.HP_MAX] = Modifier.new(hp_modifier)
+		passive_effect.stat_modifiers[UnitData.StatType.MP_MAX] = Modifier.new(mp_modifier)
 		
 	elif idx < 0xf0: # accessory data
 		sub_index = idx - 0xd0
@@ -360,9 +349,9 @@ func _init(idx: int = 0) -> void:
 		consumable_inflict_status_id = RomReader.scus_data.chem_item_inflict_status_id[sub_index]
 	
 	# remove empty modifiers
-	for key: UnitData.StatType in stat_modifiers.keys():
-		if stat_modifiers[key].value_formula.values[0] == 0:
-			stat_modifiers.erase(key)
+	for key: UnitData.StatType in passive_effect.stat_modifiers.keys():
+		if passive_effect.stat_modifiers[key].value_formula.values[0] == 0:
+			passive_effect.stat_modifiers.erase(key)
 	
 	emit_changed()
 
@@ -374,20 +363,20 @@ func set_item_attributes(item_attribute: ScusData.ItemAttribute) -> void:
 	move_modifier = item_attribute.move_modifier
 	jump_modifier = item_attribute.jump_modifier
 	
-	stat_modifiers[UnitData.StatType.PHYSICAL_ATTACK] = Modifier.new(item_attribute.pa_modifier)
-	stat_modifiers[UnitData.StatType.MAGIC_ATTACK] = Modifier.new(item_attribute.ma_modifier)
-	stat_modifiers[UnitData.StatType.SPEED] = Modifier.new(item_attribute.sp_modifier)
-	stat_modifiers[UnitData.StatType.MOVE] = Modifier.new(item_attribute.move_modifier)
-	stat_modifiers[UnitData.StatType.JUMP] = Modifier.new(item_attribute.jump_modifier)
+	passive_effect.stat_modifiers[UnitData.StatType.PHYSICAL_ATTACK] = Modifier.new(item_attribute.pa_modifier)
+	passive_effect.stat_modifiers[UnitData.StatType.MAGIC_ATTACK] = Modifier.new(item_attribute.ma_modifier)
+	passive_effect.stat_modifiers[UnitData.StatType.SPEED] = Modifier.new(item_attribute.sp_modifier)
+	passive_effect.stat_modifiers[UnitData.StatType.MOVE] = Modifier.new(item_attribute.move_modifier)
+	passive_effect.stat_modifiers[UnitData.StatType.JUMP] = Modifier.new(item_attribute.jump_modifier)
 	
-	status_always = item_attribute.status_always
-	status_immune = item_attribute.status_immune
-	status_start = item_attribute.status_start
-	elemental_absorb = Action.get_element_types_array([item_attribute.elemental_absorb])
-	elemental_cancel = Action.get_element_types_array([item_attribute.elemental_cancel])
-	elemental_half = Action.get_element_types_array([item_attribute.elemental_half])
-	elemental_weakness = Action.get_element_types_array([item_attribute.elemental_weakness])
-	elemental_strengthen = Action.get_element_types_array([item_attribute.elemental_strengthen])
+	passive_effect.status_always = item_attribute.status_always
+	passive_effect.status_immune = item_attribute.status_immune
+	passive_effect.status_start = item_attribute.status_start
+	passive_effect.element_absorb = Action.get_element_types_array([item_attribute.elemental_absorb])
+	passive_effect.element_cancel = Action.get_element_types_array([item_attribute.elemental_cancel])
+	passive_effect.element_half = Action.get_element_types_array([item_attribute.elemental_half])
+	passive_effect.element_weakness = Action.get_element_types_array([item_attribute.elemental_weakness])
+	passive_effect.element_strengthen = Action.get_element_types_array([item_attribute.elemental_strengthen])
 
 	emit_changed()
 

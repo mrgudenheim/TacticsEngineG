@@ -33,7 +33,7 @@ func choose_action(unit: UnitData) -> void:
 	if Vector2i(floori(unit.char_body.position.x), floori(unit.char_body.position.z)) != unit.tile_position.location:
 		push_error("Unit position not equal to char body position")
 	
-	wait_action_instance = unit.actions_data[unit.wait_action]
+	wait_action_instance = unit.actions_data[unit.wait_action.unique_name]
 	
 	if strategy == Strategy.END_TURN:
 		await wait_for_delay(unit)
@@ -57,7 +57,7 @@ func choose_action(unit: UnitData) -> void:
 		var chosen_action: ActionInstance = eligible_actions.pick_random()
 		await action_targeted(unit, chosen_action) # random target
 	elif strategy == Strategy.BEST: # TODO implement better ai choosing 'best' action
-		var move_action_instance: ActionInstance = unit.actions_data[unit.move_action]
+		var move_action_instance: ActionInstance = unit.actions_data[unit.move_action.unique_name]
 		var non_move_actions: Array[ActionInstance] = eligible_actions.duplicate()
 		non_move_actions.erase(move_action_instance) # TODO evaluate move separately
 		

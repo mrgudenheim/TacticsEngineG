@@ -315,7 +315,7 @@ var active_action: ActionInstance
 @export var attack_action: Action
 @export var wait_action: Action
 @export var actions: Array[Action] = []
-var actions_data: Dictionary[Action, ActionInstance] = {}
+var actions_data: Dictionary[String, ActionInstance] = {}
 @export var move_points_start: int = 1
 @export var move_points_remaining: int = 1
 @export var action_points_start: int = 1
@@ -649,7 +649,7 @@ func update_actions(battle_manager: BattleManager) -> void:
 	for action: Action in actions:
 		var modified_action: Action = Action.get_modified_action(action, self)
 		var new_action_instance: ActionInstance = ActionInstance.new(modified_action, self, battle_manager)
-		actions_data[modified_action] = new_action_instance
+		actions_data[modified_action.unique_name] = new_action_instance
 		
 		if new_action_instance.is_usable():
 			await new_action_instance.update_potential_targets()

@@ -384,7 +384,7 @@ func add_test_teams_to_map() -> void:
 	#json_file.close()
 
 	for unit in units:
-		unit.equip_ability(unit.ability_slots[4], test_ability)
+		# unit.equip_ability(unit.ability_slots[4], test_ability)
 		unit.is_ai_controlled = false
 
 
@@ -415,6 +415,7 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData
 	new_unit.icon.texture = RomReader.frame_bin_texture # TODO clean up status icon stuff
 	new_unit.icon2.texture = RomReader.frame_bin_texture
 	
+	new_unit.generate_random_abilities()
 	new_unit.primary_weapon_assigned.connect(func(weapon_id: int): new_unit.update_actions(self))
 	new_unit.generate_equipment()
 	#var unit_actions: Array[Action] = new_unit.get_skillset_actions()

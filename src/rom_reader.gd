@@ -623,7 +623,7 @@ func import_custom_data() -> void:
 			var file_name: String = dir.get_next()
 			while file_name != "":
 				if not file_name.begins_with("."): # Exclude hidden files
-					push_warning("Found file: " + file_name)
+					#push_warning("Found file: " + file_name)
 					if file_name.ends_with(".json"):
 						var file_path: String = dir_path + file_name
 						var file := FileAccess.open(file_path, FileAccess.READ)

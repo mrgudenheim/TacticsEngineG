@@ -69,6 +69,7 @@ var reaction_abilities: Array = []
 var support_ability: Array = []
 var movement_ability: Array = []
 
+var equipable_item_types: PackedInt32Array = []
 var primary_weapon: ItemData
 var equip_slots: Array[EquipmentSlot] = [
 	EquipmentSlot.new("RH", [ItemData.SlotType.WEAPON, ItemData.SlotType.SHIELD]),
@@ -480,6 +481,25 @@ func generate_battle_stats(current_job: JobData) -> void:
 	stats[StatType.JUMP].base_value = current_job.jump
 	stats[StatType.JUMP].set_value(stats[StatType.JUMP].base_value)
 
+
+func generate_random_abilities() -> void:
+	ability_slots[2].ability = RomReader.abilities.values().filter(func(ability: Ability): return ability_slots[2].slot_types.has(ability.slot_type)).pick_random()
+	ability_slots[3].ability = RomReader.abilities.values().filter(func(ability: Ability): return ability_slots[3].slot_types.has(ability.slot_type)).pick_random()
+	ability_slots[4].ability = RomReader.abilities.values().filter(func(ability: Ability): return ability_slots[4].slot_types.has(ability.slot_type)).pick_random()
+
+	update_equipable_item_types()
+
+
+func update_equipable_item_types() -> void:
+	equipable_item_types = []
+	
+	var all_passive_effects: Array[PassiveEffect] = get_all_passive_effects()
+	for passive_effect: PassiveEffect in all_passive_effects:
+		equipable_item_types.append_array(passive_effect.added_equipment_types_equipable)
+	
+	equipable_item_types.append_array(job_data.equippable_item_types) # TODO job equipable item types should be in passive effect
+
+
 # TODO generate equipment https://ffhacktics.com/wiki/Calculate/Store_ENTD_Unit_Equipment
 func generate_equipment() -> void:
 	#if not ["TYPE1.SEQ", "TYPE3.SEQ"].has(animation_manager.global_seq.file_name): # monsters don't have equipment
@@ -524,7 +544,7 @@ func get_item_idx_for_slot(slot_type: ItemData.SlotType, item_level: int, random
 	valid_items.assign(RomReader.items_array.filter(func(item: ItemData): 
 		var slot_type_is_valid: bool = item.slot_type == slot_type
 		var level_is_valid: bool = item.min_level <= item_level
-		var type_is_valid: bool = job_data.equippable_item_types.has(item.item_type) # TODO allow forcing specifc type based on ability requirements
+		var type_is_valid: bool = equipable_item_types.has(item.item_type) # TODO allow forcing specifc type based on ability requirements
 		return slot_type_is_valid and level_is_valid and type_is_valid))
 	var item_idx: int = 0
 	if not valid_items.is_empty():

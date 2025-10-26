@@ -40,16 +40,19 @@ Escape: Open/Close debug menus
 - Initial loading of the ROM can take a little while (about 10+ seconds for me)
 - Loading expanded maps with lots of units can take a while (over a minute for 45 units per team + more time for pathfinding to run)
 - Units with lots of ranged actions (ex. Summoner) will take some time to decide what action to take
-- Reaction / Support / Movement abilities not implemented
-- Oil status caunts as Fire Weakness
-- Reflect re-targeting not implemented
-- Many statuses do nothing
-- Bard, Dancer, Calculator, Mime will not be generated, skillsets not implemented
-- Additionally, the following skillsets are not implemented:
--- Chemist Item
--- Archer Charge
--- Lancer Jump
--- Ninja Throw 
+- The following Reaction / Support / Movement abilities are not implemented:
+-- R: Counter Flood, Auto Potion, Distribute, Damage Split, MP Switch, Catch
+-- S: Gain JP Up, Gained EXP Up, Equip Change, Defend, Train, Secret Hunt, Two Hands, Two Swords, Monster Skill
+-- M: Fly, Teleport, Teleport2, Cant enter depth, Move Find Item, Swim, Walk on Water, Move Underwater, Float
+- Status Effects partially implemented:
+-- No AI changes or team changes (Berserk, Confused, Charm, Invite)
+-- Oil status caunts as Fire Weakness
+-- Reflect re-targeting not implemented
+-- Undead status changing healing to damage not implemented
+- Some jobs not fully implemented:
+-- Bard, Dancer, Calculator, Mime will not be generated, skillsets not implemented
+-- Skillsets not implemented: Chemist Item, Archer Charge, Lancer Jump, Ninja Throw 
+
 
 # Future Improvements
 - Generally improve ability vfx by using more data from vfx files
@@ -68,5 +71,5 @@ Escape: Open/Close debug menus
 ...
 
 # Building From Source
-This project is built with Godot 4.4
+This project is built with Godot 4.5.1
 https://godotengine.org/

@@ -157,7 +157,7 @@ func get_base_value(user: UnitData, target: UnitData) -> float:
 		Formulas.LVLxSPxV1:
 			base_value = user.level * user.speed_current * values[0] # 0x27 steal gil LVLxSP
 		Formulas.MIN_TARGET_EXP_or_SP_plus_V1:
-			base_value = mini(target.unit_exp, user.speed_current + values[0]) # 0x28 steal exp
+			base_value = minf(target.unit_exp, user.speed_current + values[0]) # 0x28 steal exp
 		Formulas.PA_plus_V1:
 			base_value = user.physical_attack_current + values[0] # 0x2b, 0x2c PAplusY
 		Formulas.PAxWP_plus_V1:

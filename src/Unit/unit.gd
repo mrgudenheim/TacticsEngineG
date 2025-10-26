@@ -1358,6 +1358,8 @@ func get_native_passive_effects(exclude_passives: PackedStringArray = []) -> Arr
 	
 	if job_data != null:
 		native_passive_effects.append_array(job_data.passive_effects)
+		for ability: Ability in job_data.innate_abilities:
+			native_passive_effects.append(ability.passive_effect)
 	
 	for ability_slot: AbilitySlot in ability_slots:
 		native_passive_effects.append(ability_slot.ability.passive_effect)

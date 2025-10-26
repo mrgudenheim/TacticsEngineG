@@ -683,6 +683,16 @@ func connect_data_references() -> void:
 				passive_effect_name = job_data.unique_name
 				job_data.passive_effect_names[passive_effect_name_idx] = passive_effect_name
 				job_data.passive_effects.append(passive_effects[passive_effect_name])
+		
+		for innate_ability_id: int in job_data.innate_abilities_ids:
+			# var ability_uname: String = fft_abilities[innate_ability_id].display_name.to_snake_case()
+			var ability_uname: String = abilities.values()[innate_ability_id].unique_name
+			if not job_data.innate_ability_names.has(ability_uname):
+				job_data.innate_ability_names.append(ability_uname)
+
+		for ability_name: String in job_data.innate_ability_names:
+			if abilities.has(ability_name):
+				job_data.innate_abilities.append(abilities[ability_name])
 
 	for ability: Ability in abilities.values():
 		if passive_effects.has(ability.passive_effect_name):
@@ -704,9 +714,6 @@ func connect_data_references() -> void:
 		for action_name: String in passive_effect.added_actions_names:
 			if actions.has(action_name):
 				passive_effect.added_actions.append(actions[action_name])
-		for ability_name: String in passive_effect.added_ability_names:
-			if abilities.has(ability_name):
-				passive_effect.added_abilities.append(abilities[ability_name])
 		for triggered_action_name: String in passive_effect.added_triggered_actions_names:
 			if triggered_actions.has(triggered_action_name):
 				passive_effect.added_triggered_actions.append(triggered_actions[triggered_action_name])

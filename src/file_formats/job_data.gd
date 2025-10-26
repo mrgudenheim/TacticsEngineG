@@ -10,6 +10,8 @@ const FILE_SUFFIX: String = "job"
 @export var display_name: String = "Job Name"
 @export var skillset_id: int = 0
 @export var innate_abilities_ids: PackedInt32Array = []
+@export var innate_ability_names: PackedStringArray = []
+var innate_abilities: Array[Ability] = []
 @export var equippable_item_types: Array[ItemData.ItemType] # 4 bytes of bitflags, 32 total
 @export var hp_growth: int = 1
 @export var mp_growth: int = 1
@@ -105,22 +107,10 @@ func _init(new_job_id: int = -1, job_bytes: PackedByteArray = []) -> void:
 	# new_passive_effect.element_strengthen = Action.get_element_types_array([job_bytes.decode_u8(___)])
 
 	new_passive_effect.added_equipment_types_equipable = equippable_item_types
-
-	for innate_ability_id: int in innate_abilities_ids:
-		new_passive_effect.added_ability_names.append(RomReader.fft_text.ability_names[innate_ability_id])
 	
-	if not (new_passive_effect.status_always.is_empty()
-			and new_passive_effect.status_immune.is_empty()
-			and new_passive_effect.status_start.is_empty()
-			and new_passive_effect.element_absorb.is_empty()
-			and new_passive_effect.element_cancel.is_empty()
-			and new_passive_effect.element_half.is_empty()
-			and new_passive_effect.element_weakness.is_empty()
-			and new_passive_effect.added_ability_names.is_empty()
-			):
-		new_passive_effect.unique_name = unique_name
-		new_passive_effect.add_to_global_list()
-		passive_effect_names.append(new_passive_effect.unique_name)
+	new_passive_effect.unique_name = unique_name
+	new_passive_effect.add_to_global_list()
+	passive_effect_names.append(new_passive_effect.unique_name)
 
 	add_to_global_list()
 

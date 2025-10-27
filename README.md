@@ -42,7 +42,7 @@ Escape: Open/Close debug menus
 - Units with lots of ranged actions (ex. Summoner) will take some time to decide what action to take
 - The following Reaction / Support / Movement abilities are not implemented:
 -- R: Counter Flood, Auto Potion, Distribute, Damage Split, MP Switch, Catch
--- S: Gain JP Up, Gained EXP Up, Equip Change, Defend, Train, Secret Hunt, Two Hands, Two Swords, Monster Skill
+-- S: Gain JP Up, Gained EXP Up, Equip Change, Train, Secret Hunt, Two Hands, Two Swords, Monster Skill
 -- M: Fly, Teleport, Teleport2, Cant enter depth, Move Find Item, Swim, Walk on Water, Move Underwater, Float
 - Status Effects partially implemented:
 -- No AI changes or team changes (Berserk, Confused, Charm, Invite)

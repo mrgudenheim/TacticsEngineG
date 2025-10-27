@@ -152,8 +152,51 @@ func process_rom() -> void:
 	
 	import_custom_data()
 	connect_data_references()
+	
+	#for action: Action in actions.values():
+		#Utilities.save_json(action)
+#
+	#for ability: Ability in abilities.values():
+		#Utilities.save_json(ability)
 
-	var new_passive_effect: PassiveEffect 
+	# var new_action: Action = Action.new()
+	
+	# new_action.display_name = "Defend"
+	# new_action.unique_name = "defend"
+	# new_action.status_chance = 100
+	# new_action.target_status_list = ["defending"]
+	# new_action.target_status_list_type = Action.StatusListType.ALL
+	# new_action.targeting_type = Action.TargetingTypes.RANGE
+	# new_action.auto_target = true
+	# new_action.max_targeting_range = 0
+	# new_action.status_prevents_use_any = [
+	# 	"crystal",
+	# 	"dead",
+	# 	"petrify",
+	# 	"blood_suck",
+	# 	"treasure",
+	# 	"berserk",
+	# 	"chicken",
+	# 	"frog",
+	# 	"stop",
+	# 	"don't_act",
+	# ]
+	# new_action.ignore_passives = [
+	# 	"protect_status",
+	# 	"shell_status",
+	# 	"attack_up",
+	# 	"defense_up",
+	# 	"magic_attack_up",
+	# 	"magic_defense_up",
+	# 	"martial_arts",
+	# 	"throw_item",
+	# 	"monster_talk",
+	# 	"maintenance",
+	# 	"finger_guard",
+	# ]
+	# Utilities.save_json(new_action)
+
+	# var new_passive_effect: PassiveEffect 
 
 	# new_passive_effect = PassiveEffect.new()
 	# new_passive_effect.unique_name = "attack_up"

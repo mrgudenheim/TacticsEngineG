@@ -108,11 +108,11 @@ func _init(new_job_id: int = -1, job_bytes: PackedByteArray = []) -> void:
 
 	new_passive_effect.added_equipment_types_equipable = equippable_item_types
 	
+	add_to_global_list()
+	
 	new_passive_effect.unique_name = unique_name
 	new_passive_effect.add_to_global_list()
 	passive_effect_names.append(new_passive_effect.unique_name)
-
-	add_to_global_list()
 
 
 func add_to_global_list(will_overwrite: bool = false) -> void:

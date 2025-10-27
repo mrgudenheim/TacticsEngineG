@@ -77,15 +77,20 @@ class TriggeredActionInstance:
 func connect_trigger(unit: UnitData) -> void:
 	match trigger_timing:
 		TriggerTiming.MOVED:
-			unit.completed_move.connect(moved_trigger)
+			if not unit.completed_move.is_connected(moved_trigger):
+				unit.completed_move.connect(moved_trigger)
 		TriggerTiming.TARGETTED_PRE_ACTION:
-			unit.targeted_pre_action.connect(action_trigger)
+			if not unit.targeted_pre_action.is_connected(action_trigger):
+				unit.targeted_pre_action.connect(action_trigger)
 		TriggerTiming.TARGETTED_POST_ACTION:
-			unit.targeted_post_action.connect(action_trigger)
+			if not unit.targeted_post_action.is_connected(action_trigger):
+				unit.targeted_post_action.connect(action_trigger)
 		TriggerTiming.TURN_START:
-			unit.turn_ended.connect(self_trigger)
+			if not unit.turn_ended.is_connected(self_trigger):
+				unit.turn_ended.connect(self_trigger)
 		TriggerTiming.TURN_END:
-			unit.turn_ended.connect(self_trigger)
+			if not unit.turn_ended.is_connected(self_trigger):
+				unit.turn_ended.connect(self_trigger)
 
 
 func moved_trigger(user: UnitData, moved_tiles: int) -> void:	

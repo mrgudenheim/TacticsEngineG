@@ -481,12 +481,16 @@ func generate_battle_stats(current_job: JobData) -> void:
 
 
 func generate_random_abilities() -> void:
-	ability_slots[2].ability = RomReader.abilities.values().filter(func(ability: Ability): return ability_slots[2].slot_types.has(ability.slot_type)).pick_random()
-	ability_slots[3].ability = RomReader.abilities.values().filter(func(ability: Ability): return ability_slots[3].slot_types.has(ability.slot_type)).pick_random()
-	ability_slots[4].ability = RomReader.abilities.values().filter(func(ability: Ability): return ability_slots[4].slot_types.has(ability.slot_type)).pick_random()
+	var random_reaction: Ability = RomReader.abilities.values().filter(func(ability: Ability): return ability.slot_type == Ability.SlotType.REACTION).pick_random()
+	var random_support: Ability = RomReader.abilities.values().filter(func(ability: Ability): return ability.slot_type == Ability.SlotType.SUPPORT).pick_random()
+	var random_movement: Ability = RomReader.abilities.values().filter(func(ability: Ability): return ability.slot_type == Ability.SlotType.MOVEMENT).pick_random()
+
+	ability_slots[2].ability = random_reaction
+	ability_slots[3].ability =  random_support
+	ability_slots[4].ability =  random_movement
 
 	var all_passive_effects: Array[PassiveEffect] = get_all_passive_effects()
-	update_equipable_item_types(all_passive_effects)
+	update_passive_effects()
 
 
 func update_equipable_item_types(all_passive_effects: Array[PassiveEffect]) -> void:
@@ -557,10 +561,22 @@ func get_item_idx_for_slot(slot_type: ItemData.SlotType, item_level: int, random
 func equip_ability(slot: AbilitySlot, ability: Ability):
 	slot.ability = ability
 
-	for triggered_action: TriggeredAction in ability.triggered_actions:
-		triggered_action.connect_trigger(self)
-	# TODO implement equipping individual ability slots
-	# update passives
+	update_passive_effects()
+
+
+func update_triggered_actions(all_passive_effects: Array[PassiveEffect]) -> void:
+	if job_data != null:
+		for ability: Ability in job_data.innate_abilities:
+			for triggered_action: TriggeredAction in ability.triggered_actions:
+				triggered_action.connect_trigger(self)
+	
+	for ability_slot: AbilitySlot in ability_slots:
+		for triggered_action: TriggeredAction in ability_slot.ability.triggered_actions:
+				triggered_action.connect_trigger(self)
+
+	for passive_effect: PassiveEffect in all_passive_effects:
+		for triggered_action: TriggeredAction in passive_effect.added_triggered_actions:
+			triggered_action.connect_trigger(self)
 
 
 func update_elemental_affinity(all_passive_effects: Array[PassiveEffect]) -> void:
@@ -1336,6 +1352,8 @@ func update_passive_effects(exclude_passives: PackedStringArray = []) -> void:
 	all_passive_effects = get_all_passive_effects(exclude_passives)
 	update_stat_modifiers(all_passive_effects)
 	update_elemental_affinity(all_passive_effects)
+	update_triggered_actions(all_passive_effects)
+	update_equipable_item_types(all_passive_effects)
 
 
 func get_all_passive_effects(exclude_passives: PackedStringArray = []) -> Array[PassiveEffect]:

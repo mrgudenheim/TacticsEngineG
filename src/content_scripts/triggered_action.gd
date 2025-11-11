@@ -93,7 +93,7 @@ func connect_trigger(unit: UnitData) -> void:
 				unit.turn_ended.connect(self_trigger)
 
 
-func moved_trigger(user: UnitData, moved_tiles: int) -> void:	
+func moved_trigger(user: UnitData, moved_tiles: int) -> void:
 	var new_triggered_action_data: TriggeredActionInstance = TriggeredActionInstance.new()
 	new_triggered_action_data.user = user
 	new_triggered_action_data.tiles_moved = moved_tiles
@@ -133,6 +133,9 @@ func process_triggered_action(triggered_action_data: TriggeredActionInstance) ->
 
 	var initiator_data: ActionInstance = triggered_action_data.initiating_action_instance
 	var has_initiator_data: bool = initiator_data != null
+	var initiator: UnitData = triggered_action_data.user
+	if has_initiator_data:
+		initiator = initiator_data.user
 
 	if needs_initiator:
 		if not has_initiator_data:
@@ -163,7 +166,7 @@ func process_triggered_action(triggered_action_data: TriggeredActionInstance) ->
 		# 	if excess_hp < excessive_hp_recovery_threshold:
 		# 		return
 	
-	var is_triggered = check_if_triggered(triggered_action_data.user, triggered_action_data.initiating_action_instance.user)
+	var is_triggered = check_if_triggered(triggered_action_data.user, initiator)
 	if not is_triggered:
 		return
 	
@@ -174,7 +177,7 @@ func process_triggered_action(triggered_action_data: TriggeredActionInstance) ->
 
 	var action_valid_targets: Array[TerrainTile] = new_action_instance.action.targeting_strategy.get_potential_targets(new_action_instance)
 	if allow_valid_targets_only:
-		if not action_valid_targets.has(triggered_action_data.initiating_action_instance.user.tile_position):
+		if not action_valid_targets.has(initiator.tile_position):
 			return
 	
 	match targeting:
@@ -185,7 +188,7 @@ func process_triggered_action(triggered_action_data: TriggeredActionInstance) ->
 			new_action_instance.submitted_targets = new_action_instance.action.targeting_strategy.get_aoe_targets(new_action_instance, target_tile)
 			await new_action_instance.queue_use()
 		TargetingTypes.INITIATOR:
-			var target_tile: TerrainTile = triggered_action_data.initiating_action_instance.user.tile_position
+			var target_tile: TerrainTile = initiator.tile_position
 			new_action_instance.submitted_targets = new_action_instance.action.targeting_strategy.get_aoe_targets(new_action_instance, target_tile)
 			await new_action_instance.queue_use()
 		_:

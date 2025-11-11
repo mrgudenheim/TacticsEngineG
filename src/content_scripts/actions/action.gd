@@ -405,7 +405,7 @@ func apply_standard(action_instance: ActionInstance) -> void:
 	if action_instance.allow_triggering_actions:
 		for target: UnitData in target_units:
 			for connection in target.targeted_pre_action.get_connections():
-				await connection["callable"].call(action_instance, target)
+				await connection["callable"].call(target, action_instance)
 	
 
 	# look up animation based on weapon type and vertical angle to target

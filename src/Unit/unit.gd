@@ -1000,7 +1000,7 @@ func use_attack() -> void:
 
 func use_ability(pos: Vector3) -> void:
 	can_move = false
-	push_warning("using: " + ability_data.name)
+	push_warning("using: " + ability_data.display_name)
 	#push_warning("Animations: " + str(PackedInt32Array([ability_data.animation_start_id, ability_data.animation_charging_id, ability_data.animation_executing_id])))
 	if ability_data.animation_start_id != 0:
 		#debug_menu.anim_id_spin.value = ability_data.animation_start_id + int(is_back_facing)

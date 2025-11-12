@@ -3,7 +3,7 @@ extends Node3D
 
 @export var camera: Camera3D
 
-signal zoom_changed
+signal zoom_changed(new_zoom: float)
 signal rotated(new_rotation: Vector3)
 signal camera_facing_changed
 
@@ -23,7 +23,7 @@ var zoom: float = 12:
 		return zoom
 	set(value):
 		zoom = value
-		zoom_changed.emit()
+		zoom_changed.emit(zoom)
 @export var zoom_out_max: float = 100
 @export var zoom_in_max: float = 0.01
 

@@ -28,6 +28,9 @@ var ai_controller: UnitAi = UnitAi.new()
 @export var char_body: CharacterBody3D
 @export var animation_manager: UnitAnimationManager
 @export var popup_texts: PopupTextContainer
+@export var stat_bars_position: Control
+@export var stat_bars_container: Container
+@export var stat_bar_tscn: PackedScene
 @export var icon: UnitIcon
 @export var icon2: Sprite3D
 @export var icon_cycle_time: float = 1.25
@@ -340,10 +343,30 @@ func _ready() -> void:
 	stats[StatType.HP_MAX].changed.connect(stats[StatType.HP].update_max_from_clamped_value)
 	stats[StatType.MP_MAX].changed.connect(stats[StatType.MP].update_max_from_clamped_value)
 	stats[StatType.HP].changed.connect(hp_changed)
+
+	add_stat_bar(StatType.HP).show_value = true
+	add_stat_bar(StatType.MP).visible = false
+	var ct_bar: StatBar = add_stat_bar(StatType.CT)
+	ct_bar.visual_max = 100.0
+	ct_bar.update_stat(stats[StatType.CT])
+	ct_bar.fill_color = Color.WEB_GREEN
+	ct_bar.show_value = true
 	
 	cycle_status_icons()
 	
 	add_to_group("Units")
+
+
+func add_stat_bar(stat_type: StatType) -> StatBar:
+	var new_stat_bar: StatBar = stat_bar_tscn.instantiate()
+	new_stat_bar.set_stat(str(stat_type), stats[stat_type])
+	stat_bars_container.add_child(new_stat_bar)
+
+	return new_stat_bar
+
+
+func update_stat_bars_scale(camera_zoom: float) -> void:
+	stat_bars_position.scale = Vector2.ONE * 3.775 / camera_zoom
 
 
 func initialize_unit() -> void:

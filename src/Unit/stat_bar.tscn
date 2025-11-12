@@ -1,0 +1,72 @@
+[gd_scene load_steps=8 format=3 uid="uid://d2jb1kiyb35fa"]
+
+[ext_resource type="Script" uid="uid://dw16eiy4pm2tp" path="res://src/Unit/stat_bar.gd" id="1_e7q7o"]
+
+[sub_resource type="Gradient" id="Gradient_a44xk"]
+offsets = PackedFloat32Array(0)
+colors = PackedColorArray(0.08400001, 0.12073336, 0.2, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_oxa5o"]
+gradient = SubResource("Gradient_a44xk")
+width = 16
+height = 8
+
+[sub_resource type="Gradient" id="Gradient_gngdm"]
+colors = PackedColorArray(0.38039216, 0.627451, 0.7882353, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_v0g1v"]
+gradient = SubResource("Gradient_gngdm")
+width = 16
+height = 8
+
+[sub_resource type="LabelSettings" id="LabelSettings_a44xk"]
+font_size = 22
+outline_size = 6
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_oxa5o"]
+font_size = 22
+outline_size = 6
+outline_color = Color(0, 0, 0, 1)
+
+[node name="StatBar" type="TextureProgressBar" node_paths=PackedStringArray("name_label", "value_label")]
+custom_minimum_size = Vector2(100, 15)
+value = 50.0
+allow_greater = true
+nine_patch_stretch = true
+texture_under = SubResource("GradientTexture2D_oxa5o")
+texture_progress = SubResource("GradientTexture2D_v0g1v")
+script = ExtResource("1_e7q7o")
+name_label = NodePath("StatName")
+value_label = NodePath("StatValue")
+
+[node name="StatName" type="Label" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_right = -5.0
+grow_horizontal = 0
+grow_vertical = 2
+text = "STAT"
+label_settings = SubResource("LabelSettings_a44xk")
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="StatValue" type="Label" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = 5.0
+offset_top = -15.5
+offset_right = 114.0
+offset_bottom = 15.5
+grow_vertical = 2
+text = "9999/9999"
+label_settings = SubResource("LabelSettings_oxa5o")
+vertical_alignment = 1

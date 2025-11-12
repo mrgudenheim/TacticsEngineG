@@ -302,6 +302,7 @@ func add_test_teams_to_map() -> void:
 		#0x55, # oracle
 		#0x49, # arch angel
 		#0x5f, # black chocobo
+		0x64, # bomb
 		0x7b, # wildbow
 		0x87, # dark behemoth
 		#0x8D, # tiamat

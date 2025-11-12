@@ -363,7 +363,7 @@ func _ready() -> void:
 
 func add_stat_bar(stat_type: StatType) -> StatBar:
 	var new_stat_bar: StatBar = stat_bar_tscn.instantiate()
-	new_stat_bar.set_stat(str(stat_type), stats[stat_type])
+	new_stat_bar.set_stat(str(StatType.keys()[stat_type]), stats[stat_type])
 	stat_bars_container.add_child(new_stat_bar)
 
 	return new_stat_bar

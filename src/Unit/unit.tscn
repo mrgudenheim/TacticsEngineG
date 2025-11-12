@@ -279,10 +279,6 @@ offset_right = 50.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="StatBar" parent="CharacterBody3D/StatBars/VBoxContainer" instance=ExtResource("11_oxa5o")]
-visible = false
-layout_mode = 2
-
 [node name="TileHighlights" type="Node3D" parent="."]
 
 [connection signal="input_event" from="CharacterBody3D" to="." method="_on_character_body_3d_input_event"]

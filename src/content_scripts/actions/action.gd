@@ -1002,6 +1002,8 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			ignore_passives.erase("shell_status")
 			ignore_passives.erase("magic_attack_up")
 			ignore_passives.erase("magic_defense_up")
+
+			status_chance = 19
 		0x20:
 			applicable_evasion_type = EvadeData.EvadeType.NONE
 			
@@ -1233,6 +1235,8 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			ignore_passives.erase("attack_up")
 			ignore_passives.erase("defense_up")
 			ignore_passives.erase("martial_arts")
+
+			status_chance = 19
 		0x32:
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.RANDOM_V1xPAx3_plus_V2_div_2
@@ -1566,6 +1570,8 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			ignore_passives.erase("magic_attack_up")
 			ignore_passives.erase("magic_defense_up")
 			passive_power_modifier_applies_to_hit_chance = true
+
+			status_chance = 19
 		0x54:
 			applicable_evasion_type = EvadeData.EvadeType.NONE
 			
@@ -1716,6 +1722,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			# TODO x+1 hits at random target in AoE
 		0x5f:
 			applicable_evasion_type = EvadeData.EvadeType.MAGICAL
+			status_chance = 19
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MA_plus_V1xMA_div_2

@@ -1865,7 +1865,7 @@ static func get_element_types_array(element_bitflags: PackedByteArray) -> Array[
 		for bit_idx: int in range(7, -1, -1):
 			var byte: int = element_bitflags.decode_u8(byte_idx)
 			if byte & (2 ** bit_idx) != 0:
-				var element_index: int = (7 - bit_idx) + (byte_idx * 8)
-				elemental_types.append(element_index)
+				# var element_index: int = (7 - bit_idx) + (byte_idx * 8)
+				elemental_types.append(2 ** bit_idx)
 	
 	return elemental_types

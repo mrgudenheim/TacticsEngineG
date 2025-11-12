@@ -345,7 +345,11 @@ func _ready() -> void:
 	stats[StatType.HP].changed.connect(hp_changed)
 
 	add_stat_bar(StatType.HP).show_value = true
-	add_stat_bar(StatType.MP).visible = false
+	
+	var mp_bar: StatBar = add_stat_bar(StatType.MP)
+	mp_bar.fill_color = Color.INDIAN_RED
+	mp_bar.show_value = true
+
 	var ct_bar: StatBar = add_stat_bar(StatType.CT)
 	ct_bar.visual_max = 100.0
 	ct_bar.update_stat(stats[StatType.CT])

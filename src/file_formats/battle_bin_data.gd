@@ -116,16 +116,16 @@ var status_idle_animations: Dictionary[int, int] = { # status_id :  animation_id
 	1 : 18, # crystal
 	15: 42, # treasure
 	2 : 52, # dead
-	30 : 4, # stop TODO facing frames (ptr_id <= 5) need to be handled differently from other animations
+	30 : 2, # stop TODO facing frames (ptr_id <= 5) need to be handled differently from other animations
 	35 : 72, # sleep
-	8 : 4, # petrify TODO facing frames (ptr_id <= 5) need to be handled differently from other animations
+	8 : 2, # petrify TODO facing frames (ptr_id <= 5) need to be handled differently from other animations
 	11 : 74, # confusion
 	7 : 0x50, # performing - TODO use ability ID (0x50 singing or 0x52 dancing)
 	4 : 0x56, # charging - TODO use ability ID (typically 0x54 to 0x56)
 	6 : 46, # defending
 	28 : 0x08, # haste - TODO useHeight1 (14 for flying sprites)
 	29 : 0x0a, # slow - TODO useHeight2 (16 for flying sprites)
-	14 : 4, # cursed TODO facing frames (ptr_id <= 5) need to be handled differently from other animations
+	14 : 2, # cursed TODO facing frames (ptr_id <= 5) need to be handled differently from other animations
 	0 : 66, # blank
 	23: 72, # critical
 }

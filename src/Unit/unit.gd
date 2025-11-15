@@ -1172,8 +1172,10 @@ func animate_return_to_idle() -> void:
 func set_base_animation_ptr_id(ptr_id: int) -> void:
 	current_animation_id_fwd = ptr_id
 	var new_ptr: int = ptr_id
-	if is_back_facing:
+	if is_back_facing and new_ptr > 5:
 		new_ptr = ptr_id + 1
+	elif is_back_facing: # handle facing frames
+		new_ptr = ptr_id + 2
 	
 	#if is_back_facing:
 		#debug_menu.anim_id_spin.value = ptr_id + 1
@@ -1244,10 +1246,15 @@ func update_animation_facing(camera_facing_vector: Vector3) -> void:
 		# Talcall: the direction the unit is facing gets updated on every parse of the routine, but unless the animation is changing, the instruction pointer byte doesn't get refreshed every vanilla animation is coded such that this swapping between front and back works flawlessly.
 		if animation_manager.is_back_facing != is_back_facing:
 			animation_manager.is_back_facing = is_back_facing
+			var back_facing_offset: int = 1
+			if debug_menu.anim_id_spin.value < 5:
+				back_facing_offset = 2 # there are 5 directions of facing animations, so diagonal front facing id=2 and diagonal back facing id=4
+				# TODO utilize the extra facing frames
+
 			if is_back_facing == true:
-				debug_menu.anim_id_spin.value += 1
+				debug_menu.anim_id_spin.value += back_facing_offset
 			else:
-				debug_menu.anim_id_spin.value -= 1
+				debug_menu.anim_id_spin.value -= back_facing_offset
 
 
 func toggle_debug_menu() -> void:

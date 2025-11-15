@@ -286,10 +286,12 @@ offset_right = 50.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="UnitDetails" type="Control" parent="CharacterBody3D"]
+[node name="UnitDetails" type="Control" parent="CharacterBody3D" node_paths=PackedStringArray("unit", "unit_char_body")]
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("7_wg4to")
+unit = NodePath("../..")
+unit_char_body = NodePath("..")
 offset = Vector2(0, 0.5)
 metadata/_custom_type_script = "uid://baavg15lka8r7"
 

@@ -62,6 +62,14 @@ var frame_bin_texture: Texture2D
 # Text
 var fft_text: FftText = FftText.new()
 
+class SpritesheetRegionData:
+	var shp_type: String
+	var region_id: int
+	var region_location: Vector2i
+	var region_size: Vector2i
+	var shp_frame_ids: PackedInt32Array
+	var animation_ids: PackedInt32Array
+	var animation_descriptions: PackedStringArray
 
 #func _init() -> void:
 	#pass
@@ -142,10 +150,12 @@ func process_rom() -> void:
 				#if ((frame_data.vram_bytes[1] & 0x02) >> 1) == 0:
 					#push_warning([ability_id, ability.name, ability.vfx_data.vfx_id, frameset_idx, frame_idx])
 	
-	#for seq: Seq in seqs:
-		#seq.set_data_from_seq_bytes(get_file_data(seq.file_name))
-		#seq.write_wiki_table()
+	# for seq: Seq in seqs:
+	# 	seq.set_data_from_seq_bytes(get_file_data(seq.file_name))
+	# 	seq.write_wiki_table()
 	
+	write_spritesheet_region_data()
+
 	# var json_file = FileAccess.open("user://overrides/action2_to_json.json", FileAccess.WRITE)
 	# json_file.store_line(fft_abilities[2].ability_action.to_json())
 	# json_file.close()
@@ -766,3 +776,101 @@ func connect_data_references() -> void:
 			item.passive_effect = passive_effects[item.passive_effect_name]
 		if actions.has(item.weapon_attack_action_name):
 			item.weapon_attack_action = actions[item.weapon_attack_action_name]
+
+
+func write_spritesheet_region_data() -> void:
+	var regions: Array[SpritesheetRegionData] = []
+	
+	var seq: Seq = seqs[8] # 0 - arute, 1 - cyoko, 4 - kanzen, 5 - mon, 8 - type1, 10 - type3
+	var shp: Shp = shps[7] # 0 - arute, 1 - cyoko, 4 - kanzen, 5 - mon, 7 - type1, 8 - type2
+
+	if not seq.is_initialized:
+		seq.set_data_from_seq_bytes(RomReader.get_file_data(seq.file_name))
+
+	if not shp.is_initialized:
+		shp.set_data_from_shp_bytes(RomReader.get_file_data(shp.file_name))
+	
+	for seq_ptr_index: int in seq.sequence_pointers.size():
+		var seq_idx: int = seq.sequence_pointers[seq_ptr_index]
+		var animation: Sequence = seq.sequences[seq_idx]
+		var seq_description: String = animation.seq_name
+		if seq_description == "":
+			seq_description = "?"
+		
+		for part: SeqPart in animation.seq_parts:
+			if part.opcode == "LoadFrameAndWait":
+				var shp_frame_id: int = part.parameters[0]
+				var frame: FrameData = shp.frames[shp_frame_id]
+				var frame_submerged: FrameData = shp.frames_submerged[shp_frame_id]
+				
+				for subframe_idx: int in frame.subframes.size():
+					var subframe: SubFrameData = frame.subframes[subframe_idx]
+					var subframe_region_size = subframe.rect_size
+					var subframe_region_location = Vector2i(subframe.load_location_x, subframe.load_location_y)
+
+					var region_id: int = regions.find_custom(func(region_data: SpritesheetRegionData): 
+						return region_data.region_size == subframe_region_size and region_data.region_location == subframe_region_location)
+					
+					var modified_description: String = seq_description.replace("\n", ", ").replace("-, ", "-<br>").replace(", -", "<br>-")
+					if modified_description.contains("-"):
+						modified_description = "<br>" + modified_description
+
+					if region_id != -1: # add data to existing region
+						var existing_region: SpritesheetRegionData = regions[region_id]
+						if not existing_region.shp_frame_ids.has(shp_frame_id):
+							existing_region.shp_frame_ids.append(shp_frame_id)
+						
+						if not existing_region.animation_ids.has(seq_ptr_index):
+							existing_region.animation_ids.append(seq_ptr_index)
+							existing_region.animation_descriptions.append(modified_description)
+					else: # add new region if an existing region does not have the same location and size
+						var new_region: SpritesheetRegionData = SpritesheetRegionData.new()
+						new_region.shp_type = shp.file_name
+						new_region.region_id = regions.size()
+						new_region.region_size = subframe_region_size
+						new_region.region_location = subframe_region_location
+						new_region.shp_frame_ids.append(shp_frame_id)
+						new_region.animation_ids.append(seq_ptr_index)
+
+						modified_description = modified_description.trim_prefix("<br>")
+						new_region.animation_descriptions.append(modified_description)
+						regions.append(new_region)
+	
+	# convert data to text file
+	var table_start: String = '{| class="wikitable mw-collapsible mw-collapsed sortable"\n|+ style="text-align:left; white-space:nowrap" | ' + shp.file_name + ' Regions\n'
+	var headers: PackedStringArray = [
+		"! SHP Type",
+		"Region ID",
+		"Region Location",
+		"Region Size",
+		"SHP Frame IDs",
+		"SEQ Animation IDs",
+		"Animation Descriptions",
+	]
+	
+	var output: String = table_start + " !! ".join(headers)
+	var output_array: PackedStringArray = []
+	output_array.append(output)
+	for region: SpritesheetRegionData in regions:
+		var row_strings: PackedStringArray = []
+		row_strings.append("| " + region.shp_type)
+		row_strings.append(str(region.region_id))
+		row_strings.append(str(region.region_location))
+		row_strings.append(str(region.region_size))
+		row_strings.append(str(region.shp_frame_ids))
+		row_strings.append(str(region.animation_ids))
+		row_strings.append(str(region.animation_descriptions).remove_chars('[]"'))
+		
+		# var description_list: String = str(region.animation_descriptions)
+		# description_list = description_list.replace("\n", "<br>")
+		# row_strings.append(description_list)
+
+		output_array.append(" || ".join(row_strings))
+	
+	var final_output: String = "\n|-\n".join(output_array)
+	final_output += "\n|}"
+	
+	var file_name: String = shp.file_name.to_snake_case().replace(".","_") + "_regions"
+	DirAccess.make_dir_recursive_absolute("user://wiki_tables")
+	var save_file := FileAccess.open("user://wiki_tables/wiki_table_" + file_name + ".txt", FileAccess.WRITE)
+	save_file.store_string(final_output)

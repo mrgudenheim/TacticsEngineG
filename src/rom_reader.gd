@@ -67,9 +67,10 @@ class SpritesheetRegionData:
 	var region_id: int
 	var region_location: Vector2i
 	var region_size: Vector2i
-	var shp_frame_ids: PackedInt32Array
-	var animation_ids: PackedInt32Array
-	var animation_descriptions: PackedStringArray
+	var shp_frame_ids: PackedInt32Array = []
+	var shp_frame_id_labels: PackedStringArray = []
+	var animation_ids: PackedInt32Array = []
+	var animation_descriptions: PackedStringArray = []
 
 #func _init() -> void:
 	#pass
@@ -154,7 +155,7 @@ func process_rom() -> void:
 	# 	seq.set_data_from_seq_bytes(get_file_data(seq.file_name))
 	# 	seq.write_wiki_table()
 	
-	write_spritesheet_region_data()
+	# write_all_spritesheet_region_data()
 
 	# var json_file = FileAccess.open("user://overrides/action2_to_json.json", FileAccess.WRITE)
 	# json_file.store_line(fft_abilities[2].ability_action.to_json())
@@ -778,11 +779,35 @@ func connect_data_references() -> void:
 			item.weapon_attack_action = actions[item.weapon_attack_action_name]
 
 
-func write_spritesheet_region_data() -> void:
+func write_all_spritesheet_region_data() -> void:
+	# SEQs: 0 - arute, 1 - cyoko, 4 - kanzen, 5 - mon, 8 - type1, 10 - type3
+	# SHPs: 0 - arute, 1 - cyoko, 4 - kanzen, 5 - mon, 7 - type1, 8 - type2
+	var seq_indicies: PackedInt32Array = [
+		0,
+		1,
+		4,
+		5,
+		8,
+		10,
+	]
+	var shp_indicies: PackedInt32Array = [
+		0,
+		1,
+		4,
+		5,
+		7,
+		8,
+	]
+
+	for idx: int in seq_indicies.size():
+		write_spritesheet_region_data(seq_indicies[idx], shp_indicies[idx])
+
+
+func write_spritesheet_region_data(seq_index: int, shp_index: int) -> void:
 	var regions: Array[SpritesheetRegionData] = []
 	
-	var seq: Seq = seqs[8] # 0 - arute, 1 - cyoko, 4 - kanzen, 5 - mon, 8 - type1, 10 - type3
-	var shp: Shp = shps[7] # 0 - arute, 1 - cyoko, 4 - kanzen, 5 - mon, 7 - type1, 8 - type2
+	var seq: Seq = seqs[seq_index] # 0 - arute, 1 - cyoko, 4 - kanzen, 5 - mon, 8 - type1, 10 - type3
+	var shp: Shp = shps[shp_index] # 0 - arute, 1 - cyoko, 4 - kanzen, 5 - mon, 7 - type1, 8 - type2
 
 	if not seq.is_initialized:
 		seq.set_data_from_seq_bytes(RomReader.get_file_data(seq.file_name))
@@ -801,7 +826,6 @@ func write_spritesheet_region_data() -> void:
 			if part.opcode == "LoadFrameAndWait":
 				var shp_frame_id: int = part.parameters[0]
 				var frame: FrameData = shp.frames[shp_frame_id]
-				var frame_submerged: FrameData = shp.frames_submerged[shp_frame_id]
 				
 				for subframe_idx: int in frame.subframes.size():
 					var subframe: SubFrameData = frame.subframes[subframe_idx]
@@ -817,8 +841,13 @@ func write_spritesheet_region_data() -> void:
 
 					if region_id != -1: # add data to existing region
 						var existing_region: SpritesheetRegionData = regions[region_id]
+						var new_shp_frame_id_label: String = str(shp_frame_id)
+
 						if not existing_region.shp_frame_ids.has(shp_frame_id):
 							existing_region.shp_frame_ids.append(shp_frame_id)
+
+						if not existing_region.shp_frame_id_labels.has(new_shp_frame_id_label):
+							existing_region.shp_frame_id_labels.append(new_shp_frame_id_label)
 						
 						if not existing_region.animation_ids.has(seq_ptr_index):
 							existing_region.animation_ids.append(seq_ptr_index)
@@ -832,9 +861,56 @@ func write_spritesheet_region_data() -> void:
 						new_region.shp_frame_ids.append(shp_frame_id)
 						new_region.animation_ids.append(seq_ptr_index)
 
+						var new_shp_frame_id_label: String = str(shp_frame_id)
+						new_region.shp_frame_id_labels.append(new_shp_frame_id_label)
+
 						modified_description = modified_description.trim_prefix("<br>")
 						new_region.animation_descriptions.append(modified_description)
 						regions.append(new_region)
+				
+				if shp.has_submerged_data:
+					var frame_submerged: FrameData = shp.frames_submerged[shp_frame_id]
+					
+					for subframe_idx: int in frame_submerged.subframes.size():
+						var subframe: SubFrameData = frame_submerged.subframes[subframe_idx]
+						var subframe_region_size = subframe.rect_size
+						var subframe_region_location = Vector2i(subframe.load_location_x, subframe.load_location_y)
+
+						var region_id: int = regions.find_custom(func(region_data: SpritesheetRegionData): 
+							return region_data.region_size == subframe_region_size and region_data.region_location == subframe_region_location)
+						
+						var modified_description: String = seq_description.replace("\n", ", ").replace("-, ", "-<br>").replace(", -", "<br>-")
+						if modified_description.contains("-"):
+							modified_description = "<br>" + modified_description
+
+						if region_id != -1: # add data to existing region
+							var existing_region: SpritesheetRegionData = regions[region_id]
+							var new_shp_frame_id_label: String = str(shp_frame_id) + "-S"
+
+							if not existing_region.shp_frame_ids.has(shp_frame_id):
+								existing_region.shp_frame_ids.append(shp_frame_id)
+							
+							if not existing_region.shp_frame_id_labels.has(new_shp_frame_id_label):
+								existing_region.shp_frame_id_labels.append(new_shp_frame_id_label)
+							
+							if not existing_region.animation_ids.has(seq_ptr_index):
+								existing_region.animation_ids.append(seq_ptr_index)
+								existing_region.animation_descriptions.append(modified_description)
+						else: # add new region if an existing region does not have the same location and size
+							var new_region: SpritesheetRegionData = SpritesheetRegionData.new()
+							new_region.shp_type = shp.file_name
+							new_region.region_id = regions.size()
+							new_region.region_size = subframe_region_size
+							new_region.region_location = subframe_region_location
+							new_region.shp_frame_ids.append(shp_frame_id)
+							new_region.animation_ids.append(seq_ptr_index)
+
+							var new_shp_frame_id_label: String = str(shp_frame_id) + "-S"
+							new_region.shp_frame_id_labels.append(new_shp_frame_id_label)
+
+							modified_description = modified_description.trim_prefix("<br>")
+							new_region.animation_descriptions.append(modified_description)
+							regions.append(new_region)
 	
 	# convert data to text file
 	var table_start: String = '{| class="wikitable mw-collapsible mw-collapsed sortable"\n|+ style="text-align:left; white-space:nowrap" | ' + shp.file_name + ' Regions\n'
@@ -857,8 +933,8 @@ func write_spritesheet_region_data() -> void:
 		row_strings.append(str(region.region_id))
 		row_strings.append(str(region.region_location))
 		row_strings.append(str(region.region_size))
-		row_strings.append(str(region.shp_frame_ids))
-		row_strings.append(str(region.animation_ids))
+		row_strings.append(str(region.shp_frame_id_labels).remove_chars('[]"'))
+		row_strings.append(str(region.animation_ids).remove_chars("[]"))
 		row_strings.append(str(region.animation_descriptions).remove_chars('[]"'))
 		
 		# var description_list: String = str(region.animation_descriptions)

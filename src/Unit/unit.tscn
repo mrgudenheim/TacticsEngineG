@@ -332,6 +332,14 @@ layout_mode = 2
 [node name="Stats" type="VBoxContainer" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer"]
 layout_mode = 2
 
+[node name="Label6" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats"]
+layout_mode = 2
+text = "HP BAR ----------------"
+
+[node name="Label7" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats"]
+layout_mode = 2
+text = "MP BAR ----------------"
+
 [node name="Label" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats"]
 layout_mode = 2
 text = "Physical Evade: 99"
@@ -362,6 +370,11 @@ layout_mode = 2
 [node name="EquipmentSlots" type="VBoxContainer" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer"]
 layout_mode = 2
 
+[node name="Title" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer/EquipmentSlots"]
+layout_mode = 2
+text = "Equipment"
+horizontal_alignment = 1
+
 [node name="Label" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer/EquipmentSlots"]
 layout_mode = 2
 text = "Slot: Item"
@@ -380,6 +393,11 @@ layout_mode = 2
 [node name="AbilituSlots" type="VBoxContainer" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer2"]
 layout_mode = 2
 
+[node name="Title" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer2/AbilituSlots"]
+layout_mode = 2
+text = "Abilities"
+horizontal_alignment = 1
+
 [node name="Label" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer2/AbilituSlots"]
 layout_mode = 2
 text = "Slot: Ability"
@@ -391,6 +409,65 @@ text = "Slot: Ability"
 [node name="Label3" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer2/AbilituSlots"]
 layout_mode = 2
 text = "Slot: Ability"
+
+[node name="PanelContainer3" type="PanelContainer" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Statuses" type="VBoxContainer" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer3"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer3/Statuses"]
+layout_mode = 2
+text = "Current Statuses"
+horizontal_alignment = 1
+
+[node name="Label" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer3/Statuses"]
+layout_mode = 2
+text = "Status1"
+
+[node name="Label2" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer3/Statuses"]
+layout_mode = 2
+text = "Status2"
+
+[node name="Label3" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer3/Statuses"]
+layout_mode = 2
+text = "Status3 (Always)"
+
+[node name="Title2" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer3/Statuses"]
+layout_mode = 2
+text = "Status Immunities"
+horizontal_alignment = 1
+
+[node name="Label4" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer3/Statuses"]
+layout_mode = 2
+text = "Status1"
+
+[node name="PanelContainer4" type="PanelContainer" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="ElementAffinities" type="VBoxContainer" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/ElementAffinities"]
+layout_mode = 2
+text = "Element Affinities"
+horizontal_alignment = 1
+
+[node name="Label" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/ElementAffinities"]
+layout_mode = 2
+text = "Weak Fire"
+
+[node name="Label2" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/ElementAffinities"]
+layout_mode = 2
+text = "Immune Earth"
+
+[node name="Label3" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/ElementAffinities"]
+layout_mode = 2
+text = "Resist Ice"
+
+[node name="Label4" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/ElementAffinities"]
+layout_mode = 2
+text = "Strengthen Holy"
 
 [node name="TileHighlights" type="Node3D" parent="."]
 

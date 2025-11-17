@@ -485,6 +485,14 @@ layout_mode = 2
 text = "Current Statuses"
 horizontal_alignment = 1
 
+[node name="Label5" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer3/Statuses"]
+layout_mode = 2
+text = "Charging: Fire1 |---   |"
+
+[node name="Label6" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer3/Statuses"]
+layout_mode = 2
+text = "Performing: Last Song |-     |"
+
 [node name="Label" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer3/Statuses"]
 layout_mode = 2
 text = "Status1"

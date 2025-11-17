@@ -360,67 +360,102 @@ text = "Jump: 99"
 layout_mode = 2
 text = "Speed: 99"
 
-[node name="GridContainer" type="GridContainer" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats"]
+[node name="Evade" type="GridContainer" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats"]
 layout_mode = 2
 columns = 5
 
-[node name="Label3" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+[node name="Label3" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/Evade"]
 layout_mode = 2
 text = "Evade"
 
-[node name="Label4" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+[node name="Label4" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/Evade"]
 layout_mode = 2
 text = "Job"
 
-[node name="Label5" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+[node name="Label5" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/Evade"]
 layout_mode = 2
 text = "Shield"
 
-[node name="Label6" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+[node name="Label6" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/Evade"]
 layout_mode = 2
 text = "Accessory"
 
-[node name="Label7" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+[node name="Label7" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/Evade"]
 layout_mode = 2
 text = "Weapon"
 
-[node name="Label" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+[node name="Label" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/Evade"]
 layout_mode = 2
 text = "Physical"
 
-[node name="Label8" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+[node name="Label8" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/Evade"]
 layout_mode = 2
 text = "99%"
 
-[node name="Label9" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+[node name="Label9" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/Evade"]
 layout_mode = 2
 text = "99%"
 
-[node name="Label10" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+[node name="Label10" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/Evade"]
 layout_mode = 2
 text = "99%"
 
-[node name="Label11" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+[node name="Label11" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/Evade"]
 layout_mode = 2
 text = "99%"
 
-[node name="Label2" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+[node name="Label2" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/Evade"]
 layout_mode = 2
 text = "Magic"
 
-[node name="Label12" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+[node name="Label12" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/Evade"]
 layout_mode = 2
 text = "99%"
 
-[node name="Label13" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+[node name="Label13" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/Evade"]
 layout_mode = 2
 text = "99%"
 
-[node name="Label14" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+[node name="Label14" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/Evade"]
 layout_mode = 2
 text = "99%"
 
-[node name="Label15" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+[node name="Label15" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/Evade"]
+layout_mode = 2
+text = "99%"
+
+[node name="TotalEvade" type="GridContainer" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats"]
+layout_mode = 2
+columns = 2
+
+[node name="Label3" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/TotalEvade"]
+layout_mode = 2
+text = "Total Evade"
+
+[node name="Label4" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/TotalEvade"]
+layout_mode = 2
+
+[node name="Label5" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/TotalEvade"]
+layout_mode = 2
+text = "Front"
+
+[node name="Label6" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/TotalEvade"]
+layout_mode = 2
+text = "99%"
+
+[node name="Label7" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/TotalEvade"]
+layout_mode = 2
+text = "Side"
+
+[node name="Label8" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/TotalEvade"]
+layout_mode = 2
+text = "99%"
+
+[node name="Label9" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/TotalEvade"]
+layout_mode = 2
+text = "Rear"
+
+[node name="Label10" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/TotalEvade"]
 layout_mode = 2
 text = "99%"
 

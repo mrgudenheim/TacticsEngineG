@@ -455,19 +455,23 @@ horizontal_alignment = 1
 
 [node name="Label" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/ElementAffinities"]
 layout_mode = 2
-text = "Weak Fire"
-
-[node name="Label2" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/ElementAffinities"]
-layout_mode = 2
-text = "Immune Earth"
+text = "Weak: Fire, Lightning"
 
 [node name="Label3" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/ElementAffinities"]
 layout_mode = 2
-text = "Resist Ice"
+text = "Resist: Ice"
+
+[node name="Label2" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/ElementAffinities"]
+layout_mode = 2
+text = "Immune: Earth"
+
+[node name="Label5" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/ElementAffinities"]
+layout_mode = 2
+text = "Absorb: Wind"
 
 [node name="Label4" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/ElementAffinities"]
 layout_mode = 2
-text = "Strengthen Holy"
+text = "Strengthen: Holy, Dark"
 
 [node name="TileHighlights" type="Node3D" parent="."]
 

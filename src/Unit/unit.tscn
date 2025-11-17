@@ -340,17 +340,13 @@ text = "HP BAR ----------------"
 layout_mode = 2
 text = "MP BAR ----------------"
 
-[node name="Label" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats"]
-layout_mode = 2
-text = "Physical Evade: 99"
-
-[node name="Label2" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats"]
-layout_mode = 2
-text = "Magic Evade: 99"
-
 [node name="Label3" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats"]
 layout_mode = 2
 text = "PA: 99"
+
+[node name="Label8" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats"]
+layout_mode = 2
+text = "MA: 99"
 
 [node name="Label4" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats"]
 layout_mode = 2
@@ -359,6 +355,74 @@ text = "Move: 99"
 [node name="Label5" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats"]
 layout_mode = 2
 text = "Jump: 99"
+
+[node name="Label9" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats"]
+layout_mode = 2
+text = "Speed: 99"
+
+[node name="GridContainer" type="GridContainer" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats"]
+layout_mode = 2
+columns = 5
+
+[node name="Label3" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+layout_mode = 2
+text = "Evade"
+
+[node name="Label4" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+layout_mode = 2
+text = "Job"
+
+[node name="Label5" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+layout_mode = 2
+text = "Shield"
+
+[node name="Label6" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+layout_mode = 2
+text = "Accessory"
+
+[node name="Label7" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+layout_mode = 2
+text = "Weapon"
+
+[node name="Label" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+layout_mode = 2
+text = "Physical"
+
+[node name="Label8" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+layout_mode = 2
+text = "99%"
+
+[node name="Label9" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+layout_mode = 2
+text = "99%"
+
+[node name="Label10" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+layout_mode = 2
+text = "99%"
+
+[node name="Label11" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+layout_mode = 2
+text = "99%"
+
+[node name="Label2" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+layout_mode = 2
+text = "Magic"
+
+[node name="Label12" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+layout_mode = 2
+text = "99%"
+
+[node name="Label13" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+layout_mode = 2
+text = "99%"
+
+[node name="Label14" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+layout_mode = 2
+text = "99%"
+
+[node name="Label15" type="Label" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Stats/GridContainer"]
+layout_mode = 2
+text = "99%"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CharacterBody3D/UnitDetails/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2

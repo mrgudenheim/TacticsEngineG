@@ -1377,6 +1377,15 @@ func get_evade(evade_source: EvadeData.EvadeSource, evade_type: EvadeData.EvadeT
 	return evade
 
 
+func get_evade_values(evade_type: EvadeData.EvadeType, evade_direction: EvadeData.Directions) -> Dictionary[EvadeData.EvadeSource, int]:
+	var evade_values: Dictionary[EvadeData.EvadeSource, int] = {}
+	for evade_source: EvadeData.EvadeSource in EvadeData.EvadeSource.values():
+		var evade_value: int = get_evade(evade_source, evade_type, evade_direction)
+		evade_values[evade_source] = evade_value
+	
+	return evade_values
+
+
 func update_passive_effects(exclude_passives: PackedStringArray = []) -> void:
 	var all_passive_effects: Array[PassiveEffect] = get_all_passive_effects(exclude_passives)
 

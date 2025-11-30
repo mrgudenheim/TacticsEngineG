@@ -311,7 +311,7 @@ func get_total_hit_chance(user: UnitData, target: UnitData, evade_direction: Eva
 		for passive_effect: PassiveEffect in target_passive_effects:
 			modified_hit_chance = passive_effect.hit_chance_modifier_targeted.apply(modified_hit_chance, target)
 
-	var evade_values: Dictionary[EvadeData.EvadeSource, int] = get_evade_values(target, evade_direction)
+	var evade_values: Dictionary[EvadeData.EvadeSource, int] = target.get_evade_values(applicable_evasion_type, evade_direction)
 	
 	var target_total_evade_factor: float = 1.0
 	var evade_factors: Dictionary[EvadeData.EvadeSource, float] = {}
@@ -381,7 +381,7 @@ func animate_evade(target_unit: UnitData, evade_direction: EvadeData.Directions,
 	
 	var evade_anim_id: int = -1
 	var sum_of_weight: int = 0
-	var evade_values: Dictionary[EvadeData.EvadeSource, int] = get_evade_values(target_unit, evade_direction)
+	var evade_values: Dictionary[EvadeData.EvadeSource, int] = target_unit.get_evade_values(applicable_evasion_type, evade_direction)
 	for evade_source_value: int in evade_values.values():
 		sum_of_weight += evade_source_value
 	

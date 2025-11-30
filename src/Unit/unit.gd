@@ -856,7 +856,6 @@ func update_permanent_statuses(all_passive_effects: Array[PassiveEffect]) -> voi
 		if immune_statuses.has(status_unique_name):
 			continue
 		
-		
 		var num_should_have: int = 0
 
 		# check passive sources: equipment, job, abilities, statuses
@@ -868,7 +867,7 @@ func update_permanent_statuses(all_passive_effects: Array[PassiveEffect]) -> voi
 		var change: int = num_should_have - num_has
 		
 		if change == 0:
-			return
+			continue
 		elif change > 0:
 			for counter: int in change:
 				var new_status: StatusEffect = RomReader.status_effects[status_unique_name].duplicate()

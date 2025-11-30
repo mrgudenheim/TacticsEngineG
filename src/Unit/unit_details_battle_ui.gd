@@ -229,7 +229,7 @@ func get_total_evade_factor(unit: UnitData, unit_passive_effects: Array[PassiveE
 		if unit_passive_effects.any(func(passive_effect): return passive_effect.include_evade_sources.has(evade_source)):
 			var evade_value: float = evade_values[evade_source]
 			for passive_effect: PassiveEffect in unit_passive_effects:
-				if passive_effect.evade_source_modifiers_user.has(evade_source):
+				if passive_effect.evade_source_modifiers_targeted.has(evade_source):
 					evade_value = passive_effect.evade_source_modifiers_targeted[evade_source].apply(evade_value)
 			
 			var evade_factor: float = max(0.0, 1 - (evade_value / 100.0))

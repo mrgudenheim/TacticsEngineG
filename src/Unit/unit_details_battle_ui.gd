@@ -20,6 +20,7 @@ extends PanelContainer
 @export var speed_label: Label
 
 @export var evade_grid: GridContainer
+
 @export var equipment_grid: GridContainer
 @export var ability_grid: GridContainer
 @export var innate_ability_grid: GridContainer
@@ -77,7 +78,62 @@ func update_ui(unit: UnitData) -> void:
 	update_stat_label(jump_label, unit, UnitData.StatType.JUMP)
 	update_stat_label(speed_label, unit, UnitData.StatType.SPEED)
 
-	# TODO update evade
+	# update evade
+	var unit_passive_effects: Array[PassiveEffect] = unit.get_all_passive_effects()
+
+	for evade_type: EvadeData.EvadeType in EvadeData.EvadeType.values():
+		# skip EvadeType.NONE
+		if evade_type == EvadeData.EvadeType.NONE:
+			continue
+		
+		# skip first row of lables (column headers)
+		var label_idx: int = evade_type * (EvadeData.Directions.keys().size() + EvadeData.EvadeSource.keys().size() + 2)
+		label_idx += 1 # skip first column of labels
+		for evade_direction: EvadeData.Directions in EvadeData.Directions.values():
+			var evade_factor: int = get_total_evade_factor(unit, unit_passive_effects, evade_type, evade_direction)
+			var evade_value_label: Label = evade_grid.get_child(label_idx)
+			evade_value_label.text = str(evade_factor) + "%"
+			
+			label_idx += 1
+
+		label_idx += 1 # skip empty spacer column
+		var source_evade_values: Dictionary[EvadeData.EvadeSource, int] = unit.get_evade_values(evade_type, EvadeData.Directions.FRONT)
+		for evade_source: EvadeData.EvadeSource in source_evade_values.keys():
+			var evade_value_label: Label = evade_grid.get_child(label_idx)
+			evade_value_label.text = str(source_evade_values[evade_source]) + "%"
+			
+			label_idx += 1
+
+	
+	# var magic_evade_values: Dictionary[EvadeData.EvadeSource, int] = unit.get_evade_values(EvadeData.EvadeType.MAGICAL, EvadeData.Directions.FRONT)
+
+	# var job_evade_phys: int = unit.get_evade(EvadeData.EvadeSource.JOB, EvadeData.EvadeType.PHYSICAL, EvadeData.Directions.FRONT)
+	# var shield_evade_phys: int = unit.get_evade(EvadeData.EvadeSource.SHIELD, EvadeData.EvadeType.PHYSICAL, EvadeData.Directions.FRONT)
+	# var accessory_evade_phys: int = unit.get_evade(EvadeData.EvadeSource.ACCESSORY, EvadeData.EvadeType.PHYSICAL, EvadeData.Directions.FRONT)
+	# var weapon_evade_phys: int = unit.get_evade(EvadeData.EvadeSource.WEAPON, EvadeData.EvadeType.PHYSICAL, EvadeData.Directions.FRONT)
+
+	# var job_evade_magic: int = unit.get_evade(EvadeData.EvadeSource.JOB, EvadeData.EvadeType.MAGICAL, EvadeData.Directions.FRONT)
+	# var shield_evade_magic: int = unit.get_evade(EvadeData.EvadeSource.SHIELD, EvadeData.EvadeType.MAGICAL, EvadeData.Directions.FRONT)
+	# var accessory_evade_magic: int = unit.get_evade(EvadeData.EvadeSource.ACCESSORY, EvadeData.EvadeType.MAGICAL, EvadeData.Directions.FRONT)
+	# var weapon_evade_magic: int = unit.get_evade(EvadeData.EvadeSource.WEAPON, EvadeData.EvadeType.MAGICAL, EvadeData.Directions.FRONT)
+
+	
+	# var target_total_evade_factor: float = 1.0
+	# var evade_factors: Dictionary[EvadeData.EvadeSource, float] = {}
+
+	# for evade_source: EvadeData.EvadeSource in physical_evade_values.keys():
+	# 	if unit_passive_effects.any(func(passive_effect): return passive_effect.include_evade_sources.has(evade_source)):
+	# 		var evade_value: float = physical_evade_values[evade_source]
+	# 		for passive_effect: PassiveEffect in unit_passive_effects:
+	# 			if passive_effect.evade_source_modifiers_user.has(evade_source):
+	# 				evade_value = passive_effect.evade_source_modifiers_targeted[evade_source].apply(evade_value)
+			
+	# 		var evade_factor: float = max(0.0, 1 - (evade_value / 100.0))
+
+	# 		evade_factors[evade_source] = evade_factor
+	# 		target_total_evade_factor = target_total_evade_factor * evade_factor
+
+	# target_total_evade_factor = max(0, target_total_evade_factor) # prevent negative evasion
 
 	# update equipment
 	var equipment_labels: Array[Node] = equipment_grid.get_children()
@@ -153,10 +209,33 @@ func update_element_list(affinity_list_label: Label, label_start: String, affini
 	affinity_list_label.text += ", ".join(elements_list)
 
 
-
 func update_stat_label(stat_label: Label, unit: UnitData, stat_type: UnitData.StatType) -> void:
 	var stat_name: String = UnitData.StatType.find_key(stat_type).to_pascal_case()
 	var stat: ClampedValue = unit.stats[stat_type]
 	var stat_value: int = stat.get_modified_value()
 	# stat_label.text = stat_name + ": " + str(roundi(stat_value)) + "/" + str(roundi(stat.max_value))
 	stat_label.text = stat_name + ": " + str(roundi(stat_value)) # + "/" + str(roundi(stat.max_value))
+
+
+func get_total_evade_factor(unit: UnitData, unit_passive_effects: Array[PassiveEffect], evade_type: EvadeData.EvadeType, evade_direction: EvadeData.Directions) -> int:
+	var evade_values: Dictionary[EvadeData.EvadeSource, int] = unit.get_evade_values(evade_type, evade_direction)
+
+	var total_evade_factor: float = 1.0
+	var evade_factors: Dictionary[EvadeData.EvadeSource, float] = {}
+
+	for evade_source: EvadeData.EvadeSource in evade_values.keys():
+		if unit_passive_effects.any(func(passive_effect): return passive_effect.include_evade_sources.has(evade_source)):
+			var evade_value: float = evade_values[evade_source]
+			for passive_effect: PassiveEffect in unit_passive_effects:
+				if passive_effect.evade_source_modifiers_user.has(evade_source):
+					evade_value = passive_effect.evade_source_modifiers_targeted[evade_source].apply(evade_value)
+			
+			var evade_factor: float = max(0.0, 1 - (evade_value / 100.0))
+
+			evade_factors[evade_source] = evade_factor
+			total_evade_factor = total_evade_factor * evade_factor
+
+	total_evade_factor = max(0, total_evade_factor) # prevent negative evasion
+	var total_evade_value: int = roundi((1 - total_evade_factor) * 100)
+
+	return total_evade_value

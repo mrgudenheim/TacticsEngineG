@@ -861,22 +861,27 @@ horizontal_alignment = 1
 [node name="Weak" type="Label" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/MarginContainer/ElementAffinities"]
 layout_mode = 2
 text = "Weak: Fire, Lightning"
+autowrap_mode = 3
 
 [node name="Resist" type="Label" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/MarginContainer/ElementAffinities"]
 layout_mode = 2
 text = "Resist: Ice"
+autowrap_mode = 3
 
 [node name="Immune" type="Label" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/MarginContainer/ElementAffinities"]
 layout_mode = 2
 text = "Immune: Earth"
+autowrap_mode = 3
 
 [node name="Absorb" type="Label" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/MarginContainer/ElementAffinities"]
 layout_mode = 2
 text = "Absorb: Wind"
+autowrap_mode = 3
 
 [node name="Strengthen" type="Label" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/MarginContainer/ElementAffinities"]
 layout_mode = 2
 text = "Strengthen: Holy, Dark"
+autowrap_mode = 3
 
 [node name="TileHighlights" type="Node3D" parent="."]
 

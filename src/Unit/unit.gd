@@ -565,8 +565,6 @@ func update_stat_modifiers(all_passive_effects: Array[PassiveEffect]) -> void:
 	for passive_effect: PassiveEffect in all_passive_effects:
 		for stat_type: StatType in passive_effect.stat_modifiers.keys():
 			stats[stat_type].add_modifier(passive_effect.stat_modifiers[stat_type])
-	
-	# TODO implement updating passive modifiers: abilities, equipment, statuses, job
 
 
 func get_item_idx_for_slot(slot_type: ItemData.SlotType, item_level: int, random: bool = false) -> int:
@@ -832,7 +830,8 @@ func remove_status_id(status_removed_unique_name: String) -> void:
 	var statuses_to_remove: Array[StatusEffect] = []
 	statuses_to_remove.append_array(current_statuses.filter(func(status: StatusEffect): return status.unique_name == status_removed_unique_name and status.duration_type != StatusEffect.DurationType.PERMANENT))
 	for status: StatusEffect in statuses_to_remove:
-		remove_status(status)
+		if current_statuses.any(func(current_status: StatusEffect): return current_status.unique_name == status.unique_name):
+			remove_status(status)
 
 
 func remove_status(status_removed: StatusEffect, remove_permanent: bool = false) -> void:

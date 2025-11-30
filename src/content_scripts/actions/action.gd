@@ -324,7 +324,7 @@ func get_total_hit_chance(user: UnitData, target: UnitData, evade_direction: Eva
 						evade_value = passive_effect.evade_source_modifiers_user[evade_source].apply(evade_value)
 				
 				for passive_effect: PassiveEffect in target_passive_effects:
-					if passive_effect.evade_source_modifiers_user.has(evade_source):
+					if passive_effect.evade_source_modifiers_targeted.has(evade_source):
 						evade_value = passive_effect.evade_source_modifiers_targeted[evade_source].apply(evade_value)
 				
 				var evade_factor: float = max(0.0, 1 - (evade_value / 100.0))

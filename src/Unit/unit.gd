@@ -1647,5 +1647,3 @@ func _on_character_body_3d_input_event(_camera: Node, event: InputEvent, _event_
 	# if Input.is_action_just_pressed("secondary_action") and UnitControllerRT.unit.char_body.is_on_floor():
 	# 	UnitControllerRT.unit.use_ability(char_body.position)
 	# 	process_targeted()
-
-

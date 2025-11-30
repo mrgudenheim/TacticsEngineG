@@ -22,6 +22,7 @@ extends PanelContainer
 @export var evade_grid: GridContainer
 @export var equipment_grid: GridContainer
 @export var ability_grid: GridContainer
+@export var innate_ability_grid: GridContainer
 
 @export var current_status_list: VBoxContainer
 @export var immune_status_list: VBoxContainer
@@ -105,6 +106,16 @@ func update_ui(unit: UnitData) -> void:
 		var new_ability_label: Label = Label.new()
 		new_ability_label.text = ability_slot.ability.display_name
 		ability_grid.add_child(new_ability_label)
+
+	# update innate abilities
+	var innate_ability_labels: Array[Node] = innate_ability_grid.get_children()
+	for child_idx: int in range(0, innate_ability_labels.size()):
+		innate_ability_labels[child_idx].queue_free()
+
+	for ability: Ability in unit.job_data.innate_abilities:
+		var new_ability_label: Label = Label.new()
+		new_ability_label.text = ability.display_name
+		innate_ability_grid.add_child(new_ability_label)
 
 	# update statuses
 	var current_status_labels: Array[Node] = current_status_list.get_children()

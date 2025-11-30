@@ -731,12 +731,13 @@ func connect_data_references() -> void:
 	for job_data: JobData in jobs_data.values():
 		for passive_effect_name_idx: int in job_data.passive_effect_names.size():
 			var passive_effect_name: String = job_data.passive_effect_names[passive_effect_name_idx]
-			if passive_effects.has(passive_effect_name):
-				job_data.passive_effects.append(passive_effects[passive_effect_name])
-			elif passive_effect_name == "" and passive_effects.has(job_data.unique_name):
+			if passive_effect_name == "" and passive_effects.has(job_data.unique_name):
 				passive_effect_name = job_data.unique_name
 				job_data.passive_effect_names[passive_effect_name_idx] = passive_effect_name
 				job_data.passive_effects.append(passive_effects[passive_effect_name])
+			elif passive_effects.has(passive_effect_name):
+				job_data.passive_effects.append(passive_effects[passive_effect_name])
+			
 		
 		for innate_ability_id: int in job_data.innate_abilities_ids:
 			# var ability_uname: String = fft_abilities[innate_ability_id].display_name.to_snake_case()
@@ -749,11 +750,12 @@ func connect_data_references() -> void:
 				job_data.innate_abilities.append(abilities[ability_name])
 
 	for ability: Ability in abilities.values():
-		if passive_effects.has(ability.passive_effect_name):
-			ability.passive_effect = passive_effects[ability.passive_effect_name]
-		elif ability.passive_effect_name == "" and passive_effects.has(ability.unique_name):
+		if ability.passive_effect_name == "" and passive_effects.has(ability.unique_name):
 			ability.passive_effect_name = ability.unique_name
 			ability.passive_effect = passive_effects[ability.passive_effect_name]
+		elif passive_effects.has(ability.passive_effect_name):
+			ability.passive_effect = passive_effects[ability.passive_effect_name]
+		
 		
 		for triggered_action_name: String in ability.triggered_actions_names:
 			if triggered_actions.has(triggered_action_name):

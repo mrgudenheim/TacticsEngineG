@@ -357,8 +357,6 @@ func _ready() -> void:
 	ct_bar.update_stat(stats[StatType.CT])
 	ct_bar.fill_color = Color.WEB_GREEN
 	ct_bar.show_value = true
-
-	# unit_battle_details_ui.setup(self)
 	
 	cycle_status_icons()
 	

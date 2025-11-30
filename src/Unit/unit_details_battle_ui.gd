@@ -181,6 +181,8 @@ func update_ui(unit: UnitData) -> void:
 	for status: StatusEffect in unit.current_statuses:
 		var new_status_label: Label = Label.new()
 		new_status_label.text = status.status_effect_name
+		if status.duration_type == StatusEffect.DurationType.PERMANENT:
+			new_status_label.text += " (Permanent)"
 		current_status_list.add_child(new_status_label)
 	
 	# update immune statuses

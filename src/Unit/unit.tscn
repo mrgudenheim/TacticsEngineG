@@ -308,6 +308,7 @@ metadata/_custom_type_script = "uid://baavg15lka8r7"
 
 [node name="UnitDetails" type="PanelContainer" parent="CharacterBody3D/UnitDetailsPosition" node_paths=PackedStringArray("portrait_rect", "team_label", "unit_name_label", "job_label", "level_label", "hp_bar", "mp_bar", "ct_bar", "pa_label", "ma_label", "brave_label", "faith_label", "move_label", "jump_label", "speed_label", "evade_grid", "equipment_grid", "ability_grid", "innate_ability_grid", "current_status_list", "immune_status_list", "weak_elements_label", "resist_elements_label", "immune_elements_label", "absorb_elements_label", "strengthen_elements_label")]
 visible = false
+z_index = 1
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
@@ -745,6 +746,7 @@ text = "Ability"
 
 [node name="PanelContainer2" type="PanelContainer" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
+size_flags_vertical = 3
 
 [node name="MarginContainer" type="MarginContainer" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/PanelContainer2"]
 layout_mode = 2
@@ -759,7 +761,6 @@ horizontal_alignment = 1
 
 [node name="InnateAbilityGrid" type="GridContainer" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/PanelContainer2/MarginContainer/InnateAbilities"]
 layout_mode = 2
-size_flags_vertical = 3
 
 [node name="Ability" type="Label" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/PanelContainer2/MarginContainer/InnateAbilities/InnateAbilityGrid"]
 layout_mode = 2

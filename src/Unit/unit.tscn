@@ -52,7 +52,7 @@ font_size = 18
 outline_size = 6
 outline_color = Color(0, 0, 0, 1)
 
-[node name="Unit" type="Node3D" node_paths=PackedStringArray("char_body", "animation_manager", "popup_texts", "stat_bars_position", "stat_bars_container", "icon", "icon2", "debug_menu", "tile_highlights")]
+[node name="Unit" type="Node3D" node_paths=PackedStringArray("char_body", "animation_manager", "popup_texts", "stat_bars_position", "stat_bars_container", "unit_battle_details_ui", "icon", "icon2", "debug_menu", "tile_highlights")]
 script = ExtResource("1_lcmw7")
 char_body = NodePath("CharacterBody3D")
 animation_manager = NodePath("CharacterBody3D/UnitAnimationManager")
@@ -60,6 +60,7 @@ popup_texts = NodePath("CharacterBody3D/Control/ActionPopups")
 stat_bars_position = NodePath("CharacterBody3D/StatBars")
 stat_bars_container = NodePath("CharacterBody3D/StatBars/VBoxContainer")
 stat_bar_tscn = ExtResource("11_oxa5o")
+unit_battle_details_ui = NodePath("CharacterBody3D/UnitDetailsPosition/UnitDetails")
 icon = NodePath("CharacterBody3D/Control2/StatusBubble")
 icon2 = NodePath("CharacterBody3D/StatusIcon")
 debug_menu = NodePath("CharacterBody3D/UnitDebugMenu")
@@ -296,6 +297,7 @@ grow_horizontal = 2
 grow_vertical = 0
 
 [node name="UnitDetailsPosition" type="Control" parent="CharacterBody3D" node_paths=PackedStringArray("unit", "unit_char_body")]
+visible = false
 layout_mode = 3
 anchors_preset = 0
 theme = ExtResource("12_gngdm")
@@ -305,7 +307,7 @@ unit_char_body = NodePath("..")
 offset = Vector2(0.75, 0.5)
 metadata/_custom_type_script = "uid://baavg15lka8r7"
 
-[node name="UnitDetails" type="PanelContainer" parent="CharacterBody3D/UnitDetailsPosition" node_paths=PackedStringArray("portrait_rect", "team_label", "unit_name_label", "level_label", "hp_bar", "mp_bar", "ct_bar", "pa_label", "ma_label", "brave_label", "faith_label", "move_label", "jump_label", "speed_label", "evade_grid", "equipment_grid", "ability_grid", "current_status_list", "immune_status_list", "element_affinity_list")]
+[node name="UnitDetails" type="PanelContainer" parent="CharacterBody3D/UnitDetailsPosition" node_paths=PackedStringArray("portrait_rect", "team_label", "unit_name_label", "job_label", "level_label", "hp_bar", "mp_bar", "ct_bar", "pa_label", "ma_label", "brave_label", "faith_label", "move_label", "jump_label", "speed_label", "evade_grid", "equipment_grid", "ability_grid", "current_status_list", "immune_status_list", "weak_elements_label", "resist_elements_label", "immune_elements_label", "absorb_elements_label", "strengthen_elements_label")]
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5
@@ -318,6 +320,7 @@ script = ExtResource("13_v0g1v")
 portrait_rect = NodePath("MarginContainer/VBoxContainer/HBoxContainer2/Portrait")
 team_label = NodePath("MarginContainer/VBoxContainer/HBoxContainer2/Portrait/Team")
 unit_name_label = NodePath("MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/UnitName")
+job_label = NodePath("MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/Job")
 level_label = NodePath("MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/Level")
 hp_bar = NodePath("MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/PanelContainer2/MarginContainer/GridContainer2/StatBar")
 mp_bar = NodePath("MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/PanelContainer2/MarginContainer/GridContainer2/StatBar2")
@@ -334,7 +337,11 @@ equipment_grid = NodePath("MarginContainer/VBoxContainer/HBoxContainer/PanelCont
 ability_grid = NodePath("MarginContainer/VBoxContainer/HBoxContainer/PanelContainer2/MarginContainer/AbilitySlots/AbilityGrid")
 current_status_list = NodePath("MarginContainer/VBoxContainer/HBoxContainer/Statuses/PanelContainer/MarginContainer/CurrentStatuses")
 immune_status_list = NodePath("MarginContainer/VBoxContainer/HBoxContainer/Statuses/PanelContainer2/MarginContainer/StatusImmunities")
-element_affinity_list = NodePath("MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/MarginContainer/ElementAffinities")
+weak_elements_label = NodePath("MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/MarginContainer/ElementAffinities/Weak")
+resist_elements_label = NodePath("MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/MarginContainer/ElementAffinities/Resist")
+immune_elements_label = NodePath("MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/MarginContainer/ElementAffinities/Immune")
+absorb_elements_label = NodePath("MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/MarginContainer/ElementAffinities/Absorb")
+strengthen_elements_label = NodePath("MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/MarginContainer/ElementAffinities/Strengthen")
 
 [node name="MarginContainer" type="MarginContainer" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails"]
 layout_mode = 2
@@ -373,6 +380,13 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 text = "UnitName"
+horizontal_alignment = 1
+
+[node name="Job" type="Label" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.25
+text = "Job"
 horizontal_alignment = 1
 
 [node name="Level" type="Label" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
@@ -465,6 +479,7 @@ horizontal_alignment = 1
 [node name="StatBar3" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/PanelContainer2/MarginContainer/GridContainer2" instance=ExtResource("11_oxa5o")]
 custom_minimum_size = Vector2(175, 15)
 layout_mode = 2
+visual_max = 100.0
 show_name = true
 show_value = true
 
@@ -770,7 +785,7 @@ layout_mode = 2
 [node name="StatusImmunities" type="VBoxContainer" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/Statuses/PanelContainer2/MarginContainer"]
 layout_mode = 2
 
-[node name="Title2" type="Label" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/Statuses/PanelContainer2/MarginContainer/StatusImmunities"]
+[node name="Title" type="Label" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/Statuses/PanelContainer2/MarginContainer/StatusImmunities"]
 layout_mode = 2
 text = "Status Immunities"
 horizontal_alignment = 1
@@ -800,23 +815,23 @@ layout_mode = 2
 text = "Element Affinities"
 horizontal_alignment = 1
 
-[node name="Label" type="Label" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/MarginContainer/ElementAffinities"]
+[node name="Weak" type="Label" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/MarginContainer/ElementAffinities"]
 layout_mode = 2
 text = "Weak: Fire, Lightning"
 
-[node name="Label3" type="Label" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/MarginContainer/ElementAffinities"]
+[node name="Resist" type="Label" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/MarginContainer/ElementAffinities"]
 layout_mode = 2
 text = "Resist: Ice"
 
-[node name="Label2" type="Label" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/MarginContainer/ElementAffinities"]
+[node name="Immune" type="Label" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/MarginContainer/ElementAffinities"]
 layout_mode = 2
 text = "Immune: Earth"
 
-[node name="Label5" type="Label" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/MarginContainer/ElementAffinities"]
+[node name="Absorb" type="Label" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/MarginContainer/ElementAffinities"]
 layout_mode = 2
 text = "Absorb: Wind"
 
-[node name="Label4" type="Label" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/MarginContainer/ElementAffinities"]
+[node name="Strengthen" type="Label" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4/MarginContainer/ElementAffinities"]
 layout_mode = 2
 text = "Strengthen: Holy, Dark"
 

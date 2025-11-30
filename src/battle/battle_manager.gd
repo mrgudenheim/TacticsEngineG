@@ -435,6 +435,8 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData
 	
 	new_unit.is_ai_controlled = true
 	new_unit.ai_controller.strategy = UnitAi.Strategy.BEST
+
+	new_unit.unit_battle_details_ui.setup(new_unit)
 	
 	return new_unit
 

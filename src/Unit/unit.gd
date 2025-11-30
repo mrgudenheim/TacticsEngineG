@@ -31,6 +31,7 @@ var ai_controller: UnitAi = UnitAi.new()
 @export var stat_bars_position: Control
 @export var stat_bars_container: Container
 @export var stat_bar_tscn: PackedScene
+@export var unit_battle_details_ui: UnitDetailsBattleUi
 @export var icon: UnitIcon
 @export var icon2: Sprite3D
 @export var icon_cycle_time: float = 1.25
@@ -344,7 +345,8 @@ func _ready() -> void:
 	stats[StatType.MP_MAX].changed.connect(stats[StatType.MP].update_max_from_clamped_value)
 	stats[StatType.HP].changed.connect(hp_changed)
 
-	add_stat_bar(StatType.HP).show_value = true
+	var hp_bar: StatBar = add_stat_bar(StatType.HP)
+	hp_bar.show_value = true
 	
 	var mp_bar: StatBar = add_stat_bar(StatType.MP)
 	mp_bar.fill_color = Color.INDIAN_RED
@@ -355,6 +357,8 @@ func _ready() -> void:
 	ct_bar.update_stat(stats[StatType.CT])
 	ct_bar.fill_color = Color.WEB_GREEN
 	ct_bar.show_value = true
+
+	# unit_battle_details_ui.setup(self)
 	
 	cycle_status_icons()
 	

@@ -1639,10 +1639,13 @@ func update_map_paths(map_tiles: Dictionary[Vector2i, Array], units: Array[UnitD
 
 func _on_character_body_3d_input_event(_camera: Node, event: InputEvent, _event_position: Vector3, _normal: Vector3, _shape_idx: int) -> void:
 	unit_input_event.emit(self, event)
+
+	# show Unit preview ui - hp, mp, evade, equipment, statuses, status immunities, element affinity, etc. portrait/mini sprite?
+	if Input.is_action_just_pressed("secondary_action"):
+		unit_battle_details_ui.visible = !unit_battle_details_ui.visible
 	
-	if Input.is_action_just_pressed("secondary_action") and UnitControllerRT.unit.char_body.is_on_floor():
-		UnitControllerRT.unit.use_ability(char_body.position)
-		process_targeted()
+	# if Input.is_action_just_pressed("secondary_action") and UnitControllerRT.unit.char_body.is_on_floor():
+	# 	UnitControllerRT.unit.use_ability(char_body.position)
+	# 	process_targeted()
 
 
-# TODO Unit preview ui - hp, mp, evade, hand equipment, statuses, status immunities, elemental scalaing, etc. portrait/mini sprite?

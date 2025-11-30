@@ -297,7 +297,6 @@ grow_horizontal = 2
 grow_vertical = 0
 
 [node name="UnitDetailsPosition" type="Control" parent="CharacterBody3D" node_paths=PackedStringArray("unit", "unit_char_body")]
-visible = false
 layout_mode = 3
 anchors_preset = 0
 theme = ExtResource("12_gngdm")
@@ -308,6 +307,7 @@ offset = Vector2(0.75, 0.5)
 metadata/_custom_type_script = "uid://baavg15lka8r7"
 
 [node name="UnitDetails" type="PanelContainer" parent="CharacterBody3D/UnitDetailsPosition" node_paths=PackedStringArray("portrait_rect", "team_label", "unit_name_label", "job_label", "level_label", "hp_bar", "mp_bar", "ct_bar", "pa_label", "ma_label", "brave_label", "faith_label", "move_label", "jump_label", "speed_label", "evade_grid", "equipment_grid", "ability_grid", "current_status_list", "immune_status_list", "weak_elements_label", "resist_elements_label", "immune_elements_label", "absorb_elements_label", "strengthen_elements_label")]
+visible = false
 layout_mode = 1
 anchors_preset = 4
 anchor_top = 0.5

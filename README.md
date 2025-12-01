@@ -6,7 +6,7 @@ This engine is intended to create a game similar to Final Fantasy Tactics (FFT),
 
 Controls:
 
-Selection: Mouse
+Selection: Left Mouse
 
 WASD: Move
 
@@ -17,6 +17,8 @@ Space: Jump
 Scroll Wheel: Zoom in/out
 
 Escape: Open/Close debug menus
+
+Right click on unit to toggle showing more details about them
 
 
 # Features

@@ -91,9 +91,10 @@ func set_min_value(new_min_value: int) -> int:
 	return delta_current
 
 
-func add_modifier(new_modifier: Modifier) -> void:
+func add_modifier(new_modifier: Modifier, emit_changed: bool = true) -> void:
 	modifiers.append(new_modifier)
-	changed.emit(self)
+	if emit_changed:
+		changed.emit(self)
 
 
 func remove_modifier(modifier: Modifier) -> void:

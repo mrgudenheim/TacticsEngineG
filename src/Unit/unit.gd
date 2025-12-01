@@ -560,11 +560,13 @@ func update_stat_modifiers(all_passive_effects: Array[PassiveEffect]) -> void:
 	for stat_type: StatType in StatType.values():
 		if not stats[stat_type].modifiers.is_empty():
 			stats[stat_type].modifiers.clear()
-			stats[stat_type].changed.emit(stats[stat_type])
 
 	for passive_effect: PassiveEffect in all_passive_effects:
 		for stat_type: StatType in passive_effect.stat_modifiers.keys():
-			stats[stat_type].add_modifier(passive_effect.stat_modifiers[stat_type])
+			stats[stat_type].add_modifier(passive_effect.stat_modifiers[stat_type], false)
+	
+	for stat_type: StatType in StatType.values():
+		stats[stat_type].changed.emit(stats[stat_type])
 
 
 func get_item_idx_for_slot(slot_type: ItemData.SlotType, item_level: int, random: bool = false) -> int:
@@ -784,11 +786,12 @@ func end_turn():
 
 
 func hp_changed(clamped_value: ClampedValue) -> void:
-	if stats[StatType.HP].current_value == 0:
+	if clamped_value.current_value == 0:
 		await add_status(RomReader.status_effects["dead"].duplicate()) # add dead
-	elif stats[StatType.HP].current_value < stats[StatType.HP].max_value / 5: # critical
-		await add_status(RomReader.status_effects["critical"].duplicate()) # add critical
-	elif stats[StatType.HP].current_value >= stats[StatType.HP].max_value / 5: # critical
+	elif clamped_value.current_value < clamped_value.max_value / 5: # critical
+		if not current_status_ids.has("critical"):
+			await add_status(RomReader.status_effects["critical"].duplicate()) # add critical
+	elif clamped_value.current_value >= clamped_value.max_value / 5: # not critical
 		remove_status_id("critical") # remove critical
 
 
@@ -830,8 +833,7 @@ func remove_status_id(status_removed_unique_name: String) -> void:
 	var statuses_to_remove: Array[StatusEffect] = []
 	statuses_to_remove.append_array(current_statuses.filter(func(status: StatusEffect): return status.unique_name == status_removed_unique_name and status.duration_type != StatusEffect.DurationType.PERMANENT))
 	for status: StatusEffect in statuses_to_remove:
-		if current_statuses.any(func(current_status: StatusEffect): return current_status.unique_name == status.unique_name):
-			remove_status(status)
+		remove_status(status)
 
 
 func remove_status(status_removed: StatusEffect, remove_permanent: bool = false) -> void:

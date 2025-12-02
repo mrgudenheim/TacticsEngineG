@@ -787,7 +787,7 @@ func end_turn():
 
 func hp_changed(clamped_value: ClampedValue) -> void:
 	if clamped_value.current_value == 0:
-		await add_status(RomReader.status_effects["dead"].duplicate()) # add dead
+		await add_status(RomReader.status_effects["dead"].duplicate(), true) # add dead
 	elif clamped_value.current_value < clamped_value.max_value / 5: # critical
 		if not current_status_ids.has("critical"):
 			await add_status(RomReader.status_effects["critical"].duplicate()) # add critical
@@ -795,8 +795,8 @@ func hp_changed(clamped_value: ClampedValue) -> void:
 		remove_status_id("critical") # remove critical
 
 
-func add_status(new_status: StatusEffect) -> void:
-	if immune_statuses.has(new_status.unique_name): # prevent application based on immune statuses
+func add_status(new_status: StatusEffect, ignore_immunity: bool = false) -> void:
+	if not ignore_immunity and immune_statuses.has(new_status.unique_name): # prevent application based on immune statuses
 		return
 	
 	for status_prevents_id: String in new_status.status_cant_stack: # prevent application based on flags

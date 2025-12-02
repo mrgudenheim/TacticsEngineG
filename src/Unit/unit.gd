@@ -785,6 +785,7 @@ func end_turn():
 		turn_ended.emit()
 
 
+# TODO should these be triggered actions on the statuses?
 func hp_changed(clamped_value: ClampedValue) -> void:
 	if clamped_value.current_value == 0:
 		await add_status(RomReader.status_effects["dead"].duplicate(), true) # add dead
@@ -886,9 +887,9 @@ func update_immune_statuses(all_passive_effects: Array[PassiveEffect]) -> void:
 	for passive_effect: PassiveEffect in all_passive_effects:
 		immune_statuses.append_array(passive_effect.status_immune)
 	
-	for status: StatusEffect in current_statuses:
-		if immune_statuses.has(status.unique_name):
-			remove_status(status, true)
+	#for status: StatusEffect in current_statuses:
+		#if immune_statuses.has(status.unique_name):
+			#remove_status(status, true)
 
 
 func update_start_statuses(all_passive_effects: Array[PassiveEffect]) -> void:

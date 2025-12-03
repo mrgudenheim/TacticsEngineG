@@ -53,6 +53,7 @@ var is_defeated: bool:
 var character_id: int = 0
 var unit_index_formation: int = 0
 var stat_basis: StatBasis = StatBasis.MALE
+var gender: Gender = Gender.MALE
 var job_id: int = 0
 var job_data: JobData
 var sprite_palette_id: int = 0
@@ -125,6 +126,14 @@ enum StatBasis {
 	OTHER,
 	MONSTER,
 }
+
+enum Gender {
+	MALE,
+	FEMALE,
+	OTHER,
+	MONSTER,
+}
+
 
 enum StatType {
 	HP,

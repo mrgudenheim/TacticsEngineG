@@ -905,6 +905,8 @@ func update_status_visuals() -> void:
 	var other_type_priority: int = 0
 	var spritesheet_priority: int = 0
 
+	var anim_status: StatusEffect
+	var current_anim: int = current_animation_id_fwd
 	var other_type_status: StatusEffect
 	var spritesheet_status: StatusEffect
 	if current_statuses.is_empty():
@@ -922,11 +924,13 @@ func update_status_visuals() -> void:
 		for status: StatusEffect in current_statuses:
 			if status.order >= anim_priority and status.idle_animation_id != -1:
 				anim_priority = status.order
-				if current_animation_id_fwd == current_idle_animation_id:
-					current_idle_animation_id = status.idle_animation_id
-					set_base_animation_ptr_id(status.idle_animation_id)
-				else:
-					current_idle_animation_id = status.idle_animation_id
+				anim_status = status
+				
+				# if current_animation_id_fwd == current_idle_animation_id:
+				# 	current_idle_animation_id = status.idle_animation_id
+				# 	set_base_animation_ptr_id(status.idle_animation_id)
+				# else:
+				# 	current_idle_animation_id = status.idle_animation_id
 			
 			if status.order >= shading_priority and status.modulation_color != Color.BLACK:
 				shading_priority = status.order
@@ -940,13 +944,6 @@ func update_status_visuals() -> void:
 				spritesheet_priority = status.order
 				spritesheet_status = status
 		
-		if anim_priority == 0: # no statuses set the idle animation (may happen when status is removed)
-			if current_animation_id_fwd == current_idle_animation_id:
-				current_idle_animation_id = idle_walk_animation_id
-				set_base_animation_ptr_id(current_idle_animation_id)
-			else:
-				current_idle_animation_id = idle_walk_animation_id
-		
 		if shading_priority == 0:
 			animation_manager.unit_sprites_manager.sprite_primary.modulate = Color.WHITE
 		
@@ -955,16 +952,28 @@ func update_status_visuals() -> void:
 		else:
 			animation_manager.other_type_index = other_type_status.other_type_index
 		
+		set_base_animation_ptr_id(0) # prevent out of bounds error in case SEQ is also changing
 		if spritesheet_priority == 0:
 			set_sprite_by_job_id(job_id)
 		else:
 			set_sprite_by_file_name(spritesheet_status.spritesheet_file_name)
+		
+		if anim_priority == 0: # if no statuses set the idle animation (may happen when status is removed)
+			if current_anim == current_idle_animation_id:
+				current_idle_animation_id = idle_walk_animation_id
+				set_base_animation_ptr_id(current_idle_animation_id)
+			else:
+				current_idle_animation_id = idle_walk_animation_id
+		else:
+			if current_anim == current_idle_animation_id:
+				current_idle_animation_id = anim_status.idle_animation_id
+				set_base_animation_ptr_id(anim_status.idle_animation_id)
+			else:
+				current_idle_animation_id = anim_status.idle_animation_id
 
 		# palette update must come after spritesheet change to make sure palettes are taken from correct spritesheet
 		if other_type_priority != 0:
 			set_sprite_palette_override(sprite_palette_id + other_type_status.palette_idx_offset)
-		
-		
 
 
 func use_attack() -> void:
@@ -1177,8 +1186,10 @@ func set_base_animation_ptr_id(ptr_id: int) -> void:
 	var new_ptr: int = ptr_id
 	if is_back_facing and new_ptr > 5:
 		new_ptr = ptr_id + 1
-	elif is_back_facing: # handle facing frames
+	elif is_back_facing and new_ptr > 0: # handle facing frames 
 		new_ptr = ptr_id + 2
+	else:
+		new_ptr = ptr_id # null animation
 	
 	#if is_back_facing:
 		#debug_menu.anim_id_spin.value = ptr_id + 1
@@ -1598,6 +1609,9 @@ func on_sprite_idx_selected(index: int) -> void:
 	#spritesheet_changed.emit(ImageTexture.create_from_image(spr.spritesheet)) # TODO hook up to sprite for debug purposes
 	#spritesheet_changed.emit(animation_manager.unit_sprites_manager.sprite_weapon.texture) # TODO hook up to sprite for debug purposes
 	if animation_changed:
+		# if animation_manager.global_animation_id >= animation_manager.global_seq.sequences.size():
+		# 	set_base_animation_ptr_id(6) # triggers on_animation_changed
+		# else:
 		animation_manager._on_animation_changed()
 
 

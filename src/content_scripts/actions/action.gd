@@ -492,6 +492,11 @@ func apply_standard(action_instance: ActionInstance) -> void:
 	# apply status to user
 	await apply_status(action_instance.user, user_status_list, user_status_list_type, user_status_chance, will_remove_user_status)
 
+	# this is needed in case the action causes the user to change animations (or SEQ entirely, ex. new status)
+	# TODO correctly time animations with end of action
+	if action_instance.user.current_animation_id_fwd != action_instance.user.current_idle_animation_id:
+		action_instance.user.animate_return_to_idle()
+
 	# wait for applying effect animation
 	action_instance.user.global_battle_manager.game_state_label.text = "Waiting for " + display_name + " vfx" 
 	if vfx_data != null and target_units.size() > 0:
@@ -506,6 +511,7 @@ func apply_standard(action_instance: ActionInstance) -> void:
 	# pay costs
 	action_instance.user.mp_current -= action_instance.action.mp_cost
 
+	# wait for triggered actions
 	if action_instance.allow_triggering_actions:
 		for target: UnitData in target_units:
 			for connection in target.targeted_post_action.get_connections():

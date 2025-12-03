@@ -225,7 +225,7 @@ func _init(idx: int = 0) -> void:
 				weapon_attack_action.target_effects[0].base_power_formula.formula = FormulaData.Formulas.MAxV1
 		
 		weapon_attack_action.description = "Attack Base Damage = " + FormulaData.formula_descriptions[weapon_attack_action.target_effects[0].base_power_formula.formula]
-		weapon_attack_action.status_chance = 19 # https://ffhacktics.com/wiki/Weapon_Damage_Calculation
+		weapon_attack_action.target_status_chance = 19 # https://ffhacktics.com/wiki/Weapon_Damage_Calculation
 		
 		match weapon_formula_id:
 			4: # TODO proc ability for Formula 04 (magic gun)
@@ -272,15 +272,15 @@ func _init(idx: int = 0) -> void:
 			weapon_attack_action.inflict_status_id = weapon_inflict_status_spell_id
 			var inflict_status: ScusData.InflictStatus = RomReader.scus_data.inflict_statuses[weapon_inflict_status_spell_id]
 			weapon_attack_action.target_status_list = inflict_status.status_list
-			weapon_attack_action.will_remove_status = inflict_status.will_cancel
-			weapon_attack_action.status_chance = 19
+			weapon_attack_action.will_remove_target_status = inflict_status.will_cancel
+			weapon_attack_action.target_status_chance = 19
 			
 			weapon_attack_action.target_status_list_type = Action.StatusListType.ALL
 			if inflict_status.is_random:
 				weapon_attack_action.target_status_list_type = Action.StatusListType.RANDOM
 			elif inflict_status.is_separate:
 				weapon_attack_action.target_status_list_type = Action.StatusListType.EACH
-				weapon_attack_action.status_chance = roundi(weapon_attack_action.status_chance * 0.24)
+				weapon_attack_action.target_status_chance = roundi(weapon_attack_action.target_status_chance * 0.24)
 		
 		if weapon_is_striking:
 			weapon_attack_action.max_targeting_range = 1

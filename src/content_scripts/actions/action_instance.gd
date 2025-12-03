@@ -143,7 +143,7 @@ func get_target_units(target_tiles: Array[TerrainTile]) -> Array[UnitData]:
 			var action_ignores_all_null_statuses: bool = unit.get_nullify_statuses().all(
 				func(status: StatusEffect): return action.ignores_statuses.has(status.unique_name))
 			var action_removes_null_status: bool = unit.get_nullify_statuses().any(
-				func(status: StatusEffect): return action.will_remove_status and action.target_status_list.has(status.unique_name)) # ignore action unless it would remove nullify
+				func(status: StatusEffect): return action.will_remove_target_status and action.target_status_list.has(status.unique_name)) # ignore action unless it would remove nullify
 		
 			if action_ignores_all_null_statuses or action_removes_null_status:
 				target_units.append(unit)
@@ -188,11 +188,11 @@ func get_ai_score() -> int:
 		var total_status_score: float = 0.0
 		for status_id: String in action.target_status_list:
 			var status: StatusEffect = RomReader.status_effects[status_id]
-			var status_score: float = status.get_ai_score(user, target, action.will_remove_status)
+			var status_score: float = status.get_ai_score(user, target, action.will_remove_target_status)
 			if action.target_status_list_type == Action.StatusListType.ALL:
-				status_score = status_score * action.status_chance
+				status_score = status_score * action.target_status_chance
 			elif action.target_status_list_type == Action.StatusListType.EACH:
-				status_score = status_score * action.status_chance
+				status_score = status_score * action.target_status_chance
 			total_status_score += status_score
 		
 		if action.target_status_list_type == Action.StatusListType.RANDOM:
@@ -253,9 +253,9 @@ func get_statuses_text(target: UnitData) -> String:
 	if action.target_status_list.is_empty():
 		return ""
 	
-	var status_chance: String = str(action.status_chance) + "%"
+	var status_chance: String = str(action.target_status_chance) + "%"
 	var remove_status: String = ""
-	if action.will_remove_status:
+	if action.will_remove_target_status:
 		remove_status = "Remove "
 	var status_group_type: String = Action.StatusListType.keys()[action.target_status_list_type] + " "
 	if action.target_status_list.size() < 2:
@@ -263,10 +263,10 @@ func get_statuses_text(target: UnitData) -> String:
 	
 	var status_names: PackedStringArray = []
 	for status_id: String in action.target_status_list:
-		if not action.will_remove_status or target.current_status_ids.has(status_id): # don't show removing status the target does not have TODO don't show remove Always statuses
+		if not action.will_remove_target_status or target.current_status_ids.has(status_id): # don't show removing status the target does not have TODO don't show remove Always statuses
 			status_names.append(RomReader.status_effects[status_id].status_effect_name)
 	
-	if status_names.is_empty() and action.will_remove_status:
+	if status_names.is_empty() and action.will_remove_target_status:
 		status_names = ["[No status to remove]"]
 	
 	var total_status_text: String = status_chance + " " + remove_status + status_group_type + ", ".join(status_names)

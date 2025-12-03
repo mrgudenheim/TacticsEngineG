@@ -86,12 +86,17 @@ var inflict_status_id: int = 0
 
 # inflict status data
 @export var target_status_list: PackedStringArray = []
-@export var status_chance: int = 100
-@export var will_remove_status: bool = false
+@export var target_status_chance: int = 100
+@export var will_remove_target_status: bool = false
 @export var target_status_list_type: StatusListType = StatusListType.EACH
 var all_status: bool = false
 var random_status: bool = false
 var separate_status: bool = false
+
+@export var user_status_list: PackedStringArray = []
+@export var user_status_chance: int = 100
+@export var will_remove_user_status: bool = false
+@export var user_status_list_type: StatusListType = StatusListType.EACH
 
 @export var status_prevents_use_any: Array[String] = [] # silence, dont move, dont act, etc.
 @export var required_equipment_type: Array[ItemData.ItemType] = [] # sword, gun, etc.
@@ -457,7 +462,7 @@ func apply_standard(action_instance: ActionInstance) -> void:
 					target_unit.animate_recieve_heal(vfx_data)
 			
 			# apply status
-			await apply_status(target_unit, target_status_list, target_status_list_type)
+			await apply_status(target_unit, target_status_list, target_status_list_type, target_status_chance, will_remove_target_status)
 			
 			# TODO apply secondary action
 			if secondary_action_list_type == StatusListType.RANDOM:
@@ -484,6 +489,9 @@ func apply_standard(action_instance: ActionInstance) -> void:
 		var effect_value: int = roundi(effect.base_power_formula.get_result(action_instance.user, action_instance.user, element))
 		effect.apply(action_instance.user, action_instance.user, effect_value)
 	
+	# apply status to user
+	await apply_status(action_instance.user, user_status_list, user_status_list_type, user_status_chance, will_remove_user_status)
+
 	# wait for applying effect animation
 	action_instance.user.global_battle_manager.game_state_label.text = "Waiting for " + display_name + " vfx" 
 	if vfx_data != null and target_units.size() > 0:
@@ -512,9 +520,9 @@ func apply_standard(action_instance: ActionInstance) -> void:
 	action_instance.action_completed.emit(action_instance.battle_manager)
 
 
-func apply_status(unit: UnitData, status_list: Array[String], status_list_type: StatusListType) -> void:
+func apply_status(unit: UnitData, status_list: Array[String], status_list_type: StatusListType, status_list_chance: int, will_remove_status: bool) -> void:
 	if status_list_type == StatusListType.ALL:
-		var status_success: bool = randi_range(0, 99) < status_chance
+		var status_success: bool = randi_range(0, 99) < target_status_chance
 		if status_success:
 			for status_id: String in status_list:
 				if will_remove_status and unit.current_statuses.any(func(status: StatusEffect): status.unique_name == status_id):
@@ -525,7 +533,7 @@ func apply_status(unit: UnitData, status_list: Array[String], status_list_type: 
 					await unit.add_status(RomReader.status_effects[status_id].duplicate())
 	elif status_list_type == StatusListType.EACH:
 		for status_id: String in status_list:
-			var status_success: bool = randi_range(0, 99) < status_chance
+			var status_success: bool = randi_range(0, 99) < target_status_chance
 			if status_success:
 				if will_remove_status and unit.current_statuses.any(func(status: StatusEffect): status.unique_name == status_id):
 					unit.remove_status_id(status_id)
@@ -534,7 +542,7 @@ func apply_status(unit: UnitData, status_list: Array[String], status_list_type: 
 					unit.show_popup_text(RomReader.status_effects[status_id].status_effect_name)
 					await unit.add_status(RomReader.status_effects[status_id].duplicate())
 	elif status_list_type == StatusListType.RANDOM:
-		var status_success: bool = randi_range(0, 99) < status_chance
+		var status_success: bool = randi_range(0, 99) < target_status_chance
 		if status_success:
 			if will_remove_status:
 				var removable_status_list: Array[String] = status_list.filter(func(status_id: String): return unit.current_status_ids.has(status_id))
@@ -613,7 +621,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 	match formula_id:
 		0, 1, 5:
 			use_weapon_damage = true
-			status_chance = 19
+			target_status_chance = 19
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
 			ignore_passives.erase("protect_status")
 			ignore_passives.erase("attack_up")
@@ -622,9 +630,9 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		2:
 			use_weapon_damage = true
 			# secondary_actions.append(RomReader.abilities[inflict_status_id].ability_action)
-			status_chance = 19
+			target_status_chance = 19
 			# secondary_actions_chances = [19]
-			secondary_actions2.append(SecondaryAction.new(RomReader.fft_abilities[inflict_status_id].ability_action.unique_name, status_chance))
+			secondary_actions2.append(SecondaryAction.new(RomReader.fft_abilities[inflict_status_id].ability_action.unique_name, target_status_chance))
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
 			ignore_passives.erase("protect_status")
 			ignore_passives.erase("attack_up")
@@ -696,7 +704,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		8:
 			applicable_evasion_type = EvadeData.EvadeType.MAGICAL
 			
-			status_chance = 19
+			target_status_chance = 19
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MAxV1
@@ -710,7 +718,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			ignore_passives.erase("magic_defense_up")
 		9:
 			applicable_evasion_type = EvadeData.EvadeType.MAGICAL
-			status_chance = 19
+			target_status_chance = 19
 			
 			base_hit_formula.formula = FormulaData.Formulas.MA_plus_V1
 			base_hit_formula.values[0] = formula_x
@@ -786,7 +794,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			base_hit_formula.is_modified_by_element = true
 			base_hit_formula.is_modified_by_zodiac = true
 			
-			status_chance = 100
+			target_status_chance = 100
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
@@ -1003,7 +1011,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			ignore_passives.erase("magic_attack_up")
 			ignore_passives.erase("magic_defense_up")
 
-			status_chance = 19
+			target_status_chance = 19
 		0x20:
 			applicable_evasion_type = EvadeData.EvadeType.NONE
 			
@@ -1180,7 +1188,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.values[0] = formula_y
 			
 			
-			status_chance = 100
+			target_status_chance = 100
 			target_status_list_type = StatusListType.RANDOM
 			
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
@@ -1236,7 +1244,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			ignore_passives.erase("defense_up")
 			ignore_passives.erase("martial_arts")
 
-			status_chance = 19
+			target_status_chance = 19
 		0x32:
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.RANDOM_V1xPAx3_plus_V2_div_2
@@ -1297,7 +1305,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x38:
 			applicable_evasion_type = EvadeData.EvadeType.NONE
 			
-			status_chance = 100
+			target_status_chance = 100
 		0x39:
 			applicable_evasion_type = EvadeData.EvadeType.NONE
 			
@@ -1429,7 +1437,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x47:
 			applicable_evasion_type = EvadeData.EvadeType.NONE
 			
-			status_chance = 100
+			target_status_chance = 100
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
@@ -1468,7 +1476,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x4b:
 			applicable_evasion_type = EvadeData.EvadeType.NONE
 			
-			status_chance = 100
+			target_status_chance = 100
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.RANDOM_V1_V2
@@ -1545,7 +1553,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x52:
 			applicable_evasion_type = EvadeData.EvadeType.NONE
 			
-			status_chance = 100
+			target_status_chance = 100
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.USER_MISSING_HPxV1
@@ -1571,7 +1579,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			ignore_passives.erase("magic_defense_up")
 			passive_power_modifier_applies_to_hit_chance = true
 
-			status_chance = 19
+			target_status_chance = 19
 		0x54:
 			applicable_evasion_type = EvadeData.EvadeType.NONE
 			
@@ -1618,6 +1626,13 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.V1
 			target_effects[0].base_power_formula.values[0] = 1
 			target_effects[0].base_power_formula.reverse_sign = false # add
+
+			user_status_list = target_status_list.duplicate()
+			user_status_chance = target_status_chance
+			user_status_list_type = target_status_list_type
+			will_remove_user_status = will_remove_target_status
+
+			target_status_list.clear()
 		0x58:
 			applicable_evasion_type = EvadeData.EvadeType.NONE
 			
@@ -1644,7 +1659,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			ignore_passives.erase("magic_defense_up")
 			passive_power_modifier_applies_to_hit_chance = true
 		0x5a:
-			status_chance = 100
+			target_status_chance = 100
 			
 			required_target_job_uname = [
 				"dragon",
@@ -1657,7 +1672,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 		0x5b:
 			applicable_evasion_type = EvadeData.EvadeType.NONE
 			
-			status_chance = 100
+			target_status_chance = 100
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.TARGET_MAX_HPxV1
@@ -1709,7 +1724,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			]
 		0x5e:
 			applicable_evasion_type = EvadeData.EvadeType.MAGICAL
-			status_chance = 19
+			target_status_chance = 19
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MA_plus_V1xMA_div_2
@@ -1722,7 +1737,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			# TODO x+1 hits at random target in AoE
 		0x5f:
 			applicable_evasion_type = EvadeData.EvadeType.MAGICAL
-			status_chance = 19
+			target_status_chance = 19
 			
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.MA_plus_V1xMA_div_2

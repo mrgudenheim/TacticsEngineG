@@ -270,8 +270,8 @@ func set_action() -> void:
 	# inflict status data
 	var inflict_status_data: ScusData.InflictStatus = RomReader.scus_data.inflict_statuses[inflict_status_id]
 	ability_action.target_status_list = inflict_status_data.status_list
-	ability_action.status_chance = 100
-	ability_action.will_remove_status = inflict_status_data.will_cancel
+	ability_action.target_status_chance = 100
+	ability_action.will_remove_target_status = inflict_status_data.will_cancel
 	
 	ability_action.all_status = inflict_status_data.is_all
 	ability_action.random_status = inflict_status_data.is_random
@@ -322,7 +322,7 @@ func set_action() -> void:
 		ability_action.applicable_evasion_type = EvadeData.EvadeType.NONE
 	
 	if inflict_status_data.is_separate:
-		ability_action.status_chance = roundi(ability_action.status_chance * 0.24)
+		ability_action.target_status_chance = roundi(ability_action.target_status_chance * 0.24)
 	
 	# animation data
 	ability_action.animation_start_id = animation_start_id

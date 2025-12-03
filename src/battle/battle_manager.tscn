@@ -289,3 +289,106 @@ grow_horizontal = 2
 layout_mode = 2
 text = "Game State"
 horizontal_alignment = 1
+
+[node name="TeamSetup" type="PanelContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 51.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TeamSetup"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TeamSetup/VBoxContainer"]
+layout_mode = 2
+
+[node name="NumUnits" type="Label" parent="TeamSetup/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Units:"
+
+[node name="NumUnitsSpinBox" type="SpinBox" parent="TeamSetup/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="TeamSetup/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TeamSetup/VBoxContainer/ScrollContainer"]
+layout_mode = 2
+
+[node name="Unit Panel" type="PanelContainer" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel"]
+layout_mode = 2
+
+[node name="Sprite" type="Label" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel/VBoxContainer"]
+layout_mode = 2
+text = "Sprite Preview"
+
+[node name="Name" type="Label" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel/VBoxContainer"]
+layout_mode = 2
+text = "UnitName"
+
+[node name="Gender" type="Label" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel/VBoxContainer"]
+layout_mode = 2
+text = "Gender"
+
+[node name="Job" type="Label" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel/VBoxContainer"]
+layout_mode = 2
+text = "Job"
+
+[node name="Level" type="Label" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel/VBoxContainer"]
+layout_mode = 2
+text = "Level"
+
+[node name="Stats" type="Label" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel/VBoxContainer"]
+layout_mode = 2
+text = "Stats - HP, MP bars, PA, MA, 
+brave, faith, evade, move, jump, speed"
+
+[node name="Equipment" type="Label" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel/VBoxContainer"]
+layout_mode = 2
+text = "Equipment"
+
+[node name="Abilities" type="Label" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel/VBoxContainer"]
+layout_mode = 2
+text = "Abilities"
+
+[node name="Unit Panel2" type="PanelContainer" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel2"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel2/VBoxContainer"]
+layout_mode = 2
+text = "Test"
+
+[node name="Label2" type="Label" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel2/VBoxContainer"]
+layout_mode = 2
+text = "Test"
+
+[node name="Label3" type="Label" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel2/VBoxContainer"]
+layout_mode = 2
+text = "Test"
+
+[node name="Unit Panel3" type="PanelContainer" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel3"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel3/VBoxContainer"]
+layout_mode = 2
+text = "Test"
+
+[node name="Label2" type="Label" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel3/VBoxContainer"]
+layout_mode = 2
+text = "Test"
+
+[node name="Label3" type="Label" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel3/VBoxContainer"]
+layout_mode = 2
+text = "Test"

@@ -319,7 +319,7 @@ func add_test_teams_to_map() -> void:
 	for specific_job: int in specific_jobs:
 		spawn_unit(get_random_stand_terrain_tile(), specific_job, teams[0])
 	
-	units[3].set_primary_weapon(0x4a) # blaze gun
+	#units[3].set_primary_weapon(0x4a) # blaze gun
 	
 	var test_ability: Ability = Ability.new()
 	var test_triggered_action: TriggeredAction = TriggeredAction.new()

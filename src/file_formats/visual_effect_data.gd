@@ -572,21 +572,21 @@ func display_vfx(location: Node3D) -> void:
 	#for frameset_idx: int in range(0, num_framesets):
 		#frame_meshes.append(vfx_data.get_frame_mesh(frameset_idx))
 
-	# for timeline: EmitterTimeline in phase1_emitter_timelines:
-	# 	spawn_emitters(location, timeline)
+	for timeline: EmitterTimeline in phase1_emitter_timelines:
+		spawn_emitters(location, timeline)
 
-	# for timeline: EmitterTimeline in child_emitter_timelines:
-	# 	spawn_emitters(location, timeline, phase1_duration)
+	for timeline: EmitterTimeline in child_emitter_timelines:
+		spawn_emitters(location, timeline, phase1_duration)
 
 	# TODO show vfx animations on emitters, get correct position of vfx
-	for emitter_idx: int in emitters.size():
-		var emitter := emitters[emitter_idx]
-		var emitter_location: Node3D = Node3D.new()
-		emitter_location.position = emitter.start_position * MapData.SCALE
-		location.add_child(emitter_location)
+	# for emitter_idx: int in emitters.size():
+	# 	var emitter := emitters[emitter_idx]
+	# 	var emitter_location: Node3D = Node3D.new()
+	# 	emitter_location.position = emitter.start_position * MapData.SCALE
+	# 	location.add_child(emitter_location)
 		
-		# TODO fix emitter timing; why do they need x3 to be reasonable?
-		emitter_location.get_tree().create_timer(emitter.start_time * 3.0 / animation_speed).timeout.connect(func(): display_vfx_animation(emitter, emitter_location))
+	# 	# TODO fix emitter timing; why do they need x3 to be reasonable?
+	# 	emitter_location.get_tree().create_timer(emitter.start_time * 3.0 / animation_speed).timeout.connect(func(): display_vfx_animation(emitter, emitter_location))
 	
 	while location.get_child_count() > 0:
 		await Engine.get_main_loop().process_frame

@@ -1,5 +1,6 @@
 class_name VisualEffectData
 
+# https://ffhacktics.com/wiki/Effect_File_Format
 # https://ffhacktics.com/wiki/Effect_Files
 # https://ffhacktics.com/wiki/Effect_Data
 
@@ -57,6 +58,14 @@ class VfxAnimationFrame:
 	var duration: int
 	var byte_02: int
 
+	# Depth Modes
+	# Mode 0: Z >> 2 (standard depth-based)
+	# Mode 1: Z >> 2 - 8 (pulled forward)
+	# Mode 2: Fixed at 8 (very front)
+	# Mode 3: Fixed at 0x17E (very back)
+	# Mode 4: Fixed at 0x10 (near front)
+	# Mode 5: Z >> 2 - 0x10 (strongly forward)
+
 class VfxEmitter:
 	var anim_index: int
 	var animation: VfxAnimation
@@ -91,7 +100,7 @@ class EmitterTimeline:
 			var time: int = bytes.decode_u16(idx * 2)
 			times.append(time)
 
-			var emitter_id: int = bytes.decode_u16(50 + idx)
+			var emitter_id: int = bytes.decode_u8(50 + idx)
 			emitter_ids.append(emitter_id)
 
 			var action_flag: int = action_flags.decode_u16(idx * 2)
@@ -110,8 +119,8 @@ class EmitterTimeline:
 			keyframes.append(new_keyframe)
 
 class EmitterKeyframe:
-	var time: int = 0
-	var emitter_id: int = 0
+	var time: int = -1
+	var emitter_id: int = -1
 	var flags: PackedByteArray = []
 	var display_damage: bool = false
 	var status_change: bool = false
@@ -122,6 +131,9 @@ var emitter_control_bytes: PackedByteArray = []
 var emitters: Array[VfxEmitter] = []
 var timer_data_header_bytes: PackedByteArray = []
 var timer_data_bytes: PackedByteArray = []
+var phase1_duration: int = -1
+var child_spawn_delay: int = -1
+var phase2_offset: int = -1
 
 var child_emitter_timelines: Array[EmitterTimeline] = []
 var phase1_emitter_timelines: Array[EmitterTimeline] = []
@@ -226,7 +238,7 @@ func init_from_file() -> void:
 			next_section_start = frame_set_offsets[frame_set_id + 1]
 		
 		var frame_set_bytes: PackedByteArray = data_bytes.slice(frame_set_offsets[frame_set_id], next_section_start)
-		var num_frames: int = data_bytes.decode_u16(2)
+		var num_frames: int = frame_set_bytes.decode_u16(2)
 		frame_set.num_frames = num_frames
 		var frame_data_length: int = 0x18
 		# var num_frames: int = (frame_set_bytes.size() - 4) / frame_data_length
@@ -357,8 +369,8 @@ func init_from_file() -> void:
 		emitter.end_position = Vector3i(emitter_data_bytes.decode_s16(0x1a), -emitter_data_bytes.decode_s16(0x1c), emitter_data_bytes.decode_s16(0x1e))
 		
 		emitter.animation = VfxAnimation.new()
-		emitter.animation.screen_offset = animations[emitter.anim_index - 1].screen_offset
-		emitter.animation.animation_frames = animations[emitter.anim_index - 1].animation_frames.duplicate_deep()
+		emitter.animation.screen_offset = animations[emitter.anim_index].screen_offset
+		emitter.animation.animation_frames = animations[emitter.anim_index].animation_frames.duplicate_deep()
 
 		var frameset_group_id_offset: int = 0
 		for idx: int in emitter.frameset_group_index:
@@ -376,8 +388,10 @@ func init_from_file() -> void:
 	section_start = section_offsets[section_num]
 	timer_data_header_bytes = vfx_bytes.slice(section_start, section_offsets[section_num + 1])
 	
-	
-	
+	phase1_duration = timer_data_header_bytes.decode_u16(4)
+	child_spawn_delay = timer_data_header_bytes.decode_u16(6)
+	phase2_offset = timer_data_header_bytes.decode_u16(0x0a)
+
 	### TODO timer data
 	section_num = VfxSections.TIMER_DATA_CAMERA
 	section_start = section_offsets[section_num]
@@ -557,7 +571,13 @@ func display_vfx(location: Node3D) -> void:
 	#var frame_meshes: Array[ArrayMesh] = []
 	#for frameset_idx: int in range(0, num_framesets):
 		#frame_meshes.append(vfx_data.get_frame_mesh(frameset_idx))
-	
+
+	# for timeline: EmitterTimeline in phase1_emitter_timelines:
+	# 	spawn_emitters(location, timeline)
+
+	# for timeline: EmitterTimeline in child_emitter_timelines:
+	# 	spawn_emitters(location, timeline, phase1_duration)
+
 	# TODO show vfx animations on emitters, get correct position of vfx
 	for emitter_idx: int in emitters.size():
 		var emitter := emitters[emitter_idx]
@@ -575,14 +595,31 @@ func display_vfx(location: Node3D) -> void:
 	vfx_completed.emit()
 
 
-func display_vfx_animation(emitter_data, emitter_node: Node3D) -> void:
+func spawn_emitters(location: Node3D, timeline: EmitterTimeline, time_offset: int = 0):
+	for emitter_keyframe_idx: int in timeline.num_keyframes:
+		var keyframe: EmitterKeyframe = timeline.keyframes[emitter_keyframe_idx]
+		if keyframe.emitter_id <= 0: # no emitter
+			continue
+		
+		var emitter: VfxEmitter = emitters[keyframe.emitter_id - 1]
+		var emitter_location: Node3D = Node3D.new()
+		emitter_location.position = emitter.start_position * MapData.SCALE
+		location.add_child(emitter_location)
+		
+		# TODO fix emitter timing; why do they need x3 to be reasonable?
+		emitter_location.get_tree().create_timer((emitter.start_time + time_offset) * 3.0 / animation_speed).timeout.connect(func(): display_vfx_animation(emitter, emitter_location))
+
+
+func display_vfx_animation(emitter_data: VfxEmitter, emitter_node: Node3D) -> void:
 	if emitter_data.anim_index >= animations.size(): # TODO fix steal exp vfx?
 		push_error(file_name + " trying to access animation " + str(emitter_data.anim_index) + ", but there are only " + str(animations.size()) + " animations")
 		emitter_node.queue_free()
 		return
 	
-	var vfx_animation := animations[emitter_data.anim_index]
+	# var vfx_animation := animations[emitter_data.anim_index]
+	var vfx_animation: VfxAnimation = emitter_data.animation
 	var anim_location: Node3D = Node3D.new()
+	anim_location.name = "vfx frameset"
 	# handle initial anim_location position as screen_space movement instead of world space
 	var camera_right: Vector3 = emitter_node.get_viewport().get_camera_3d().basis * Vector3.RIGHT
 	var screen_space_x: Vector3 = (vfx_animation.screen_offset.x * camera_right)
@@ -605,6 +642,7 @@ func display_vfx_animation(emitter_data, emitter_node: Node3D) -> void:
 		# get composite frame
 		for frame_idx: int in framesets[vfx_anim_frame.frameset_id].frameset.size():
 			var vfx_frame_mesh: MeshInstance3D = MeshInstance3D.new()
+			vfx_frame_mesh.name = "frame"
 			#mesh_instance.mesh = frame_meshes[frame_mesh_idx]
 			vfx_frame_mesh.mesh = get_frame_mesh(vfx_anim_frame.frameset_id, frame_idx)
 			#vfx_frame_mesh.scale.y = -1

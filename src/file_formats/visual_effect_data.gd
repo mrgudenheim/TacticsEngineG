@@ -64,12 +64,61 @@ class VfxEmitter:
 	
 	var start_time: int = 0
 
+# 128 bytes, 25 keyframes
+class EmitterTimeline:
+	var bytes: PackedByteArray = []
+	var times: PackedInt32Array = []
+	var emitter_ids: PackedInt32Array = []
+	var action_flags: PackedByteArray = []
+	var num_keyframes: int = 0
+
+	var keyframes: Array[EmitterKeyframe] = []
+	var has_unknown_flags: bool = false
+
+	func _init(new_bytes: PackedByteArray):
+		bytes = new_bytes
+		action_flags = bytes.slice(75, 125)
+		num_keyframes = bytes.decode_u16(126)
+
+		for idx in 25:
+			var time: int = bytes.decode_u16(idx * 2)
+			times.append(time)
+
+			var emitter_id: int = bytes.decode_u16(50 + idx)
+			emitter_ids.append(emitter_id)
+
+			var action_flag: int = action_flags.decode_u16(idx * 2)
+			if not [0, 0x1000, 0x2000, 0x3000, 0x4000, 0x5000, 0x6000, 0x7000].has(action_flag):
+				has_unknown_flags = true
+				# push_warning(action_flag)
+			
+			var new_keyframe: EmitterKeyframe = EmitterKeyframe.new()
+			new_keyframe.time = time
+			new_keyframe.emitter_id = emitter_id
+			new_keyframe.flags = action_flags.slice(idx * 2, (idx + 1) * 2)
+			new_keyframe.display_damage = action_flag & 0x1000 == 0x1000
+			new_keyframe.status_change = action_flag & 0x2000 == 0x2000
+			new_keyframe.target_animation = action_flag & 0x4000 == 0x4000
+
+			keyframes.append(new_keyframe)
+
+class EmitterKeyframe:
+	var time: int = 0
+	var emitter_id: int = 0
+	var flags: PackedByteArray = []
+	var display_damage: bool = false
+	var status_change: bool = false
+	var target_animation: bool = false
+
 var script_bytes: PackedByteArray = []
 var emitter_control_bytes: PackedByteArray = []
 var emitters: Array[VfxEmitter] = []
 var timer_data_header_bytes: PackedByteArray = []
 var timer_data_bytes: PackedByteArray = []
 
+var child_emitter_timelines: Array[EmitterTimeline] = []
+var phase1_emitter_timelines: Array[EmitterTimeline] = []
+var phase2_emitter_timelines: Array[EmitterTimeline] = []
 
 var vfx_spr: Spr
 var texture: Texture2D
@@ -105,6 +154,10 @@ func _init(new_file_name: String = "") -> void:
 
 func init_from_file() -> void:
 	var vfx_bytes: PackedByteArray = RomReader.get_file_data(file_name)
+
+	if vfx_bytes.size() == 0:
+		push_warning(file_name + ": zero bytes in file. Skipping.")
+		return
 	
 	#### header data
 	header_start = RomReader.battle_bin_data.ability_vfx_header_offsets[vfx_id]
@@ -302,6 +355,10 @@ func init_from_file() -> void:
 	# TODO 5 emitter timing sections, 0x80 long each
 	for emitter_timing_section_id: int in 5:
 		var emitter_timing_data_start: int = 0x0c + (emitter_timing_section_id * 0x80)
+
+		var new_timeline: EmitterTimeline = EmitterTimeline.new(timer_data_bytes.slice(emitter_timing_data_start, emitter_timing_data_start + 0x80))
+		child_emitter_timelines.append(new_timeline)
+
 		var times: PackedInt32Array = []
 		times.resize(0x10) # TODO is 0x10 the max?
 		var emitter_ids: PackedInt32Array = []
@@ -316,8 +373,22 @@ func init_from_file() -> void:
 			elif emitter_id > 0:
 				if emitters[emitter_id - 1].start_time == 0 and time < 0x200: # TODO can an emitter be started multiple times? Ex. Cure E001 2nd timing section
 					emitters[emitter_id - 1].start_time = time # TODO figure out special 'times' of 0x257, 0x0258, and 0x0259
-			
 	
+	# Parent Phase1 Emitters
+	for emitter_timing_section_id: int in 5:
+		var emitter_timing_data_start: int = 0x82A + (emitter_timing_section_id * 0x80)
+
+		var new_timeline: EmitterTimeline = EmitterTimeline.new(timer_data_bytes.slice(emitter_timing_data_start, emitter_timing_data_start + 0x80))
+		phase1_emitter_timelines.append(new_timeline)
+
+	# Phase2 Emitters
+	for emitter_timing_section_id: int in 5:
+		var emitter_timing_data_start: int = 0xAAA + (emitter_timing_section_id * 0x80)
+
+		var new_timeline: EmitterTimeline = EmitterTimeline.new(timer_data_bytes.slice(emitter_timing_data_start, emitter_timing_data_start + 0x80))
+		phase2_emitter_timelines.append(new_timeline)
+
+
 	#### image and palette data
 	section_num = VfxSections.PALETTE_IMAGE
 	section_start = section_offsets[section_num]

@@ -1826,6 +1826,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 
 static func get_modified_action(action_to_modify: Action, user: UnitData) -> Action:
 	var modified_action: Action = action_to_modify.duplicate()
+	modified_action.vfx_data = action_to_modify.vfx_data
 	var all_passive_effects = user.get_all_passive_effects(action_to_modify.ignore_passives)
 
 	for passive_effect: PassiveEffect in all_passive_effects:

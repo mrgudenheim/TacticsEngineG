@@ -13,20 +13,26 @@ var ability_names: String = ""
 var header_start: int = 0
 var section_offsets: PackedInt32Array = []
 
-var frame_sets: Array[VfxFrameSet] = []
+var num_frameset_groups: int = 0
+var frameset_group_offsets: PackedInt32Array = []
+var frameset_groups_num_framesets: PackedInt32Array = []
+var framesets: Array[VfxFrameSet] = []
 var animations: Array[VfxAnimation] = []
 
 class VfxFrameSet:
-	var frame_set: Array[VfxFrame] = []
+	var flags: int = 0 # unused
+	var num_frames: int = 0
+	var frameset: Array[VfxFrame] = []
 
 class VfxFrame:
 	var vram_bytes: PackedByteArray = []
-	var palette_id: int = 0 # 0 = 4bpp, 1 = 8bpp
+	var palette_id: int = 0 
 	var semi_transparency_mode: int = 0
-	var image_color_depth: int = 0
+	var image_color_depth: int = 0 # 0 = 4bpp, 1 = 8bpp
 	var semi_transparency_on: bool = true
 	var frame_width_signed: bool = false
 	var frame_height_signed: bool = false
+	var texture_page: int = 0
 	
 	var top_left_uv: Vector2i = Vector2i.ZERO
 	var uv_width: int = 0
@@ -173,11 +179,25 @@ func init_from_file() -> void:
 	var section_start: int = section_offsets[section_num]
 	data_bytes = vfx_bytes.slice(section_start, section_offsets[section_num + 1])
 	
+	num_frameset_groups = data_bytes.decode_u32(0)
 	var initial_offset: int = 4
-	initial_offset += data_bytes.decode_u8(0) * 2
+	for group_idx: int in num_frameset_groups:
+		var group_offset: int = data_bytes.decode_u16(initial_offset + (group_idx * 2))
+		frameset_group_offsets.append(group_offset)
+
+	initial_offset += num_frameset_groups * 2
 	var frame_sets_data_start: int = data_bytes.decode_u16(initial_offset) + 4
 	var num_frame_sets: int = (frame_sets_data_start - initial_offset) / 2
-	frame_sets.resize(num_frame_sets)
+
+	var framesets_so_far: int = 0
+	for group_idx: int in num_frameset_groups:
+		if group_idx > 0:
+			frameset_groups_num_framesets[group_idx - 1] = (frameset_group_offsets[group_idx] - frameset_group_offsets[group_idx - 1]) / 2
+			framesets_so_far += frameset_groups_num_framesets[group_idx - 1]
+		
+		frameset_groups_num_framesets.append(num_frame_sets - framesets_so_far)
+
+	framesets.resize(num_frame_sets)
 	var frame_set_offsets: PackedInt32Array = []
 	frame_set_offsets.resize(num_frame_sets)
 	
@@ -186,7 +206,7 @@ func init_from_file() -> void:
 		if offset == 4:
 			num_frame_sets -= 1
 			frame_set_offsets.resize(num_frame_sets)
-			frame_sets.resize(num_frame_sets)
+			framesets.resize(num_frame_sets)
 			continue
 		frame_set_offsets[id] = offset
 	
@@ -205,9 +225,11 @@ func init_from_file() -> void:
 			next_section_start = frame_set_offsets[frame_set_id + 1]
 		
 		var frame_set_bytes: PackedByteArray = data_bytes.slice(frame_set_offsets[frame_set_id], next_section_start)
+		var num_frames: int = data_bytes.decode_u16(2)
+		frame_set.num_frames = num_frames
 		var frame_data_length: int = 0x18
-		var num_frames: int = (frame_set_bytes.size() - 4) / frame_data_length
-		frame_set.frame_set.resize(num_frames)
+		# var num_frames: int = (frame_set_bytes.size() - 4) / frame_data_length
+		frame_set.frameset.resize(num_frames)
 		for frame_id: int in num_frames:
 			var frame_bytes: PackedByteArray = frame_set_bytes.slice(4 + (frame_id * frame_data_length))
 			var new_frame: VfxFrame = VfxFrame.new()
@@ -218,6 +240,7 @@ func init_from_file() -> void:
 			new_frame.semi_transparency_on = (new_frame.vram_bytes[1] & 0x02) == 0x02
 			new_frame.frame_width_signed = (new_frame.vram_bytes[1] & 0x10) == 0x10
 			new_frame.frame_height_signed = (new_frame.vram_bytes[1] & 0x20) == 0x20
+			new_frame.texture_page = new_frame.vram_bytes.decode_u16(2)
 			
 			var top_left_u: int = frame_bytes.decode_u8(4)
 			var top_left_v: int = frame_bytes.decode_u8(5)
@@ -263,9 +286,9 @@ func init_from_file() -> void:
 			for vertex_idx: int in vertices_xy.size():
 				new_frame.quad_vertices.append(Vector3(vertices_xy[vertex_idx].x, -vertices_xy[vertex_idx].y, 0) * MapData.SCALE)
 			
-			frame_set.frame_set[frame_id] = new_frame
+			frame_set.frameset[frame_id] = new_frame
 		
-		frame_sets[frame_set_id] = frame_set
+		framesets[frame_set_id] = frame_set
 	
 	
 	### animation data
@@ -429,9 +452,9 @@ func init_from_file() -> void:
 	texture = ImageTexture.create_from_image(vfx_spr.spritesheet)
 	
 	# set frame uvs based on spr
-	for frameset_idx: int in frame_sets.size():
-		for frame_idx: int in frame_sets[frameset_idx].frame_set.size():
-			var vfx_frame: VfxFrame = frame_sets[frameset_idx].frame_set[frame_idx]
+	for frameset_idx: int in framesets.size():
+		for frame_idx: int in framesets[frameset_idx].frameset.size():
+			var vfx_frame: VfxFrame = framesets[frameset_idx].frameset[frame_idx]
 			vfx_frame.quad_uvs.resize(vfx_frame.quad_uvs_pixels.size())
 			for vert_idx: int in vfx_frame.quad_uvs_pixels.size():
 				vfx_frame.quad_uvs[vert_idx] = Vector2(vfx_frame.quad_uvs_pixels[vert_idx].x / float(vfx_spr.width), 
@@ -441,7 +464,7 @@ func init_from_file() -> void:
 
 
 func get_frame_mesh(frame_set_idx: int, frame_idx: int = 0) -> ArrayMesh:
-	var vfx_frame: VfxFrame = frame_sets[frame_set_idx].frame_set[frame_idx]
+	var vfx_frame: VfxFrame = framesets[frame_set_idx].frameset[frame_idx]
 	
 	var st = SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
@@ -563,12 +586,12 @@ func display_vfx_animation(emitter_data, emitter_node: Node3D) -> void:
 			var screen_space_offset_y: Vector3 = Vector3(0, -vfx_anim_frame.byte_02, 0)
 			anim_location.position += (screen_space_offset_x + screen_space_offset_y) * MapData.SCALE # byte01 is actually the X movement in function 0x83, not the duration
 			continue
-		elif vfx_anim_frame.frameset_id >= frame_sets.size():
+		elif vfx_anim_frame.frameset_id >= framesets.size():
 			push_warning(file_name + " frameset_id: " + str(vfx_anim_frame.frameset_id)) # TODO fix special frame_id codes, >= 0x80 (128)
 			continue
 		
 		# get composite frame
-		for frame_idx: int in frame_sets[vfx_anim_frame.frameset_id].frame_set.size():
+		for frame_idx: int in framesets[vfx_anim_frame.frameset_id].frameset.size():
 			var vfx_frame_mesh: MeshInstance3D = MeshInstance3D.new()
 			#mesh_instance.mesh = frame_meshes[frame_mesh_idx]
 			vfx_frame_mesh.mesh = get_frame_mesh(vfx_anim_frame.frameset_id, frame_idx)

@@ -279,8 +279,8 @@ func add_test_teams_to_map() -> void:
 	var new_ramza: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x01, teams[0])
 	
 	# add non-player unit
-	var new_unit2: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x07, teams[1]) # 0x07 is Algus
-	new_unit2.set_primary_weapon(0x4e) # crossbow
+	# var new_unit2: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x07, teams[1]) # 0x07 is Algus
+	# new_unit2.set_primary_weapon(0x4e) # crossbow
 	
 	## set up what to do when target unit is knocked out
 	#new_unit2.knocked_out.connect(load_random_map_delay)
@@ -294,17 +294,17 @@ func add_test_teams_to_map() -> void:
 		#0x67, # panther
 		#0x76, # juravis
 		#0x4a, # squire
-		0x50, # black mage
-		0x53, # thief
-		0x4f, # white mage
+		#0x50, # black mage
+		#0x53, # thief
+		#0x4f, # white mage
 		#0x52, # summoner
 		#0x51, # time mage
 		#0x55, # oracle
 		#0x49, # arch angel
 		#0x5f, # black chocobo
-		0x64, # bomb
-		0x7b, # wildbow
-		0x87, # dark behemoth
+		#0x64, # bomb
+		#0x7b, # wildbow
+		#0x87, # dark behemoth
 		#0x8D, # tiamat
 		]
 	

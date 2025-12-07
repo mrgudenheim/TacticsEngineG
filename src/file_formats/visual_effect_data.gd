@@ -59,10 +59,11 @@ class VfxAnimationFrame:
 
 class VfxEmitter:
 	var anim_index: int
+	var animation: VfxAnimation
 	var motion_type_flag: int
 	var animation_target_flag: int
-	var color_masking_motion_flags: int
-	var byte_04: int
+	var color_masking_motion_flags: int # byte 06
+	var frameset_group_index: int
 	var byte_05: int
 	var byte_07: int
 	var start_position: Vector3i
@@ -347,7 +348,7 @@ func init_from_file() -> void:
 		emitter.anim_index = emitter_data_bytes.decode_u8(1)
 		emitter.motion_type_flag = emitter_data_bytes.decode_u8(2)
 		emitter.animation_target_flag = emitter_data_bytes.decode_u8(3)
-		emitter.byte_04 = emitter_data_bytes.decode_u8(4)
+		emitter.frameset_group_index = emitter_data_bytes.decode_u8(4)
 		emitter.byte_05 = emitter_data_bytes.decode_u8(5)
 		emitter.color_masking_motion_flags = emitter_data_bytes.decode_u8(6)
 		emitter.byte_07 = emitter_data_bytes.decode_u8(7)
@@ -355,6 +356,17 @@ func init_from_file() -> void:
 		emitter.start_position = Vector3i(emitter_data_bytes.decode_s16(0x14), -emitter_data_bytes.decode_s16(0x16), emitter_data_bytes.decode_s16(0x18))
 		emitter.end_position = Vector3i(emitter_data_bytes.decode_s16(0x1a), -emitter_data_bytes.decode_s16(0x1c), emitter_data_bytes.decode_s16(0x1e))
 		
+		emitter.animation = VfxAnimation.new()
+		emitter.animation.screen_offset = animations[emitter.anim_index - 1].screen_offset
+		emitter.animation.animation_frames = animations[emitter.anim_index - 1].animation_frames.duplicate_deep()
+
+		var frameset_group_id_offset: int = 0
+		for idx: int in emitter.frameset_group_index:
+			frameset_group_id_offset += frameset_groups_num_framesets[idx]
+
+		for animation_frame: VfxAnimationFrame in emitter.animation.animation_frames:
+			animation_frame.frameset_id += frameset_group_id_offset
+
 		emitters[emitter_id] = emitter
 	
 	# TODO extract relevant data from emitter data

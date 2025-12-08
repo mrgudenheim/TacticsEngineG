@@ -306,6 +306,7 @@ func add_test_teams_to_map() -> void:
 		#0x7b, # wildbow
 		#0x87, # dark behemoth
 		#0x8D, # tiamat
+		0x99, # archaic demon
 		]
 	
 	#var generic_jobs: PackedInt32Array = range(0x4a, 0x5d) # all generics

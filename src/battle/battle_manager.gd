@@ -276,7 +276,7 @@ func add_test_teams_to_map() -> void:
 	new_unit.is_ai_controlled = false
 	new_unit.set_primary_weapon(0x1d) # ice brand
 	
-	var new_ramza: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x01, teams[0])
+	# var new_ramza: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x01, teams[0])
 	
 	# add non-player unit
 	# var new_unit2: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x07, teams[1]) # 0x07 is Algus
@@ -297,7 +297,7 @@ func add_test_teams_to_map() -> void:
 		#0x50, # black mage
 		#0x53, # thief
 		#0x4f, # white mage
-		#0x52, # summoner
+		0x52, # summoner
 		#0x51, # time mage
 		#0x55, # oracle
 		#0x49, # arch angel

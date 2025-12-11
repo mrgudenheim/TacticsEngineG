@@ -409,7 +409,7 @@ func init_from_file() -> void:
 	child_spawn_delay = timer_data_header_bytes.decode_u16(6)
 	phase2_offset = timer_data_header_bytes.decode_u16(0x0a)
 
-	### TODO timer data
+	### TODO timeline data
 	section_num = VfxSections.TIMELINES
 	section_start = section_offsets[section_num]
 	timer_data_bytes = vfx_bytes.slice(section_start, section_offsets[section_num + 1])
@@ -426,7 +426,7 @@ func init_from_file() -> void:
 		child_emitter_timelines.append(new_timeline)
 
 		var times: PackedInt32Array = []
-		times.resize(0x10) # TODO is 0x10 the max?
+		times.resize(25)
 		var emitter_ids: PackedInt32Array = []
 		emitter_ids.resize(times.size())
 		for time_index: int in times.size():
@@ -624,7 +624,10 @@ func spawn_emitters(location: Node3D, timeline: EmitterTimeline, time_offset: in
 		location.add_child(emitter_location)
 		
 		# TODO fix emitter timing; why do they need x3 to be reasonable?
-		emitter_location.get_tree().create_timer((emitter.start_time + time_offset) * 3.0 / animation_speed).timeout.connect(func(): display_vfx_animation(emitter, emitter_location))
+		emitter_location.get_tree().create_timer((keyframe.time + time_offset) * 3.0 / animation_speed).timeout.connect(func(): display_vfx_animation(emitter, emitter_location))
+
+		# destroy emitter and next keyframe time
+		emitter_location.get_tree().create_timer((timeline.keyframes[emitter_keyframe_idx + 1].time + time_offset) * 3.0 / animation_speed).timeout.connect(func(): emitter_location.queue_free())
 
 
 func display_vfx_animation(emitter_data: VfxEmitter, emitter_node: Node3D) -> void:

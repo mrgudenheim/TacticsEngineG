@@ -107,6 +107,7 @@ var child_emitter_idx_on_interval: int = 0
 # var end_position: Vector3i
 
 var start_time: int = 0
+var emitter_lifetime: int = 0 # frames
 
 func _init(bytes: PackedByteArray = []):
 	if bytes.size() == 0:

@@ -79,10 +79,10 @@ var drag_max_start: Vector3 = Vector3.ZERO
 var drag_min_end: Vector3 = Vector3.ZERO
 var drag_max_end: Vector3 = Vector3.ZERO
 
-var lifetime_min_start: int = 0
-var lifetime_max_start: int = 0
-var lifetime_min_end: int = 0
-var lifetime_max_end: int = 0
+var particle_lifetime_min_start: int = 0
+var particle_lifetime_max_start: int = 0
+var particle_lifetime_min_end: int = 0
+var particle_lifetime_max_end: int = 0
 
 var target_offset_start: Vector3 = Vector3.ZERO
 var target_offset_end: Vector3 = Vector3.ZERO
@@ -201,10 +201,10 @@ func _init(bytes: PackedByteArray = []):
 	drag_min_end = Vector3(bytes.decode_u16(0x88), bytes.decode_u16(0x8c), bytes.decode_u16(0x90))
 	drag_max_end = Vector3(bytes.decode_u16(0x8a), bytes.decode_u16(0x8e), bytes.decode_u16(0x92))
 
-	lifetime_min_start = bytes.decode_u16(0x94)
-	lifetime_max_start = bytes.decode_u16(0x96)
-	lifetime_min_end = bytes.decode_u16(0x98)
-	lifetime_max_end = bytes.decode_u16(0x9a)
+	particle_lifetime_min_start = bytes.decode_u16(0x94)
+	particle_lifetime_max_start = bytes.decode_u16(0x96)
+	particle_lifetime_min_end = bytes.decode_u16(0x98)
+	particle_lifetime_max_end = bytes.decode_u16(0x9a)
 
 	target_offset_start = Vector3(bytes.decode_u16(0x9c), bytes.decode_u16(0x9e), bytes.decode_u16(0xa0))
 	target_offset_end = Vector3(bytes.decode_u16(0xa2), bytes.decode_u16(0xa4), bytes.decode_u16(0xa6))

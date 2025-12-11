@@ -19,6 +19,10 @@ var frameset_group_offsets: PackedInt32Array = []
 var frameset_groups_num_framesets: PackedInt32Array = []
 var framesets: Array[VfxFrameSet] = []
 var animations: Array[VfxAnimation] = []
+var num_curves: int = 0
+var curves_bytes: Array[PackedByteArray] = []
+var curves: Array[PackedFloat64Array] = []
+var time_scale_curve: PackedByteArray = []
 
 class VfxFrameSet:
 	var flags: int = 0 # unused
@@ -143,12 +147,13 @@ enum VfxSections {
 	FRAMES = 0,
 	ANIMATION = 1,
 	VFX_SCRIPT = 2,
-	EMITTER_MOTION_CONTROL = 3,
-	DIRECTIONS = 4,
-	TIMER_DATA_CAMERA_HEADER = 6,
-	TIMER_DATA_CAMERA = 7,
+	EMITTER_DATA = 3,
+	CURVES = 4,
+	TIME_SCALE_CURVE = 5, # optional
+	EFFECT_FLAGS = 6,
+	TIMELINES = 7,
 	SOUND_EFFECTS = 8,
-	PALETTE_IMAGE = 9,
+	TEXTURE = 9,
 	}
 
 
@@ -331,7 +336,7 @@ func init_from_file() -> void:
 	# TODO extract relevant data from effect script;
 	
 	### TODO emitter control data
-	section_num = VfxSections.EMITTER_MOTION_CONTROL
+	section_num = VfxSections.EMITTER_DATA
 	section_start = section_offsets[section_num]
 	emitter_control_bytes = vfx_bytes.slice(section_start, section_offsets[section_num + 1])
 	
@@ -367,10 +372,36 @@ func init_from_file() -> void:
 
 		emitters[emitter_id] = emitter
 	
-	# TODO extract relevant data from emitter data
-	
+	# Curves
+	section_num = VfxSections.CURVES
+	section_start = section_offsets[section_num]
+	var next_section_start = section_offsets[section_num + 1]
+	if next_section_start == 0:
+		next_section_start = section_offsets[section_num + 2] # skip timing speed curve if it doesn't exist
+	var curve_section_bytes = vfx_bytes.slice(section_start, next_section_start)
+
+	num_curves = curve_section_bytes.decode_u32(0)
+	curves.resize(num_curves)
+	var curve_length = 0xA0 # 160 bytes
+	for curve_idx in num_curves:
+		var curve_data_start: int = 4 + (curve_idx * curve_length)
+		var curve_data_end: int = curve_data_start + curve_length
+		curves_bytes[curve_idx] = curve_section_bytes.slice(curve_data_start, curve_data_end)
+
+		var new_curve: PackedFloat64Array = []
+		new_curve.resize(curve_length)
+		for byte_idx: int in curve_length:
+			new_curve[byte_idx] = curves_bytes[curve_idx][byte_idx] / 255.0 # convert to percentage
+		curves[curve_idx] = new_curve
+
+	# Timing Curve
+	section_num = VfxSections.TIME_SCALE_CURVE
+	section_start = section_offsets[section_num]
+	if section_start != 0: # skip this section if it doesn't exist
+		time_scale_curve = vfx_bytes.slice(section_start, section_offsets[section_num + 1])
+
 	### TODO timer header data
-	section_num = VfxSections.TIMER_DATA_CAMERA_HEADER
+	section_num = VfxSections.EFFECT_FLAGS
 	section_start = section_offsets[section_num]
 	timer_data_header_bytes = vfx_bytes.slice(section_start, section_offsets[section_num + 1])
 	
@@ -379,7 +410,7 @@ func init_from_file() -> void:
 	phase2_offset = timer_data_header_bytes.decode_u16(0x0a)
 
 	### TODO timer data
-	section_num = VfxSections.TIMER_DATA_CAMERA
+	section_num = VfxSections.TIMELINES
 	section_start = section_offsets[section_num]
 	timer_data_bytes = vfx_bytes.slice(section_start, section_offsets[section_num + 1])
 	
@@ -425,7 +456,7 @@ func init_from_file() -> void:
 
 
 	#### image and palette data
-	section_num = VfxSections.PALETTE_IMAGE
+	section_num = VfxSections.TEXTURE
 	section_start = section_offsets[section_num]
 	data_bytes = vfx_bytes.slice(section_start)
 	

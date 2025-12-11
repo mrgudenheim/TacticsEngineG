@@ -66,11 +66,6 @@ class VfxAnimationFrame:
 	# Mode 4: Fixed at 0x10 (near front)
 	# Mode 5: Z >> 2 - 0x10 (strongly forward)
 
-
-class Particle:
-	var lifetime: int = 0 # 0xFFFF - particle dies when animation frame duration = 0
-
-
 # 128 bytes, 25 keyframes
 class EmitterTimeline:
 	var bytes: PackedByteArray = []

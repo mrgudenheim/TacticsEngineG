@@ -381,6 +381,7 @@ func init_from_file() -> void:
 	var curve_section_bytes = vfx_bytes.slice(section_start, next_section_start)
 
 	num_curves = curve_section_bytes.decode_u32(0)
+	curves_bytes.resize(num_curves)
 	curves.resize(num_curves)
 	var curve_length = 0xA0 # 160 bytes
 	for curve_idx in num_curves:
@@ -425,20 +426,20 @@ func init_from_file() -> void:
 		var new_timeline: EmitterTimeline = EmitterTimeline.new(timer_data_bytes.slice(emitter_timing_data_start, emitter_timing_data_start + 0x80))
 		child_emitter_timelines.append(new_timeline)
 
-		var times: PackedInt32Array = []
-		times.resize(25)
-		var emitter_ids: PackedInt32Array = []
-		emitter_ids.resize(times.size())
-		for time_index: int in times.size():
-			var time: int = timer_data_bytes.decode_u16(emitter_timing_data_start + (time_index * 2))
-			times[time_index] = time
-			var emitter_id: int = timer_data_bytes.decode_u8(emitter_timing_data_start + 0x32 + time_index)
-			emitter_ids[time_index] = emitter_id
-			if emitter_id - 1 >= emitters.size():
-				push_warning(file_name + ": time_index " + str(time_index) + "; emitter " + str(emitter_id - 1) + "/" + str(emitters.size()))
-			elif emitter_id > 0:
-				if emitters[emitter_id - 1].start_time == 0 and time < 0x200: # TODO can an emitter be started multiple times? Ex. Cure E001 2nd timing section
-					emitters[emitter_id - 1].start_time = time # TODO figure out special 'times' of 0x257, 0x0258, and 0x0259
+		# var times: PackedInt32Array = []
+		# times.resize(25)
+		# var emitter_ids: PackedInt32Array = []
+		# emitter_ids.resize(times.size())
+		# for time_index: int in times.size():
+		# 	var time: int = timer_data_bytes.decode_u16(emitter_timing_data_start + (time_index * 2))
+		# 	times[time_index] = time
+		# 	var emitter_id: int = timer_data_bytes.decode_u8(emitter_timing_data_start + 0x32 + time_index)
+		# 	emitter_ids[time_index] = emitter_id
+		# 	if emitter_id - 1 >= emitters.size():
+		# 		push_warning(file_name + ": time_index " + str(time_index) + "; emitter " + str(emitter_id - 1) + "/" + str(emitters.size()))
+		# 	elif emitter_id > 0:
+		# 		if emitters[emitter_id - 1].start_time == 0 and time < 0x200: # TODO can an emitter be started multiple times? Ex. Cure E001 2nd timing section
+		# 			emitters[emitter_id - 1].start_time = time # TODO figure out special 'times' of 0x257, 0x0258, and 0x0259
 	
 	# Parent Phase1 Emitters
 	for emitter_timing_section_id: int in 5:
@@ -621,6 +622,7 @@ func spawn_emitters(location: Node3D, timeline: EmitterTimeline, time_offset: in
 		var emitter: VfxEmitter = emitters[keyframe.emitter_id - 1]
 		var emitter_location: Node3D = Node3D.new()
 		emitter_location.position = emitter.start_position * MapData.SCALE
+		emitter_location.name = "Emitter " + str(keyframe.emitter_id - 1)
 		location.add_child(emitter_location)
 		
 		# TODO fix emitter timing; why do they need x3 to be reasonable?
@@ -638,14 +640,17 @@ func display_vfx_animation(emitter_data: VfxEmitter, emitter_node: Node3D) -> vo
 	
 	# var vfx_animation := animations[emitter_data.anim_index]
 	var vfx_animation: VfxAnimation = emitter_data.animation
-	var anim_location: Node3D = Node3D.new()
-	anim_location.name = "vfx frameset"
+	var particle: Node3D = Node3D.new()
+	particle.name = "Particle, Animation: " + str(emitter_data.anim_index)
 	# handle initial anim_location position as screen_space movement instead of world space
 	var camera_right: Vector3 = emitter_node.get_viewport().get_camera_3d().basis * Vector3.RIGHT
 	var screen_space_x: Vector3 = (vfx_animation.screen_offset.x * camera_right)
 	var screen_space_y: Vector3 = Vector3(0, -vfx_animation.screen_offset.y, 0)
-	anim_location.position = (screen_space_x + screen_space_y) * MapData.SCALE 
-	emitter_node.add_child(anim_location)
+	particle.position = (screen_space_x + screen_space_y) * MapData.SCALE 
+	
+	if emitter_node == null:
+		return
+	emitter_node.add_child(particle)
 	
 	for anim_frame_idx: int in vfx_animation.animation_frames.size():
 		var vfx_anim_frame := vfx_animation.animation_frames[anim_frame_idx]
@@ -653,7 +658,7 @@ func display_vfx_animation(emitter_data: VfxEmitter, emitter_node: Node3D) -> vo
 		if vfx_anim_frame.frameset_id == 0x83: # move anim_location, handle anim_location 0x83 movement as screen_space movement instead of world space
 			var screen_space_offset_x: Vector3 = (vfx_anim_frame.duration * camera_right)
 			var screen_space_offset_y: Vector3 = Vector3(0, -vfx_anim_frame.byte_02, 0)
-			anim_location.position += (screen_space_offset_x + screen_space_offset_y) * MapData.SCALE # byte01 is actually the X movement in function 0x83, not the duration
+			particle.position += (screen_space_offset_x + screen_space_offset_y) * MapData.SCALE # byte01 is actually the X movement in function 0x83, not the duration
 			continue
 		elif vfx_anim_frame.frameset_id >= framesets.size():
 			push_warning(file_name + " frameset_id: " + str(vfx_anim_frame.frameset_id)) # TODO fix special frame_id codes, >= 0x80 (128)
@@ -666,18 +671,21 @@ func display_vfx_animation(emitter_data: VfxEmitter, emitter_node: Node3D) -> vo
 			#mesh_instance.mesh = frame_meshes[frame_mesh_idx]
 			vfx_frame_mesh.mesh = get_frame_mesh(vfx_anim_frame.frameset_id, frame_idx)
 			#vfx_frame_mesh.scale.y = -1
-			anim_location.add_child(vfx_frame_mesh)
+			particle.add_child(vfx_frame_mesh)
 		
 		if vfx_anim_frame.duration == 0: # TODO handle vfx animation with duration 00 corretly
-			await anim_location.get_tree().create_timer(10 / animation_speed).timeout
+			await particle.get_tree().create_timer(10 / animation_speed).timeout
 		else:
 			if vfx_anim_frame.duration < 0:
 				vfx_anim_frame.duration += 256 # convert signed byte to unsigned 
-			await anim_location.get_tree().create_timer(vfx_anim_frame.duration / animation_speed).timeout
+			await particle.get_tree().create_timer(vfx_anim_frame.duration / animation_speed).timeout
+		
+		if particle == null:
+			break
 		
 		# clear composite frame
-		var children := anim_location.get_children()
+		var children := particle.get_children()
 		for child: Node in children:
 			child.queue_free()
 	
-	emitter_node.queue_free()
+	# emitter_node.queue_free()

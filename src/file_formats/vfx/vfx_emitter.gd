@@ -106,8 +106,9 @@ var child_emitter_idx_on_interval: int = 0
 # var start_position: Vector3i
 # var end_position: Vector3i
 
-var start_time: int = 0
-var emitter_lifetime: int = 0 # frames
+# start time and lifetime controlled by timers in VisualEffectData.spawn_emitters
+# var start_time: int = 0
+# var emitter_lifetime: int = 0 # frames
 
 func _init(bytes: PackedByteArray = []):
 	if bytes.size() == 0:

@@ -346,18 +346,18 @@ func init_from_file() -> void:
 	for emitter_id: int in num_emitters:
 		var emitter_data_start: int = 0x14 + (196 * emitter_id)
 		var emitter_data_bytes: PackedByteArray = emitter_control_bytes.slice(emitter_data_start, emitter_data_start + 196)
-		var emitter: VfxEmitter = VfxEmitter.new()
+		var emitter: VfxEmitter = VfxEmitter.new(emitter_data_bytes)
 		
-		emitter.anim_index = emitter_data_bytes.decode_u8(1)
-		emitter.motion_type_flag = emitter_data_bytes.decode_u8(2)
-		emitter.animation_target_flag = emitter_data_bytes.decode_u8(3)
-		emitter.frameset_group_index = emitter_data_bytes.decode_u8(4)
-		emitter.byte_05 = emitter_data_bytes.decode_u8(5)
-		emitter.color_masking_motion_flags = emitter_data_bytes.decode_u8(6)
-		emitter.byte_07 = emitter_data_bytes.decode_u8(7)
+		# emitter.anim_index = emitter_data_bytes.decode_u8(1)
+		# emitter.motion_type_flag = emitter_data_bytes.decode_u8(2)
+		# emitter.animation_target_flag = emitter_data_bytes.decode_u8(3)
+		# emitter.frameset_group_index = emitter_data_bytes.decode_u8(4)
+		# emitter.byte_05 = emitter_data_bytes.decode_u8(5)
+		# emitter.color_masking_motion_flags = emitter_data_bytes.decode_u8(6)
+		# emitter.byte_07 = emitter_data_bytes.decode_u8(7)
 		
-		emitter.start_position = Vector3i(emitter_data_bytes.decode_s16(0x14), -emitter_data_bytes.decode_s16(0x16), emitter_data_bytes.decode_s16(0x18))
-		emitter.end_position = Vector3i(emitter_data_bytes.decode_s16(0x1a), -emitter_data_bytes.decode_s16(0x1c), emitter_data_bytes.decode_s16(0x1e))
+		# emitter.start_position = Vector3i(emitter_data_bytes.decode_s16(0x14), -emitter_data_bytes.decode_s16(0x16), emitter_data_bytes.decode_s16(0x18))
+		# emitter.end_position = Vector3i(emitter_data_bytes.decode_s16(0x1a), -emitter_data_bytes.decode_s16(0x1c), emitter_data_bytes.decode_s16(0x1e))
 		
 		emitter.animation = VfxAnimation.new()
 		emitter.animation.screen_offset = animations[emitter.anim_index].screen_offset

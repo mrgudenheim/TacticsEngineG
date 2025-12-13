@@ -1,6 +1,7 @@
 class_name VfxEmitter
 extends RefCounted
 
+var vfx_data: VisualEffectData
 var anim_index: int
 var animation: VisualEffectData.VfxAnimation
 var motion_type_flag: int
@@ -110,28 +111,30 @@ var child_emitter_idx_on_interval: int = 0
 # var start_time: int = 0
 # var emitter_lifetime: int = 0 # frames
 
-func _init(bytes: PackedByteArray = []):
-	if bytes.size() == 0:
+func _init(emitter_bytes: PackedByteArray = [], new_vfx_data: VisualEffectData = null):
+	if emitter_bytes.size() == 0:
 		return
 	
-	anim_index = bytes.decode_u8(1)
+	vfx_data = new_vfx_data
+
+	anim_index = emitter_bytes.decode_u8(1)
 	
-	motion_type_flag = bytes.decode_u8(2)
+	motion_type_flag = emitter_bytes.decode_u8(2)
 	align_to_velocity = motion_type_flag & 1 == 1
 	target_anchor_mode = motion_type_flag >> 5
 	
-	animation_target_flag = bytes.decode_u8(3) 
+	animation_target_flag = emitter_bytes.decode_u8(3) 
 	spread_mode = animation_target_flag & 1 # 0=sphere, 1=box
 	emitter_anchor_mode = (animation_target_flag >> 1) & 7
 	handler_index = (animation_target_flag >> 4) & 0x0F # unused
 	
-	frameset_group_index = bytes.decode_u8(4)
+	frameset_group_index = emitter_bytes.decode_u8(4)
 	# byte_05 = bytes.decode_u8(5) # unused
 	# color_masking_motion_flags = bytes.decode_u8(6)
 	# byte_07 = bytes.decode_u8(7)
 
 	# byte_05 unused
-	emitter_flags = bytes.decode_u16(0x06) # bytes 0x06 and 0x07
+	emitter_flags = emitter_bytes.decode_u16(0x06) # bytes 0x06 and 0x07
 	child_death_mode = emitter_flags & 3
 	child_midlife_mode = (emitter_flags >> 2) & 3
 	is_velocity_inward = (emitter_flags >> 4) & 1 == 1
@@ -140,91 +143,106 @@ func _init(bytes: PackedByteArray = []):
 	velocity_mode = emitter_flags & 0x0410
 
 	# curves
-	interpolation_curve_indicies["POSITION"] = bytes.decode_u8(0x08) & 0xF # lower nibble
-	interpolation_curve_indicies["PARTICLE_SPREAD"] = (bytes.decode_u8(0x08) >> 8) & 0xF # upper nibble
-	interpolation_curve_indicies["VELOCITY_ANGLE"] = bytes.decode_u8(0x09) & 0xF # lower nibble
-	interpolation_curve_indicies["VELOCITY_ANGLE_SPREAD"] = (bytes.decode_u8(0x09) >> 8) & 0xF # upper nibble
-	interpolation_curve_indicies["INERTIA"] = bytes.decode_u8(0x0a) & 0xF # lower nibble
+	interpolation_curve_indicies["POSITION"] = emitter_bytes.decode_u8(0x08) & 0xF # lower nibble
+	interpolation_curve_indicies["PARTICLE_SPREAD"] = (emitter_bytes.decode_u8(0x08) >> 4) & 0xF # upper nibble
+	interpolation_curve_indicies["VELOCITY_ANGLE"] = emitter_bytes.decode_u8(0x09) & 0xF # lower nibble
+	interpolation_curve_indicies["VELOCITY_ANGLE_SPREAD"] = (emitter_bytes.decode_u8(0x09) >> 4) & 0xF # upper nibble
+	interpolation_curve_indicies["INERTIA"] = emitter_bytes.decode_u8(0x0a) & 0xF # lower nibble
 	# byte 0x0a upper nibble not used
-	interpolation_curve_indicies["WEIGHT"] = bytes.decode_u8(0x0b) & 0xF # lower nibble
-	interpolation_curve_indicies["RADIAL_VELOCITY"] = (bytes.decode_u8(0x0b) >> 8) & 0xF # upper nibble
-	interpolation_curve_indicies["ACCELERATION"] = bytes.decode_u8(0x0c) & 0xF # lower nibble
-	interpolation_curve_indicies["DRAG"] = (bytes.decode_u8(0x0c) >> 8) & 0xF # upper nibble
-	interpolation_curve_indicies["PARTICLE_LIFETIME"] = bytes.decode_u8(0x0d) & 0xF # lower nibble
-	interpolation_curve_indicies["TARGET_OFFSET"] = (bytes.decode_u8(0x0d) >> 8) & 0xF # upper nibble
+	interpolation_curve_indicies["WEIGHT"] = emitter_bytes.decode_u8(0x0b) & 0xF # lower nibble
+	interpolation_curve_indicies["RADIAL_VELOCITY"] = (emitter_bytes.decode_u8(0x0b) >> 4) & 0xF # upper nibble
+	interpolation_curve_indicies["ACCELERATION"] = emitter_bytes.decode_u8(0x0c) & 0xF # lower nibble
+	interpolation_curve_indicies["DRAG"] = (emitter_bytes.decode_u8(0x0c) >> 4) & 0xF # upper nibble
+	interpolation_curve_indicies["PARTICLE_LIFETIME"] = emitter_bytes.decode_u8(0x0d) & 0xF # lower nibble
+	interpolation_curve_indicies["TARGET_OFFSET"] = (emitter_bytes.decode_u8(0x0d) >> 4) & 0xF # upper nibble
 	# byte 0x0e low nibble not used
-	interpolation_curve_indicies["PARTICLE_COUNT"] = (bytes.decode_u8(0x0e) >> 8) & 0xF # upper nibble
-	interpolation_curve_indicies["SPAWN_INTERVAL"] = bytes.decode_u8(0x0f) & 0xF # lower nibble
-	interpolation_curve_indicies["HOMING_STRENGTH"] = (bytes.decode_u8(0x0f) >> 8) & 0xF # upper nibble 2 bits?
-	interpolation_curve_indicies["HOMING_CURVE"] = (bytes.decode_u8(0x0f) >> 8) & 0xF # upper nibble 2 bits?
+	interpolation_curve_indicies["PARTICLE_COUNT"] = (emitter_bytes.decode_u8(0x0e) >> 4) & 0xF # upper nibble
+	interpolation_curve_indicies["SPAWN_INTERVAL"] = emitter_bytes.decode_u8(0x0f) & 0xF # lower nibble
+	interpolation_curve_indicies["HOMING_STRENGTH"] = (emitter_bytes.decode_u8(0x0f) >> 4) & 0x3 # upper nibble 2 bits?
+	interpolation_curve_indicies["HOMING_CURVE"] = (emitter_bytes.decode_u8(0x0f) >> 6) & 0x3 # upper nibble 2 bits?
 	# TODO how is byte 0x0f handled for homing?
 
 	# color curves
-	interpolation_curve_indicies["COLOR_R"] = bytes.decode_u8(0x10) & 0xF # lower nibble
-	interpolation_curve_indicies["COLOR_G"] = (bytes.decode_u8(0x10) >> 8) & 0xF # upper nibble
-	interpolation_curve_indicies["COLOR_B"] = bytes.decode_u8(0x11) & 0xF # lower nibble
+	interpolation_curve_indicies["COLOR_R"] = emitter_bytes.decode_u8(0x10) & 0xF # lower nibble
+	interpolation_curve_indicies["COLOR_G"] = (emitter_bytes.decode_u8(0x10) >> 8) & 0xF # upper nibble
+	interpolation_curve_indicies["COLOR_B"] = emitter_bytes.decode_u8(0x11) & 0xF # lower nibble
 
-	start_position = Vector3(bytes.decode_s16(0x14), -bytes.decode_s16(0x16), bytes.decode_s16(0x18))
-	end_position = Vector3(bytes.decode_s16(0x1a), -bytes.decode_s16(0x1c), bytes.decode_s16(0x1e))
+	start_position = Vector3(emitter_bytes.decode_s16(0x14), -emitter_bytes.decode_s16(0x16), emitter_bytes.decode_s16(0x18))
+	end_position = Vector3(emitter_bytes.decode_s16(0x1a), -emitter_bytes.decode_s16(0x1c), emitter_bytes.decode_s16(0x1e))
 
-	start_position_spread = Vector3(bytes.decode_s16(0x20), bytes.decode_s16(0x22), bytes.decode_s16(0x24))
-	end_position_spread = Vector3(bytes.decode_s16(0x26), bytes.decode_s16(0x28), bytes.decode_s16(0x2a))
+	start_position_spread = Vector3(emitter_bytes.decode_s16(0x20), emitter_bytes.decode_s16(0x22), emitter_bytes.decode_s16(0x24))
+	end_position_spread = Vector3(emitter_bytes.decode_s16(0x26), emitter_bytes.decode_s16(0x28), emitter_bytes.decode_s16(0x2a))
 
-	start_angle = Vector3(bytes.decode_u16(0x2c), bytes.decode_u16(0x2e), bytes.decode_u16(0x30))
-	end_angle = Vector3(bytes.decode_u16(0x32), bytes.decode_u16(0x34), bytes.decode_u16(0x36))
+	start_angle = Vector3(emitter_bytes.decode_u16(0x2c), emitter_bytes.decode_u16(0x2e), emitter_bytes.decode_u16(0x30))
+	end_angle = Vector3(emitter_bytes.decode_u16(0x32), emitter_bytes.decode_u16(0x34), emitter_bytes.decode_u16(0x36))
 
-	start_angle_spread = Vector3(bytes.decode_u16(0x38), bytes.decode_u16(0x3a), bytes.decode_u16(0x3c))
-	end_angle_spread = Vector3(bytes.decode_u16(0x3e), bytes.decode_u16(0x40), bytes.decode_u16(0x42))
+	start_angle_spread = Vector3(emitter_bytes.decode_u16(0x38), emitter_bytes.decode_u16(0x3a), emitter_bytes.decode_u16(0x3c))
+	end_angle_spread = Vector3(emitter_bytes.decode_u16(0x3e), emitter_bytes.decode_u16(0x40), emitter_bytes.decode_u16(0x42))
 
-	intertia_min_start = bytes.decode_u16(0x44)
-	intertia_max_start = bytes.decode_u16(0x46)
-	intertia_min_end = bytes.decode_u16(0x48)
-	intertia_max_end = bytes.decode_u16(0x4a)
+	intertia_min_start = emitter_bytes.decode_u16(0x44)
+	intertia_max_start = emitter_bytes.decode_u16(0x46)
+	intertia_min_end = emitter_bytes.decode_u16(0x48)
+	intertia_max_end = emitter_bytes.decode_u16(0x4a)
 	
 	# bytes 0x4c - 0x52 not used
 
-	weight_min_start = bytes.decode_u16(0x54)
-	weight_max_start = bytes.decode_u16(0x56)
-	weight_min_end = bytes.decode_u16(0x58)
-	weight_max_end = bytes.decode_u16(0x5a)
+	weight_min_start = emitter_bytes.decode_u16(0x54)
+	weight_max_start = emitter_bytes.decode_u16(0x56)
+	weight_min_end = emitter_bytes.decode_u16(0x58)
+	weight_max_end = emitter_bytes.decode_u16(0x5a)
 
-	radial_velocity_min_start = bytes.decode_u16(0x5c)
-	radial_velocity_max_start = bytes.decode_u16(0x5e)
-	radial_velocity_min_end = bytes.decode_u16(0x60)
-	radial_velocity_max_end = bytes.decode_u16(0x62)
+	radial_velocity_min_start = emitter_bytes.decode_u16(0x5c)
+	radial_velocity_max_start = emitter_bytes.decode_u16(0x5e)
+	radial_velocity_min_end = emitter_bytes.decode_u16(0x60)
+	radial_velocity_max_end = emitter_bytes.decode_u16(0x62)
 
-	acceleration_min_start = Vector3(bytes.decode_u16(0x64), bytes.decode_u16(0x68), bytes.decode_u16(0x6c))
-	acceleration_max_start = Vector3(bytes.decode_u16(0x66), bytes.decode_u16(0x6a), bytes.decode_u16(0x6e))
-	acceleration_min_end = Vector3(bytes.decode_u16(0x70), bytes.decode_u16(0x74), bytes.decode_u16(0x78))
-	acceleration_max_end = Vector3(bytes.decode_u16(0x72), bytes.decode_u16(0x76), bytes.decode_u16(0x7a))
+	acceleration_min_start = Vector3(emitter_bytes.decode_u16(0x64), emitter_bytes.decode_u16(0x68), emitter_bytes.decode_u16(0x6c))
+	acceleration_max_start = Vector3(emitter_bytes.decode_u16(0x66), emitter_bytes.decode_u16(0x6a), emitter_bytes.decode_u16(0x6e))
+	acceleration_min_end = Vector3(emitter_bytes.decode_u16(0x70), emitter_bytes.decode_u16(0x74), emitter_bytes.decode_u16(0x78))
+	acceleration_max_end = Vector3(emitter_bytes.decode_u16(0x72), emitter_bytes.decode_u16(0x76), emitter_bytes.decode_u16(0x7a))
 
-	drag_min_start = Vector3(bytes.decode_u16(0x7c), bytes.decode_u16(0x80), bytes.decode_u16(0x84))
-	drag_max_start = Vector3(bytes.decode_u16(0x7e), bytes.decode_u16(0x82), bytes.decode_u16(0x86))
-	drag_min_end = Vector3(bytes.decode_u16(0x88), bytes.decode_u16(0x8c), bytes.decode_u16(0x90))
-	drag_max_end = Vector3(bytes.decode_u16(0x8a), bytes.decode_u16(0x8e), bytes.decode_u16(0x92))
+	drag_min_start = Vector3(emitter_bytes.decode_u16(0x7c), emitter_bytes.decode_u16(0x80), emitter_bytes.decode_u16(0x84))
+	drag_max_start = Vector3(emitter_bytes.decode_u16(0x7e), emitter_bytes.decode_u16(0x82), emitter_bytes.decode_u16(0x86))
+	drag_min_end = Vector3(emitter_bytes.decode_u16(0x88), emitter_bytes.decode_u16(0x8c), emitter_bytes.decode_u16(0x90))
+	drag_max_end = Vector3(emitter_bytes.decode_u16(0x8a), emitter_bytes.decode_u16(0x8e), emitter_bytes.decode_u16(0x92))
 
-	particle_lifetime_min_start = bytes.decode_u16(0x94)
-	particle_lifetime_max_start = bytes.decode_u16(0x96)
-	particle_lifetime_min_end = bytes.decode_u16(0x98)
-	particle_lifetime_max_end = bytes.decode_u16(0x9a)
+	particle_lifetime_min_start = emitter_bytes.decode_u16(0x94)
+	particle_lifetime_max_start = emitter_bytes.decode_u16(0x96)
+	particle_lifetime_min_end = emitter_bytes.decode_u16(0x98)
+	particle_lifetime_max_end = emitter_bytes.decode_u16(0x9a)
 
-	target_offset_start = Vector3(bytes.decode_u16(0x9c), bytes.decode_u16(0x9e), bytes.decode_u16(0xa0))
-	target_offset_end = Vector3(bytes.decode_u16(0xa2), bytes.decode_u16(0xa4), bytes.decode_u16(0xa6))
+	target_offset_start = Vector3(emitter_bytes.decode_u16(0x9c), emitter_bytes.decode_u16(0x9e), emitter_bytes.decode_u16(0xa0))
+	target_offset_end = Vector3(emitter_bytes.decode_u16(0xa2), emitter_bytes.decode_u16(0xa4), emitter_bytes.decode_u16(0xa6))
 
 	# bytes 0xa8 - 0xaf not used
 
-	particle_count_start = bytes.decode_u16(0xb0)
-	particle_count_end = bytes.decode_u16(0xb2)
+	particle_count_start = emitter_bytes.decode_u16(0xb0)
+	particle_count_end = emitter_bytes.decode_u16(0xb2)
 
-	spawn_interval_start = bytes.decode_u16(0xb4)
-	spawn_interval_end = bytes.decode_u16(0xb6)
+	spawn_interval_start = emitter_bytes.decode_u16(0xb4)
+	spawn_interval_end = emitter_bytes.decode_u16(0xb6)
 
-	homing_strength_min_start = bytes.decode_u16(0xb8)
-	homing_strength_max_start = bytes.decode_u16(0xba)
-	homing_strength_min_end = bytes.decode_u16(0xbc)
-	homing_strength_max_end = bytes.decode_u16(0xbe)
+	homing_strength_min_start = emitter_bytes.decode_u16(0xb8)
+	homing_strength_max_start = emitter_bytes.decode_u16(0xba)
+	homing_strength_min_end = emitter_bytes.decode_u16(0xbc)
+	homing_strength_max_end = emitter_bytes.decode_u16(0xbe)
 
-	child_emitter_idx_on_death = bytes.decode_u16(0xc0)
-	child_emitter_idx_on_interval = bytes.decode_u16(0xc1)
+	child_emitter_idx_on_death = emitter_bytes.decode_u16(0xc0)
+	child_emitter_idx_on_interval = emitter_bytes.decode_u16(0xc1)
 
 	# bytes 0xc2, 0xc3 not used
+
+
+# TODO implement emitters spawning particles
+func spawn_particles(emitter_node: Node3D) -> void:
+	var particle: VfxParticle = VfxParticle.new(vfx_data, self)
+	particle.name = emitter_node.name + " Particle, Animation_" + str(anim_index)
+	# handle initial anim_location position as screen_space movement instead of world space
+	
+	if emitter_node == null:
+		return
+	emitter_node.add_child(particle)
+	particle.reparent(emitter_node.get_parent())
+	particle.play_animation() # needs to be added to tree before playing animation because needs to get the viewport
+	
+	

@@ -346,7 +346,7 @@ func init_from_file() -> void:
 	for emitter_id: int in num_emitters:
 		var emitter_data_start: int = 0x14 + (196 * emitter_id)
 		var emitter_data_bytes: PackedByteArray = emitter_control_bytes.slice(emitter_data_start, emitter_data_start + 196)
-		var emitter: VfxEmitter = VfxEmitter.new(emitter_data_bytes)
+		var emitter: VfxEmitter = VfxEmitter.new(emitter_data_bytes, self)
 		
 		# emitter.anim_index = emitter_data_bytes.decode_u8(1)
 		# emitter.motion_type_flag = emitter_data_bytes.decode_u8(2)
@@ -507,9 +507,10 @@ func init_from_file() -> void:
 	is_initialized = true
 
 
-func get_frame_mesh(frame_set_idx: int, frame_idx: int = 0) -> ArrayMesh:
-	var vfx_frame: VfxFrame = framesets[frame_set_idx].frameset[frame_idx]
+func get_frame_mesh(composite_frame_idx: int, frame_idx: int = 0) -> ArrayMesh:
+	var vfx_frame: VfxFrame = framesets[composite_frame_idx].frameset[frame_idx]
 	
+	# TODO use object pooling and just adjust the vertex positions
 	var st = SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	
@@ -626,7 +627,8 @@ func spawn_emitters(location: Node3D, timeline: EmitterTimeline, time_offset: in
 		location.add_child(emitter_location)
 		
 		# TODO fix emitter timing; why do they need x3 to be reasonable?
-		emitter_location.get_tree().create_timer((keyframe.time + time_offset) * 3.0 / animation_speed).timeout.connect(func(): display_vfx_animation(emitter, emitter_location))
+		# emitter_location.get_tree().create_timer((keyframe.time + time_offset) * 3.0 / animation_speed).timeout.connect(func(): display_vfx_animation(emitter, emitter_location))
+		emitter_location.get_tree().create_timer((keyframe.time + time_offset) * 3.0 / animation_speed).timeout.connect(func(): emitter.spawn_particles(emitter_location))
 
 		# destroy emitter and next keyframe time
 		emitter_location.get_tree().create_timer((timeline.keyframes[emitter_keyframe_idx + 1].time + time_offset) * 3.0 / animation_speed).timeout.connect(func(): emitter_location.queue_free())
@@ -641,7 +643,7 @@ func display_vfx_animation(emitter_data: VfxEmitter, emitter_node: Node3D) -> vo
 	# var vfx_animation := animations[emitter_data.anim_index]
 	var vfx_animation: VfxAnimation = emitter_data.animation
 	var particle: Node3D = Node3D.new()
-	particle.name = "Particle, Animation: " + str(emitter_data.anim_index)
+	particle.name = "Particle, Animation_" + str(emitter_data.anim_index)
 	# handle initial anim_location position as screen_space movement instead of world space
 	var camera_right: Vector3 = emitter_node.get_viewport().get_camera_3d().basis * Vector3.RIGHT
 	var screen_space_x: Vector3 = (vfx_animation.screen_offset.x * camera_right)

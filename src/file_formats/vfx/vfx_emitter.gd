@@ -242,7 +242,6 @@ func spawn_particles(emitter_node: Node3D) -> void:
 	if emitter_node == null:
 		return
 	emitter_node.add_child(particle)
+	particle.play_animation() # particles needs to be added to tree before playing animation because they need to get the viewport to set their position
 	particle.reparent(emitter_node.get_parent())
-	particle.play_animation() # needs to be added to tree before playing animation because needs to get the viewport
-	
 	

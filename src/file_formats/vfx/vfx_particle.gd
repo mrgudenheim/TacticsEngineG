@@ -15,7 +15,6 @@ func _init(new_vfx_data: VisualEffectData, new_emitter_data: VfxEmitter):
 	lifetime = emitter_data.particle_lifetime_min_start
 
 
-
 func play_animation() -> void:
 	if lifetime != 0xFFFF:
 		get_tree().create_timer(lifetime * 3.0 / vfx_data.animation_speed).timeout.connect(queue_free)

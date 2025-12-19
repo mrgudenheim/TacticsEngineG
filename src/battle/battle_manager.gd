@@ -302,7 +302,7 @@ func add_test_teams_to_map() -> void:
 	################# unit 2
 	spawn_tile = total_map_tiles[Vector2i(1, 2)][0] # [Vector2i(x, y)][layer]
 	job_id = 0x11 # 0x11 is Gafgorian
-	new_unit = spawn_unit(spawn_tile, job_id, teams[0]) 
+	new_unit = spawn_unit(spawn_tile, job_id, teams[1]) 
 	new_unit.is_ai_controlled = false
 	new_unit.set_primary_weapon(RomReader.items["blood_sword"].item_idx) # item_id
 	

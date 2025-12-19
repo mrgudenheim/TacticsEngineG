@@ -271,11 +271,64 @@ func add_units_to_map() -> void:
 
 
 func add_test_teams_to_map() -> void:
-	# add player unit
-	var random_tile: TerrainTile = get_random_stand_terrain_tile()
-	var new_unit: UnitData = spawn_unit(random_tile, 0x05, teams[0]) # 0x05 is Delita holy knight
+	################# unit 1
+	var spawn_tile: TerrainTile = total_map_tiles[Vector2i(1, 1)][0] # [Vector2i(x, y)][layer]
+	var job_id: int = 0x05 # 0x05 is Delita holy knight
+	var new_unit: UnitData = spawn_unit(spawn_tile, job_id, teams[0]) 
 	new_unit.is_ai_controlled = false
-	new_unit.set_primary_weapon(0x1d) # ice brand
+	new_unit.set_primary_weapon(0x1d) # item_id - 0x1d is ice brand
+	
+	# add abilities: slot ids 0 - Skillset 1, 1 - skillset 2, 2 - reaction, 3 - support, 4 - movement
+	var ability_unique_name: String = "counter_attack" # usually the psx ability name in snake_case, but some are changed (see RomReader.Abilities after loading ROM for full list, RSM start on page 22)
+	# TODO implement skillsets
+	new_unit.equip_ability(new_unit.ability_slots[2], RomReader.abilities[ability_unique_name]) # reaction
+	new_unit.equip_ability(new_unit.ability_slots[3], RomReader.abilities["abandon"]) # support
+	new_unit.equip_ability(new_unit.ability_slots[4], RomReader.abilities["move_get_hp"]) # movement
+	
+	new_unit.generate_raw_stats(UnitData.StatBasis.MALE) # StatBasis Options: MALE, FEMALE, OTHER, MONSTER
+	var level: int = 40
+	new_unit.stats[UnitData.StatType.LEVEL].set_value(level)
+	new_unit.generate_leveled_stats(level, new_unit.job_data)
+	new_unit.generate_battle_stats(new_unit.job_data)
+	
+	var item_unique_name: String = "ice_brand" # usually the psx item name in snake_case (see RomReader.Items after loading ROM for full list)
+	# RH is already set by set_primary_weapon() above
+	#new_unit.set_equipment_slot(new_unit.equip_slots[0], RomReader.items[item_unique_name]) # RH
+	new_unit.set_equipment_slot(new_unit.equip_slots[1], RomReader.items["buckler"]) # LH
+	new_unit.set_equipment_slot(new_unit.equip_slots[2], RomReader.items["crystal_helmet"]) # headgear
+	new_unit.set_equipment_slot(new_unit.equip_slots[3], RomReader.items["power_sleeve"]) # body
+	new_unit.set_equipment_slot(new_unit.equip_slots[4], RomReader.items["small_mantle"]) # accessory
+	
+	################# unit 2
+	spawn_tile = total_map_tiles[Vector2i(1, 2)][0] # [Vector2i(x, y)][layer]
+	job_id = 0x11 # 0x11 is Gafgorian
+	new_unit = spawn_unit(spawn_tile, job_id, teams[0]) 
+	new_unit.is_ai_controlled = false
+	new_unit.set_primary_weapon(RomReader.items["blood_sword"].item_idx) # item_id
+	
+	# TODO implement skillsets
+	new_unit.equip_ability(new_unit.ability_slots[2], RomReader.abilities["pa_save"]) # reaction
+	new_unit.equip_ability(new_unit.ability_slots[3], RomReader.abilities["attack_up"]) # support
+	new_unit.equip_ability(new_unit.ability_slots[4], RomReader.abilities["move+1"]) # movement
+	
+	new_unit.generate_raw_stats(UnitData.StatBasis.MALE) # StatBasis Options: MALE, FEMALE, OTHER, MONSTER
+	level = 40
+	new_unit.stats[UnitData.StatType.LEVEL].set_value(level)
+	new_unit.generate_leveled_stats(level, new_unit.job_data)
+	new_unit.generate_battle_stats(new_unit.job_data)
+	
+	# RH is already set by set_primary_weapon() above
+	#new_unit.set_equipment_slot(new_unit.equip_slots[0], RomReader.items["blood_sword"]) # RH
+	new_unit.set_equipment_slot(new_unit.equip_slots[1], RomReader.items["buckler"]) # LH
+	new_unit.set_equipment_slot(new_unit.equip_slots[2], RomReader.items["crystal_helmet"]) # headgear
+	new_unit.set_equipment_slot(new_unit.equip_slots[3], RomReader.items["power_sleeve"]) # body
+	new_unit.set_equipment_slot(new_unit.equip_slots[4], RomReader.items["small_mantle"]) # accessory
+	
+	# add player unit
+	#var random_tile: TerrainTile = get_random_stand_terrain_tile()
+	#var new_unit: UnitData = spawn_unit(random_tile, 0x05, teams[0]) # 0x05 is Delita holy knight
+	#new_unit.is_ai_controlled = false
+	#new_unit.set_primary_weapon(0x1d) # ice brand
 	
 	# var new_ramza: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x01, teams[0])
 	
@@ -287,28 +340,28 @@ func add_test_teams_to_map() -> void:
 	#new_unit2.knocked_out.connect(load_random_map_delay)
 	#new_unit2.knocked_out.connect(increment_counter)
 	
-	var new_unit3: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x11, teams[1]) # 0x11 is Gafgorian dark knight
-	new_unit3.set_primary_weapon(0x17) # blood sword
+	#var new_unit3: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x11, teams[1]) # 0x11 is Gafgorian dark knight
+	#new_unit3.set_primary_weapon(0x17) # blood sword
 	
-	var specific_jobs: PackedInt32Array = [
-		#0x65, # grenade
-		#0x67, # panther
-		#0x76, # juravis
-		#0x4a, # squire
-		#0x50, # black mage
-		#0x53, # thief
-		#0x4f, # white mage
-		0x52, # summoner
-		#0x51, # time mage
-		#0x55, # oracle
-		#0x49, # arch angel
-		#0x5f, # black chocobo
-		#0x64, # bomb
-		#0x7b, # wildbow
-		#0x87, # dark behemoth
-		#0x8D, # tiamat
-		0x99, # archaic demon
-		]
+	#var specific_jobs: PackedInt32Array = [
+		##0x65, # grenade
+		##0x67, # panther
+		##0x76, # juravis
+		##0x4a, # squire
+		##0x50, # black mage
+		##0x53, # thief
+		##0x4f, # white mage
+		#0x52, # summoner
+		##0x51, # time mage
+		##0x55, # oracle
+		##0x49, # arch angel
+		##0x5f, # black chocobo
+		##0x64, # bomb
+		##0x7b, # wildbow
+		##0x87, # dark behemoth
+		##0x8D, # tiamat
+		#0x99, # archaic demon
+		#]
 	
 	#var generic_jobs: PackedInt32Array = range(0x4a, 0x5d) # all generics
 	#var special_jobs: PackedInt32Array = []
@@ -318,39 +371,39 @@ func add_test_teams_to_map() -> void:
 	#specific_jobs.append_array(special_jobs)
 	#specific_jobs.append_array(standard_monsters)
 	
-	for specific_job: int in specific_jobs:
-		spawn_unit(get_random_stand_terrain_tile(), specific_job, teams[0])
+	#for specific_job: int in specific_jobs:
+		#spawn_unit(get_random_stand_terrain_tile(), specific_job, teams[0])
 	
 	#units[3].set_primary_weapon(0x4a) # blaze gun
 	
-	var test_ability: Ability = Ability.new()
-	var test_triggered_action: TriggeredAction = TriggeredAction.new()
-	test_ability.triggered_actions.append(test_triggered_action)
+	#var test_ability: Ability = Ability.new()
+	#var test_triggered_action: TriggeredAction = TriggeredAction.new()
+	#test_ability.triggered_actions.append(test_triggered_action)
 	
 	# Move Hp Up
-	test_triggered_action.trigger_timing = TriggeredAction.TriggerTiming.MOVED
-	test_triggered_action.action_unique_name = "regen_heal" # Regen
-	test_triggered_action.trigger_chance_formula.values = [100.0]
-	test_triggered_action.trigger_chance_formula.formula = FormulaData.Formulas.V1
-	test_triggered_action.targeting = TriggeredAction.TargetingTypes.SELF
-	test_triggered_action.display_name = "Move Get HP"
-	test_triggered_action.unique_name = test_triggered_action.display_name.to_snake_case()
-	
-	Utilities.save_json(test_triggered_action)
+	#test_triggered_action.trigger_timing = TriggeredAction.TriggerTiming.MOVED
+	#test_triggered_action.action_unique_name = "regen_heal" # Regen
+	#test_triggered_action.trigger_chance_formula.values = [100.0]
+	#test_triggered_action.trigger_chance_formula.formula = FormulaData.Formulas.V1
+	#test_triggered_action.targeting = TriggeredAction.TargetingTypes.SELF
+	#test_triggered_action.display_name = "Move Get HP"
+	#test_triggered_action.unique_name = test_triggered_action.display_name.to_snake_case()
+	#
+	#Utilities.save_json(test_triggered_action)
 	# var json_file = FileAccess.open("user://overrides/triggered_actions/move-hp-up.json", FileAccess.WRITE)
 	# json_file.store_line(test_triggered_action.to_json())
 	# json_file.close()
 	
 	# Counter Attack
-	test_triggered_action.trigger_timing = TriggeredAction.TriggerTiming.TARGETTED_POST_ACTION
-	test_triggered_action.action_unique_name = "ATTACK" # primary attack special case
-	test_triggered_action.trigger_chance_formula.values = [1.0]
-	test_triggered_action.trigger_chance_formula.formula = FormulaData.Formulas.BRAVExV1
-	test_triggered_action.targeting = TriggeredAction.TargetingTypes.INITIATOR
-	test_triggered_action.display_name = "attack"
-	test_triggered_action.unique_name = test_triggered_action.display_name.to_snake_case()
-	
-	Utilities.save_json(test_triggered_action)
+	#test_triggered_action.trigger_timing = TriggeredAction.TriggerTiming.TARGETTED_POST_ACTION
+	#test_triggered_action.action_unique_name = "ATTACK" # primary attack special case
+	#test_triggered_action.trigger_chance_formula.values = [1.0]
+	#test_triggered_action.trigger_chance_formula.formula = FormulaData.Formulas.BRAVExV1
+	#test_triggered_action.targeting = TriggeredAction.TargetingTypes.INITIATOR
+	#test_triggered_action.display_name = "attack"
+	#test_triggered_action.unique_name = test_triggered_action.display_name.to_snake_case()
+	#
+	#Utilities.save_json(test_triggered_action)
 	# json_file = FileAccess.open("user://overrides/triggered_actions/counter.json", FileAccess.WRITE)
 	# json_file.store_line(test_triggered_action.to_json())
 	# json_file.close()
@@ -373,11 +426,11 @@ func add_test_teams_to_map() -> void:
 	# test_triggered_action = TriggeredAction.create_from_json(json_text)
 	# test_ability.triggered_actions = [test_triggered_action]
 	
-	test_ability.triggered_actions_names.append("attack")
+	#test_ability.triggered_actions_names.append("attack")
 	# test_ability.triggered_actions_names.append("regen_heal")
-	test_ability.display_name = "Counter Attack"
-	test_ability.unique_name = "counter"
-	Utilities.save_json(test_ability)
+	#test_ability.display_name = "Counter Attack"
+	#test_ability.unique_name = "counter"
+	#Utilities.save_json(test_ability)
 
 
 	#var csv_row = test_triggered_action.to_csv_row()
@@ -386,10 +439,10 @@ func add_test_teams_to_map() -> void:
 	#json_file.store_line(test_triggered_action.get_csv_headers())
 	#json_file.store_line(csv_row)
 	#json_file.close()
-
-	for unit in units:
-		# unit.equip_ability(unit.ability_slots[4], test_ability)
-		unit.is_ai_controlled = false
+	
+	#for unit in units:
+		## unit.equip_ability(unit.ability_slots[4], test_ability)
+		#unit.is_ai_controlled = false
 
 
 func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData:

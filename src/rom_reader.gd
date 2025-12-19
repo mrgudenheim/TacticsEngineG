@@ -133,6 +133,7 @@ func process_rom() -> void:
 	items_array.resize(NUM_ITEMS)
 	for id: int in NUM_ITEMS:
 		items_array[id] = (ItemData.new(id))
+		items_array[id].add_to_global_list()
 	
 	scus_data.init_statuses()
 	# for status_: int in status_effects.size():

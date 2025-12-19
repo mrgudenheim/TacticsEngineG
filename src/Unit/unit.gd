@@ -559,9 +559,11 @@ func generate_equipment() -> void:
 
 
 func set_equipment_slot(slot: EquipmentSlot, item: ItemData):
-	pass
-	# TODO implement equipping individual equipement slots
-	# update passives
+	slot.item_idx = item.item_idx
+	
+	update_passive_effects()
+	stats[StatType.HP].set_value(stats[StatType.HP].max_value)
+	stats[StatType.MP].set_value(stats[StatType.MP].max_value)
 
 
 func update_stat_modifiers(all_passive_effects: Array[PassiveEffect]) -> void:

@@ -170,6 +170,11 @@ func get_target_units(target_tiles: Array[TerrainTile]) -> Array[UnitData]:
 
 
 func get_ai_score() -> int:
+	# https://ffhacktics.com/smf/index.php?topic=11590.0
+	# Target Value Formula
+	# (HP Value[curHP * 128 / maxHP] + Total Status Values + (51 * # of items broken up to 7) + Caster Hate [(curMP% / 16) * # MP using Abilities, 0 if not enough MP] + Golem Fear [CurGolem * 128 / Average Team HP (- 1 if Golem not damaged)]) * (-1 if unit is Enemy, 1 if ally)
+
+
 	var ai_score: int = 0
 	var target_units: Array[UnitData] = get_target_units(preview_targets)
 	

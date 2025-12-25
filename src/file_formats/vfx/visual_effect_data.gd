@@ -236,6 +236,11 @@ func init_from_file() -> void:
 		frame_set.frameset.resize(num_frames)
 		for frame_id: int in num_frames:
 			var frame_bytes: PackedByteArray = frame_set_bytes.slice(4 + (frame_id * frame_data_length))
+			if frame_bytes.is_empty(): # E509
+				push_warning(file_name + "frameset " + str(frame_set_id) + " does not have bytes for a frame, clearing frameset")
+				frame_set.frameset.clear()
+				break
+			
 			var new_frame: VfxFrame = VfxFrame.new()
 			new_frame.vram_bytes = frame_bytes.slice(0, 4)
 			new_frame.palette_id = new_frame.vram_bytes[0] & 0x0f
@@ -360,8 +365,11 @@ func init_from_file() -> void:
 		# emitter.end_position = Vector3i(emitter_data_bytes.decode_s16(0x1a), -emitter_data_bytes.decode_s16(0x1c), emitter_data_bytes.decode_s16(0x1e))
 		
 		emitter.animation = VfxAnimation.new()
-		emitter.animation.screen_offset = animations[emitter.anim_index].screen_offset
-		emitter.animation.animation_frames = animations[emitter.anim_index].animation_frames.duplicate_deep()
+		if emitter.anim_index >= animations.size():
+			push_warning(file_name + ": animation index " + str(emitter.anim_index) + " out of bounds, skipping") # only shows up in unused emitters?
+		else:
+			emitter.animation.screen_offset = animations[emitter.anim_index].screen_offset
+			emitter.animation.animation_frames = animations[emitter.anim_index].animation_frames.duplicate_deep()
 
 		var frameset_group_id_offset: int = 0
 		for idx: int in emitter.frameset_group_index:

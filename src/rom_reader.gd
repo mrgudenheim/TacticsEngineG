@@ -166,6 +166,7 @@ func process_rom() -> void:
 	connect_data_references()
 
 	# var vfx_scripts: Dictionary[String, PackedStringArray] = {}
+	# var output_array: PackedStringArray = []
 	# for vfx_file in vfx:
 	# 	if file_records[vfx_file.file_name].size == 0:
 	# 		continue
@@ -173,31 +174,39 @@ func process_rom() -> void:
 	# 	if not vfx_file.is_initialized:
 	# 		vfx_file.init_from_file()
 
-	# 	var script_bytes: String = vfx_file.script_bytes.hex_encode()
-	# 	if not vfx_scripts.has(script_bytes):
-	# 		var files_list: PackedStringArray = []
-	# 		vfx_scripts[script_bytes] = files_list
+		# var script_bytes: String = vfx_file.script_bytes.hex_encode()
+		# if not vfx_scripts.has(script_bytes):
+		# 	var files_list: PackedStringArray = []
+		# 	vfx_scripts[script_bytes] = files_list
 		
-	# 	vfx_scripts[script_bytes].append(vfx_file.file_name + " " + vfx_file.ability_names)
+		# vfx_scripts[script_bytes].append(vfx_file.file_name + " " + vfx_file.ability_names)
 
-		#if vfx_file.child_emitter_timelines.any(func(timeline: VisualEffectData.EmitterTimeline): return timeline.has_unknown_flags):
-			#push_warning(vfx_file.file_name + "child flags")
-		#if vfx_file.phase1_emitter_timelines.any(func(timeline: VisualEffectData.EmitterTimeline): return timeline.has_unknown_flags):
-			#push_warning(vfx_file.file_name + "phase1 flags")
-		#if vfx_file.phase2_emitter_timelines.any(func(timeline: VisualEffectData.EmitterTimeline): return timeline.has_unknown_flags):
-			#push_warning(vfx_file.file_name + "phase2 flags")
+		# if vfx_file.child_emitter_timelines.any(func(timeline: VisualEffectData.EmitterTimeline): return timeline.has_unknown_flags):
+		# 	push_warning(vfx_file.file_name + " unknown child flags")
+		# if vfx_file.phase1_emitter_timelines.any(func(timeline: VisualEffectData.EmitterTimeline): return timeline.has_unknown_flags):
+		# 	push_warning(vfx_file.file_name + "unknown phase1 flags")
+		# if vfx_file.phase2_emitter_timelines.any(func(timeline: VisualEffectData.EmitterTimeline): return timeline.has_unknown_flags):
+		# 	push_warning(vfx_file.file_name + "unknown phase2 flags")
 
+		# if vfx_file.phase2_emitter_timelines.any(func(timeline: VisualEffectData.EmitterTimeline): 
+		# 		return timeline.num_keyframes > 0):
+		# 	output_array.append(vfx_file.file_name)
+		
+		# if vfx_file.phase2_emitter_timelines.any(func(timeline: VisualEffectData.EmitterTimeline): 
+		# 		return timeline.num_keyframes > 0 and timeline.keyframes.any(func(keyframe: VisualEffectData.EmitterKeyframe): 
+		# 				return keyframe.emitter_id > 0)):
+		# 	output_array.append(vfx_file.file_name)
 
-	#var output_array: PackedStringArray = []
-	#for key: String in vfx_scripts.keys():
-		#output_array.append(key + ": " + ", ".join(vfx_scripts[key]))
-#
-	#var final_output: String = "\n".join(output_array)
+	# var output_array: PackedStringArray = []
+	# for key: String in vfx_scripts.keys():
+	# 	output_array.append(key + ": " + ", ".join(vfx_scripts[key]))
+
+	# var final_output: String = "\n".join(output_array)
 	
-	#DirAccess.make_dir_recursive_absolute("user://wiki_tables")
-	#var file_name: String = "vfx_scripts"
-	#var save_file := FileAccess.open("user://wiki_tables/" + file_name + ".txt", FileAccess.WRITE)
-	#save_file.store_string(final_output)
+	# DirAccess.make_dir_recursive_absolute("user://wiki_tables")
+	# var file_name: String = "vfx_phase2_particles"
+	# var save_file := FileAccess.open("user://wiki_tables/" + file_name + ".txt", FileAccess.WRITE)
+	# save_file.store_string(final_output)
 
 	#for action: Action in actions.values():
 		#Utilities.save_json(action)

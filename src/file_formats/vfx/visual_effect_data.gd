@@ -94,8 +94,8 @@ class EmitterTimeline:
 			emitter_ids.append(emitter_id)
 
 			var action_flag: int = action_flags.decode_u16(idx * 2)
-			if not [0, 0x1000, 0x2000, 0x3000, 0x4000, 0x5000, 0x6000, 0x7000].has(action_flag):
-				has_unknown_flags = true
+			# if not [0, 0x1000, 0x2000, 0x3000, 0x4000, 0x5000, 0x6000, 0x7000].has(action_flag):
+			# 	has_unknown_flags = true
 				# push_warning(action_flag)
 			
 			var new_keyframe: EmitterKeyframe = EmitterKeyframe.new()
@@ -105,6 +105,11 @@ class EmitterTimeline:
 			new_keyframe.display_damage = action_flag & 0x1000 == 0x1000
 			new_keyframe.status_change = action_flag & 0x2000 == 0x2000
 			new_keyframe.target_animation = action_flag & 0x4000 == 0x4000
+			new_keyframe.use_global_target = action_flag & 0x0800 == 0x0800
+			new_keyframe.callback_slot = ((action_flag & 0x0700) >> 8) - 1 # will give -1 if not using callback
+			new_keyframe.animation_param = action_flag & 0x00FF
+
+			new_keyframe.unused_flag_80 = action_flag & 0x8000 == 0x8000
 
 			keyframes.append(new_keyframe)
 
@@ -115,6 +120,10 @@ class EmitterKeyframe:
 	var display_damage: bool = false
 	var status_change: bool = false
 	var target_animation: bool = false
+	var use_global_target: bool = false
+	var callback_slot: int = -1
+	var animation_param: int = 0
+	var unused_flag_80: bool = false
 
 var script_bytes: PackedByteArray = []
 var emitter_control_bytes: PackedByteArray = []

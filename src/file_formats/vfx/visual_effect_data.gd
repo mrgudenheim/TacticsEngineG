@@ -114,7 +114,7 @@ class EmitterTimeline:
 			keyframes.append(new_keyframe)
 
 class EmitterKeyframe:
-	var time: int = -1
+	var time: int = -1 # frames
 	var emitter_id: int = -1
 	var flags: PackedByteArray = []
 	var display_damage: bool = false

@@ -85,3 +85,11 @@ func has_any_elements(array1: Array, array2: Array) -> bool:
 			return true
 	
 	return false
+
+
+func get_array_unique(array: Array) -> Array:
+	var unique_array: Array = []
+	for item in array:
+		if not unique_array.has(item):
+			unique_array.append(item)
+	return unique_array

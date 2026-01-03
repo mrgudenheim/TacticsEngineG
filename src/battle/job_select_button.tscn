@@ -1,9 +1,41 @@
-[gd_scene load_steps=2 format=3 uid="uid://djqalqt20isme"]
+[gd_scene load_steps=3 format=3 uid="uid://djqalqt20isme"]
+
+[ext_resource type="Script" uid="uid://cpvculriomav7" path="res://src/battle/job_select_button.gd" id="1_dxfb3"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d26o3"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
 
-[node name="JobDataButton" type="PanelContainer"]
+[node name="JobSelectButton" type="PanelContainer" node_paths=PackedStringArray("button", "display_name", "sprite_rect", "move", "jump", "hp_multiplier", "mp_multiplier", "speed_multiplier", "pa_multiplier", "ma_multiplier", "hp_growth", "mp_growth", "speed_growth", "pa_growth", "ma_growth", "equipment_hand", "equipment_head", "equipment_body", "equipment_accessory", "evade_grid", "innate_abilities_list", "statuses_always_list", "statuses_start_list", "statuses_immune_list", "element_weak", "element_resist", "element_immune", "element_absorb", "element_strengthen")]
+script = ExtResource("1_dxfb3")
+button = NodePath("Button")
+display_name = NodePath("MarginContainer/VBoxContainer/Name")
+sprite_rect = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/PanelContainer/Sprite")
+move = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/HBoxContainer2/Move")
+jump = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/HBoxContainer2/Jump")
+hp_multiplier = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats/multiplier1")
+mp_multiplier = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats/multiplier2")
+speed_multiplier = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats/multiplier3")
+pa_multiplier = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats/multiplier4")
+ma_multiplier = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats/multiplier5")
+hp_growth = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats/growth1")
+mp_growth = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats/growth2")
+speed_growth = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats/growth3")
+pa_growth = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats/growth4")
+ma_growth = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats/growth5")
+equipment_hand = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EquipmentPanel/MarginContainer/EquipmentProficiency/GridContainer/ItemTypes1")
+equipment_head = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EquipmentPanel/MarginContainer/EquipmentProficiency/GridContainer/ItemTypes2")
+equipment_body = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EquipmentPanel/MarginContainer/EquipmentProficiency/GridContainer/ItemTypes3")
+equipment_accessory = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EquipmentPanel/MarginContainer/EquipmentProficiency/GridContainer/ItemTypes4")
+evade_grid = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/Evade")
+innate_abilities_list = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/AbilityPanel/MarginContainer/InnateAbilities")
+statuses_always_list = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer/MarginContainer/StatusesAlways")
+statuses_start_list = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer2/MarginContainer/StatusesStarting")
+statuses_immune_list = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer3/MarginContainer/StatusesImmune")
+element_weak = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/ElementPanel/MarginContainer/ElementAffinities/Weak")
+element_resist = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/ElementPanel/MarginContainer/ElementAffinities/Resist")
+element_immune = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/ElementPanel/MarginContainer/ElementAffinities/Immune")
+element_absorb = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/ElementPanel/MarginContainer/ElementAffinities/Absorb")
+element_strengthen = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/ElementPanel/MarginContainer/ElementAffinities/Strengthen")
 
 [node name="Button" type="Button" parent="."]
 layout_mode = 2
@@ -58,13 +90,13 @@ layout_mode = 2
 [node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/HBoxContainer2"]
+[node name="Move" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/HBoxContainer2"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Move: 3"
 horizontal_alignment = 1
 
-[node name="Label2" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/HBoxContainer2"]
+[node name="Jump" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/HBoxContainer2"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Jump: 3"
@@ -112,27 +144,27 @@ horizontal_alignment = 1
 layout_mode = 2
 text = "Multiplier"
 
-[node name="value4" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+[node name="multiplier1" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
 layout_mode = 2
 text = "999"
 horizontal_alignment = 1
 
-[node name="value5" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+[node name="multiplier2" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
 layout_mode = 2
 text = "999"
 horizontal_alignment = 1
 
-[node name="value6" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+[node name="multiplier3" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
 layout_mode = 2
 text = "999"
 horizontal_alignment = 1
 
-[node name="value7" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+[node name="multiplier4" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
 layout_mode = 2
 text = "999"
 horizontal_alignment = 1
 
-[node name="value8" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+[node name="multiplier5" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
 layout_mode = 2
 text = "999"
 horizontal_alignment = 1
@@ -141,27 +173,27 @@ horizontal_alignment = 1
 layout_mode = 2
 text = "Growth"
 
-[node name="value11" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+[node name="growth1" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
 layout_mode = 2
 text = "99"
 horizontal_alignment = 1
 
-[node name="value12" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+[node name="growth2" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
 layout_mode = 2
 text = "99"
 horizontal_alignment = 1
 
-[node name="value13" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+[node name="growth3" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
 layout_mode = 2
 text = "99"
 horizontal_alignment = 1
 
-[node name="value14" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+[node name="growth4" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
 layout_mode = 2
 text = "99"
 horizontal_alignment = 1
 
-[node name="value15" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+[node name="growth5" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
 layout_mode = 2
 text = "99"
 horizontal_alignment = 1
@@ -359,42 +391,72 @@ horizontal_alignment = 1
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="StatusesAlways" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="StatusesAlways" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer/MarginContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer/StatusesAlways"]
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer/MarginContainer/StatusesAlways"]
 layout_mode = 2
 text = "Always"
 horizontal_alignment = 1
 
-[node name="Label3" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer/StatusesAlways"]
+[node name="Label3" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer/MarginContainer/StatusesAlways"]
 layout_mode = 2
 text = "Status"
 
-[node name="StatusesStarting" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="PanelContainer2" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer2"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="StatusesStarting" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer2/MarginContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer/StatusesStarting"]
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer2/MarginContainer/StatusesStarting"]
 layout_mode = 2
 text = "Starting"
 horizontal_alignment = 1
 
-[node name="Label3" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer/StatusesStarting"]
+[node name="Label3" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer2/MarginContainer/StatusesStarting"]
 layout_mode = 2
 text = "Status"
 
-[node name="StatusesImmune" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="PanelContainer3" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer3"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="StatusesImmune" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer3/MarginContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer/StatusesImmune"]
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer3/MarginContainer/StatusesImmune"]
 layout_mode = 2
 text = "Immune"
 horizontal_alignment = 1
 
-[node name="Label3" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer/StatusesImmune"]
+[node name="Label3" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer3/MarginContainer/StatusesImmune"]
 layout_mode = 2
 text = "Status"
 

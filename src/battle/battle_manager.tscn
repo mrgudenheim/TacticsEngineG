@@ -393,3 +393,346 @@ text = "Test"
 [node name="Label3" type="Label" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel3/VBoxContainer"]
 layout_mode = 2
 text = "Test"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="TeamSetup"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TeamSetup/ScrollContainer"]
+layout_mode = 2
+
+[node name="JobData" type="PanelContainer" parent="TeamSetup/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer"]
+layout_mode = 2
+
+[node name="Name" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "JobName"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer"]
+layout_mode = 2
+color = Color(0.7724798, 0.5703566, 0.2862759, 1)
+
+[node name="Sprite" type="TextureRect" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer"]
+layout_mode = 2
+expand_mode = 2
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer"]
+layout_mode = 2
+text = "Sprite"
+
+[node name="StatsPanel" type="PanelContainer" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/StatsPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/StatsPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/StatsPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/StatsPanel/MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Move: 3"
+horizontal_alignment = 1
+
+[node name="Label2" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/StatsPanel/MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Jump: 3"
+horizontal_alignment = 1
+
+[node name="Stats" type="GridContainer" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/StatsPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+columns = 6
+
+[node name="Label3" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "Stat"
+
+[node name="Stat1" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "HP"
+horizontal_alignment = 1
+
+[node name="Stat2" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "MP"
+horizontal_alignment = 1
+
+[node name="Stat3" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Speed"
+horizontal_alignment = 1
+
+[node name="Stat4" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "PA"
+horizontal_alignment = 1
+
+[node name="Stat5" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "MA"
+horizontal_alignment = 1
+
+[node name="Type1" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "Multiplier"
+
+[node name="value4" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "99%"
+horizontal_alignment = 1
+
+[node name="value5" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "99%"
+horizontal_alignment = 1
+
+[node name="value6" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "99%"
+horizontal_alignment = 1
+
+[node name="value7" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "99%"
+horizontal_alignment = 1
+
+[node name="value8" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "99%"
+horizontal_alignment = 1
+
+[node name="Type2" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "Growth"
+
+[node name="value11" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "99%"
+horizontal_alignment = 1
+
+[node name="value12" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "99%"
+horizontal_alignment = 1
+
+[node name="value13" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "99%"
+horizontal_alignment = 1
+
+[node name="value14" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "99%"
+horizontal_alignment = 1
+
+[node name="value15" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "99%"
+horizontal_alignment = 1
+
+[node name="PanelContainer2" type="PanelContainer" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer2"]
+layout_mode = 2
+
+[node name="InnateAbilities" type="VBoxContainer" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer2/MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer2/MarginContainer/InnateAbilities"]
+layout_mode = 2
+text = "Innate Abilities"
+horizontal_alignment = 1
+
+[node name="Innate1" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer2/MarginContainer/InnateAbilities"]
+layout_mode = 2
+text = "Innate1"
+
+[node name="Innate2" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer2/MarginContainer/InnateAbilities"]
+layout_mode = 2
+text = "Innate2"
+
+[node name="PanelContainer3" type="PanelContainer" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/PanelContainer3"]
+layout_mode = 2
+
+[node name="EquipmentProficiency" type="VBoxContainer" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/PanelContainer3/MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/PanelContainer3/MarginContainer/EquipmentProficiency"]
+layout_mode = 2
+text = "Equippable Item Types"
+horizontal_alignment = 1
+
+[node name="GridContainer" type="GridContainer" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/PanelContainer3/MarginContainer/EquipmentProficiency"]
+layout_mode = 2
+theme_override_constants/v_separation = 8
+columns = 2
+
+[node name="SlotType1" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/PanelContainer3/MarginContainer/EquipmentProficiency/GridContainer"]
+layout_mode = 2
+text = "SlotType:"
+
+[node name="ItemTypes1" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/PanelContainer3/MarginContainer/EquipmentProficiency/GridContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Knife, Sword, Knight Sword, Flail, Bag"
+autowrap_mode = 3
+
+[node name="SlotType2" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/PanelContainer3/MarginContainer/EquipmentProficiency/GridContainer"]
+layout_mode = 2
+text = "SlotType:"
+
+[node name="ItemTypes2" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/PanelContainer3/MarginContainer/EquipmentProficiency/GridContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "ItemType1, ItemType2"
+autowrap_mode = 3
+
+[node name="SlotType3" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/PanelContainer3/MarginContainer/EquipmentProficiency/GridContainer"]
+layout_mode = 2
+text = "SlotType:"
+
+[node name="ItemTypes3" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/PanelContainer3/MarginContainer/EquipmentProficiency/GridContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "ItemType1, ItemType2"
+autowrap_mode = 3
+
+[node name="SlotType4" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/PanelContainer3/MarginContainer/EquipmentProficiency/GridContainer"]
+layout_mode = 2
+text = "SlotType:"
+
+[node name="ItemTypes4" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/PanelContainer3/MarginContainer/EquipmentProficiency/GridContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Shoes, Armguard, Ring, Armlet, Cloak, Perfume"
+autowrap_mode = 3
+
+[node name="PanelContainer2" type="PanelContainer" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/PanelContainer2"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="Evade" type="GridContainer" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/PanelContainer2/MarginContainer"]
+layout_mode = 2
+columns = 5
+
+[node name="Label3" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/PanelContainer2/MarginContainer/Evade"]
+layout_mode = 2
+text = "Innate Evade"
+
+[node name="Source1" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/PanelContainer2/MarginContainer/Evade"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Job"
+horizontal_alignment = 1
+
+[node name="Source2" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/PanelContainer2/MarginContainer/Evade"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Shield"
+horizontal_alignment = 1
+
+[node name="Source3" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/PanelContainer2/MarginContainer/Evade"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Accessory"
+horizontal_alignment = 1
+
+[node name="Source4" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/PanelContainer2/MarginContainer/Evade"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Weapon"
+horizontal_alignment = 1
+
+[node name="Type1" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/PanelContainer2/MarginContainer/Evade"]
+layout_mode = 2
+text = "Physical"
+
+[node name="value4" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/PanelContainer2/MarginContainer/Evade"]
+layout_mode = 2
+text = "99%"
+horizontal_alignment = 1
+
+[node name="value5" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/PanelContainer2/MarginContainer/Evade"]
+layout_mode = 2
+text = "99%"
+horizontal_alignment = 1
+
+[node name="value6" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/PanelContainer2/MarginContainer/Evade"]
+layout_mode = 2
+text = "99%"
+horizontal_alignment = 1
+
+[node name="value7" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/PanelContainer2/MarginContainer/Evade"]
+layout_mode = 2
+text = "99%"
+horizontal_alignment = 1
+
+[node name="Type2" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/PanelContainer2/MarginContainer/Evade"]
+layout_mode = 2
+text = "Magic"
+
+[node name="value11" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/PanelContainer2/MarginContainer/Evade"]
+layout_mode = 2
+text = "99%"
+horizontal_alignment = 1
+
+[node name="value12" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/PanelContainer2/MarginContainer/Evade"]
+layout_mode = 2
+text = "99%"
+horizontal_alignment = 1
+
+[node name="value13" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/PanelContainer2/MarginContainer/Evade"]
+layout_mode = 2
+text = "99%"
+horizontal_alignment = 1
+
+[node name="value14" type="Label" parent="TeamSetup/ScrollContainer/VBoxContainer/JobData/MarginContainer/VBoxContainer/PanelContainer2/MarginContainer/Evade"]
+layout_mode = 2
+text = "99%"
+horizontal_alignment = 1

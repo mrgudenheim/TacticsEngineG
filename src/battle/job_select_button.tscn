@@ -5,7 +5,7 @@
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d26o3"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
 
-[node name="JobSelectButton" type="PanelContainer" node_paths=PackedStringArray("button", "display_name", "sprite_rect", "move", "jump", "hp_multiplier", "mp_multiplier", "speed_multiplier", "pa_multiplier", "ma_multiplier", "hp_growth", "mp_growth", "speed_growth", "pa_growth", "ma_growth", "equipment_hand", "equipment_head", "equipment_body", "equipment_accessory", "evade_grid", "innate_abilities_list", "statuses_always_list", "statuses_start_list", "statuses_immune_list", "element_weak", "element_resist", "element_immune", "element_absorb", "element_strengthen")]
+[node name="JobSelectButton" type="PanelContainer" node_paths=PackedStringArray("button", "display_name", "sprite_rect", "move", "jump", "hp_multiplier", "mp_multiplier", "speed_multiplier", "pa_multiplier", "ma_multiplier", "hp_growth", "mp_growth", "speed_growth", "pa_growth", "ma_growth", "equipment_hand", "equipment_head", "equipment_body", "equipment_accessory", "evade_grid", "innate_abilities_list", "statuses_always_list", "statuses_start_list", "statuses_immune_list", "element_weak", "element_resist", "element_immune", "element_absorb", "element_strengthen", "action_list")]
 script = ExtResource("1_dxfb3")
 button = NodePath("Button")
 display_name = NodePath("MarginContainer/VBoxContainer/Name")
@@ -36,6 +36,7 @@ element_resist = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxConta
 element_immune = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/ElementPanel/MarginContainer/ElementAffinities/Immune")
 element_absorb = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/ElementPanel/MarginContainer/ElementAffinities/Absorb")
 element_strengthen = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/ElementPanel/MarginContainer/ElementAffinities/Strengthen")
+action_list = NodePath("MarginContainer/VBoxContainer/HBoxContainer/ActionPanel/MarginContainer/ActionList")
 
 [node name="Button" type="Button" parent="."]
 layout_mode = 2
@@ -498,3 +499,21 @@ autowrap_mode = 3
 layout_mode = 2
 text = "Strengthen: Holy, Dark"
 autowrap_mode = 3
+
+[node name="ActionPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/ActionPanel"]
+layout_mode = 2
+
+[node name="ActionList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/ActionPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/ActionPanel/MarginContainer/ActionList"]
+layout_mode = 2
+text = "Actions"
+horizontal_alignment = 1
+
+[node name="Action1" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/ActionPanel/MarginContainer/ActionList"]
+layout_mode = 2
+text = "Action1"

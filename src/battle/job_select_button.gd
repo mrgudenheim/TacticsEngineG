@@ -48,6 +48,8 @@ var job_data: JobData:
 @export var element_absorb: Label
 @export var element_strengthen: Label
 
+@export var action_list: Container
+
 func _ready():
 	button.pressed.connect(on_selected)
 
@@ -161,7 +163,18 @@ func update_ui(new_job_data: JobData) -> void:
 	update_element_list(element_immune, "Immune: ", element_immune_list)
 	update_element_list(element_absorb, "Absorb: ", element_absorb_list)
 	update_element_list(element_strengthen, "Strengthen: ", element_strengthen_list)
-	pass
+	
+	# update action list
+	var action_labels: Array[Node] = action_list.get_children()
+	for child_idx: int in range(1, action_labels.size()):
+		action_labels[child_idx].queue_free()
+	
+	for ability_id: int in RomReader.scus_data.skillsets_data[job_data.skillset_id].action_ability_ids:
+		if ability_id != 0:
+			var new_action: Action = RomReader.fft_abilities[ability_id].ability_action
+			var new_action_name: Label = Label.new()
+			new_action_name.text = new_action.display_name
+			action_list.add_child(new_action_name)
 
 
 func get_evade_values(evade_datas: Array[EvadeData], evade_type: EvadeData.EvadeType, direction: EvadeData.Directions) -> Dictionary[EvadeData.EvadeSource, int]:

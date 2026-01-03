@@ -697,6 +697,22 @@ text = "Slot:"
 layout_mode = 2
 text = "Item"
 
+[node name="Slot4" type="Label" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer/MarginContainer/EquipmentSlots/EquipmentGrid"]
+layout_mode = 2
+text = "Slot:"
+
+[node name="Item4" type="Label" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer/MarginContainer/EquipmentSlots/EquipmentGrid"]
+layout_mode = 2
+text = "Item"
+
+[node name="Slot5" type="Label" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer/MarginContainer/EquipmentSlots/EquipmentGrid"]
+layout_mode = 2
+text = "Slot:"
+
+[node name="Item5" type="Label" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/PanelContainer/MarginContainer/EquipmentSlots/EquipmentGrid"]
+layout_mode = 2
+text = "Item"
+
 [node name="VBoxContainer" type="VBoxContainer" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 
@@ -739,6 +755,22 @@ layout_mode = 2
 text = "Slot:"
 
 [node name="Ability3" type="Label" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/PanelContainer/MarginContainer/AbilitySlots/AbilityGrid"]
+layout_mode = 2
+text = "Ability"
+
+[node name="Slot4" type="Label" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/PanelContainer/MarginContainer/AbilitySlots/AbilityGrid"]
+layout_mode = 2
+text = "Slot:"
+
+[node name="Ability4" type="Label" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/PanelContainer/MarginContainer/AbilitySlots/AbilityGrid"]
+layout_mode = 2
+text = "Ability"
+
+[node name="Slot5" type="Label" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/PanelContainer/MarginContainer/AbilitySlots/AbilityGrid"]
+layout_mode = 2
+text = "Slot:"
+
+[node name="Ability5" type="Label" parent="CharacterBody3D/UnitDetailsPosition/UnitDetails/MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/PanelContainer/MarginContainer/AbilitySlots/AbilityGrid"]
 layout_mode = 2
 text = "Ability"
 

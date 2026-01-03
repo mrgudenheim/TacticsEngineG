@@ -22,6 +22,7 @@ class FftTextFile:
 # https://github.com/Glain/FFTPatcher/blob/master/FFTacText/notes.txt
 # https://ffhacktics.com/wiki/Load_FFTText
 # https://github.com/Glain/FFTPatcher/blob/master/FFTacText/PSXText.xml
+# https://github.com/Glain/FFTPatcher/blob/master/FFTacText/Utilities/DTE.cs
 enum WorldLzwSections {
 	JOB_NAMES = 6,
 	ITEM_NAMES = 7,
@@ -270,7 +271,7 @@ static func text_to_string(bytes_text: PackedByteArray) -> PackedStringArray:
 		elif char_code == 70 or char_code == 0xd9bd: # colon
 			char_code = 0x3a
 		# 71 - 94 japanese? # TODO japanese
-		# Handle TacText special cases?
+		# Handle TacText special cases? TODO DTE dual tile encoding
 		elif char_code == 0x56:
 			text_element += "ni"
 			continue

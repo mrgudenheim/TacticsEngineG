@@ -31,6 +31,10 @@ window/size/viewport_height=864
 
 enabled=PackedStringArray("res://addons/Todo_Manager/plugin.cfg", "res://addons/script-ide/plugin.cfg")
 
+[gui]
+
+theme/custom="uid://bhwwwa4jiaiop"
+
 [input]
 
 zoom_in={

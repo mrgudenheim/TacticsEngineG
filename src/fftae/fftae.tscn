@@ -1,6 +1,5 @@
-[gd_scene load_steps=12 format=3 uid="uid://dgp4s8ucc0j6n"]
+[gd_scene load_steps=11 format=3 uid="uid://dgp4s8ucc0j6n"]
 
-[ext_resource type="Theme" uid="uid://bhwwwa4jiaiop" path="res://src/ui_theme.tres" id="1_kwydp"]
 [ext_resource type="Script" uid="uid://bnyoqmlgtnvkt" path="res://src/fftae/fftae.gd" id="2_2hqs7"]
 [ext_resource type="PackedScene" uid="uid://t3xjefep2ne1" path="res://src/fftae/row_animation.tscn" id="3_n0tn6"]
 [ext_resource type="PackedScene" uid="uid://cxr41bg8c7dir" path="res://src/fftae/row_frame.tscn" id="4_omu1g"]
@@ -25,7 +24,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("1_kwydp")
 script = ExtResource("2_2hqs7")
 ui_manager = NodePath("HBoxContainer/PatchPanel")
 preview_manager = NodePath("HBoxContainer/PatchPanel/MarginContainer/VBoxContainer/PreviewContainer")

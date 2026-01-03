@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://dkudrb304m7t1"]
+[gd_scene load_steps=21 format=3 uid="uid://dkudrb304m7t1"]
 
 [ext_resource type="Script" uid="uid://b1ogscpjrty2b" path="res://src/Unit/unit.gd" id="1_lcmw7"]
 [ext_resource type="Script" uid="uid://cmjcg2ou16liv" path="res://src/Unit/unit_animation_manager.gd" id="3_l3ow2"]
@@ -11,7 +11,6 @@
 [ext_resource type="PackedScene" uid="uid://dfhvsm7ynvj76" path="res://src/Unit/popup_text.tscn" id="8_rp3cl"]
 [ext_resource type="Script" uid="uid://lnojayxpawho" path="res://src/Unit/unit_icon.gd" id="9_0prau"]
 [ext_resource type="PackedScene" uid="uid://d2jb1kiyb35fa" path="res://src/Unit/stat_bar.tscn" id="11_oxa5o"]
-[ext_resource type="Theme" uid="uid://bhwwwa4jiaiop" path="res://src/ui_theme.tres" id="12_gngdm"]
 [ext_resource type="Script" uid="uid://bfgbs3vyxkrng" path="res://src/Unit/unit_details_battle_ui.gd" id="13_v0g1v"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_omsuf"]
@@ -299,7 +298,6 @@ grow_vertical = 0
 [node name="UnitDetailsPosition" type="Control" parent="CharacterBody3D" node_paths=PackedStringArray("unit", "unit_char_body")]
 layout_mode = 3
 anchors_preset = 0
-theme = ExtResource("12_gngdm")
 script = ExtResource("7_wg4to")
 unit = NodePath("../..")
 unit_char_body = NodePath("..")

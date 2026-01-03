@@ -38,10 +38,6 @@ element_absorb = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxConta
 element_strengthen = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/ElementPanel/MarginContainer/ElementAffinities/Strengthen")
 action_list = NodePath("MarginContainer/VBoxContainer/HBoxContainer/ActionPanel/MarginContainer/ActionList")
 
-[node name="Button" type="Button" parent="."]
-layout_mode = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_d26o3")
-
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
 
@@ -518,3 +514,7 @@ horizontal_alignment = 1
 [node name="Action1" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/ActionPanel/MarginContainer/ActionList"]
 layout_mode = 2
 text = "Action1"
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_d26o3")

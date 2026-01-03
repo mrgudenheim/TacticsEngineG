@@ -1,0 +1,438 @@
+[gd_scene load_steps=2 format=3 uid="uid://djqalqt20isme"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d26o3"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[node name="JobDataButton" type="PanelContainer"]
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_d26o3")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="Name" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "JobName"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="SpriteAndStats" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats"]
+layout_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/PanelContainer"]
+layout_mode = 2
+color = Color(0.7724798, 0.5703566, 0.2862759, 1)
+
+[node name="Sprite" type="TextureRect" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/PanelContainer"]
+layout_mode = 2
+expand_mode = 2
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/PanelContainer"]
+layout_mode = 2
+text = "Sprite"
+
+[node name="StatsPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Move: 3"
+horizontal_alignment = 1
+
+[node name="Label2" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Jump: 3"
+horizontal_alignment = 1
+
+[node name="Stats" type="GridContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+columns = 6
+
+[node name="Label3" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "Stat"
+
+[node name="Stat1" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "HP"
+horizontal_alignment = 1
+
+[node name="Stat2" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "MP"
+horizontal_alignment = 1
+
+[node name="Stat3" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Speed"
+horizontal_alignment = 1
+
+[node name="Stat4" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "PA"
+horizontal_alignment = 1
+
+[node name="Stat5" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "MA"
+horizontal_alignment = 1
+
+[node name="Type1" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "Multiplier"
+
+[node name="value4" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "999"
+horizontal_alignment = 1
+
+[node name="value5" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "999"
+horizontal_alignment = 1
+
+[node name="value6" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "999"
+horizontal_alignment = 1
+
+[node name="value7" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "999"
+horizontal_alignment = 1
+
+[node name="value8" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "999"
+horizontal_alignment = 1
+
+[node name="Type2" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "Growth"
+
+[node name="value11" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "99"
+horizontal_alignment = 1
+
+[node name="value12" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "99"
+horizontal_alignment = 1
+
+[node name="value13" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "99"
+horizontal_alignment = 1
+
+[node name="value14" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "99"
+horizontal_alignment = 1
+
+[node name="value15" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "99"
+horizontal_alignment = 1
+
+[node name="EquipmentPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EquipmentPanel"]
+layout_mode = 2
+
+[node name="EquipmentProficiency" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EquipmentPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EquipmentPanel/MarginContainer/EquipmentProficiency"]
+layout_mode = 2
+text = "Equippable Item Types"
+horizontal_alignment = 1
+
+[node name="GridContainer" type="GridContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EquipmentPanel/MarginContainer/EquipmentProficiency"]
+layout_mode = 2
+theme_override_constants/v_separation = 8
+columns = 2
+
+[node name="SlotType1" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EquipmentPanel/MarginContainer/EquipmentProficiency/GridContainer"]
+layout_mode = 2
+text = "Hand:"
+
+[node name="ItemTypes1" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EquipmentPanel/MarginContainer/EquipmentProficiency/GridContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Knife, Sword, Knight Sword, Flail, Bag, Shield"
+autowrap_mode = 3
+
+[node name="SlotType2" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EquipmentPanel/MarginContainer/EquipmentProficiency/GridContainer"]
+layout_mode = 2
+text = "Head:"
+
+[node name="ItemTypes2" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EquipmentPanel/MarginContainer/EquipmentProficiency/GridContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Helmet, Hat, HairAdornment"
+autowrap_mode = 3
+
+[node name="SlotType3" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EquipmentPanel/MarginContainer/EquipmentProficiency/GridContainer"]
+layout_mode = 2
+text = "Body:"
+
+[node name="ItemTypes3" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EquipmentPanel/MarginContainer/EquipmentProficiency/GridContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Armour, Clothing, Robe"
+autowrap_mode = 3
+
+[node name="SlotType4" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EquipmentPanel/MarginContainer/EquipmentProficiency/GridContainer"]
+layout_mode = 2
+text = "Accessory:"
+
+[node name="ItemTypes4" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EquipmentPanel/MarginContainer/EquipmentProficiency/GridContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Shoes, Armguard, Ring, Armlet, Cloak, Perfume"
+autowrap_mode = 3
+
+[node name="EvadePanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EvadePanel"]
+layout_mode = 2
+
+[node name="Evade" type="GridContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer"]
+layout_mode = 2
+columns = 5
+
+[node name="Label3" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/Evade"]
+layout_mode = 2
+text = "Innate Evade"
+
+[node name="Source1" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/Evade"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Job"
+horizontal_alignment = 1
+
+[node name="Source2" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/Evade"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Shield"
+horizontal_alignment = 1
+
+[node name="Source3" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/Evade"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Accessory"
+horizontal_alignment = 1
+
+[node name="Source4" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/Evade"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Weapon"
+horizontal_alignment = 1
+
+[node name="Type1" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/Evade"]
+layout_mode = 2
+text = "Physical"
+
+[node name="value4" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/Evade"]
+layout_mode = 2
+text = "99%"
+horizontal_alignment = 1
+
+[node name="value5" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/Evade"]
+layout_mode = 2
+text = "99%"
+horizontal_alignment = 1
+
+[node name="value6" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/Evade"]
+layout_mode = 2
+text = "99%"
+horizontal_alignment = 1
+
+[node name="value7" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/Evade"]
+layout_mode = 2
+text = "99%"
+horizontal_alignment = 1
+
+[node name="Type2" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/Evade"]
+layout_mode = 2
+text = "Magic"
+
+[node name="value11" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/Evade"]
+layout_mode = 2
+text = "99%"
+horizontal_alignment = 1
+
+[node name="value12" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/Evade"]
+layout_mode = 2
+text = "99%"
+horizontal_alignment = 1
+
+[node name="value13" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/Evade"]
+layout_mode = 2
+text = "99%"
+horizontal_alignment = 1
+
+[node name="value14" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/Evade"]
+layout_mode = 2
+text = "99%"
+horizontal_alignment = 1
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="AbilityPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/AbilityPanel"]
+layout_mode = 2
+
+[node name="InnateAbilities" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/AbilityPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/AbilityPanel/MarginContainer/InnateAbilities"]
+layout_mode = 2
+text = "Innate Abilities"
+horizontal_alignment = 1
+
+[node name="Innate1" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/AbilityPanel/MarginContainer/InnateAbilities"]
+layout_mode = 2
+text = "Innate1"
+
+[node name="Innate2" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/AbilityPanel/MarginContainer/InnateAbilities"]
+layout_mode = 2
+text = "Innate2"
+
+[node name="StatusPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Statuses"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="StatusesAlways" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer/StatusesAlways"]
+layout_mode = 2
+text = "Always"
+horizontal_alignment = 1
+
+[node name="Label3" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer/StatusesAlways"]
+layout_mode = 2
+text = "Status"
+
+[node name="StatusesStarting" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer/StatusesStarting"]
+layout_mode = 2
+text = "Starting"
+horizontal_alignment = 1
+
+[node name="Label3" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer/StatusesStarting"]
+layout_mode = 2
+text = "Status"
+
+[node name="StatusesImmune" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer/StatusesImmune"]
+layout_mode = 2
+text = "Immune"
+horizontal_alignment = 1
+
+[node name="Label3" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/StatusPanel/MarginContainer/VBoxContainer/HBoxContainer/StatusesImmune"]
+layout_mode = 2
+text = "Status"
+
+[node name="ElementPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/ElementPanel"]
+layout_mode = 2
+
+[node name="ElementAffinities" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/ElementPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/ElementPanel/MarginContainer/ElementAffinities"]
+layout_mode = 2
+text = "Element Affinities"
+horizontal_alignment = 1
+
+[node name="Weak" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/ElementPanel/MarginContainer/ElementAffinities"]
+layout_mode = 2
+text = "Weak: Fire, Lightning"
+autowrap_mode = 3
+
+[node name="Resist" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/ElementPanel/MarginContainer/ElementAffinities"]
+layout_mode = 2
+text = "Resist: Ice"
+autowrap_mode = 3
+
+[node name="Immune" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/ElementPanel/MarginContainer/ElementAffinities"]
+layout_mode = 2
+text = "Immune: Earth"
+autowrap_mode = 3
+
+[node name="Absorb" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/ElementPanel/MarginContainer/ElementAffinities"]
+layout_mode = 2
+text = "Absorb: Wind"
+autowrap_mode = 3
+
+[node name="Strengthen" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer2/ElementPanel/MarginContainer/ElementAffinities"]
+layout_mode = 2
+text = "Strengthen: Holy, Dark"
+autowrap_mode = 3

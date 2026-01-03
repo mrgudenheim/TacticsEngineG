@@ -112,7 +112,7 @@ func update_ui(new_job_data: JobData) -> void:
 
 	# update innate abilities
 	var innate_ability_labels: Array[Node] = innate_abilities_list.get_children()
-	for child_idx: int in range(0, innate_ability_labels.size()):
+	for child_idx: int in range(1, innate_ability_labels.size()):
 		innate_ability_labels[child_idx].queue_free()
 
 	for ability: Ability in job_data.innate_abilities:
@@ -130,12 +130,12 @@ func update_ui(new_job_data: JobData) -> void:
 		statuses_start.append_array(passive_effect.status_start)
 		statuses_immune.append_array(passive_effect.status_immune)
 	
-	statuses_always = Utilities.get_array_unique(statuses_always)
-	statuses_start = Utilities.get_array_unique(statuses_start)
-	statuses_immune = Utilities.get_array_unique(statuses_immune)
+	statuses_always = PackedStringArray(Utilities.get_array_unique(statuses_always))
+	statuses_start = PackedStringArray(Utilities.get_array_unique(statuses_start))
+	statuses_immune = PackedStringArray(Utilities.get_array_unique(statuses_immune))
 
-	update_status_list(statuses_immune_list, statuses_always)
-	update_status_list(statuses_immune_list, statuses_start)
+	update_status_list(statuses_always_list, statuses_always)
+	update_status_list(statuses_start_list, statuses_start)
 	update_status_list(statuses_immune_list, statuses_immune)
 	
 	# Update element affinities
@@ -152,11 +152,11 @@ func update_ui(new_job_data: JobData) -> void:
 		element_absorb_list.append_array(passive_effect.element_absorb)
 		element_strengthen_list.append_array(passive_effect.element_strengthen)
 	
-	element_weak_list = Utilities.get_array_unique(element_weak_list)
-	element_resist_list = Utilities.get_array_unique(element_resist_list)
-	element_immune_list = Utilities.get_array_unique(element_immune_list)
-	element_absorb_list = Utilities.get_array_unique(element_absorb_list)
-	element_strengthen_list = Utilities.get_array_unique(element_strengthen_list)
+	element_weak_list.assign(Utilities.get_array_unique(element_weak_list))
+	element_resist_list.assign(Utilities.get_array_unique(element_resist_list))
+	element_immune_list.assign(Utilities.get_array_unique(element_immune_list))
+	element_absorb_list.assign(Utilities.get_array_unique(element_absorb_list))
+	element_strengthen_list.assign(Utilities.get_array_unique(element_strengthen_list))
 
 	update_element_list(element_weak, "Weak: ", element_weak_list)
 	update_element_list(element_resist, "Resist: ", element_resist_list)
@@ -214,6 +214,6 @@ func get_slot_item_type_names(equippable_item_types: Array[ItemData.ItemType], s
 	var slot_equipable_types: PackedStringArray = []
 	for type: int in equippable_item_types:
 		if slot_types.has(type):
-			slot_equipable_types.append(ItemData.ItemType.keys()[type].to_snake_case)
+			slot_equipable_types.append(ItemData.ItemType.keys()[type].to_snake_case())
 	
 	return slot_equipable_types

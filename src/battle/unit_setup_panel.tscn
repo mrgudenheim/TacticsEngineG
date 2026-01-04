@@ -17,11 +17,36 @@ font_size = 18
 outline_size = 6
 outline_color = Color(0, 0, 0, 1)
 
-[node name="UnitSetupPanel" type="PanelContainer"]
+[node name="UnitSetupPanel" type="PanelContainer" node_paths=PackedStringArray("sprite_rect", "unit_name_line_edit", "gender_option_button", "job_button", "level_spinbox", "hp_bar", "mp_bar", "ct_bar", "pa_label", "ma_label", "brave_label", "faith_label", "move_label", "jump_label", "speed_label", "evade_grid", "equipment_grid", "ability_grid", "innate_ability_container", "status_affinity_container", "weak_elements_label", "resist_elements_label", "immune_elements_label", "absorb_elements_label", "strengthen_elements_label")]
 z_index = 1
 offset_right = 1184.0
 offset_bottom = 232.0
 script = ExtResource("1_fwwrv")
+sprite_rect = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/Sprite")
+unit_name_line_edit = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/UnitName")
+gender_option_button = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/Gender")
+job_button = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/JobSelect")
+level_spinbox = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/LevelSpinBox")
+hp_bar = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid/StatBar")
+mp_bar = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid/StatBar2")
+ct_bar = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid/StatBar3")
+pa_label = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid/PA")
+ma_label = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid/MA")
+brave_label = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid/Brave")
+faith_label = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid/Faith")
+move_label = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid/Move")
+jump_label = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid/Jump")
+speed_label = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid/Speed")
+evade_grid = NodePath("MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid")
+equipment_grid = NodePath("MarginContainer/HBoxContainer/EquipmentPanel/MarginContainer/EquipmentSlots/EquipmentGrid")
+ability_grid = NodePath("MarginContainer/HBoxContainer/AbilityPanel/MarginContainer/AbilitySlots/AbilityGrid")
+innate_ability_container = NodePath("MarginContainer/HBoxContainer/InnateAbilityPanel/MarginContainer/InnateAbilities/InnateAbilityGrid")
+status_affinity_container = NodePath("MarginContainer/HBoxContainer/StatusAffinityPanel/MarginContainer/StatusAffinityList")
+weak_elements_label = NodePath("MarginContainer/HBoxContainer/ElementAffinityPanel/MarginContainer/ElementAffinities/Weak")
+resist_elements_label = NodePath("MarginContainer/HBoxContainer/ElementAffinityPanel/MarginContainer/ElementAffinities/Resist")
+immune_elements_label = NodePath("MarginContainer/HBoxContainer/ElementAffinityPanel/MarginContainer/ElementAffinities/Immune")
+absorb_elements_label = NodePath("MarginContainer/HBoxContainer/ElementAffinityPanel/MarginContainer/ElementAffinities/Absorb")
+strengthen_elements_label = NodePath("MarginContainer/HBoxContainer/ElementAffinityPanel/MarginContainer/ElementAffinities/Strengthen")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
@@ -35,13 +60,13 @@ layout_mode = 2
 [node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="Portrait" type="TextureRect" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2"]
+[node name="Sprite" type="TextureRect" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2"]
 layout_mode = 2
 texture = SubResource("GradientTexture2D_gngdm")
 expand_mode = 3
 stretch_mode = 5
 
-[node name="Team" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/Portrait"]
+[node name="Team" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/Sprite"]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -80,7 +105,7 @@ layout_mode = 2
 text = "Lvl:"
 horizontal_alignment = 2
 
-[node name="SpinBox" type="SpinBox" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
+[node name="LevelSpinBox" type="SpinBox" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 min_value = 1.0
 value = 1.0
@@ -105,18 +130,6 @@ layout_mode = 2
 [node name="StatGrid" type="GridContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer"]
 layout_mode = 2
 columns = 4
-
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid"]
-visible = false
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid/HBoxContainer"]
-layout_mode = 2
-text = "STAT"
-
-[node name="Label2" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid/HBoxContainer"]
-layout_mode = 2
-text = "9999/9999"
 
 [node name="StatBar" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid" instance=ExtResource("2_3o4pl")]
 custom_minimum_size = Vector2(175, 15)

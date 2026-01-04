@@ -19,26 +19,29 @@ outline_color = Color(0, 0, 0, 1)
 
 [node name="UnitSetupPanel" type="PanelContainer"]
 z_index = 1
-offset_right = 602.0
-offset_bottom = 504.0
+offset_right = 1184.0
+offset_bottom = 232.0
 script = ExtResource("1_fwwrv")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
 
-[node name="Portrait" type="TextureRect" parent="MarginContainer/VBoxContainer/HBoxContainer2"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Portrait" type="TextureRect" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2"]
 layout_mode = 2
 texture = SubResource("GradientTexture2D_gngdm")
 expand_mode = 3
 stretch_mode = 5
 
-[node name="Team" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2/Portrait"]
+[node name="Team" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/Portrait"]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -49,19 +52,19 @@ grow_vertical = 0
 text = "Sprite"
 label_settings = SubResource("LabelSettings_v0g1v")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer2"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer"]
 layout_mode = 2
 
-[node name="UnitName" type="LineEdit" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
+[node name="UnitName" type="LineEdit" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "UnitName"
 
-[node name="Gender" type="OptionButton" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
+[node name="Gender" type="OptionButton" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 selected = 0
 item_count = 3
@@ -72,488 +75,470 @@ popup/item_1/id = 1
 popup/item_2/text = "Monster"
 popup/item_2/id = 2
 
-[node name="Level" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
+[node name="Level" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 text = "Lvl:"
 horizontal_alignment = 2
 
-[node name="SpinBox" type="SpinBox" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
+[node name="SpinBox" type="SpinBox" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 min_value = 1.0
 value = 1.0
 rounded = true
 
-[node name="Job" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
+[node name="Job" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_stretch_ratio = 0.25
 text = "Job"
 horizontal_alignment = 1
 
-[node name="JobSelect" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
+[node name="JobSelect" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 text = "Select Job"
 
-[node name="StatPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer"]
+[node name="StatPanel" type="PanelContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer"]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel"]
 layout_mode = 2
 
-[node name="StatGrid" type="GridContainer" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer"]
+[node name="StatGrid" type="GridContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer"]
 layout_mode = 2
 columns = 4
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid"]
 visible = false
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid/HBoxContainer"]
+[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid/HBoxContainer"]
 layout_mode = 2
 text = "STAT"
 
-[node name="Label2" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid/HBoxContainer"]
+[node name="Label2" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid/HBoxContainer"]
 layout_mode = 2
 text = "9999/9999"
 
-[node name="StatBar" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid" instance=ExtResource("2_3o4pl")]
+[node name="StatBar" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid" instance=ExtResource("2_3o4pl")]
 custom_minimum_size = Vector2(175, 15)
 layout_mode = 2
 show_name = true
 show_value = true
 
-[node name="PA" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid"]
+[node name="PA" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "PA: 99"
 horizontal_alignment = 1
 
-[node name="Brave" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid"]
+[node name="Brave" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Brave: 99"
 horizontal_alignment = 1
 
-[node name="Move" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid"]
+[node name="Move" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Move: 99"
 horizontal_alignment = 1
 
-[node name="StatBar2" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid" instance=ExtResource("2_3o4pl")]
+[node name="StatBar2" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid" instance=ExtResource("2_3o4pl")]
 custom_minimum_size = Vector2(175, 15)
 layout_mode = 2
 show_name = true
 show_value = true
 
-[node name="MA" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid"]
+[node name="MA" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "MA: 99"
 horizontal_alignment = 1
 
-[node name="Faith" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid"]
+[node name="Faith" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Faith: 99"
 horizontal_alignment = 1
 
-[node name="Jump" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid"]
+[node name="Jump" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Jump: 99"
 horizontal_alignment = 1
 
-[node name="StatBar3" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid" instance=ExtResource("2_3o4pl")]
+[node name="StatBar3" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid" instance=ExtResource("2_3o4pl")]
 custom_minimum_size = Vector2(175, 15)
 layout_mode = 2
 visual_max = 100.0
 show_name = true
 show_value = true
 
-[node name="Control" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid"]
+[node name="Control" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Control2" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid"]
+[node name="Control2" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Speed" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid"]
+[node name="Speed" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Speed: 99"
 horizontal_alignment = 1
 
-[node name="EvadePanel" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+[node name="EvadePanel" type="PanelContainer" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/EvadePanel"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/EvadePanel"]
 layout_mode = 2
 
-[node name="EvadeGrid" type="GridContainer" parent="MarginContainer/VBoxContainer/EvadePanel/MarginContainer"]
+[node name="EvadeGrid" type="GridContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer"]
 layout_mode = 2
 columns = 9
 
-[node name="Label3" type="Label" parent="MarginContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
+[node name="Label3" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
 layout_mode = 2
 text = "Evade"
 
-[node name="Direction1" type="Label" parent="MarginContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
+[node name="Direction1" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Front"
 horizontal_alignment = 1
 
-[node name="Direction2" type="Label" parent="MarginContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
+[node name="Direction2" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Side"
 horizontal_alignment = 1
 
-[node name="Direction3" type="Label" parent="MarginContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
+[node name="Direction3" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Back"
 horizontal_alignment = 1
 
-[node name="Spacer" type="Control" parent="MarginContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
+[node name="Spacer" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 
-[node name="Source1" type="Label" parent="MarginContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
+[node name="Source1" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Job"
 horizontal_alignment = 1
 
-[node name="Source2" type="Label" parent="MarginContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
+[node name="Source2" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Shield"
 horizontal_alignment = 1
 
-[node name="Source3" type="Label" parent="MarginContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
+[node name="Source3" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Accessory"
 horizontal_alignment = 1
 
-[node name="Source4" type="Label" parent="MarginContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
+[node name="Source4" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Weapon"
 horizontal_alignment = 1
 
-[node name="Type1" type="Label" parent="MarginContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
+[node name="Type1" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
 layout_mode = 2
 text = "Physical"
 
-[node name="value" type="Label" parent="MarginContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
+[node name="value" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
 layout_mode = 2
 text = "99%"
 horizontal_alignment = 1
 
-[node name="value2" type="Label" parent="MarginContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
+[node name="value2" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
 layout_mode = 2
 text = "99%"
 horizontal_alignment = 1
 
-[node name="value3" type="Label" parent="MarginContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
+[node name="value3" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
 layout_mode = 2
 text = "99%"
 horizontal_alignment = 1
 
-[node name="Control2" type="Control" parent="MarginContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
+[node name="Control2" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
 layout_mode = 2
 
-[node name="value4" type="Label" parent="MarginContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
-layout_mode = 2
-text = "99%"
-horizontal_alignment = 1
-
-[node name="value5" type="Label" parent="MarginContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
+[node name="value4" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
 layout_mode = 2
 text = "99%"
 horizontal_alignment = 1
 
-[node name="value6" type="Label" parent="MarginContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
+[node name="value5" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
 layout_mode = 2
 text = "99%"
 horizontal_alignment = 1
 
-[node name="value7" type="Label" parent="MarginContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
+[node name="value6" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
 layout_mode = 2
 text = "99%"
 horizontal_alignment = 1
 
-[node name="Type2" type="Label" parent="MarginContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
+[node name="value7" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
+layout_mode = 2
+text = "99%"
+horizontal_alignment = 1
+
+[node name="Type2" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
 layout_mode = 2
 text = "Magic"
 
-[node name="value8" type="Label" parent="MarginContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
+[node name="value8" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
 layout_mode = 2
 text = "99%"
 horizontal_alignment = 1
 
-[node name="value9" type="Label" parent="MarginContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
+[node name="value9" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
 layout_mode = 2
 text = "99%"
 horizontal_alignment = 1
 
-[node name="value10" type="Label" parent="MarginContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
+[node name="value10" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
 layout_mode = 2
 text = "99%"
 horizontal_alignment = 1
 
-[node name="Control3" type="Control" parent="MarginContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
+[node name="Control3" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
 layout_mode = 2
 
-[node name="value11" type="Label" parent="MarginContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
-layout_mode = 2
-text = "99%"
-horizontal_alignment = 1
-
-[node name="value12" type="Label" parent="MarginContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
+[node name="value11" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
 layout_mode = 2
 text = "99%"
 horizontal_alignment = 1
 
-[node name="value13" type="Label" parent="MarginContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
+[node name="value12" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
 layout_mode = 2
 text = "99%"
 horizontal_alignment = 1
 
-[node name="value14" type="Label" parent="MarginContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
+[node name="value13" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
 layout_mode = 2
 text = "99%"
 horizontal_alignment = 1
 
-[node name="Stats" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
-visible = false
+[node name="value14" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid"]
+layout_mode = 2
+text = "99%"
+horizontal_alignment = 1
+
+[node name="EquipmentPanel" type="PanelContainer" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="EquipmentPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/EquipmentPanel"]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/EquipmentPanel"]
+[node name="EquipmentSlots" type="VBoxContainer" parent="MarginContainer/HBoxContainer/EquipmentPanel/MarginContainer"]
 layout_mode = 2
 
-[node name="EquipmentSlots" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/EquipmentPanel/MarginContainer"]
-layout_mode = 2
-
-[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/EquipmentPanel/MarginContainer/EquipmentSlots"]
+[node name="Title" type="Label" parent="MarginContainer/HBoxContainer/EquipmentPanel/MarginContainer/EquipmentSlots"]
 layout_mode = 2
 text = "Equipment"
 horizontal_alignment = 1
 
-[node name="EquipmentGrid" type="GridContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/EquipmentPanel/MarginContainer/EquipmentSlots"]
+[node name="EquipmentGrid" type="GridContainer" parent="MarginContainer/HBoxContainer/EquipmentPanel/MarginContainer/EquipmentSlots"]
 layout_mode = 2
 columns = 2
 
-[node name="Slot" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/EquipmentPanel/MarginContainer/EquipmentSlots/EquipmentGrid"]
+[node name="Slot" type="Label" parent="MarginContainer/HBoxContainer/EquipmentPanel/MarginContainer/EquipmentSlots/EquipmentGrid"]
 layout_mode = 2
 text = "Slot:"
 
-[node name="Item" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/EquipmentPanel/MarginContainer/EquipmentSlots/EquipmentGrid"]
+[node name="Item" type="Button" parent="MarginContainer/HBoxContainer/EquipmentPanel/MarginContainer/EquipmentSlots/EquipmentGrid"]
 layout_mode = 2
 text = "Select Item"
 
-[node name="Slot2" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/EquipmentPanel/MarginContainer/EquipmentSlots/EquipmentGrid"]
+[node name="Slot2" type="Label" parent="MarginContainer/HBoxContainer/EquipmentPanel/MarginContainer/EquipmentSlots/EquipmentGrid"]
 layout_mode = 2
 text = "Slot:"
 
-[node name="Item2" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/EquipmentPanel/MarginContainer/EquipmentSlots/EquipmentGrid"]
+[node name="Item2" type="Button" parent="MarginContainer/HBoxContainer/EquipmentPanel/MarginContainer/EquipmentSlots/EquipmentGrid"]
 layout_mode = 2
 text = "Select Item"
 
-[node name="Slot3" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/EquipmentPanel/MarginContainer/EquipmentSlots/EquipmentGrid"]
+[node name="Slot3" type="Label" parent="MarginContainer/HBoxContainer/EquipmentPanel/MarginContainer/EquipmentSlots/EquipmentGrid"]
 layout_mode = 2
 text = "Slot:"
 
-[node name="Item3" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/EquipmentPanel/MarginContainer/EquipmentSlots/EquipmentGrid"]
+[node name="Item3" type="Button" parent="MarginContainer/HBoxContainer/EquipmentPanel/MarginContainer/EquipmentSlots/EquipmentGrid"]
 layout_mode = 2
 text = "Select Item"
 
-[node name="Slot4" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/EquipmentPanel/MarginContainer/EquipmentSlots/EquipmentGrid"]
+[node name="Slot4" type="Label" parent="MarginContainer/HBoxContainer/EquipmentPanel/MarginContainer/EquipmentSlots/EquipmentGrid"]
 layout_mode = 2
 text = "Slot:"
 
-[node name="Item4" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/EquipmentPanel/MarginContainer/EquipmentSlots/EquipmentGrid"]
+[node name="Item4" type="Button" parent="MarginContainer/HBoxContainer/EquipmentPanel/MarginContainer/EquipmentSlots/EquipmentGrid"]
 layout_mode = 2
 text = "Select Item"
 
-[node name="Slot5" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/EquipmentPanel/MarginContainer/EquipmentSlots/EquipmentGrid"]
+[node name="Slot5" type="Label" parent="MarginContainer/HBoxContainer/EquipmentPanel/MarginContainer/EquipmentSlots/EquipmentGrid"]
 layout_mode = 2
 text = "Slot:"
 
-[node name="Item5" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/EquipmentPanel/MarginContainer/EquipmentSlots/EquipmentGrid"]
+[node name="Item5" type="Button" parent="MarginContainer/HBoxContainer/EquipmentPanel/MarginContainer/EquipmentSlots/EquipmentGrid"]
 layout_mode = 2
 text = "Select Item"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="AbilityPanel" type="PanelContainer" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
 
-[node name="AbilityPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/AbilityPanel"]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/AbilityPanel"]
+[node name="AbilitySlots" type="VBoxContainer" parent="MarginContainer/HBoxContainer/AbilityPanel/MarginContainer"]
 layout_mode = 2
 
-[node name="AbilitySlots" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/AbilityPanel/MarginContainer"]
-layout_mode = 2
-
-[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/AbilityPanel/MarginContainer/AbilitySlots"]
+[node name="Title" type="Label" parent="MarginContainer/HBoxContainer/AbilityPanel/MarginContainer/AbilitySlots"]
 layout_mode = 2
 text = "Abilities"
 horizontal_alignment = 1
 
-[node name="AbilityGrid" type="GridContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/AbilityPanel/MarginContainer/AbilitySlots"]
+[node name="AbilityGrid" type="GridContainer" parent="MarginContainer/HBoxContainer/AbilityPanel/MarginContainer/AbilitySlots"]
 layout_mode = 2
 columns = 2
 
-[node name="Slot" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/AbilityPanel/MarginContainer/AbilitySlots/AbilityGrid"]
+[node name="Slot" type="Label" parent="MarginContainer/HBoxContainer/AbilityPanel/MarginContainer/AbilitySlots/AbilityGrid"]
 layout_mode = 2
 text = "Slot:"
 
-[node name="Ability" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/AbilityPanel/MarginContainer/AbilitySlots/AbilityGrid"]
+[node name="Ability" type="Button" parent="MarginContainer/HBoxContainer/AbilityPanel/MarginContainer/AbilitySlots/AbilityGrid"]
 layout_mode = 2
 text = "Select Ability"
 
-[node name="Slot2" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/AbilityPanel/MarginContainer/AbilitySlots/AbilityGrid"]
+[node name="Slot2" type="Label" parent="MarginContainer/HBoxContainer/AbilityPanel/MarginContainer/AbilitySlots/AbilityGrid"]
 layout_mode = 2
 text = "Slot:"
 
-[node name="Ability2" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/AbilityPanel/MarginContainer/AbilitySlots/AbilityGrid"]
+[node name="Ability2" type="Button" parent="MarginContainer/HBoxContainer/AbilityPanel/MarginContainer/AbilitySlots/AbilityGrid"]
 layout_mode = 2
 text = "Select Ability"
 
-[node name="Slot3" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/AbilityPanel/MarginContainer/AbilitySlots/AbilityGrid"]
+[node name="Slot3" type="Label" parent="MarginContainer/HBoxContainer/AbilityPanel/MarginContainer/AbilitySlots/AbilityGrid"]
 layout_mode = 2
 text = "Slot:"
 
-[node name="Ability3" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/AbilityPanel/MarginContainer/AbilitySlots/AbilityGrid"]
+[node name="Ability3" type="Button" parent="MarginContainer/HBoxContainer/AbilityPanel/MarginContainer/AbilitySlots/AbilityGrid"]
 layout_mode = 2
 text = "Select Ability"
 
-[node name="Slot4" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/AbilityPanel/MarginContainer/AbilitySlots/AbilityGrid"]
+[node name="Slot4" type="Label" parent="MarginContainer/HBoxContainer/AbilityPanel/MarginContainer/AbilitySlots/AbilityGrid"]
 layout_mode = 2
 text = "Slot:"
 
-[node name="Ability4" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/AbilityPanel/MarginContainer/AbilitySlots/AbilityGrid"]
+[node name="Ability4" type="Button" parent="MarginContainer/HBoxContainer/AbilityPanel/MarginContainer/AbilitySlots/AbilityGrid"]
 layout_mode = 2
 text = "Select Ability"
 
-[node name="Slot5" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/AbilityPanel/MarginContainer/AbilitySlots/AbilityGrid"]
+[node name="Slot5" type="Label" parent="MarginContainer/HBoxContainer/AbilityPanel/MarginContainer/AbilitySlots/AbilityGrid"]
 layout_mode = 2
 text = "Slot:"
 
-[node name="Ability5" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/AbilityPanel/MarginContainer/AbilitySlots/AbilityGrid"]
+[node name="Ability5" type="Button" parent="MarginContainer/HBoxContainer/AbilityPanel/MarginContainer/AbilitySlots/AbilityGrid"]
 layout_mode = 2
 text = "Select Ability"
 
-[node name="InnateAbilityPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+[node name="InnateAbilityPanel" type="PanelContainer" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/InnateAbilityPanel"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/InnateAbilityPanel"]
 layout_mode = 2
 
-[node name="InnateAbilities" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/InnateAbilityPanel/MarginContainer"]
+[node name="InnateAbilities" type="VBoxContainer" parent="MarginContainer/HBoxContainer/InnateAbilityPanel/MarginContainer"]
 layout_mode = 2
 
-[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/InnateAbilityPanel/MarginContainer/InnateAbilities"]
+[node name="Title" type="Label" parent="MarginContainer/HBoxContainer/InnateAbilityPanel/MarginContainer/InnateAbilities"]
 layout_mode = 2
 text = "Innate Abilities"
 horizontal_alignment = 1
 
-[node name="InnateAbilityGrid" type="GridContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/InnateAbilityPanel/MarginContainer/InnateAbilities"]
+[node name="InnateAbilityGrid" type="GridContainer" parent="MarginContainer/HBoxContainer/InnateAbilityPanel/MarginContainer/InnateAbilities"]
 layout_mode = 2
 
-[node name="Ability" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/InnateAbilityPanel/MarginContainer/InnateAbilities/InnateAbilityGrid"]
-layout_mode = 2
-text = "Ability"
-
-[node name="Ability2" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/InnateAbilityPanel/MarginContainer/InnateAbilities/InnateAbilityGrid"]
+[node name="Ability" type="Label" parent="MarginContainer/HBoxContainer/InnateAbilityPanel/MarginContainer/InnateAbilities/InnateAbilityGrid"]
 layout_mode = 2
 text = "Ability"
 
-[node name="Ability3" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/InnateAbilityPanel/MarginContainer/InnateAbilities/InnateAbilityGrid"]
+[node name="Ability2" type="Label" parent="MarginContainer/HBoxContainer/InnateAbilityPanel/MarginContainer/InnateAbilities/InnateAbilityGrid"]
 layout_mode = 2
 text = "Ability"
 
-[node name="PanelContainer2" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
-visible = false
+[node name="Ability3" type="Label" parent="MarginContainer/HBoxContainer/InnateAbilityPanel/MarginContainer/InnateAbilities/InnateAbilityGrid"]
+layout_mode = 2
+text = "Ability"
+
+[node name="StatusAffinityPanel" type="PanelContainer" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/PanelContainer2"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/StatusAffinityPanel"]
 layout_mode = 2
 
-[node name="StatusAffinityPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="StatusAffinityList" type="VBoxContainer" parent="MarginContainer/HBoxContainer/StatusAffinityPanel/MarginContainer"]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/StatusAffinityPanel"]
-layout_mode = 2
-
-[node name="StatusAffinityList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/StatusAffinityPanel/MarginContainer"]
-layout_mode = 2
-
-[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/StatusAffinityPanel/MarginContainer/StatusAffinityList"]
+[node name="Title" type="Label" parent="MarginContainer/HBoxContainer/StatusAffinityPanel/MarginContainer/StatusAffinityList"]
 layout_mode = 2
 text = "Status Affinity"
 horizontal_alignment = 1
 
-[node name="Label3" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/StatusAffinityPanel/MarginContainer/StatusAffinityList"]
+[node name="Label3" type="Label" parent="MarginContainer/HBoxContainer/StatusAffinityPanel/MarginContainer/StatusAffinityList"]
 layout_mode = 2
 text = "Always Status"
 
-[node name="Label4" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/StatusAffinityPanel/MarginContainer/StatusAffinityList"]
+[node name="Label4" type="Label" parent="MarginContainer/HBoxContainer/StatusAffinityPanel/MarginContainer/StatusAffinityList"]
 layout_mode = 2
 text = "Start Status"
 
-[node name="Label5" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/StatusAffinityPanel/MarginContainer/StatusAffinityList"]
+[node name="Label5" type="Label" parent="MarginContainer/HBoxContainer/StatusAffinityPanel/MarginContainer/StatusAffinityList"]
 layout_mode = 2
 text = "Immune Status"
 
-[node name="ElementAffinityPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="ElementAffinityPanel" type="PanelContainer" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/ElementAffinityPanel"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/ElementAffinityPanel"]
 layout_mode = 2
 
-[node name="ElementAffinities" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/ElementAffinityPanel/MarginContainer"]
+[node name="ElementAffinities" type="VBoxContainer" parent="MarginContainer/HBoxContainer/ElementAffinityPanel/MarginContainer"]
 layout_mode = 2
 
-[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/ElementAffinityPanel/MarginContainer/ElementAffinities"]
+[node name="Title" type="Label" parent="MarginContainer/HBoxContainer/ElementAffinityPanel/MarginContainer/ElementAffinities"]
 layout_mode = 2
 text = "Element Affinities"
 horizontal_alignment = 1
 
-[node name="Weak" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/ElementAffinityPanel/MarginContainer/ElementAffinities"]
+[node name="Weak" type="Label" parent="MarginContainer/HBoxContainer/ElementAffinityPanel/MarginContainer/ElementAffinities"]
 layout_mode = 2
 text = "Weak: Fire, Lightning"
 autowrap_mode = 3
 
-[node name="Resist" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/ElementAffinityPanel/MarginContainer/ElementAffinities"]
+[node name="Resist" type="Label" parent="MarginContainer/HBoxContainer/ElementAffinityPanel/MarginContainer/ElementAffinities"]
 layout_mode = 2
 text = "Resist: Ice"
 autowrap_mode = 3
 
-[node name="Immune" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/ElementAffinityPanel/MarginContainer/ElementAffinities"]
+[node name="Immune" type="Label" parent="MarginContainer/HBoxContainer/ElementAffinityPanel/MarginContainer/ElementAffinities"]
 layout_mode = 2
 text = "Immune: Earth"
 autowrap_mode = 3
 
-[node name="Absorb" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/ElementAffinityPanel/MarginContainer/ElementAffinities"]
+[node name="Absorb" type="Label" parent="MarginContainer/HBoxContainer/ElementAffinityPanel/MarginContainer/ElementAffinities"]
 layout_mode = 2
 text = "Absorb: Wind"
 autowrap_mode = 3
 
-[node name="Strengthen" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/ElementAffinityPanel/MarginContainer/ElementAffinities"]
+[node name="Strengthen" type="Label" parent="MarginContainer/HBoxContainer/ElementAffinityPanel/MarginContainer/ElementAffinities"]
 layout_mode = 2
 text = "Strengthen: Holy, Dark"
 autowrap_mode = 3

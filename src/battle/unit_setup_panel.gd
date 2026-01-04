@@ -1,6 +1,8 @@
 class_name UnitSetupPanel
 extends Container
 
+signal job_select_pressed(unit: UnitData)
+
 @export var sprite_rect: TextureRect
 @export var unit_name_line_edit: LineEdit
 @export var gender_option_button: OptionButton
@@ -62,8 +64,25 @@ func setup(unit: UnitData) -> void:
 	# ct_bar.value_label.grow_horizontal = GrowDirection.GROW_DIRECTION_BEGIN
 
 	# TODO hook up buttons to update Unit data
+	unit_name_line_edit.text_submitted.connect(func(new_name: String): unit.unit_nickname = new_name)
+	level_spinbox.value_changed.connect(func(new_value): update_level(unit, new_value))
+	# TODO update gender - sprite and stats
+	
+	# TODO hook up job select button
+	job_button.pressed.connect(func(): job_select_pressed.emit(unit))
+	
+	# show job select list
+	# hookup job select buttons to update this units job
+	# remove invalid equipment
+	# generate battle stats (aka apply stat multipliers)
 
 	update_ui(unit)
+
+
+func update_level(unit: UnitData, new_level: int) -> void:
+	unit.stats[UnitData.StatType.LEVEL].set_value(new_level)
+	unit.generate_leveled_stats(new_level, unit.job_data)
+	unit.generate_battle_stats(unit.job_data)
 
 
 func update_ui(unit: UnitData) -> void:
@@ -114,8 +133,9 @@ func update_ui(unit: UnitData) -> void:
 		new_slot_label.text = equip_slot.equipment_slot_name
 		equipment_grid.add_child(new_slot_label)
 
-		var new_item_button: Label = Label.new()
+		var new_item_button: Button = Button.new()
 		new_item_button.text = equip_slot.item.display_name
+		# TODO implement item select buttons
 		equipment_grid.add_child(new_item_button)
 
 	# update abilities
@@ -130,6 +150,7 @@ func update_ui(unit: UnitData) -> void:
 
 		var new_ability_button: Button = Button.new()
 		new_ability_button.text = ability_slot.ability.display_name
+		# TODO implement ability select buttons
 		ability_grid.add_child(new_ability_button)
 
 	# update innate abilities

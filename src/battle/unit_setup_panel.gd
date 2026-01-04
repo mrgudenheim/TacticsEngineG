@@ -2,6 +2,8 @@ class_name UnitSetupPanel
 extends Container
 
 signal job_select_pressed(unit: UnitData)
+signal item_select_pressed(unit: UnitData, slot: UnitData.EquipmentSlot)
+signal ability_select_pressed(unit: UnitData, slot: UnitData.AbilitySlot)
 
 @export var sprite_rect: TextureRect
 @export var unit_name_line_edit: LineEdit
@@ -70,7 +72,6 @@ func setup(unit: UnitData) -> void:
 	
 	# TODO hook up job select button
 	job_button.pressed.connect(func(): job_select_pressed.emit(unit))
-	
 	# show job select list
 	# hookup job select buttons to update this units job
 	# remove invalid equipment
@@ -135,6 +136,7 @@ func update_ui(unit: UnitData) -> void:
 
 		var new_item_button: Button = Button.new()
 		new_item_button.text = equip_slot.item.display_name
+		new_item_button.pressed.connect(func(): item_select_pressed.emit(unit, equip_slot))
 		# TODO implement item select buttons
 		equipment_grid.add_child(new_item_button)
 
@@ -150,6 +152,7 @@ func update_ui(unit: UnitData) -> void:
 
 		var new_ability_button: Button = Button.new()
 		new_ability_button.text = ability_slot.ability.display_name
+		new_ability_button.pressed.connect(func(): ability_select_pressed.emit(unit, ability_slot))
 		# TODO implement ability select buttons
 		ability_grid.add_child(new_ability_button)
 

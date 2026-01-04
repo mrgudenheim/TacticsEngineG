@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://card26cltbba1"]
+[gd_scene load_steps=23 format=3 uid="uid://card26cltbba1"]
 
 [ext_resource type="Script" uid="uid://cd31vmh881wm5" path="res://src/battle/battle_manager.gd" id="1_hnd0w"]
 [ext_resource type="PackedScene" uid="uid://buljw4afjva1d" path="res://src/content_scripts/Map/map.tscn" id="2_1os5c"]
@@ -12,6 +12,7 @@
 [ext_resource type="Material" uid="uid://emgoiswtrorw" path="res://src/content_scripts/Map/tile_highlight_blue.material" id="11_1os5c"]
 [ext_resource type="PackedScene" uid="uid://7tn6b6eup5na" path="res://src/camera_controller.tscn" id="12_l2dig"]
 [ext_resource type="PackedScene" uid="uid://djqalqt20isme" path="res://src/battle/job_select_button.tscn" id="14_f2r6p"]
+[ext_resource type="PackedScene" uid="uid://b2bfuf828p6i6" path="res://src/battle/unit_setup_panel.tscn" id="14_kb1q2"]
 [ext_resource type="Script" uid="uid://cectjl7guvpqa" path="res://src/content_scripts/actions/action_button.gd" id="16_l2dig"]
 
 [sub_resource type="Environment" id="Environment_njvnp"]
@@ -302,7 +303,6 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="TeamSetup"]
-visible = false
 layout_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="TeamSetup/VBoxContainer"]
@@ -315,94 +315,19 @@ text = "Units:"
 [node name="NumUnitsSpinBox" type="SpinBox" parent="TeamSetup/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="TeamSetup/VBoxContainer"]
+[node name="TeamScrollArea" type="ScrollContainer" parent="TeamSetup/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="TeamSetup/VBoxContainer/ScrollContainer"]
+[node name="TeamList" type="HBoxContainer" parent="TeamSetup/VBoxContainer/TeamScrollArea"]
 layout_mode = 2
 
-[node name="Unit Panel" type="PanelContainer" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer"]
+[node name="UnitSetupPanel" parent="TeamSetup/VBoxContainer/TeamScrollArea/TeamList" instance=ExtResource("14_kb1q2")]
 layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel"]
-layout_mode = 2
-
-[node name="Sprite" type="Label" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel/VBoxContainer"]
-layout_mode = 2
-text = "Sprite Preview"
-
-[node name="Name" type="Label" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel/VBoxContainer"]
-layout_mode = 2
-text = "UnitName"
-
-[node name="Gender" type="Label" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel/VBoxContainer"]
-layout_mode = 2
-text = "Gender"
-
-[node name="Job" type="Label" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel/VBoxContainer"]
-layout_mode = 2
-text = "Job"
-
-[node name="Level" type="Label" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel/VBoxContainer"]
-layout_mode = 2
-text = "Level"
-
-[node name="Stats" type="Label" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel/VBoxContainer"]
-layout_mode = 2
-text = "Stats - HP, MP bars, PA, MA, 
-brave, faith, evade, move, jump, speed"
-
-[node name="Equipment" type="Label" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel/VBoxContainer"]
-layout_mode = 2
-text = "Equipment"
-
-[node name="Abilities" type="Label" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel/VBoxContainer"]
-layout_mode = 2
-text = "Abilities"
-
-[node name="Unit Panel2" type="PanelContainer" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer"]
-layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel2"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel2/VBoxContainer"]
-layout_mode = 2
-text = "Test"
-
-[node name="Label2" type="Label" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel2/VBoxContainer"]
-layout_mode = 2
-text = "Test"
-
-[node name="Label3" type="Label" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel2/VBoxContainer"]
-layout_mode = 2
-text = "Test"
-
-[node name="Unit Panel3" type="PanelContainer" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer"]
-layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel3"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel3/VBoxContainer"]
-layout_mode = 2
-text = "Test"
-
-[node name="Label2" type="Label" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel3/VBoxContainer"]
-layout_mode = 2
-text = "Test"
-
-[node name="Label3" type="Label" parent="TeamSetup/VBoxContainer/ScrollContainer/HBoxContainer/Unit Panel3/VBoxContainer"]
-layout_mode = 2
-text = "Test"
 
 [node name="JobSelectScrollArea" type="ScrollContainer" parent="TeamSetup"]
+visible = false
 layout_mode = 2
 
 [node name="JobSelectList" type="VBoxContainer" parent="TeamSetup/JobSelectScrollArea"]
-layout_mode = 2
-
-[node name="JobSelectButton" parent="TeamSetup/JobSelectScrollArea/JobSelectList" instance=ExtResource("14_f2r6p")]
-visible = false
 layout_mode = 2

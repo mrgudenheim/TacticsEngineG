@@ -314,6 +314,9 @@ text = "Units:"
 
 [node name="NumUnitsSpinBox" type="SpinBox" parent="TeamSetup/VBoxContainer/HBoxContainer"]
 layout_mode = 2
+min_value = 1.0
+value = 1.0
+rounded = true
 
 [node name="TeamScrollArea" type="ScrollContainer" parent="TeamSetup/VBoxContainer"]
 layout_mode = 2

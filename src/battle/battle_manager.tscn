@@ -81,7 +81,7 @@ units_per_team_spinbox = NodePath("DebugOptions/MarginContainer/VBoxContainer2/V
 units_level_spinbox = NodePath("DebugOptions/MarginContainer/VBoxContainer2/VBoxContainer/GridContainer/UnitsLevel")
 icon_counter = NodePath("IconGridContainer")
 allow_mirror = false
-job_select_list = NodePath("BattleSetup/JobSelectScrollArea/JobSelectList")
+job_select_list = NodePath("JobSelectScrollArea/JobSelectList")
 job_select_button_scene = ExtResource("14_f2r6p")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -304,19 +304,19 @@ grow_vertical = 2
 size_flags_horizontal = 3
 current_tab = 0
 
-[node name="TeamSetup1" parent="BattleSetup" instance=ExtResource("14_kb1q2")]
+[node name="Team1" parent="BattleSetup" instance=ExtResource("14_kb1q2")]
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="TeamSetup2" parent="BattleSetup" instance=ExtResource("14_kb1q2")]
+[node name="Team2" parent="BattleSetup" instance=ExtResource("14_kb1q2")]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
-[node name="JobSelectScrollArea" type="ScrollContainer" parent="BattleSetup"]
+[node name="JobSelectScrollArea" type="ScrollContainer" parent="."]
 visible = false
-layout_mode = 2
-metadata/_tab_index = 2
+offset_top = 98.0
+offset_bottom = 98.0
 
-[node name="JobSelectList" type="VBoxContainer" parent="BattleSetup/JobSelectScrollArea"]
+[node name="JobSelectList" type="VBoxContainer" parent="JobSelectScrollArea"]
 layout_mode = 2

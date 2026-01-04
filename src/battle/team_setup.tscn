@@ -3,8 +3,11 @@
 [ext_resource type="PackedScene" uid="uid://b2bfuf828p6i6" path="res://src/battle/unit_setup_panel.tscn" id="1_vj6nb"]
 
 [node name="TeamSetup" type="MarginContainer"]
-offset_right = 616.0
-offset_bottom = 601.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
@@ -30,15 +33,9 @@ rounded = true
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="TeamList" type="HBoxContainer" parent="VBoxContainer/TeamScrollArea"]
+[node name="TeamList" type="VBoxContainer" parent="VBoxContainer/TeamScrollArea"]
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="UnitSetupPanel" parent="VBoxContainer/TeamScrollArea/TeamList" instance=ExtResource("1_vj6nb")]
-layout_mode = 2
-
-[node name="JobSelectScrollArea" type="ScrollContainer" parent="."]
-visible = false
-layout_mode = 2
-
-[node name="JobSelectList" type="VBoxContainer" parent="JobSelectScrollArea"]
 layout_mode = 2

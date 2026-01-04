@@ -1,5 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://b2bfuf828p6i6"]
+[gd_scene load_steps=6 format=3 uid="uid://b2bfuf828p6i6"]
 
+[ext_resource type="Script" uid="uid://6pc8u8p185nd" path="res://src/battle/unit_setup_panel.gd" id="1_fwwrv"]
 [ext_resource type="PackedScene" uid="uid://d2jb1kiyb35fa" path="res://src/Unit/stat_bar.tscn" id="2_3o4pl"]
 
 [sub_resource type="Gradient" id="Gradient_oxa5o"]
@@ -20,6 +21,7 @@ outline_color = Color(0, 0, 0, 1)
 z_index = 1
 offset_right = 602.0
 offset_bottom = 504.0
+script = ExtResource("1_fwwrv")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
@@ -77,6 +79,7 @@ horizontal_alignment = 2
 
 [node name="SpinBox" type="SpinBox" parent="MarginContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
 layout_mode = 2
+min_value = 1.0
 value = 1.0
 rounded = true
 

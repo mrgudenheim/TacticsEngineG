@@ -313,6 +313,11 @@ visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
+[node name="Map" type="MarginContainer" parent="BattleSetup"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 2
+
 [node name="JobSelectScrollArea" type="ScrollContainer" parent="."]
 visible = false
 offset_top = 98.0

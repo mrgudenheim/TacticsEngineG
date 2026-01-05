@@ -93,3 +93,8 @@ func get_array_unique(array: Array) -> Array:
 		if not unique_array.has(item):
 			unique_array.append(item)
 	return unique_array
+
+
+func disconnect_all_connections(signal_to_disconnect: Signal) -> void:
+	for connection_dictionary in signal_to_disconnect.get_connections():
+		signal_to_disconnect.disconnect(connection_dictionary.callable)

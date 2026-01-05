@@ -1,13 +1,18 @@
-[gd_scene load_steps=2 format=3 uid="uid://h7281h60pnbl"]
+[gd_scene load_steps=3 format=3 uid="uid://h7281h60pnbl"]
 
+[ext_resource type="Script" uid="uid://dam17uf3w1qj4" path="res://src/battle/team_setup.gd" id="1_v60ut"]
 [ext_resource type="PackedScene" uid="uid://b2bfuf828p6i6" path="res://src/battle/unit_setup_panel.tscn" id="1_vj6nb"]
 
-[node name="TeamSetup" type="MarginContainer"]
+[node name="TeamSetup" type="MarginContainer" node_paths=PackedStringArray("unit_list", "num_units_spinbox")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_v60ut")
+unit_list = NodePath("VBoxContainer/UnitListScrollArea/UnitList")
+num_units_spinbox = NodePath("VBoxContainer/HBoxContainer/NumUnitsSpinBox")
+unit_setup_scene = ExtResource("1_vj6nb")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
@@ -29,13 +34,13 @@ min_value = 1.0
 value = 1.0
 rounded = true
 
-[node name="TeamScrollArea" type="ScrollContainer" parent="VBoxContainer"]
+[node name="UnitListScrollArea" type="ScrollContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="TeamList" type="VBoxContainer" parent="VBoxContainer/TeamScrollArea"]
+[node name="UnitList" type="VBoxContainer" parent="VBoxContainer/UnitListScrollArea"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="UnitSetupPanel" parent="VBoxContainer/TeamScrollArea/TeamList" instance=ExtResource("1_vj6nb")]
+[node name="UnitSetupPanel" parent="VBoxContainer/UnitListScrollArea/UnitList" instance=ExtResource("1_vj6nb")]
 layout_mode = 2

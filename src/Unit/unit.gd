@@ -4,6 +4,8 @@ extends Node3D
 # https://ffhacktics.com/wiki/Miscellaneous_Unit_Data
 # https://ffhacktics.com/wiki/Battle_Stats
 
+signal initialized()
+
 signal ability_assigned(id: int)
 signal ability_completed()
 signal primary_weapon_assigned(idx: int)
@@ -347,9 +349,6 @@ var actions_data: Dictionary[String, ActionInstance] = {}
 var submerged_depth: int = 0
 
 func _ready() -> void:
-	if not RomReader.is_ready:
-		RomReader.rom_loaded.connect(initialize_unit)
-	
 	stats[StatType.HP_MAX].changed.connect(stats[StatType.HP].update_max_from_clamped_value)
 	stats[StatType.MP_MAX].changed.connect(stats[StatType.MP].update_max_from_clamped_value)
 	stats[StatType.HP].changed.connect(hp_changed)
@@ -370,6 +369,11 @@ func _ready() -> void:
 	cycle_status_icons()
 	
 	add_to_group("Units")
+
+	if not RomReader.is_ready:
+		RomReader.rom_loaded.connect(initialize_unit)
+	else:
+		initialize_unit()
 
 
 func add_stat_bar(stat_type: StatType) -> StatBar:
@@ -417,6 +421,8 @@ func initialize_unit() -> void:
 	
 	var random_name_idx: int = randi_range(0, RomReader.fft_text.unit_names_list_filtered.size() - 1)
 	unit_nickname = RomReader.fft_text.unit_names_list_filtered[random_name_idx]
+
+	initialized.emit()
 
 
 func _physics_process(delta: float) -> void:
@@ -798,6 +804,9 @@ func end_turn():
 
 # TODO should these be triggered actions on the statuses?
 func hp_changed(clamped_value: ClampedValue) -> void:
+	if global_battle_manager == null: # TODO should statuses be applied outside battle?
+		return
+	
 	if clamped_value.current_value == 0:
 		await add_status(RomReader.status_effects["dead"].duplicate(), true) # add dead
 	elif clamped_value.current_value < clamped_value.max_value / 5: # critical

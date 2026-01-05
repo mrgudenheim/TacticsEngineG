@@ -99,8 +99,7 @@ var walled_maps: PackedInt32Array = [
 	104,
 ]
 
-@export var job_select_list: Container
-@export var job_select_button_scene: PackedScene
+@export var battle_setup: BattleSetup
 
 const SCALE: float = 1.0 / MapData.TILE_SIDE_LENGTH
 const SCALED_UNITS_PER_HEIGHT: float = SCALE * MapData.UNITS_PER_HEIGHT
@@ -138,11 +137,9 @@ func on_rom_loaded() -> void:
 	push_warning("on rom loaded")
 	load_rom_button.visible = false
 
-	for job_data: JobData in RomReader.jobs_data.values():
-		var job_select_button: JobSelectButton = job_select_button_scene.instantiate()
-		job_select_button.job_data = job_data
-		job_select_list.add_child(job_select_button)
+	battle_setup.populate_option_lists()
 	
+	# TODO move to battle_setup
 	for file_record: FileRecord in RomReader.file_records.values():
 		if file_record.name.contains(".GNS"):
 			var map_name: String = ""

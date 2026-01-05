@@ -38,7 +38,20 @@ signal ability_select_pressed(unit: UnitData, slot: UnitData.AbilitySlot)
 @export var absorb_elements_label: Label
 @export var strengthen_elements_label: Label
 
+@export var unit_scene: PackedScene
+var unit_data: UnitData
+
+func _ready() -> void:
+	var new_unit: UnitData = unit_scene.instantiate()
+	add_child(new_unit)
+	new_unit.initialized.connect(func(): setup(new_unit))
+
+
 func setup(unit: UnitData) -> void:
+	unit_data = unit
+	if unit.job_data == null:
+		unit.set_job_id(0x01) # TODO set initial job correctly
+	
 	unit_name_line_edit.text = unit.unit_nickname
 	job_button.text = unit.job_data.display_name
 

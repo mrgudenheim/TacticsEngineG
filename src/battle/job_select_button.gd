@@ -1,7 +1,7 @@
 class_name JobSelectButton
 extends PanelContainer
 
-signal selected(JobData)
+signal selected(job_data: JobData)
 
 var job_data: JobData:
 	get: return job_data

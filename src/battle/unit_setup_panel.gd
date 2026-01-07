@@ -191,12 +191,12 @@ func update_ui(unit: UnitData) -> void:
 	
 	for status_name: String in unit.start_statuses:
 		var new_status_label: Label = Label.new()
-		new_status_label.text = "Always " + status_name
+		new_status_label.text = "Start " + status_name
 		status_affinity_container.add_child(new_status_label)
 	
 	for status_name: String in unit.immune_statuses:
 		var new_status_label: Label = Label.new()
-		new_status_label.text = "Always " + status_name
+		new_status_label.text = "Immune " + status_name
 		status_affinity_container.add_child(new_status_label)
 	
 	# update element affinities

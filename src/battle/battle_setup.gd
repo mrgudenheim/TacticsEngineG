@@ -30,6 +30,6 @@ func desetup_job_select() -> void:
 
 func update_unit_job(unit: UnitData, new_job: JobData) -> void:
 	unit.set_job_id(new_job.job_id)
-	# TODO update stats
+	# TODO update stats (apply multipliers, redo growths, etc.)
 	
 	desetup_job_select()

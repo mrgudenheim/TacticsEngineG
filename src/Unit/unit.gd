@@ -5,6 +5,7 @@ extends Node3D
 # https://ffhacktics.com/wiki/Battle_Stats
 
 signal initialized()
+signal data_updated(unit: UnitData)
 
 signal ability_assigned(id: int)
 signal ability_completed()
@@ -1431,6 +1432,8 @@ func update_passive_effects(exclude_passives: PackedStringArray = []) -> void:
 	update_elemental_affinity(all_passive_effects)
 	update_triggered_actions(all_passive_effects)
 	update_equipable_item_types(all_passive_effects)
+
+	data_updated.emit(self)
 
 
 func get_all_passive_effects(exclude_passives: PackedStringArray = []) -> Array[PassiveEffect]:

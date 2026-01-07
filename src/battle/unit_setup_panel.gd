@@ -89,6 +89,7 @@ func setup(unit: UnitData) -> void:
 	# hookup job select buttons to update this units job
 	# remove invalid equipment
 	# generate battle stats (aka apply stat multipliers)
+	unit.data_updated.connect(update_ui)
 
 	update_ui(unit)
 
@@ -101,6 +102,7 @@ func update_level(unit: UnitData, new_level: int) -> void:
 
 func update_ui(unit: UnitData) -> void:
 	# update_stat_label(level_label, unit, UnitData.StatType.LEVEL)
+	job_button.text = unit.job_data.display_name
 	level_spinbox.value = unit.stats[UnitData.StatType.LEVEL].get_modified_value()
 	
 	update_stat_label(pa_label, unit, UnitData.StatType.PHYSICAL_ATTACK)

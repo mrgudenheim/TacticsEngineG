@@ -19,7 +19,6 @@ outline_size = 6
 outline_color = Color(0, 0, 0, 1)
 
 [node name="UnitSetupPanel" type="PanelContainer" node_paths=PackedStringArray("sprite_rect", "unit_name_line_edit", "gender_option_button", "job_button", "level_spinbox", "hp_bar", "mp_bar", "ct_bar", "pa_label", "ma_label", "brave_label", "faith_label", "move_label", "jump_label", "speed_label", "evade_grid", "equipment_grid", "ability_grid", "innate_ability_container", "status_affinity_container", "weak_elements_label", "resist_elements_label", "immune_elements_label", "absorb_elements_label", "strengthen_elements_label")]
-z_index = 1
 offset_right = 1184.0
 offset_bottom = 232.0
 script = ExtResource("1_fwwrv")

@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://card26cltbba1"]
+[gd_scene load_steps=27 format=3 uid="uid://card26cltbba1"]
 
 [ext_resource type="Script" uid="uid://cd31vmh881wm5" path="res://src/battle/battle_manager.gd" id="1_hnd0w"]
 [ext_resource type="PackedScene" uid="uid://buljw4afjva1d" path="res://src/content_scripts/Map/map.tscn" id="2_1os5c"]
@@ -16,6 +16,8 @@
 [ext_resource type="Script" uid="uid://b7qofr54bmos3" path="res://src/battle/battle_setup.gd" id="14_l2dig"]
 [ext_resource type="Script" uid="uid://df08xhig8ojgj" path="res://src/battle/job_select_control.gd" id="16_bp08t"]
 [ext_resource type="Script" uid="uid://cectjl7guvpqa" path="res://src/content_scripts/actions/action_button.gd" id="16_l2dig"]
+[ext_resource type="Script" uid="uid://cu0evj643fugd" path="res://src/battle/item_select_control.gd" id="17_bp08t"]
+[ext_resource type="Script" uid="uid://bsflrccy2sry" path="res://src/battle/ability_select_control.gd" id="18_pbg35"]
 
 [sub_resource type="Environment" id="Environment_njvnp"]
 background_mode = 3
@@ -295,7 +297,7 @@ layout_mode = 2
 text = "Game State"
 horizontal_alignment = 1
 
-[node name="BattleSetup" type="Control" parent="." node_paths=PackedStringArray("team_setups", "job_select_control")]
+[node name="BattleSetup" type="Control" parent="." node_paths=PackedStringArray("job_select_control", "item_select_control", "ability_select_control")]
 layout_mode = 3
 anchor_top = 0.124000005
 anchor_right = 1.0
@@ -304,8 +306,9 @@ offset_top = -0.13600159
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("14_l2dig")
-team_setups = [NodePath("BattleSetupTabContainer/Team0"), NodePath("BattleSetupTabContainer/Team1")]
 job_select_control = NodePath("JobSelectScrollArea")
+item_select_control = NodePath("ItemSelectScrollArea")
+ability_select_control = NodePath("AbilitySelectScrollArea")
 
 [node name="BattleSetupTabContainer" type="TabContainer" parent="BattleSetup"]
 layout_mode = 1
@@ -343,5 +346,31 @@ job_select_button_container = NodePath("JobSelectList")
 job_select_button_scene = ExtResource("14_f2r6p")
 
 [node name="JobSelectList" type="VBoxContainer" parent="BattleSetup/JobSelectScrollArea"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ItemSelectScrollArea" type="ScrollContainer" parent="BattleSetup"]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("17_bp08t")
+
+[node name="ItemSelectList" type="VBoxContainer" parent="BattleSetup/ItemSelectScrollArea"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AbilitySelectScrollArea" type="ScrollContainer" parent="BattleSetup"]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("18_pbg35")
+
+[node name="AbilitySelectList" type="VBoxContainer" parent="BattleSetup/AbilitySelectScrollArea"]
 layout_mode = 2
 size_flags_horizontal = 3

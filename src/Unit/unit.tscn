@@ -291,6 +291,7 @@ offset = Vector2(0.75, 0.5)
 metadata/_custom_type_script = "uid://baavg15lka8r7"
 
 [node name="UnitDetailsPanel" parent="CharacterBody3D/UnitDetailsPosition" instance=ExtResource("12_gngdm")]
+visible = false
 layout_mode = 0
 anchors_preset = 0
 anchor_top = 0.0

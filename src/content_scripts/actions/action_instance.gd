@@ -339,6 +339,9 @@ func queue_use() -> void:
 
 
 func use() -> void:
+	if battle_manager == null: # TODO correctly handle updating passive_effects, statuses, etc. outside of battle
+		return
+	
 	stop_targeting()
 	
 	await action.use(self)

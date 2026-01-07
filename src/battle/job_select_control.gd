@@ -1,5 +1,5 @@
 class_name JobSelectControl
-extends ScrollContainer
+extends Container
 
 @export var job_select_button_container: Container
 @export var job_select_button_scene: PackedScene

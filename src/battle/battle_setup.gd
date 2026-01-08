@@ -2,6 +2,7 @@ class_name BattleSetup
 extends Control
 
 @export var battle_manager: BattleManager
+@export var start_button: Button
 @export var unit_scene: PackedScene
 
 @export var battle_setup_container: Container
@@ -20,6 +21,8 @@ func initial_setup() -> void:
 	
 	for team_num: int in 2:
 		add_team("Team" + str(team_num))
+	
+	start_button.pressed.connect(battle_manager.start_battle)
 
 
 func populate_option_lists() -> void:

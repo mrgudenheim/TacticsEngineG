@@ -207,6 +207,8 @@ func on_map_selected(index: int) -> void:
 
 
 func start_battle() -> void:
+	battle_setup.visible = false
+	
 	camera_controller.follow_node = units[0].char_body
 	controller.unit = units[0]
 	#controller.rotate_camera(1) # HACK workaround for bug where controls are off until camera is rotated

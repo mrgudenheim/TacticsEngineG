@@ -89,6 +89,7 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 text = "UnitName"
+select_all_on_focus = true
 
 [node name="Gender" type="OptionButton" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
 layout_mode = 2
@@ -111,6 +112,7 @@ layout_mode = 2
 min_value = 1.0
 value = 1.0
 rounded = true
+select_all_on_focus = true
 
 [node name="Job" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
 layout_mode = 2

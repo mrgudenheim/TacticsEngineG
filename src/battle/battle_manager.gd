@@ -2,6 +2,7 @@ class_name BattleManager
 extends Node3D
 
 signal map_input_event(action_instance: ActionInstance, camera: Camera3D, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int)
+signal unit_created(new_unit: UnitData)
 
 # debug vars
 @export var use_test_teams: bool = false
@@ -136,8 +137,6 @@ func hide_debug_ui() -> void:
 func on_rom_loaded() -> void:
 	push_warning("on rom loaded")
 	load_rom_button.visible = false
-
-	battle_setup.populate_option_lists()
 	
 	# TODO move to battle_setup
 	for file_record: FileRecord in RomReader.file_records.values():
@@ -191,16 +190,23 @@ func on_map_selected(index: int) -> void:
 	#maps.add_child(instantiate_map(0x09, not walled_maps.has(index), Vector3(30, 0 * MapData.HEIGHT_SCALE, 0))) # 0x09 = Igros Citadel
 	initialize_map_tiles()
 	
-	var map_width_range: Vector2i = Vector2i(0, map_data.map_width)
-	var map_length_range: Vector2i = Vector2i(0, map_data.map_length)
-	if not walled_maps.has(index):
-		map_width_range = Vector2i(-map_data.map_width + 1, map_data.map_width * 2 - 2)
-		map_length_range = Vector2i(-map_data.map_length + 1, map_data.map_length * 2 - 2)
+	#var map_width_range: Vector2i = Vector2i(0, map_data.map_width)
+	#var map_length_range: Vector2i = Vector2i(0, map_data.map_length)
+	#if not walled_maps.has(index):
+		#map_width_range = Vector2i(-map_data.map_width + 1, map_data.map_width * 2 - 2)
+		#map_length_range = Vector2i(-map_data.map_length + 1, map_data.map_length * 2 - 2)
 	
 	push_warning("Time to create map (ms): " + str(Time.get_ticks_msec() - start_time))
 	push_warning("Map_created")
 	
-	add_units_to_map()
+	battle_setup.initial_setup()
+	await update_units_pathfinding()
+	units.shuffle()
+	
+	hide_debug_ui()
+
+
+func start_battle() -> void:
 	camera_controller.follow_node = units[0].char_body
 	controller.unit = units[0]
 	#controller.rotate_camera(1) # HACK workaround for bug where controls are off until camera is rotated
@@ -209,125 +215,126 @@ func on_map_selected(index: int) -> void:
 	process_battle()
 
 
-func add_units_to_map() -> void:
-	var team1: Team = Team.new()
-	teams.append(team1)
-	team1.team_name = "Team 1 (Player)"
-	
-	var team2: Team = Team.new()
-	teams.append(team2)
-	team2.team_name = "Team 2 (Computer)"
-	
-	if use_test_teams:
-		add_test_teams_to_map()
-	else: # use random teams
-		var generic_job_ids: Array[int] = []
-		generic_job_ids.assign(range(0x4a, 0x5a)) # generics
-		var special_characters: Array[int] = [
-			0x01, # ramza 1
-			0x04, # ramza 4
-			0x05, # delita 1
-			0x34, # agrias
-			0x11, # gafgorian
-			]
-		
-		var monster_jobs: Array[int] = []
-		monster_jobs.assign(range(0x5e, 0x8e)) # generic monsters
-		var special_monsters: Array[int] = [
-			0x41, # holy angel
-			0x49, # arch angel
-			0x3c, # gigas/warlock (Belias)
-			0x3e, # angel of death
-			0x40, # regulator (Hashmal)
-			0x43, # impure king (quakelin)
-			0x45, # ghost of fury (adremelk)
-			0x97, # serpentarious
-			0x91, # steel giant
-			]
-		
-		var team_1_job_ids: Array[int] = generic_job_ids
-		team_1_job_ids.append_array(special_characters)
-		
-		var team_2_job_ids: Array[int] = monster_jobs
-		team_2_job_ids.append_array(special_monsters)
-		
-		for random_unit: int in units_per_team:
-			var rand_job: int = team_1_job_ids.pick_random()
-			while [0x2c, 0x31].has(rand_job): # prevent jobs without idle frames - 0x2c (Alma2) and 0x31 (Ajora) do not have walking frames
-				rand_job = randi_range(0x01, 0x8d)
-			var new_unit: UnitData = spawn_unit(get_random_stand_terrain_tile(), rand_job, team1)
-			new_unit.is_ai_controlled = false
-		
-		for random_unit: int in units_per_team:
-			var rand_job: int = team_2_job_ids.pick_random()
-			#var rand_job: int = randi_range(0x5e, 0x8d) # monsters
-			while [0x2c, 0x31].has(rand_job): # prevent jobs without idle frames - 0x2c (Alma2) and 0x31 (Ajora) do not have walking frames
-				rand_job = randi_range(0x01, 0x8d)
-			var new_unit: UnitData = spawn_unit(get_random_stand_terrain_tile(), rand_job, team2)
-			#new_unit.is_ai_controlled = false
-	
-	await update_units_pathfinding()
-	
-	#new_unit.start_turn(self)
-	
-	units.shuffle()
-	
-	hide_debug_ui()
+#func add_units_to_map() -> void:
+	#var team1: Team = Team.new()
+	#teams.append(team1)
+	#team1.team_name = "Team 1 (Player)"
+	#
+	#var team2: Team = Team.new()
+	#teams.append(team2)
+	#team2.team_name = "Team 2 (Computer)"
+	#
+	##if use_test_teams:
+		##add_test_teams_to_map()
+	##else: # use random teams
+		##var generic_job_ids: Array[int] = []
+		##generic_job_ids.assign(range(0x4a, 0x5a)) # generics
+		##var special_characters: Array[int] = [
+			##0x01, # ramza 1
+			##0x04, # ramza 4
+			##0x05, # delita 1
+			##0x34, # agrias
+			##0x11, # gafgorian
+			##]
+		##
+		##var monster_jobs: Array[int] = []
+		##monster_jobs.assign(range(0x5e, 0x8e)) # generic monsters
+		##var special_monsters: Array[int] = [
+			##0x41, # holy angel
+			##0x49, # arch angel
+			##0x3c, # gigas/warlock (Belias)
+			##0x3e, # angel of death
+			##0x40, # regulator (Hashmal)
+			##0x43, # impure king (quakelin)
+			##0x45, # ghost of fury (adremelk)
+			##0x97, # serpentarious
+			##0x91, # steel giant
+			##]
+		##
+		##var team_1_job_ids: Array[int] = generic_job_ids
+		##team_1_job_ids.append_array(special_characters)
+		##
+		##var team_2_job_ids: Array[int] = monster_jobs
+		##team_2_job_ids.append_array(special_monsters)
+		##
+		##for random_unit: int in units_per_team:
+			##var rand_job: int = team_1_job_ids.pick_random()
+			##while [0x2c, 0x31].has(rand_job): # prevent jobs without idle frames - 0x2c (Alma2) and 0x31 (Ajora) do not have walking frames
+				##rand_job = randi_range(0x01, 0x8d)
+			##var new_unit: UnitData = spawn_unit(get_random_stand_terrain_tile(), rand_job, team1)
+			##new_unit.is_ai_controlled = false
+		##
+		##for random_unit: int in units_per_team:
+			##var rand_job: int = team_2_job_ids.pick_random()
+			###var rand_job: int = randi_range(0x5e, 0x8d) # monsters
+			##while [0x2c, 0x31].has(rand_job): # prevent jobs without idle frames - 0x2c (Alma2) and 0x31 (Ajora) do not have walking frames
+				##rand_job = randi_range(0x01, 0x8d)
+			##var new_unit: UnitData = spawn_unit(get_random_stand_terrain_tile(), rand_job, team2)
+			###new_unit.is_ai_controlled = false
+	#
+	#await update_units_pathfinding()
+	#
+	##new_unit.start_turn(self)
+	#
+	#units.shuffle()
+	#
+	#hide_debug_ui()
 
 
 func add_test_teams_to_map() -> void:
-	################# unit 1
-	var spawn_tile: TerrainTile = total_map_tiles[Vector2i(1, 1)][0] # [Vector2i(x, y)][layer]
-	var job_id: int = 0x05 # 0x05 is Delita holy knight
-	var new_unit: UnitData = spawn_unit(spawn_tile, job_id, teams[0]) 
-	new_unit.is_ai_controlled = false
-	new_unit.set_primary_weapon(0x1d) # item_id - 0x1d is ice brand
-	
-	# add abilities: slot ids 0 - Skillset 1, 1 - skillset 2, 2 - reaction, 3 - support, 4 - movement
-	var ability_unique_name: String = "counter_attack" # usually the psx ability name in snake_case, but some are changed (see RomReader.Abilities after loading ROM for full list, RSM start on page 22)
-	# TODO implement skillsets
-	new_unit.equip_ability(new_unit.ability_slots[2], RomReader.abilities[ability_unique_name]) # reaction
-	new_unit.equip_ability(new_unit.ability_slots[3], RomReader.abilities["abandon"]) # support
-	new_unit.equip_ability(new_unit.ability_slots[4], RomReader.abilities["move_get_hp"]) # movement
-	
-	new_unit.generate_raw_stats(UnitData.StatBasis.MALE) # StatBasis Options: MALE, FEMALE, OTHER, MONSTER
-	var level: int = 40
-	new_unit.stats[UnitData.StatType.LEVEL].set_value(level)
-	new_unit.generate_leveled_stats(level, new_unit.job_data)
-	new_unit.generate_battle_stats(new_unit.job_data)
-	
-	var item_unique_name: String = "ice_brand" # usually the psx item name in snake_case (see RomReader.Items after loading ROM for full list)
-	# RH is already set by set_primary_weapon() above
-	#new_unit.set_equipment_slot(new_unit.equip_slots[0], RomReader.items[item_unique_name]) # RH
-	new_unit.set_equipment_slot(new_unit.equip_slots[1], RomReader.items["buckler"]) # LH
-	new_unit.set_equipment_slot(new_unit.equip_slots[2], RomReader.items["crystal_helmet"]) # headgear
-	new_unit.set_equipment_slot(new_unit.equip_slots[3], RomReader.items["power_sleeve"]) # body
-	new_unit.set_equipment_slot(new_unit.equip_slots[4], RomReader.items["small_mantle"]) # accessory
-	
-	################# unit 2
-	spawn_tile = total_map_tiles[Vector2i(1, 2)][0] # [Vector2i(x, y)][layer]
-	job_id = 0x11 # 0x11 is Gafgorian
-	new_unit = spawn_unit(spawn_tile, job_id, teams[1]) 
-	new_unit.is_ai_controlled = false
-	new_unit.set_primary_weapon(RomReader.items["blood_sword"].item_idx) # item_id
-	
-	# TODO implement skillsets
-	new_unit.equip_ability(new_unit.ability_slots[2], RomReader.abilities["pa_save"]) # reaction
-	new_unit.equip_ability(new_unit.ability_slots[3], RomReader.abilities["attack_up"]) # support
-	new_unit.equip_ability(new_unit.ability_slots[4], RomReader.abilities["move+1"]) # movement
-	
-	new_unit.generate_raw_stats(UnitData.StatBasis.MALE) # StatBasis Options: MALE, FEMALE, OTHER, MONSTER
-	level = 40
-	new_unit.stats[UnitData.StatType.LEVEL].set_value(level)
-	new_unit.generate_leveled_stats(level, new_unit.job_data)
-	new_unit.generate_battle_stats(new_unit.job_data)
-	
-	# RH is already set by set_primary_weapon() above
-	#new_unit.set_equipment_slot(new_unit.equip_slots[0], RomReader.items["blood_sword"]) # RH
-	new_unit.set_equipment_slot(new_unit.equip_slots[1], RomReader.items["buckler"]) # LH
-	new_unit.set_equipment_slot(new_unit.equip_slots[2], RomReader.items["crystal_helmet"]) # headgear
-	new_unit.set_equipment_slot(new_unit.equip_slots[3], RomReader.items["power_sleeve"]) # body
-	new_unit.set_equipment_slot(new_unit.equip_slots[4], RomReader.items["small_mantle"]) # accessory
+	pass
+	################## unit 1
+	#var spawn_tile: TerrainTile = total_map_tiles[Vector2i(1, 1)][0] # [Vector2i(x, y)][layer]
+	#var job_id: int = 0x05 # 0x05 is Delita holy knight
+	#var new_unit: UnitData = spawn_unit(spawn_tile, job_id, teams[0]) 
+	#new_unit.is_ai_controlled = false
+	#new_unit.set_primary_weapon(0x1d) # item_id - 0x1d is ice brand
+	#
+	## add abilities: slot ids 0 - Skillset 1, 1 - skillset 2, 2 - reaction, 3 - support, 4 - movement
+	#var ability_unique_name: String = "counter_attack" # usually the psx ability name in snake_case, but some are changed (see RomReader.Abilities after loading ROM for full list, RSM start on page 22)
+	## TODO implement skillsets
+	#new_unit.equip_ability(new_unit.ability_slots[2], RomReader.abilities[ability_unique_name]) # reaction
+	#new_unit.equip_ability(new_unit.ability_slots[3], RomReader.abilities["abandon"]) # support
+	#new_unit.equip_ability(new_unit.ability_slots[4], RomReader.abilities["move_get_hp"]) # movement
+	#
+	#new_unit.generate_raw_stats(UnitData.StatBasis.MALE) # StatBasis Options: MALE, FEMALE, OTHER, MONSTER
+	#var level: int = 40
+	#new_unit.stats[UnitData.StatType.LEVEL].set_value(level)
+	#new_unit.generate_leveled_stats(level, new_unit.job_data)
+	#new_unit.generate_battle_stats(new_unit.job_data)
+	#
+	#var item_unique_name: String = "ice_brand" # usually the psx item name in snake_case (see RomReader.Items after loading ROM for full list)
+	## RH is already set by set_primary_weapon() above
+	##new_unit.set_equipment_slot(new_unit.equip_slots[0], RomReader.items[item_unique_name]) # RH
+	#new_unit.set_equipment_slot(new_unit.equip_slots[1], RomReader.items["buckler"]) # LH
+	#new_unit.set_equipment_slot(new_unit.equip_slots[2], RomReader.items["crystal_helmet"]) # headgear
+	#new_unit.set_equipment_slot(new_unit.equip_slots[3], RomReader.items["power_sleeve"]) # body
+	#new_unit.set_equipment_slot(new_unit.equip_slots[4], RomReader.items["small_mantle"]) # accessory
+	#
+	################## unit 2
+	#spawn_tile = total_map_tiles[Vector2i(1, 2)][0] # [Vector2i(x, y)][layer]
+	#job_id = 0x11 # 0x11 is Gafgorian
+	#new_unit = spawn_unit(spawn_tile, job_id, teams[1]) 
+	#new_unit.is_ai_controlled = false
+	#new_unit.set_primary_weapon(RomReader.items["blood_sword"].item_idx) # item_id
+	#
+	## TODO implement skillsets
+	#new_unit.equip_ability(new_unit.ability_slots[2], RomReader.abilities["pa_save"]) # reaction
+	#new_unit.equip_ability(new_unit.ability_slots[3], RomReader.abilities["attack_up"]) # support
+	#new_unit.equip_ability(new_unit.ability_slots[4], RomReader.abilities["move+1"]) # movement
+	#
+	#new_unit.generate_raw_stats(UnitData.StatBasis.MALE) # StatBasis Options: MALE, FEMALE, OTHER, MONSTER
+	#level = 40
+	#new_unit.stats[UnitData.StatType.LEVEL].set_value(level)
+	#new_unit.generate_leveled_stats(level, new_unit.job_data)
+	#new_unit.generate_battle_stats(new_unit.job_data)
+	#
+	## RH is already set by set_primary_weapon() above
+	##new_unit.set_equipment_slot(new_unit.equip_slots[0], RomReader.items["blood_sword"]) # RH
+	#new_unit.set_equipment_slot(new_unit.equip_slots[1], RomReader.items["buckler"]) # LH
+	#new_unit.set_equipment_slot(new_unit.equip_slots[2], RomReader.items["crystal_helmet"]) # headgear
+	#new_unit.set_equipment_slot(new_unit.equip_slots[3], RomReader.items["power_sleeve"]) # body
+	#new_unit.set_equipment_slot(new_unit.equip_slots[4], RomReader.items["small_mantle"]) # accessory
 	
 	# add player unit
 	#var random_tile: TerrainTile = get_random_stand_terrain_tile()
@@ -448,6 +455,18 @@ func add_test_teams_to_map() -> void:
 	#for unit in units:
 		## unit.equip_ability(unit.ability_slots[4], test_ability)
 		#unit.is_ai_controlled = false
+
+
+func spawn_random_unit(team: Team) -> UnitData:
+	var rand_job: int = range(1, RomReader.jobs_data.size()).pick_random()
+	while [0x2c, 0x31].has(rand_job): # prevent jobs without idle frames - 0x2c (Alma2) and 0x31 (Ajora) do not have walking frames
+		rand_job = randi_range(0x01, 0x8d)
+	var tile_location: TerrainTile = get_random_stand_terrain_tile()
+	var new_unit: UnitData = spawn_unit(tile_location, rand_job, team)
+	new_unit.is_ai_controlled = false
+	
+	unit_created.emit(new_unit)
+	return new_unit
 
 
 func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData:

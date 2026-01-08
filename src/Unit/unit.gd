@@ -377,6 +377,13 @@ func _ready() -> void:
 		initialize_unit()
 
 
+func _exit_tree() -> void:
+	if global_battle_manager != null:
+		var unit_index: int = global_battle_manager.units.find(self)
+		if unit_index != -1: # if the unit is in the battle_manager array
+			global_battle_manager.units.remove_at(unit_index)
+
+
 func add_stat_bar(stat_type: StatType) -> StatBar:
 	var new_stat_bar: StatBar = stat_bar_tscn.instantiate()
 	new_stat_bar.set_stat(str(StatType.keys()[stat_type]), stats[stat_type])

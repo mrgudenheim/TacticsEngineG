@@ -41,11 +41,6 @@ signal ability_select_pressed(unit: UnitData, slot: UnitData.AbilitySlot)
 @export var unit_scene: PackedScene
 var unit_data: UnitData
 
-func _ready() -> void:
-	var new_unit: UnitData = unit_scene.instantiate()
-	add_child(new_unit)
-	new_unit.initialized.connect(func(): setup(new_unit))
-
 
 func setup(unit: UnitData) -> void:
 	unit_data = unit

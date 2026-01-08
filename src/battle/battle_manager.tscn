@@ -58,11 +58,11 @@ load_rom_button = NodePath("DebugOptions/MarginContainer/VBoxContainer2/LoadRom"
 camera_controller = NodePath("CameraController")
 background_gradient = NodePath("BackgroundCanvasLayer/TextureRect")
 menu_list = NodePath("DebugOptions/MarginContainer/VBoxContainer2/VBoxContainer")
-map_dropdown = NodePath("DebugOptions/MarginContainer/VBoxContainer2/VBoxContainer/MapDropdown")
+map_dropdown = NodePath("BattleSetup/BattleSetupTabContainer/Map/VBoxContainer/MapDropdown")
 orthographic_check = NodePath("DebugOptions/MarginContainer/VBoxContainer2/VBoxContainer/OrthographicCheckBox")
 menu_reminder = NodePath("DebugOptions/MarginContainer/VBoxContainer2/MenuReminder")
-map_size_label = NodePath("DebugOptions/MarginContainer/VBoxContainer2/VBoxContainer/MapSize")
-expand_map_check = NodePath("DebugOptions/MarginContainer/VBoxContainer2/VBoxContainer/ExpandMap")
+map_size_label = NodePath("BattleSetup/BattleSetupTabContainer/Map/VBoxContainer/MapSize")
+expand_map_check = NodePath("BattleSetup/BattleSetupTabContainer/Map/VBoxContainer/ExpandMap")
 maps = NodePath("Maps")
 map_tscn = ExtResource("2_1os5c")
 tile_highlights = Dictionary[Color, Material]({
@@ -115,21 +115,10 @@ layout_mode = 2
 visible = false
 layout_mode = 2
 
-[node name="MapDropdown" type="OptionButton" parent="DebugOptions/MarginContainer/VBoxContainer2/VBoxContainer"]
-layout_mode = 2
-
-[node name="MapSize" type="Label" parent="DebugOptions/MarginContainer/VBoxContainer2/VBoxContainer"]
-layout_mode = 2
-text = "Map Size: X x Y"
-
 [node name="OrthographicCheckBox" type="CheckBox" parent="DebugOptions/MarginContainer/VBoxContainer2/VBoxContainer"]
 layout_mode = 2
 button_pressed = true
 text = "Orthographic"
-
-[node name="ExpandMap" type="CheckBox" parent="DebugOptions/MarginContainer/VBoxContainer2/VBoxContainer"]
-layout_mode = 2
-text = "Expand Map"
 
 [node name="GridContainer" type="GridContainer" parent="DebugOptions/MarginContainer/VBoxContainer2/VBoxContainer"]
 layout_mode = 2
@@ -297,7 +286,8 @@ layout_mode = 2
 text = "Game State"
 horizontal_alignment = 1
 
-[node name="BattleSetup" type="Control" parent="." node_paths=PackedStringArray("job_select_control", "item_select_control", "ability_select_control")]
+[node name="BattleSetup" type="Control" parent="." node_paths=PackedStringArray("battle_manager", "battle_setup_container", "job_select_control", "item_select_control", "ability_select_control")]
+visible = false
 layout_mode = 3
 anchor_top = 0.124000005
 anchor_right = 1.0
@@ -306,6 +296,10 @@ offset_top = -0.13600159
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("14_l2dig")
+battle_manager = NodePath("..")
+unit_scene = ExtResource("4_wfrm2")
+battle_setup_container = NodePath("BattleSetupTabContainer")
+team_setup_scene = ExtResource("14_kb1q2")
 job_select_control = NodePath("JobSelectScrollArea")
 item_select_control = NodePath("ItemSelectScrollArea")
 ability_select_control = NodePath("AbilitySelectScrollArea")
@@ -320,19 +314,23 @@ grow_vertical = 2
 size_flags_horizontal = 3
 current_tab = 0
 
-[node name="Team0" parent="BattleSetup/BattleSetupTabContainer" instance=ExtResource("14_kb1q2")]
+[node name="Map" type="MarginContainer" parent="BattleSetup/BattleSetupTabContainer"]
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="Team1" parent="BattleSetup/BattleSetupTabContainer" instance=ExtResource("14_kb1q2")]
-visible = false
+[node name="VBoxContainer" type="VBoxContainer" parent="BattleSetup/BattleSetupTabContainer/Map"]
 layout_mode = 2
-metadata/_tab_index = 1
 
-[node name="Map" type="MarginContainer" parent="BattleSetup/BattleSetupTabContainer"]
-visible = false
+[node name="MapDropdown" type="OptionButton" parent="BattleSetup/BattleSetupTabContainer/Map/VBoxContainer"]
 layout_mode = 2
-metadata/_tab_index = 2
+
+[node name="MapSize" type="Label" parent="BattleSetup/BattleSetupTabContainer/Map/VBoxContainer"]
+layout_mode = 2
+text = "Map Size: X x Y"
+
+[node name="ExpandMap" type="CheckBox" parent="BattleSetup/BattleSetupTabContainer/Map/VBoxContainer"]
+layout_mode = 2
+text = "Expand Map"
 
 [node name="JobSelectScrollArea" type="ScrollContainer" parent="BattleSetup" node_paths=PackedStringArray("job_select_button_container")]
 visible = false

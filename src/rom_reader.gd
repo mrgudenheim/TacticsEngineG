@@ -132,8 +132,7 @@ func process_rom() -> void:
 	# must be after fft_abilities to set secondary actions
 	items_array.resize(NUM_ITEMS)
 	for id: int in NUM_ITEMS:
-		items_array[id] = (ItemData.new(id))
-		items_array[id].add_to_global_list()
+		items_array[id] = ItemData.new(id)
 	
 	scus_data.init_statuses()
 	# for status_: int in status_effects.size():
@@ -719,7 +718,6 @@ func process_frame_bin() -> void:
 
 func import_custom_data() -> void:
 	# order of loading matters. Triggered Actions, PassiveEffect reference actions. Abilities, StatusEffect reference PassiveEffect. Items reference a lot.
-	# TODO break into 2 steps: 1) load all json for all types, 2) connect cross references
 	var folder_names: PackedStringArray = [
 		"actions",
 		"passive_effects",
@@ -769,7 +767,7 @@ func import_custom_data() -> void:
 									new_content.add_to_global_list()
 							"item":
 								var new_content: ItemData = ItemData.create_from_json(file_text)
-								if not items.keys().has(new_content.unique_name):
+								if not items.keys().has(new_content.unique_name): # TODO allow overwriting content
 									new_content.add_to_global_list()
 				file_name = dir.get_next()
 			dir.list_dir_end()

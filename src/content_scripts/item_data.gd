@@ -318,7 +318,6 @@ func _init(idx: int = 0) -> void:
 		weapon_attack_action.status_prevents_use_any.append_array(default_statuses_prevents_weapon_attacks)
 		
 		#weapon_attack_action.animation_executing_id = RomReader.battle_bin_data.weapon_animation_ids[item_type].y * 2
-		emit_changed()
 		
 		
 	elif idx < 0x90: # shield data
@@ -347,12 +346,18 @@ func _init(idx: int = 0) -> void:
 		consumable_formula_id = RomReader.scus_data.chem_item_formula_id[sub_index]
 		consumable_item_z = RomReader.scus_data.chem_item_z[sub_index]
 		consumable_inflict_status_id = RomReader.scus_data.chem_item_inflict_status_id[sub_index]
-	
+
 	# remove empty modifiers
 	for key: UnitData.StatType in passive_effect.stat_modifiers.keys():
 		if passive_effect.stat_modifiers[key].value_formula.values[0] == 0:
 			passive_effect.stat_modifiers.erase(key)
 	
+	add_to_global_list()
+
+	passive_effect_name = unique_name
+	passive_effect.unique_name = unique_name
+	passive_effect.add_to_global_list()
+
 	emit_changed()
 
 

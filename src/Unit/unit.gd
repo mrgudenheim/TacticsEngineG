@@ -500,6 +500,7 @@ func grow_raw_stats(current_level: int, current_job: JobData) -> void:
 	stats_raw[StatType.PHYSICAL_ATTACK] += stats_raw[StatType.PHYSICAL_ATTACK] / (current_job.pa_growth + current_level)
 	stats_raw[StatType.MAGIC_ATTACK] += stats_raw[StatType.MAGIC_ATTACK] / (current_job.ma_growth + current_level)
 
+
 # TODO is this correct for MONSTERs?
 func generate_battle_stats(current_job: JobData) -> void:
 	var base_hp: int = stats_raw[StatType.HP_MAX] * current_job.hp_multiplier / 0x190000
@@ -530,6 +531,11 @@ func generate_battle_stats(current_job: JobData) -> void:
 	
 	stats[StatType.JUMP].base_value = current_job.jump
 	stats[StatType.JUMP].set_value(stats[StatType.JUMP].base_value)
+
+	if global_battle_manager != null:
+		if not global_battle_manager.battle_is_running:
+			stats[StatType.HP].set_value(stats[StatType.HP].max_value)
+			stats[StatType.MP].set_value(stats[StatType.MP].max_value)
 
 
 func generate_random_abilities() -> void:
@@ -568,16 +574,12 @@ func generate_equipment() -> void:
 	set_primary_weapon(equip_slots[0].item_idx)
 	
 	update_passive_effects()
-	stats[StatType.HP].set_value(stats[StatType.HP].max_value)
-	stats[StatType.MP].set_value(stats[StatType.MP].max_value)
 
 
 func set_equipment_slot(slot: EquipmentSlot, item: ItemData):
 	slot.item_idx = item.item_idx
 	
 	update_passive_effects()
-	stats[StatType.HP].set_value(stats[StatType.HP].max_value)
-	stats[StatType.MP].set_value(stats[StatType.MP].max_value)
 
 
 func update_stat_modifiers(all_passive_effects: Array[PassiveEffect]) -> void:
@@ -1439,6 +1441,11 @@ func update_passive_effects(exclude_passives: PackedStringArray = []) -> void:
 	update_elemental_affinity(all_passive_effects)
 	update_triggered_actions(all_passive_effects)
 	update_equipable_item_types(all_passive_effects)
+
+	if global_battle_manager != null:
+		if not global_battle_manager.battle_is_running:
+			stats[StatType.HP].set_value(stats[StatType.HP].max_value) # TODO only set hp = max hp when updating unit not in battle, update on passive effects
+			stats[StatType.MP].set_value(stats[StatType.MP].max_value)
 
 	data_updated.emit(self)
 

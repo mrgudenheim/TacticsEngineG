@@ -58,8 +58,7 @@ var current_tile_hover: TerrainTile
 	get:
 		return units_level_spinbox.value
 	set(value):
-		units_level_spinbox.value = value
-		units_level_spinbox.value_changed.emit(value)
+		units_level_spinbox.set_value_no_signal(value)
 
 var event_num: int = 0 # TODO handle event timeline
 

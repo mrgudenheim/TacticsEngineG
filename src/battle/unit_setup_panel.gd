@@ -90,9 +90,8 @@ func setup(unit: UnitData) -> void:
 
 
 func update_level(unit: UnitData, new_level: int) -> void:
-	unit.stats[UnitData.StatType.LEVEL].set_value(new_level)
-	unit.generate_leveled_stats(new_level, unit.job_data)
-	unit.generate_battle_stats(unit.job_data)
+	unit.generate_leveled_raw_stats(new_level, unit.job_data)
+	unit.calc_battle_stats(unit.job_data)
 
 
 func update_ui(unit: UnitData) -> void:

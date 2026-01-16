@@ -474,20 +474,24 @@ func _process(_delta: float) -> void:
 	set_base_animation_ptr_id(current_animation_id_fwd)
 
 
-func generate_leveled_stats(final_level: int, job: JobData) -> void:
+func generate_leveled_raw_stats(final_level: int, job: JobData) -> void:
+	generate_level_zero_raw_stats(stat_basis)
+	stats[StatType.LEVEL].set_value(final_level)
+	
 	for curent_level: int in range(1, final_level + 1):
 		grow_raw_stats(curent_level, job)
 
 
-func generate_raw_stats(stat_basis_to_use: StatBasis) -> void:
-	stats_raw[StatType.HP_MAX] = generate_raw_stat(0, stat_basis_to_use)
-	stats_raw[StatType.MP_MAX] = generate_raw_stat(1, stat_basis_to_use)
-	stats_raw[StatType.SPEED] = generate_raw_stat(2, stat_basis_to_use)
-	stats_raw[StatType.PHYSICAL_ATTACK] = generate_raw_stat(3, stat_basis_to_use)
-	stats_raw[StatType.MAGIC_ATTACK] = generate_raw_stat(4, stat_basis_to_use)
+func generate_level_zero_raw_stats(stat_basis_to_use: StatBasis) -> void:
+	stats_raw[StatType.HP_MAX] = generate_level_zero_raw_stat(0, stat_basis_to_use)
+	stats_raw[StatType.MP_MAX] = generate_level_zero_raw_stat(1, stat_basis_to_use)
+	stats_raw[StatType.SPEED] = generate_level_zero_raw_stat(2, stat_basis_to_use)
+	stats_raw[StatType.PHYSICAL_ATTACK] = generate_level_zero_raw_stat(3, stat_basis_to_use)
+	stats_raw[StatType.MAGIC_ATTACK] = generate_level_zero_raw_stat(4, stat_basis_to_use)
+
 
 # TODO is this correct for MONSTERs?
-func generate_raw_stat(stat_idx: int, stat_basis_to_use: StatBasis) -> int:
+func generate_level_zero_raw_stat(stat_idx: int, stat_basis_to_use: StatBasis) -> int:
 	var raw_stat: int = RomReader.scus_data.unit_base_datas[stat_basis_to_use][stat_idx] * 16384
 	raw_stat += randi_range(0, RomReader.scus_data.unit_base_stats_mods[stat_basis_to_use][stat_idx] * 16384)
 	return raw_stat
@@ -502,7 +506,7 @@ func grow_raw_stats(current_level: int, current_job: JobData) -> void:
 
 
 # TODO is this correct for MONSTERs?
-func generate_battle_stats(current_job: JobData) -> void:
+func calc_battle_stats(current_job: JobData) -> void:
 	var base_hp: int = stats_raw[StatType.HP_MAX] * current_job.hp_multiplier / 0x190000
 	if ["RUKA.SEQ", "KANZEN.SEQ", "ARUTE.SEQ"].has(animation_manager.global_seq.file_name): # lucavi
 		stats[StatType.HP_MAX].max_value = 99999

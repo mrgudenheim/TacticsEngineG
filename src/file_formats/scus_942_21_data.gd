@@ -166,7 +166,7 @@ var inflict_statuses: Array[InflictStatus] = []
 # unit base data https://ffhacktics.com/wiki/Out_of_Battle_Unit_Generation
 var unit_base_data_start: int = 0x5e90c - 0xf800
 var unit_base_data_entries: int = 4 # male, female, Ramza, monster
-var unit_base_data_length: int = 0x0b # hp, mp, sp, pa, ma, helmet, armor, accessory, RH weapon, RH shield, LH weapon, LH shield
+var unit_base_data_length: int = 12 # hp, mp, sp, pa, ma, helmet, armor, accessory, RH weapon, RH shield, LH weapon, LH shield
 var unit_base_datas: Array[PackedInt32Array] = []
 # unit base stat random mod
 var unit_base_stats_mod_start: int = 0x5e93c - 0xf800
@@ -422,7 +422,7 @@ func init_from_scus() -> void:
 		var unit_base_data: PackedInt32Array = []
 		unit_base_data.resize(unit_base_data_length)
 		for byte_idx: int in unit_base_data_length:
-			unit_base_data[byte_idx] = unit_base_data_bytes.decode_u8(byte_idx)
+			unit_base_data[byte_idx] = unit_base_data_bytes.decode_u8(byte_idx + (idx * unit_base_data_length))
 		unit_base_datas[idx] = unit_base_data
 	
 	var unit_base_stats_mod_bytes: PackedByteArray = scus_bytes.slice(unit_base_stats_mod_start, unit_base_stats_mod_start + (unit_base_stats_mod_entries * unit_base_stats_mod_length))

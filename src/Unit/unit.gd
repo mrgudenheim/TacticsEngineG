@@ -888,6 +888,10 @@ func get_nullify_statuses() -> Array[StatusEffect]:
 
 
 func update_permanent_statuses(all_passive_effects: Array[PassiveEffect]) -> void:
+	always_statuses.clear()
+	for passive_effect: PassiveEffect in all_passive_effects:
+		always_statuses.append_array(passive_effect.status_always)
+	
 	for status_unique_name: String in RomReader.status_effects.keys():
 		if immune_statuses.has(status_unique_name):
 			continue

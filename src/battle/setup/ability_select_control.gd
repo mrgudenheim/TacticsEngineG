@@ -7,8 +7,8 @@ var ability_select_buttons: Array[AbilitySelectButton]
 
 
 func populate_list() -> void:
-	for ability_data: Ability in RomReader.items.values():
-		var ability_select_button: ItemSelectButton = ability_select_button_scene.instantiate()
+	for ability_data: Ability in RomReader.abilities.values():
+		var ability_select_button: AbilitySelectButton = ability_select_button_scene.instantiate()
 		ability_select_button.ability_data = ability_data
 		ability_select_button_container.add_child(ability_select_button)
 	

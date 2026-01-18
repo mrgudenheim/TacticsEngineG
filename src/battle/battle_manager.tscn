@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://card26cltbba1"]
+[gd_scene load_steps=29 format=3 uid="uid://card26cltbba1"]
 
 [ext_resource type="Script" uid="uid://cd31vmh881wm5" path="res://src/battle/battle_manager.gd" id="1_hnd0w"]
 [ext_resource type="PackedScene" uid="uid://buljw4afjva1d" path="res://src/content_scripts/Map/map.tscn" id="2_1os5c"]
@@ -19,6 +19,7 @@
 [ext_resource type="Script" uid="uid://cu0evj643fugd" path="res://src/battle/setup/item_select_control.gd" id="17_bp08t"]
 [ext_resource type="PackedScene" uid="uid://b24ja5gvetaqq" path="res://src/battle/setup/item_select_button.tscn" id="18_d5yoq"]
 [ext_resource type="Script" uid="uid://bsflrccy2sry" path="res://src/battle/setup/ability_select_control.gd" id="18_pbg35"]
+[ext_resource type="PackedScene" uid="uid://ckvy5kybckxkh" path="res://src/battle/setup/ability_select_button.tscn" id="20_ok2a6"]
 
 [sub_resource type="Environment" id="Environment_njvnp"]
 background_mode = 3
@@ -373,6 +374,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource("18_pbg35")
 ability_select_button_container = NodePath("AbilitySelectList")
+ability_select_button_scene = ExtResource("20_ok2a6")
 
 [node name="AbilitySelectList" type="VBoxContainer" parent="BattleSetup/AbilitySelectScrollArea"]
 layout_mode = 2

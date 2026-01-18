@@ -28,7 +28,7 @@ func initial_setup() -> void:
 func populate_option_lists() -> void:
 	job_select_control.populate_list()
 	item_select_control.populate_list()
-	# TODO populate ability list
+	ability_select_control.populate_list()
 
 
 func setup_job_select(unit: UnitData) -> void:
@@ -62,7 +62,11 @@ func desetup_item_select() -> void:
 func setup_ability_select(unit: UnitData, slot: UnitData.AbilitySlot) -> void:
 	ability_select_control.visible = true
 	for ability_select_button: AbilitySelectButton in ability_select_control.ability_select_buttons:
-		ability_select_button.selected.connect(func(new_ability: Ability): update_unit_ability(unit, slot, new_ability))
+		if slot.slot_types.has(ability_select_button.ability_data.slot_type):
+			ability_select_button.visible = true
+			ability_select_button.selected.connect(func(new_ability: Ability): update_unit_ability(unit, slot, new_ability))
+		else:
+			ability_select_button.visible = false
 
 
 func desetup_ability_select() -> void:

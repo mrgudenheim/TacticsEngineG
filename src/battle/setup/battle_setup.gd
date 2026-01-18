@@ -96,6 +96,8 @@ func add_team(new_team_name: String) -> Team:
 	team_setups.append(new_team_setup)
 	
 	new_team_setup.unit_job_select_pressed.connect(setup_job_select)
+	new_team_setup.unit_item_select_pressed.connect(setup_item_select)
+	new_team_setup.unit_ability_select_pressed.connect(setup_ability_select)
 	new_team_setup.need_new_unit.connect(battle_manager.spawn_random_unit)
 	battle_manager.unit_created.connect(new_team_setup.add_unit_setup)
 	

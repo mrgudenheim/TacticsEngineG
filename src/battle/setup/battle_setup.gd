@@ -46,7 +46,11 @@ func desetup_job_select() -> void:
 func setup_item_select(unit: UnitData, slot: UnitData.EquipmentSlot) -> void:
 	item_select_control.visible = true
 	for item_select_button: ItemSelectButton in item_select_control.item_select_buttons:
-		item_select_button.selected.connect(func(new_item: ItemData): update_unit_equipment(unit, slot, new_item))
+		if slot.slot_types.has(item_select_button.item_data.slot_type) and unit.equipable_item_types.has(item_select_button.item_data.item_type):
+			item_select_button.visible = true
+			item_select_button.selected.connect(func(new_item: ItemData): update_unit_equipment(unit, slot, new_item))
+		else:
+			item_select_button.visible = false
 
 
 func desetup_item_select() -> void:

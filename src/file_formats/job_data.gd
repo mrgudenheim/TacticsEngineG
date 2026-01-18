@@ -8,6 +8,7 @@ const FILE_SUFFIX: String = "job"
 # Job Data # 800610b8 in RAM
 @export var job_id = 0
 @export var display_name: String = "Job Name"
+@export var description: String = "[job description]"
 @export var skillset_id: int = 0
 @export var innate_abilities_ids: PackedInt32Array = []
 @export var innate_ability_names: PackedStringArray = []
@@ -47,6 +48,7 @@ func _init(new_job_id: int = -1, job_bytes: PackedByteArray = []) -> void:
 	job_id = new_job_id
 	if job_id < 155:
 		display_name = RomReader.fft_text.job_names[job_id]
+		description = RomReader.fft_text.job_desriptions[job_id]
 	skillset_id = job_bytes.decode_u8(0)
 	monster_portrait_id = job_bytes.decode_u8(0x2d)
 	monster_palette_id = job_bytes.decode_u8(0x2e)

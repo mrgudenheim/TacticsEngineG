@@ -47,7 +47,7 @@ enum WorldLzwSections {
 	RECORD = 29,
 	PERSON = 30,
 	PROPOSITION_OBJECTIVES = 31,
-	}
+}
 
 enum BattleBinTextSections {
 	EVENT_TEXT = 0,
@@ -64,7 +64,7 @@ enum BattleBinTextSections {
 	FORMATION_TEXT = 18,
 	SKILLSET_NAMES = 22,
 	SUMMON_DRAW_OUT_NAMES = 23,
-	}
+}
 
 enum HelpLzwSections {
 	UNIT_STATS = 1,
@@ -75,7 +75,7 @@ enum HelpLzwSections {
 	ABILITY_DESCRIPTIONS = 15,
 	SKILLSET_DESCRIPTIONS = 19,
 	STATUS_DESCRIPTIONS = 20,
-	}
+}
 
 enum AttackHelpLzwSections {
 	UNIT_STATS = 11,
@@ -83,7 +83,7 @@ enum AttackHelpLzwSections {
 	ITEM_DESCRIPTIONS = 13,
 	ABILITY_DESCRIPTIONS = 15,
 	SKILLSET_DESCRIPTIONS = 19,
-	}
+}
 
 var battle_text: FftTextFile = FftTextFile.new(0xfa2dc, 32, 0xfee64, BattleBinTextSections)
 var world_text: FftTextFile = FftTextFile.new(0, 32, 0, WorldLzwSections)
@@ -94,10 +94,11 @@ var file_layouts: Dictionary[String, FftTextFile] = {
 	"WORLD.LZW" : world_text,
 	"HELP.LZW" : help_text,
 	"ATCHELP.LZW" : attack_help_text,
-	} 
+} 
 
 
 var job_names: PackedStringArray = []
+var job_desriptions: PackedStringArray = []
 var skillset_names: PackedStringArray = []
 var ability_names: PackedStringArray = []
 var ability_descriptions: PackedStringArray = []
@@ -121,9 +122,10 @@ func init_text() -> void:
 	init_text_from_file("ATCHELP.LZW")
 	
 	job_names = battle_text.text_arrays[BattleBinTextSections.JOB_NAMES]
+	job_desriptions = attack_help_text.text_arrays[AttackHelpLzwSections.JOB_DESCRIPTIONS]
 	skillset_names = battle_text.text_arrays[BattleBinTextSections.SKILLSET_NAMES]
 	ability_names = battle_text.text_arrays[BattleBinTextSections.ABILITY_NAMES]
-	ability_descriptions = help_text.text_arrays[HelpLzwSections.ABILITY_DESCRIPTIONS]
+	ability_descriptions = attack_help_text.text_arrays[AttackHelpLzwSections.ABILITY_DESCRIPTIONS]
 	spell_quotes = text_to_string(RomReader.get_file_data("SPELL.MES"))
 	battle_effect_text = battle_text.text_arrays[BattleBinTextSections.BATTLE_ACTION_EFFECT]
 	item_names = battle_text.text_arrays[BattleBinTextSections.ITEM_NAMES]
@@ -272,30 +274,30 @@ static func text_to_string(bytes_text: PackedByteArray) -> PackedStringArray:
 			char_code = 0x3a
 		# 71 - 94 japanese? # TODO japanese
 		# Handle TacText special cases? TODO DTE dual tile encoding
-		elif char_code == 0x56:
-			text_element += "ni"
-			continue
-		elif char_code == 0x57:
-			text_element += "ht"
-			continue
-		elif char_code == 0x58:
-			text_element += "an"
-			continue
-		elif char_code == 0x59:
-			text_element += "on"
-			continue
-		elif char_code == 0x5c:
-			text_element += "th"
-			continue
-		elif char_code == 0x5d:
-			text_element += "ea"
-			continue
-		elif char_code == 0x5e:
-			text_element += "er"
-			continue
-		elif char_code == 0x60:
-			text_element += "or"
-			continue
+		# elif char_code == 0x56:
+		# 	text_element += "ni"
+		# 	continue
+		# elif char_code == 0x57:
+		# 	text_element += "ht"
+		# 	continue
+		# elif char_code == 0x58:
+		# 	text_element += "an"
+		# 	continue
+		# elif char_code == 0x59:
+		# 	text_element += "on"
+		# 	continue
+		# elif char_code == 0x5c:
+		# 	text_element += "th"
+		# 	continue
+		# elif char_code == 0x5d:
+		# 	text_element += "ea"
+		# 	continue
+		# elif char_code == 0x5e:
+		# 	text_element += "er"
+		# 	continue
+		# elif char_code == 0x60:
+		# 	text_element += "or"
+		# 	continue
 		# end handling TacText cases
 		elif char_code == 95 or char_code == 0xd11c or char_code == 0xd9b6: # period
 			char_code = 0x2e

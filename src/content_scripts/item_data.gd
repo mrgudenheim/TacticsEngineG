@@ -8,6 +8,7 @@ const FILE_SUFFIX: String = "item"
 
 @export var unique_name: String = "unique_name"
 @export var display_name: String = "Item display_name"
+@export var description: String = "[item description]"
 @export var item_idx: int = 0
 @export var item_graphic_id: int = 0
 @export var item_palette_id: int = 0
@@ -129,6 +130,7 @@ enum ItemType {
 # In SCUS data tables
 func _init(idx: int = 0) -> void:
 	display_name = RomReader.fft_text.item_names[idx]
+	description = RomReader.fft_text.item_descriptions[idx]
 	item_idx = idx
 	item_type = RomReader.scus_data.item_types[idx] as ItemType
 	slot_type = RomReader.scus_data.item_slot_types[idx] & 0xfc as SlotType # skip rare flag

@@ -26,6 +26,7 @@ enum AbilityType {
 var id: int = 0
 var display_name: String = "ability display_name"
 var spell_quote: String = "spell quote"
+var description: String = "[ability descirption]"
 var jp_cost: int = 0
 var chance_to_learn: float = 100 # percent
 var ability_type: AbilityType = AbilityType.NORMAL
@@ -119,6 +120,7 @@ func _init(new_id: int = 0) -> void:
 	
 	display_name = RomReader.fft_text.ability_names[id]
 	spell_quote = RomReader.fft_text.spell_quotes[id]
+	description = RomReader.fft_text.ability_descriptions[id]
 	
 	if new_id <= 0x1c5:
 		animation_charging_set_id = RomReader.battle_bin_data.ability_animation_charging_set_ids[new_id]
@@ -337,6 +339,7 @@ func create_ability() -> Ability:
 	var new_ability: Ability = Ability.new()
 
 	new_ability.display_name = display_name
+	new_ability.description = description
 
 	# name changes
 	if display_name == "Equip Knife":

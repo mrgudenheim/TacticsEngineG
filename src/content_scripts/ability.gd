@@ -14,6 +14,7 @@ const FILE_SUFFIX: String = "ability"
 @export var unique_name: String = "unique_name"
 @export var display_name: String = "[Ability Name]"
 @export var slot_type: SlotType = SlotType.SKILLSET
+@export var description: String = "[ability description]"
 
 @export var jp_cost: int = 0
 @export var chance_to_learn: float = 100 # percent

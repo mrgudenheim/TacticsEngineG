@@ -129,8 +129,8 @@ func update_ui(new_item_data: ItemData) -> void:
 			#evade_values[evade_data.source] += evade_data.value
 	#
 	#return evade_values
-#
-#
+
+
 func get_element_text_list(affinity_list: Array[Action.ElementTypes]) -> PackedStringArray:
 	var elements_list: PackedStringArray = []
 	for element: Action.ElementTypes in affinity_list:

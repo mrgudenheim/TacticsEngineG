@@ -121,6 +121,7 @@ text = "Job"
 horizontal_alignment = 1
 
 [node name="JobSelect" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(60, 0)
 layout_mode = 2
 text = "Select Job"
 

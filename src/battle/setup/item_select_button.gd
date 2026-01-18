@@ -38,19 +38,8 @@ func update_ui(new_item_data: ItemData) -> void:
 		var modifier_label: Label = Label.new()
 		modifier_label.text = UnitData.StatType.keys()[stat_type] + ": +" + str(stat_modifier.value_formula.values[0])
 		list.add_child(modifier_label)
-	
-	## TODO update equippable types
-	#var hand_types: PackedInt32Array = range(1,20)
-	#var head_types: PackedInt32Array = range(20,23)
-	#var body_types: PackedInt32Array = range(23,26)
-	#var accessory_types: PackedInt32Array = range(26,32)
-#
-	#var equipable_hand_types: PackedStringArray = get_slot_item_type_names(new_job_data.equippable_item_types, hand_types)
-	#var equipable_head_types: PackedStringArray = get_slot_item_type_names(new_job_data.equippable_item_types, head_types)
-	#var equipable_body_types: PackedStringArray = get_slot_item_type_names(new_job_data.equippable_item_types, body_types)
-	#var equipable_accessory_types: PackedStringArray = get_slot_item_type_names(new_job_data.equippable_item_types, accessory_types)
 
-	## update evade
+	## TODO update evade
 	#for evade_type: EvadeData.EvadeType in EvadeData.EvadeType.values():
 		## skip EvadeType.NONE
 		#if evade_type == EvadeData.EvadeType.NONE:
@@ -66,16 +55,7 @@ func update_ui(new_item_data: ItemData) -> void:
 			#evade_value_label.text = str(source_evade_values[evade_source]) + "%"
 			#
 			#label_idx += 1
-
-	## update innate abilities
-	#var innate_ability_labels: Array[Node] = innate_abilities_list.get_children()
-	#for child_idx: int in range(1, innate_ability_labels.size()):
-		#innate_ability_labels[child_idx].queue_free()
-
-	#for ability: Ability in job_data.innate_abilities:
-		#var new_ability_label: Label = Label.new()
-		#new_ability_label.text = ability.display_name
-		#innate_abilities_list.add_child(new_ability_label)
+	
 
 	# update statuses	
 	var statuses_always: PackedStringArray = []
@@ -91,36 +71,36 @@ func update_ui(new_item_data: ItemData) -> void:
 	statuses_start = PackedStringArray(Utilities.get_array_unique(statuses_start))
 	statuses_immune = PackedStringArray(Utilities.get_array_unique(statuses_immune))
 	
-	update_status_list(statuses_always, "Always: ")
-	update_status_list(statuses_start, "Start: ")
-	update_status_list(statuses_immune, "Immune: ")
-	#
+	update_list(statuses_always, "Always: ")
+	update_list(statuses_start, "Start: ")
+	update_list(statuses_immune, "Immune: ")
+	
 	## Update element affinities
-	#var element_weak_list: Array[Action.ElementTypes] = []
-	#var element_resist_list: Array[Action.ElementTypes] = []
-	#var element_immune_list: Array[Action.ElementTypes] = []
-	#var element_absorb_list: Array[Action.ElementTypes] = []
-	#var element_strengthen_list: Array[Action.ElementTypes] = []
-	#
+	var element_weak_list: Array[Action.ElementTypes] = passive_effect.element_weakness
+	var element_resist_list: Array[Action.ElementTypes] = passive_effect.element_half
+	var element_immune_list: Array[Action.ElementTypes] = passive_effect.element_cancel
+	var element_absorb_list: Array[Action.ElementTypes] = passive_effect.element_absorb
+	var element_strengthen_list: Array[Action.ElementTypes] = passive_effect.element_strengthen
+	
 	#for passive_effect: PassiveEffect in new_job_data.passive_effects:
 		#element_weak_list.append_array(passive_effect.element_weakness)
 		#element_resist_list.append_array(passive_effect.element_half)
 		#element_immune_list.append_array(passive_effect.element_cancel)
 		#element_absorb_list.append_array(passive_effect.element_absorb)
 		#element_strengthen_list.append_array(passive_effect.element_strengthen)
-	#
-	#element_weak_list.assign(Utilities.get_array_unique(element_weak_list))
-	#element_resist_list.assign(Utilities.get_array_unique(element_resist_list))
-	#element_immune_list.assign(Utilities.get_array_unique(element_immune_list))
-	#element_absorb_list.assign(Utilities.get_array_unique(element_absorb_list))
-	#element_strengthen_list.assign(Utilities.get_array_unique(element_strengthen_list))
-#
-	#update_element_list(element_weak, "Weak: ", element_weak_list)
-	#update_element_list(element_resist, "Resist: ", element_resist_list)
-	#update_element_list(element_immune, "Immune: ", element_immune_list)
-	#update_element_list(element_absorb, "Absorb: ", element_absorb_list)
-	#update_element_list(element_strengthen, "Strengthen: ", element_strengthen_list)
-	#
+	
+	element_weak_list.assign(Utilities.get_array_unique(element_weak_list))
+	element_resist_list.assign(Utilities.get_array_unique(element_resist_list))
+	element_immune_list.assign(Utilities.get_array_unique(element_immune_list))
+	element_absorb_list.assign(Utilities.get_array_unique(element_absorb_list))
+	element_strengthen_list.assign(Utilities.get_array_unique(element_strengthen_list))
+
+	update_list(get_element_text_list(element_weak_list), "Weak: ")
+	update_list(get_element_text_list(element_resist_list), "Resist: ")
+	update_list(get_element_text_list(element_immune_list), "Immune: ")
+	update_list(get_element_text_list(element_absorb_list), "Absorb: ")
+	update_list(get_element_text_list(element_strengthen_list), "Strengthen: ")
+
 	## update action list
 	#var action_labels: Array[Node] = action_list.get_children()
 	#for child_idx: int in range(1, action_labels.size()):
@@ -132,8 +112,10 @@ func update_ui(new_item_data: ItemData) -> void:
 			#var new_action_name: Label = Label.new()
 			#new_action_name.text = new_action.display_name
 			#action_list.add_child(new_action_name)
-#
-#
+	
+	# TODO update showing other passive_effect stuff for Items?
+
+
 #func get_evade_values(evade_datas: Array[EvadeData], evade_type: EvadeData.EvadeType, direction: EvadeData.Directions) -> Dictionary[EvadeData.EvadeSource, int]:
 	#var evade_values: Dictionary[EvadeData.EvadeSource, int] = {
 		#EvadeData.EvadeSource.JOB: 0,
@@ -149,40 +131,18 @@ func update_ui(new_item_data: ItemData) -> void:
 	#return evade_values
 #
 #
-#func update_element_list(affinity_list_label: Label, label_start: String, affinity_list: Array[Action.ElementTypes]) -> void:
-	#affinity_list_label.text = label_start
-	#var elements_list: PackedStringArray = []
-	#for element: Action.ElementTypes in affinity_list:
-		#elements_list.append(Action.ElementTypes.find_key(element).to_pascal_case())
-	#affinity_list_label.text += ", ".join(elements_list)
-#
-#
-#func update_status_list(status_container: Node, status_list: PackedStringArray) -> void:
-	#var status_labels: Array[Node] = status_container.get_children()
-	#for child_idx: int in range(1, status_labels.size()):
-		#status_labels[child_idx].queue_free()
-#
-	#for status_name: String in status_list:
-		#var new_status_label: Label = Label.new()
-		#new_status_label.text = status_name
-		#status_container.add_child(new_status_label)
+func get_element_text_list(affinity_list: Array[Action.ElementTypes]) -> PackedStringArray:
+	var elements_list: PackedStringArray = []
+	for element: Action.ElementTypes in affinity_list:
+		elements_list.append(Action.ElementTypes.find_key(element).to_pascal_case())
+	return elements_list
+	# affinity_list_label.text += ", ".join(elements_list)
 
-func update_status_list(status_list: PackedStringArray, status_affinity_label_start: String) -> void:
-	if status_list.is_empty():
+
+func update_list(text_list: PackedStringArray, label_start: String) -> void:
+	if text_list.is_empty():
 		return
 	
 	var new_label: Label = Label.new()
-	new_label.text = status_affinity_label_start + ", ".join(status_list)
+	new_label.text = label_start + ", ".join(text_list)
 	list.add_child(new_label)
-		
-	#for status_name: String in status_list:
-		#var new_label: Label = Label.new()
-		#new_label.text = status_affinity_type + ": "
-
-#func get_slot_item_type_names(equippable_item_types: Array[ItemData.ItemType], slot_types: PackedInt32Array) -> PackedStringArray:
-	#var slot_equipable_types: PackedStringArray = []
-	#for type: int in equippable_item_types:
-		#if slot_types.has(type):
-			#slot_equipable_types.append(ItemData.ItemType.keys()[type].to_snake_case())
-	#
-	#return slot_equipable_types

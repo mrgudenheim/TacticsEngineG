@@ -90,11 +90,6 @@ func setup(unit: UnitData) -> void:
 	update_ui(unit)
 
 
-func update_level(unit: UnitData, new_level: int) -> void:
-	unit.generate_leveled_raw_stats(new_level, unit.job_data)
-	unit.calc_battle_stats(unit.job_data)
-
-
 func update_ui(unit: UnitData) -> void:
 	# update_stat_label(level_label, unit, UnitData.StatType.LEVEL)
 	job_button.text = unit.job_data.display_name
@@ -147,7 +142,7 @@ func update_ui(unit: UnitData) -> void:
 		var new_item_button: Button = Button.new()
 		new_item_button.text = equip_slot.item.display_name
 		new_item_button.pressed.connect(func(): item_select_pressed.emit(unit, equip_slot))
-		# TODO implement item select buttons
+		new_item_button.custom_minimum_size = Vector2(60, 0)
 		equipment_grid.add_child(new_item_button)
 
 	# update abilities
@@ -242,3 +237,8 @@ func get_total_evade_factor(unit: UnitData, unit_passive_effects: Array[PassiveE
 	var total_evade_value: int = roundi((1 - total_evade_factor) * 100)
 
 	return total_evade_value
+
+
+func update_level(unit: UnitData, new_level: int) -> void:
+	unit.generate_leveled_raw_stats(new_level, unit.job_data)
+	unit.calc_battle_stats(unit.job_data)

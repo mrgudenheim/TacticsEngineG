@@ -7,29 +7,12 @@ var ability_data: Ability:
 	get: return ability_data
 	set(value):
 		ability_data = value
-		#update_ui(value)
+		update_ui(value)
 
 @export var button: Button
 @export var display_name: Label
 @export var sprite_rect: TextureRect
-@export var move: Label
-@export var jump: Label
 
-# @export var stat_multipleirs_growth_grid: Container
-
-@export var evade_grid: Container
-
-@export var innate_abilities_list: Container
-
-@export var statuses_always_list: Container
-@export var statuses_start_list: Container
-@export var statuses_immune_list: Container
-
-@export var element_weak: Label
-@export var element_resist: Label
-@export var element_immune: Label
-@export var element_absorb: Label
-@export var element_strengthen: Label
 
 @export var action_list: Container
 
@@ -41,9 +24,9 @@ func on_selected() -> void:
 	selected.emit(ability_data)
 
 
-#func update_ui(new_job_data: JobData) -> void:
-	#display_name.text = new_job_data.display_name + " (Job ID: " + str(new_job_data.job_id) + ")"
-	#name = new_job_data.unique_name
+func update_ui(new_ability_data: Ability) -> void:
+	display_name.text = new_ability_data.display_name
+	name = new_ability_data.unique_name
 #
 	## update stats
 	#move.text = "Move: " + str(new_job_data.move)

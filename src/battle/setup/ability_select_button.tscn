@@ -1,0 +1,61 @@
+[gd_scene load_steps=3 format=3 uid="uid://ckvy5kybckxkh"]
+
+[ext_resource type="Script" uid="uid://can2dyv3jj67w" path="res://src/battle/setup/ability_select_button.gd" id="1_awuk6"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d26o3"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[node name="AbilitySelectButton" type="PanelContainer" node_paths=PackedStringArray("button", "display_name")]
+script = ExtResource("1_awuk6")
+button = NodePath("Button")
+display_name = NodePath("MarginContainer/VBoxContainer/Name")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="Name" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "ItemName"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="SpriteAndStats" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats"]
+layout_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/PanelContainer"]
+layout_mode = 2
+color = Color(0.7724798, 0.5703566, 0.2862759, 1)
+
+[node name="Sprite" type="TextureRect" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/PanelContainer"]
+layout_mode = 2
+expand_mode = 2
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/PanelContainer"]
+layout_mode = 2
+text = "Sprite"
+
+[node name="PassiveEffectsPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/PassiveEffectsPanel"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/PassiveEffectsPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_d26o3")

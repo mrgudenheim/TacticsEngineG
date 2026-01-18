@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://h7281h60pnbl"]
 
-[ext_resource type="Script" uid="uid://dam17uf3w1qj4" path="res://src/battle/team_setup.gd" id="1_v60ut"]
-[ext_resource type="PackedScene" uid="uid://b2bfuf828p6i6" path="res://src/battle/unit_setup_panel.tscn" id="1_vj6nb"]
+[ext_resource type="Script" uid="uid://dam17uf3w1qj4" path="res://src/battle/setup/team_setup.gd" id="1_v60ut"]
+[ext_resource type="PackedScene" uid="uid://b2bfuf828p6i6" path="res://src/battle/setup/unit_setup_panel.tscn" id="1_vj6nb"]
 [ext_resource type="PackedScene" uid="uid://dkudrb304m7t1" path="res://src/Unit/unit.tscn" id="3_vqtvk"]
 
 [node name="TeamSetup" type="MarginContainer" node_paths=PackedStringArray("unit_list", "num_units_spinbox")]

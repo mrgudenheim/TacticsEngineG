@@ -7,31 +7,13 @@ var item_data: ItemData:
 	get: return item_data
 	set(value):
 		item_data = value
-		#update_ui(value)
+		update_ui(value)
 
 @export var button: Button
 @export var display_name: Label
 @export var sprite_rect: TextureRect
-@export var move: Label
-@export var jump: Label
 
-# @export var stat_multipleirs_growth_grid: Container
-
-@export var evade_grid: Container
-
-@export var innate_abilities_list: Container
-
-@export var statuses_always_list: Container
-@export var statuses_start_list: Container
-@export var statuses_immune_list: Container
-
-@export var element_weak: Label
-@export var element_resist: Label
-@export var element_immune: Label
-@export var element_absorb: Label
-@export var element_strengthen: Label
-
-@export var action_list: Container
+@export var list: Container
 
 func _ready():
 	button.pressed.connect(on_selected)
@@ -41,26 +23,22 @@ func on_selected() -> void:
 	selected.emit(item_data)
 
 
-#func update_ui(new_job_data: JobData) -> void:
-	#display_name.text = new_job_data.display_name + " (Job ID: " + str(new_job_data.job_id) + ")"
-	#name = new_job_data.unique_name
-#
-	## update stats
-	#move.text = "Move: " + str(new_job_data.move)
-	#jump.text = "Move: " + str(new_job_data.jump)
-#
-	#hp_multiplier.text = str(new_job_data.hp_multiplier)
-	#mp_multiplier.text = str(new_job_data.mp_multiplier)
-	#speed_multiplier.text = str(new_job_data.speed_multiplier)
-	#pa_multiplier.text = str(new_job_data.pa_multiplier)
-	#ma_multiplier.text = str(new_job_data.ma_multiplier)
-#
-	#hp_growth.text = str(new_job_data.hp_growth)
-	#mp_growth.text = str(new_job_data.mp_growth)
-	#speed_growth.text = str(new_job_data.speed_growth)
-	#pa_growth.text = str(new_job_data.pa_growth)
-	#ma_growth.text = str(new_job_data.ma_growth)
-#
+func update_ui(new_item_data: ItemData) -> void:
+	display_name.text = new_item_data.display_name + " (Item ID: " + str(new_item_data.item_idx) + ")"
+	name = new_item_data.unique_name
+	
+	var passive_effect: PassiveEffect = new_item_data.passive_effect
+	
+	var wp_label: Label = Label.new()
+	wp_label.text = "WP: " + str(new_item_data.weapon_power)
+	list.add_child(wp_label)
+	
+	for stat_type: UnitData.StatType in passive_effect.stat_modifiers.keys():
+		var stat_modifier: Modifier = passive_effect.stat_modifiers[stat_type]
+		var modifier_label: Label = Label.new()
+		modifier_label.text = UnitData.StatType.keys()[stat_type] + ": +" + str(stat_modifier.value_formula.values[0])
+		list.add_child(modifier_label)
+	
 	## TODO update equippable types
 	#var hand_types: PackedInt32Array = range(1,20)
 	#var head_types: PackedInt32Array = range(20,23)
@@ -71,12 +49,7 @@ func on_selected() -> void:
 	#var equipable_head_types: PackedStringArray = get_slot_item_type_names(new_job_data.equippable_item_types, head_types)
 	#var equipable_body_types: PackedStringArray = get_slot_item_type_names(new_job_data.equippable_item_types, body_types)
 	#var equipable_accessory_types: PackedStringArray = get_slot_item_type_names(new_job_data.equippable_item_types, accessory_types)
-	#
-	#equipment_hand.text = ", ".join(equipable_hand_types)
-	#equipment_head.text = ", ".join(equipable_head_types)
-	#equipment_body.text = ", ".join(equipable_body_types)
-	#equipment_accessory.text = ", ".join(equipable_accessory_types)
-#
+
 	## update evade
 	#for evade_type: EvadeData.EvadeType in EvadeData.EvadeType.values():
 		## skip EvadeType.NONE
@@ -86,41 +59,41 @@ func on_selected() -> void:
 		## skip first row of lables (column headers)
 		#var label_idx: int = evade_type * (EvadeData.EvadeSource.keys().size() + 1)
 		#label_idx += 1 # skip first column of labels
-#
+
 		#var source_evade_values: Dictionary[EvadeData.EvadeSource, int] = get_evade_values(new_job_data.evade_datas, evade_type, EvadeData.Directions.FRONT)
 		#for evade_source: EvadeData.EvadeSource in source_evade_values.keys():
 			#var evade_value_label: Label = evade_grid.get_child(label_idx)
 			#evade_value_label.text = str(source_evade_values[evade_source]) + "%"
 			#
 			#label_idx += 1
-#
+
 	## update innate abilities
 	#var innate_ability_labels: Array[Node] = innate_abilities_list.get_children()
 	#for child_idx: int in range(1, innate_ability_labels.size()):
 		#innate_ability_labels[child_idx].queue_free()
-#
+
 	#for ability: Ability in job_data.innate_abilities:
 		#var new_ability_label: Label = Label.new()
 		#new_ability_label.text = ability.display_name
 		#innate_abilities_list.add_child(new_ability_label)
-#
-	## update statuses	
-	#var statuses_always: PackedStringArray = []
-	#var statuses_start: PackedStringArray = []
-	#var statuses_immune: PackedStringArray = []
-#
-	#for passive_effect: PassiveEffect in new_job_data.passive_effects:
-		#statuses_always.append_array(passive_effect.status_always)
-		#statuses_start.append_array(passive_effect.status_start)
-		#statuses_immune.append_array(passive_effect.status_immune)
-	#
-	#statuses_always = PackedStringArray(Utilities.get_array_unique(statuses_always))
-	#statuses_start = PackedStringArray(Utilities.get_array_unique(statuses_start))
-	#statuses_immune = PackedStringArray(Utilities.get_array_unique(statuses_immune))
-#
-	#update_status_list(statuses_always_list, statuses_always)
-	#update_status_list(statuses_start_list, statuses_start)
-	#update_status_list(statuses_immune_list, statuses_immune)
+
+	# update statuses	
+	var statuses_always: PackedStringArray = []
+	var statuses_start: PackedStringArray = []
+	var statuses_immune: PackedStringArray = []
+
+	#for passive_effect: PassiveEffect in new_item_data.passive_effects:
+	statuses_always.append_array(passive_effect.status_always)
+	statuses_start.append_array(passive_effect.status_start)
+	statuses_immune.append_array(passive_effect.status_immune)
+	
+	statuses_always = PackedStringArray(Utilities.get_array_unique(statuses_always))
+	statuses_start = PackedStringArray(Utilities.get_array_unique(statuses_start))
+	statuses_immune = PackedStringArray(Utilities.get_array_unique(statuses_immune))
+	
+	update_status_list(statuses_always, "Always: ")
+	update_status_list(statuses_start, "Start: ")
+	update_status_list(statuses_immune, "Immune: ")
 	#
 	## Update element affinities
 	#var element_weak_list: Array[Action.ElementTypes] = []
@@ -193,7 +166,19 @@ func on_selected() -> void:
 		#var new_status_label: Label = Label.new()
 		#new_status_label.text = status_name
 		#status_container.add_child(new_status_label)
-#
+
+func update_status_list(status_list: PackedStringArray, status_affinity_label_start: String) -> void:
+	if status_list.is_empty():
+		return
+	
+	var new_label: Label = Label.new()
+	new_label.text = status_affinity_label_start + ", ".join(status_list)
+	list.add_child(new_label)
+		
+	#for status_name: String in status_list:
+		#var new_label: Label = Label.new()
+		#new_label.text = status_affinity_type + ": "
+
 #func get_slot_item_type_names(equippable_item_types: Array[ItemData.ItemType], slot_types: PackedInt32Array) -> PackedStringArray:
 	#var slot_equipable_types: PackedStringArray = []
 	#for type: int in equippable_item_types:

@@ -80,6 +80,7 @@ func setup(unit: UnitData) -> void:
 	
 	# TODO hook up job select button
 	job_button.pressed.connect(func(): job_select_pressed.emit(unit))
+	
 	# show job select list
 	# hookup job select buttons to update this units job
 	# remove invalid equipment

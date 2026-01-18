@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://djqalqt20isme"]
 
-[ext_resource type="Script" uid="uid://cpvculriomav7" path="res://src/battle/job_select_button.gd" id="1_dxfb3"]
+[ext_resource type="Script" uid="uid://cpvculriomav7" path="res://src/battle/setup/job_select_button.gd" id="1_dxfb3"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d26o3"]
 bg_color = Color(0.6, 0.6, 0.6, 0)

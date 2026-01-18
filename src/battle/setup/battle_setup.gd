@@ -27,7 +27,7 @@ func initial_setup() -> void:
 
 func populate_option_lists() -> void:
 	job_select_control.populate_list()
-	# TODO populate item list
+	item_select_control.populate_list()
 	# TODO populate ability list
 
 

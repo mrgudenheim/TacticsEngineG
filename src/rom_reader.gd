@@ -38,6 +38,7 @@ var seqs: Array[Seq] = []
 var maps: Array[MapData] = []
 var vfx: Array[VisualEffectData] = []
 var fft_abilities: Array[FftAbilityData] = []
+var fft_entds: Array[FftEntd] = []
 var items_array: Array[ItemData] = []
 # var status_effects: Array[StatusEffect] = [] # TODO reference scus_data.status_effects
 var items: Dictionary[String, ItemData] = {} # [unique_name, ItemData]
@@ -135,6 +136,13 @@ func process_rom() -> void:
 		items_array[id] = ItemData.new(id)
 	
 	scus_data.init_statuses()
+
+	add_entds("ENTD1.ENT")
+	add_entds("ENTD2.ENT")
+	add_entds("ENTD3.ENT")
+	add_entds("ENTD4.ENT")
+
+
 	# for status_: int in status_effects.size():
 		# status_effects[idx].ai_score_formula.values[0] = battle_bin_data.ai_status_priorities[idx] / 128.0
 		# TODO implement ai formulas that are modified by other statuses (ex. stop is worth zero if target is already confused/charm/blood suck) or action properties (ex. evadeable, silenceable)
@@ -1011,3 +1019,13 @@ func write_spritesheet_region_data(seq_index: int, shp_index: int) -> void:
 	DirAccess.make_dir_recursive_absolute("user://wiki_tables")
 	var save_file := FileAccess.open("user://wiki_tables/wiki_table_" + file_name + ".txt", FileAccess.WRITE)
 	save_file.store_string(final_output)
+
+
+func add_entds(file_name: String) -> void:
+	var entd_data_length: int = 40 * 16
+	var entds_per_file: int = 0x80
+	var file_bytes: PackedByteArray = file_records[file_name].get_file_data(rom)
+	for idx in entds_per_file:
+		var entd_bytes: PackedByteArray = file_bytes.slice(idx * entd_data_length, (idx + 1) * entd_data_length)
+		var new_entd: FftEntd = FftEntd.new(entd_bytes)
+		fft_entds.append(new_entd)

@@ -24,6 +24,7 @@ const FILE_SUFFIX: String = "passive_effect"
 @export var add_applicable_target_statuses: PackedStringArray = [] # status unique names
 @export var add_applicable_target_stat_bases: Array[UnitData.StatBasis] = []  # male, female, monsters
 @export var include_evade_sources: Array[EvadeData.EvadeSource] = []
+# @export var evade_datas: Array[EvadeData] = [] # TODO move evade data to PassiveEffect from JobData, ItemData, etc.
 
 # TODO generalize to target or user Stat effective modifier
 # Unit modifiers

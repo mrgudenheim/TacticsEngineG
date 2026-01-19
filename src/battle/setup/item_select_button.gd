@@ -36,26 +36,16 @@ func update_ui(new_item_data: ItemData) -> void:
 	for stat_type: UnitData.StatType in passive_effect.stat_modifiers.keys():
 		var stat_modifier: Modifier = passive_effect.stat_modifiers[stat_type]
 		var modifier_label: Label = Label.new()
-		modifier_label.text = UnitData.StatType.keys()[stat_type] + ": +" + str(stat_modifier.value_formula.values[0])
+		modifier_label.text = UnitData.StatType.keys()[stat_type] + ": +" + str(roundi(stat_modifier.value_formula.values[0]))
 		list.add_child(modifier_label)
 
-	## TODO update evade
-	#for evade_type: EvadeData.EvadeType in EvadeData.EvadeType.values():
-		## skip EvadeType.NONE
-		#if evade_type == EvadeData.EvadeType.NONE:
-			#continue
-		#
-		## skip first row of lables (column headers)
-		#var label_idx: int = evade_type * (EvadeData.EvadeSource.keys().size() + 1)
-		#label_idx += 1 # skip first column of labels
-
-		#var source_evade_values: Dictionary[EvadeData.EvadeSource, int] = get_evade_values(new_job_data.evade_datas, evade_type, EvadeData.Directions.FRONT)
-		#for evade_source: EvadeData.EvadeSource in source_evade_values.keys():
-			#var evade_value_label: Label = evade_grid.get_child(label_idx)
-			#evade_value_label.text = str(source_evade_values[evade_source]) + "%"
-			#
-			#label_idx += 1
-	
+	## update evade
+	for evade_data: EvadeData in new_item_data.evade_datas:
+		var evade_label: Label = Label.new()
+		var evade_text_source: String = EvadeData.EvadeSource.keys()[evade_data.source].to_pascal_case()
+		var evade_text_type: String = EvadeData.EvadeType.keys()[evade_data.type].to_pascal_case()
+		evade_label.text = evade_text_source + " " + evade_text_type + " Evade: " + str(roundi(evade_data.value))
+		list.add_child(evade_label)
 
 	# update statuses	
 	var statuses_always: PackedStringArray = []

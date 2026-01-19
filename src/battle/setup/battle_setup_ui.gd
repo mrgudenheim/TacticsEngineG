@@ -1,4 +1,4 @@
-class_name BattleSetup
+class_name BattleSetupUi
 extends Control
 
 @export var battle_manager: BattleManager

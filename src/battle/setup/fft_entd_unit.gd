@@ -119,8 +119,8 @@ func _init(bytes: PackedByteArray) -> void:
 	
 	experience = bytes.decode_u8(0x1c)
 	primary_skillset = bytes.decode_u8(0x1d)
-	reward_item = bytes.decode_u16(0x1e)
-	reward_money = bytes.decode_u16(0x1f)
+	reward_item = bytes.decode_u8(0x1e)
+	reward_money = bytes.decode_u8(0x1f)
 	unit_id = bytes.decode_u8(0x20)
 	ai_target_x = bytes.decode_u8(0x21)
 	ai_target_y = bytes.decode_u8(0x22)

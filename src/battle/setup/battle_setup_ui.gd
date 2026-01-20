@@ -5,7 +5,7 @@ extends Control
 @export var start_button: Button
 @export var unit_scene: PackedScene
 
-@export var battle_setup_container: Container
+@export var battle_setup_container: TabContainer
 @export var team_setups: Array[TeamSetup]
 @export var team_setup_scene: PackedScene
 
@@ -23,6 +23,7 @@ func initial_setup() -> void:
 		add_team("Team" + str(team_num))
 	
 	start_button.pressed.connect(battle_manager.start_battle)
+	battle_setup_container.tab_clicked.connect(adjust_height)
 
 
 func populate_option_lists() -> void:
@@ -114,52 +115,11 @@ func add_team(new_team_name: String) -> Team:
 	return new_team
 
 
-func add_units_to_map() -> void:
-	pass
-	#if use_test_teams:
-		#add_test_teams_to_map()
-	#else: # use random teams
-		#var generic_job_ids: Array[int] = []
-		#generic_job_ids.assign(range(0x4a, 0x5a)) # generics
-		#var special_characters: Array[int] = [
-			#0x01, # ramza 1
-			#0x04, # ramza 4
-			#0x05, # delita 1
-			#0x34, # agrias
-			#0x11, # gafgorian
-			#]
-		#
-		#var monster_jobs: Array[int] = []
-		#monster_jobs.assign(range(0x5e, 0x8e)) # generic monsters
-		#var special_monsters: Array[int] = [
-			#0x41, # holy angel
-			#0x49, # arch angel
-			#0x3c, # gigas/warlock (Belias)
-			#0x3e, # angel of death
-			#0x40, # regulator (Hashmal)
-			#0x43, # impure king (quakelin)
-			#0x45, # ghost of fury (adremelk)
-			#0x97, # serpentarious
-			#0x91, # steel giant
-			#]
-		#
-		#var team_1_job_ids: Array[int] = generic_job_ids
-		#team_1_job_ids.append_array(special_characters)
-		#
-		#var team_2_job_ids: Array[int] = monster_jobs
-		#team_2_job_ids.append_array(special_monsters)
-		#
-		#for random_unit: int in units_per_team:
-			#var rand_job: int = team_1_job_ids.pick_random()
-			#while [0x2c, 0x31].has(rand_job): # prevent jobs without idle frames - 0x2c (Alma2) and 0x31 (Ajora) do not have walking frames
-				#rand_job = randi_range(0x01, 0x8d)
-			#var new_unit: UnitData = spawn_unit(get_random_stand_terrain_tile(), rand_job, team1)
-			#new_unit.is_ai_controlled = false
-		#
-		#for random_unit: int in units_per_team:
-			#var rand_job: int = team_2_job_ids.pick_random()
-			##var rand_job: int = randi_range(0x5e, 0x8d) # monsters
-			#while [0x2c, 0x31].has(rand_job): # prevent jobs without idle frames - 0x2c (Alma2) and 0x31 (Ajora) do not have walking frames
-				#rand_job = randi_range(0x01, 0x8d)
-			#var new_unit: UnitData = spawn_unit(get_random_stand_terrain_tile(), rand_job, team2)
-			##new_unit.is_ai_controlled = false
+func adjust_height(tab_idx: int) -> void:
+	push_warning(str(tab_idx))
+	if tab_idx == 0:
+		battle_setup_container.size.y = 0
+		await get_tree().process_frame
+		battle_setup_container.position.y = 0
+	else:
+		battle_setup_container.offset_bottom = 0

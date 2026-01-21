@@ -32,6 +32,7 @@ var current_tile_hover: TerrainTile
 @export var tile_highlights: Dictionary[Color, Material] = {}
 @export var global_passive_effects: Array[PassiveEffect] = []
 
+@export var battle_view: Node3D
 @export var action_menu: Control
 @export var action_button_list: BoxContainer
 @export var units_container: Node3D
@@ -207,6 +208,9 @@ func on_map_selected(index: int) -> void:
 
 func start_battle() -> void:
 	battle_setup.visible = false
+	battle_view.reparent(self)
+	# get list of units again; reparenting temporarily removes the unit from the tree and Units auto remove themselves from the Array when they leave the tree
+	units.assign(units_container.get_children())
 	
 	camera_controller.follow_node = units[0].char_body
 	controller.unit = units[0]

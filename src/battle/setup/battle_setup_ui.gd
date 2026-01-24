@@ -13,6 +13,14 @@ extends Control
 @export var item_select_control: ItemSelectControl
 @export var ability_select_control: AbilitySelectControl
 
+@export var unit_dragged: UnitData
+var cursor_map_position: Vector3
+
+
+func _process(delta: float) -> void:
+	if unit_dragged != null:
+		unit_dragged.char_body.position = battle_manager.current_cursor_map_position + Vector3(0, 0.25, 0)
+
 
 func initial_setup() -> void:
 	visible = true
@@ -123,3 +131,15 @@ func adjust_height(tab_idx: int) -> void:
 		battle_setup_container.position.y = 0
 	else:
 		battle_setup_container.offset_bottom = 0
+
+
+func update_unit_dragging(unit: UnitData, event: InputEvent) -> void:
+	if event.is_action_pressed("primary_action") and unit_dragged == null:
+		unit_dragged = unit # TODO only drag one unit at a time
+		push_warning(unit.unit_nickname + ": is pressed")
+	
+	elif event.is_action_released("primary_action") and unit_dragged != null: # snap unit to tile when released
+		unit.tile_position = battle_manager.get_tile(battle_manager.current_cursor_map_position)
+		unit.char_body.global_position = unit.tile_position.get_world_position()
+		unit_dragged = null
+		push_warning(unit.unit_nickname + ": is released")

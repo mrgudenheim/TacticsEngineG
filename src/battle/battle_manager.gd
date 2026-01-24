@@ -1,7 +1,7 @@
 class_name BattleManager
 extends Node3D
 
-signal map_input_event(action_instance: ActionInstance, camera: Camera3D, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int)
+signal map_input_event(action_instance: ActionInstance, camera: Camera3D, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) # TODO should action_instance be removed from signal?
 signal unit_created(new_unit: UnitData)
 
 # debug vars
@@ -28,7 +28,8 @@ var main_camera: Camera3D
 @export var maps: Node3D
 var total_map_tiles: Dictionary[Vector2i, Array] = {} # Array[TerrainTile]
 @export var map_tscn: PackedScene
-var current_tile_hover: TerrainTile
+var current_tile_hover: TerrainTile # TODO remove? not used, get_tile() used instead?
+var current_cursor_map_position: Vector3
 @export var tile_highlights: Dictionary[Color, Material] = {}
 @export var global_passive_effects: Array[PassiveEffect] = []
 
@@ -208,6 +209,9 @@ func on_map_selected(index: int) -> void:
 
 func start_battle() -> void:
 	battle_setup.visible = false
+	for unit: UnitData in units:
+		unit.unit_input_event.disconnect(battle_setup.update_unit_dragging)
+	
 	battle_view.reparent(self)
 	# get list of units again; reparenting temporarily removes the unit from the tree and Units auto remove themselves from the Array when they leave the tree
 	units.assign(units_container.get_children())
@@ -519,6 +523,7 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData
 	new_unit.ai_controller.strategy = UnitAi.Strategy.BEST
 
 	new_unit.unit_battle_details_ui.setup(new_unit)
+	new_unit.unit_input_event.connect(battle_setup.update_unit_dragging)
 	
 	return new_unit
 
@@ -837,6 +842,8 @@ func increment_counter(unit: UnitData) -> void:
 
 
 func on_map_input_event(camera: Camera3D, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
+	current_cursor_map_position = event_position
+	
 	map_input_event.emit(camera, event, event_position, normal, shape_idx)
 
 

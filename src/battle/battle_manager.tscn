@@ -337,7 +337,7 @@ stretch = true
 transparent_bg = true
 handle_input_locally = false
 physics_object_picking = true
-size = Vector2i(40, 40)
+size = Vector2i(2, 2)
 render_target_update_mode = 0
 
 [node name="BattleView" type="Node3D" parent="BattleSetup/BattleSetupTabContainer/Map/VBoxContainer/SubViewportContainer/SubViewport"]

@@ -843,6 +843,7 @@ func increment_counter(unit: UnitData) -> void:
 
 func on_map_input_event(camera: Camera3D, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) -> void:
 	current_cursor_map_position = event_position
+	current_tile_hover = get_tile(event_position)
 	
 	map_input_event.emit(camera, event, event_position, normal, shape_idx)
 

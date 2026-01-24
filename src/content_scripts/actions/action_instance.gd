@@ -94,7 +94,6 @@ func show_targets_highlights(targets_highlights: Dictionary[TerrainTile, Node3D]
 		highlight.visible = show
 
 
-# TODO implement generic actions that can have tiles as targets, use this to highlight targets
 func get_tile_highlights(tiles: Array[TerrainTile], highlight_material: Material) -> Dictionary[TerrainTile, Node3D]:
 	var tile_highlights: Dictionary[TerrainTile, Node3D]
 	for tile: TerrainTile in tiles:

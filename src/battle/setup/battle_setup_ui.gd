@@ -14,12 +14,24 @@ extends Control
 @export var ability_select_control: AbilitySelectControl
 
 @export var unit_dragged: UnitData
-var cursor_map_position: Vector3
+@export var tile_highlight: Node3D
 
 
 func _process(delta: float) -> void:
 	if unit_dragged != null:
 		unit_dragged.char_body.position = battle_manager.current_cursor_map_position + Vector3(0, 0.25, 0)
+		
+		if tile_highlight != null:
+			var tile_highlight_pos = tile_highlight.global_position - Vector3(0, 0.025, 0)
+			if tile_highlight_pos == battle_manager.current_tile_hover.get_world_position(true):
+				return
+			tile_highlight.queue_free()
+			
+		var new_tile_highlight: MeshInstance3D = battle_manager.current_tile_hover.get_tile_mesh()
+		new_tile_highlight.material_override = battle_manager.tile_highlights[Color.BLUE] # use pre-existing materials
+		add_child(new_tile_highlight)
+		tile_highlight = new_tile_highlight
+		new_tile_highlight.position = battle_manager.current_tile_hover.get_world_position(true) + Vector3(0, 0.025, 0)
 
 
 func initial_setup() -> void:
@@ -136,10 +148,9 @@ func adjust_height(tab_idx: int) -> void:
 func update_unit_dragging(unit: UnitData, event: InputEvent) -> void:
 	if event.is_action_pressed("primary_action") and unit_dragged == null:
 		unit_dragged = unit # TODO only drag one unit at a time
-		push_warning(unit.unit_nickname + ": is pressed")
-	
+		# unit.char_body is moved in _process
 	elif event.is_action_released("primary_action") and unit_dragged != null: # snap unit to tile when released
 		unit.tile_position = battle_manager.get_tile(battle_manager.current_cursor_map_position)
 		unit.char_body.global_position = unit.tile_position.get_world_position()
 		unit_dragged = null
-		push_warning(unit.unit_nickname + ": is released")
+		tile_highlight.queue_free()

@@ -55,6 +55,9 @@ var battle_bin_data: BattleBinData = BattleBinData.new()
 # SCUS.942.41 tables
 var scus_data: ScusData = ScusData.new()
 
+# WLDCORE.BIN tables
+var wldcore_data: WldcoreData = WldcoreData.new()
+
 # Images
 # https://github.com/Glain/FFTPatcher/blob/master/ShishiSpriteEditor/PSXImages.xml#L148
 var frame_bin: Bmp = Bmp.new()
@@ -117,6 +120,7 @@ func process_rom() -> void:
 	fft_text.init_text()
 	scus_data.init_from_scus()
 	battle_bin_data.init_from_battle_bin()
+	wldcore_data.init_from_wldcore()
 	
 	cache_associated_files()
 	

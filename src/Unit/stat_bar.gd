@@ -28,7 +28,8 @@ func set_stat(stat_name: String, stat: ClampedValue) -> void:
 	name_label.text = stat_name
 	update_stat(stat)
 	
-	stat.changed.connect(update_stat)
+	if not stat.changed.is_connected(update_stat):
+		stat.changed.connect(update_stat)
 
 
 func update_stat(stat: ClampedValue) -> void:

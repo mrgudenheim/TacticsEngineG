@@ -52,7 +52,9 @@ func initial_setup() -> void:
 		add_team("Team" + str(team_num))
 	
 	unit_setup.setup(battle_manager.units[0]) # default to first unit
-	start_button.pressed.connect(battle_manager.start_battle)
+	
+	if not start_button.pressed.is_connected(battle_manager.start_battle):
+		start_button.pressed.connect(battle_manager.start_battle)
 	#battle_setup_container.tab_clicked.connect(adjust_height)
 
 

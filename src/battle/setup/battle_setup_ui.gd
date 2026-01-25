@@ -21,26 +21,46 @@ func _process(delta: float) -> void:
 	if unit_dragged != null:
 		unit_dragged.char_body.position = battle_manager.current_cursor_map_position + Vector3(0, 0.25, 0)
 		
-		var current_tile: TerrainTile = battle_manager.current_tile_hover
+		var cursor_tile: TerrainTile = battle_manager.current_tile_hover
 		if tile_highlight != null:
-			if current_tile == null:
+			if cursor_tile == null:
 				return
 			
 			var tile_highlight_pos = tile_highlight.global_position - Vector3(0, 0.025, 0)
-			if tile_highlight_pos == current_tile.get_world_position(true): # do nothing if tile has not changed
+			if tile_highlight_pos == cursor_tile.get_world_position(true): # do nothing if tile has not changed
 				return
 			tile_highlight.queue_free()
 		
 		var highlight_color: Color = Color.WHITE
-		var can_end_on_tile: bool = current_tile.no_walk == 0 and current_tile.no_stand_select == 0 and current_tile.no_cursor == 0
-		if can_end_on_tile and not unit_dragged.prohibited_terrain.has(current_tile.surface_type_id): # lava, etc.
+		var can_end_on_tile: bool = (cursor_tile.no_walk == 0 
+				and cursor_tile.no_stand_select == 0 
+				and cursor_tile.no_cursor == 0
+				and not unit_dragged.prohibited_terrain.has(cursor_tile.surface_type_id)) # lava, etc.
+		if can_end_on_tile:
 			highlight_color = Color.BLUE
 			
-		var new_tile_highlight: MeshInstance3D = current_tile.get_tile_mesh()
+		var new_tile_highlight: MeshInstance3D = cursor_tile.get_tile_mesh()
 		new_tile_highlight.material_override = battle_manager.tile_highlights[highlight_color] # use pre-existing materials
 		add_child(new_tile_highlight)
 		tile_highlight = new_tile_highlight
-		new_tile_highlight.position = current_tile.get_world_position(true) + Vector3(0, 0.025, 0)
+		new_tile_highlight.position = cursor_tile.get_world_position(true) + Vector3(0, 0.025, 0)
+
+
+# func _unhandled_input(event: InputEvent) -> void:
+# 	if event.is_action_released("primary_action"): # snap unit to tile when released
+# 			# check if unit can end movement on tile
+# 			var cursor_tile: TerrainTile = battle_manager.current_tile_hover
+# 			var can_end_on_tile: bool = (cursor_tile.no_walk == 0 
+# 				and cursor_tile.no_stand_select == 0 
+# 				and cursor_tile.no_cursor == 0
+# 				and not unit_dragged.prohibited_terrain.has(cursor_tile.surface_type_id)) # lava, etc.
+			
+# 			if can_end_on_tile:
+# 				unit_dragged.tile_position = cursor_tile
+			
+# 			unit_dragged.char_body.global_position = unit_dragged.tile_position.get_world_position()
+# 			unit_dragged = null
+# 			tile_highlight.queue_free()
 
 
 func initial_setup() -> void:

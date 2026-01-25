@@ -53,7 +53,7 @@ func setup(unit: UnitData) -> void:
 	hp_bar.set_stat(str(UnitData.StatType.keys()[UnitData.StatType.HP]), unit.stats[UnitData.StatType.HP])
 	hp_bar.name_label.position.x = 5
 	hp_bar.name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	hp_bar.value_label.position.x -= (hp_bar.value_label.size.x + 10)
+	hp_bar.value_label.position.x = hp_bar.size.x - hp_bar.value_label.size.x - 5
 	hp_bar.value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	# hp_bar.value_label.grow_horizontal = GrowDirection.GROW_DIRECTION_BEGIN
 	
@@ -61,7 +61,7 @@ func setup(unit: UnitData) -> void:
 	mp_bar.fill_color = Color.INDIAN_RED
 	mp_bar.name_label.position.x = 5
 	mp_bar.name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	mp_bar.value_label.position.x -= (mp_bar.value_label.size.x + 10)
+	mp_bar.value_label.position.x = mp_bar.size.x - mp_bar.value_label.size.x - 5
 	mp_bar.value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	# mp_bar.value_label.grow_horizontal = GrowDirection.GROW_DIRECTION_BEGIN
 
@@ -69,7 +69,7 @@ func setup(unit: UnitData) -> void:
 	ct_bar.fill_color = Color.WEB_GREEN
 	ct_bar.name_label.position.x = 5
 	ct_bar.name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	ct_bar.value_label.position.x -= (ct_bar.value_label.size.x + 10)
+	ct_bar.value_label.position.x = ct_bar.size.x - ct_bar.value_label.size.x - 5
 	ct_bar.value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	# ct_bar.value_label.grow_horizontal = GrowDirection.GROW_DIRECTION_BEGIN
 

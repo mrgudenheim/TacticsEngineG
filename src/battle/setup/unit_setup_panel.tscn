@@ -41,7 +41,7 @@ evade_grid = NodePath("MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/Ma
 equipment_grid = NodePath("MarginContainer/HBoxContainer/EquipmentPanel/MarginContainer/EquipmentSlots/EquipmentGrid")
 ability_grid = NodePath("MarginContainer/HBoxContainer/AbilityPanel/MarginContainer/AbilitySlots/AbilityGrid")
 innate_ability_container = NodePath("MarginContainer/HBoxContainer/InnateAbilityPanel/MarginContainer/InnateAbilities/InnateAbilityGrid")
-status_affinity_container = NodePath("MarginContainer/HBoxContainer/StatusAffinityPanel/MarginContainer/StatusAffinityList")
+status_affinity_container = NodePath("MarginContainer/HBoxContainer/StatusAffinityPanel/MarginContainer/ScrollContainer/StatusAffinityList")
 weak_elements_label = NodePath("MarginContainer/HBoxContainer/ElementAffinityPanel/MarginContainer/ElementAffinities/Weak")
 resist_elements_label = NodePath("MarginContainer/HBoxContainer/ElementAffinityPanel/MarginContainer/ElementAffinities/Resist")
 immune_elements_label = NodePath("MarginContainer/HBoxContainer/ElementAffinityPanel/MarginContainer/ElementAffinities/Immune")
@@ -521,23 +521,27 @@ layout_mode = 2
 [node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/StatusAffinityPanel"]
 layout_mode = 2
 
-[node name="StatusAffinityList" type="VBoxContainer" parent="MarginContainer/HBoxContainer/StatusAffinityPanel/MarginContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/HBoxContainer/StatusAffinityPanel/MarginContainer"]
+custom_minimum_size = Vector2(180, 0)
 layout_mode = 2
 
-[node name="Title" type="Label" parent="MarginContainer/HBoxContainer/StatusAffinityPanel/MarginContainer/StatusAffinityList"]
+[node name="StatusAffinityList" type="VBoxContainer" parent="MarginContainer/HBoxContainer/StatusAffinityPanel/MarginContainer/ScrollContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="MarginContainer/HBoxContainer/StatusAffinityPanel/MarginContainer/ScrollContainer/StatusAffinityList"]
 layout_mode = 2
 text = "Status Affinity"
 horizontal_alignment = 1
 
-[node name="Label3" type="Label" parent="MarginContainer/HBoxContainer/StatusAffinityPanel/MarginContainer/StatusAffinityList"]
+[node name="Label3" type="Label" parent="MarginContainer/HBoxContainer/StatusAffinityPanel/MarginContainer/ScrollContainer/StatusAffinityList"]
 layout_mode = 2
 text = "Always Status"
 
-[node name="Label4" type="Label" parent="MarginContainer/HBoxContainer/StatusAffinityPanel/MarginContainer/StatusAffinityList"]
+[node name="Label4" type="Label" parent="MarginContainer/HBoxContainer/StatusAffinityPanel/MarginContainer/ScrollContainer/StatusAffinityList"]
 layout_mode = 2
 text = "Start Status"
 
-[node name="Label5" type="Label" parent="MarginContainer/HBoxContainer/StatusAffinityPanel/MarginContainer/StatusAffinityList"]
+[node name="Label5" type="Label" parent="MarginContainer/HBoxContainer/StatusAffinityPanel/MarginContainer/ScrollContainer/StatusAffinityList"]
 layout_mode = 2
 text = "Immune Status"
 

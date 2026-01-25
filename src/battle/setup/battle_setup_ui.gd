@@ -69,6 +69,11 @@ func initial_setup() -> void:
 	
 	populate_option_lists()
 	
+	for team_setup: TeamSetup in team_setups:
+		team_setup.name += "remove"
+		team_setup.queue_free()
+	team_setups.clear()
+
 	for team_num: int in 2:
 		add_team("Team" + str(team_num))
 	

@@ -27,8 +27,9 @@ signal ability_select_pressed(unit: UnitData, slot: UnitData.AbilitySlot)
 
 @export var equipment_grid: GridContainer
 @export var ability_grid: GridContainer
-@export var innate_ability_container: Container
 
+@export var passive_effect_container: Container
+@export var innate_ability_container: Container
 @export var status_affinity_container: Container
 # @export var element_affinity_list: VBoxContainer
 
@@ -166,7 +167,32 @@ func update_ui(unit: UnitData) -> void:
 		new_ability_button.pressed.connect(func(): ability_select_pressed.emit(unit, ability_slot))
 		# TODO implement ability select buttons
 		ability_grid.add_child(new_ability_button)
-
+	
+	# update passive effects
+	var passive_effect_labels: Array[Node] = passive_effect_container.get_children()
+	for child_idx: int in range(1, passive_effect_labels.size()):
+		passive_effect_labels[child_idx].queue_free()
+	
+	# update innate abilities
+	var innate_abilities_names: PackedStringArray = []
+	for ability: Ability in unit.job_data.innate_abilities:
+		innate_abilities_names.append(ability.display_name)
+	#for passive_effect: PassiveEffect in unit.get_all_passive_effects(): # TODO allow giving innate abilities from passive effects?
+		#innate_abilities_names.append(passive_effect.innate_abilities)
+	
+	update_passive_effect_list_label("Innate: ", innate_abilities_names)
+	
+	update_passive_effect_list_label("Weak: ", get_elements_text(unit.elemental_weakness))
+	update_passive_effect_list_label("Resist: ", get_elements_text(unit.elemental_half))
+	update_passive_effect_list_label("Immune: ", get_elements_text(unit.elemental_cancel))
+	update_passive_effect_list_label("Absorb: ", get_elements_text(unit.elemental_absorb))
+	update_passive_effect_list_label("Strengthen: ", get_elements_text(unit.elemental_strengthen))
+	
+	update_passive_effect_list_label("Always: ", unit.always_statuses)
+	update_passive_effect_list_label("Starting: ", unit.start_statuses)
+	update_passive_effect_list_label("Immune: ", unit.immune_statuses)
+	
+	
 	# update innate abilities
 	var innate_ability_labels: Array[Node] = innate_ability_container.get_children()
 	for child_idx: int in range(0, innate_ability_labels.size()):
@@ -207,10 +233,25 @@ func update_ui(unit: UnitData) -> void:
 
 func update_element_list(affinity_list_label: Label, label_start: String, affinity_list: Array[Action.ElementTypes]) -> void:
 	affinity_list_label.text = label_start
-	var elements_list: PackedStringArray = []
-	for element: Action.ElementTypes in affinity_list:
-		elements_list.append(Action.ElementTypes.find_key(element).to_pascal_case())
+	var elements_list: PackedStringArray = get_elements_text(affinity_list)
 	affinity_list_label.text += ", ".join(elements_list)
+
+
+func get_elements_text(element_list: Array[Action.ElementTypes]) -> PackedStringArray:
+	var elements_text: PackedStringArray = []
+	for element: Action.ElementTypes in element_list:
+		elements_text.append(Action.ElementTypes.find_key(element).to_pascal_case())
+	
+	return elements_text
+
+
+func update_passive_effect_list_label(starting_text: String, text_list: PackedStringArray) -> void:
+	if not text_list.is_empty():
+		var new_label: Label = Label.new()
+		new_label.name = starting_text.to_pascal_case()
+		new_label.text = starting_text + ", ".join(text_list)
+		new_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		passive_effect_container.add_child(new_label)
 
 
 func update_stat_label(stat_label: Label, unit: UnitData, stat_type: UnitData.StatType) -> void:

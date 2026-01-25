@@ -18,7 +18,7 @@ font_size = 18
 outline_size = 6
 outline_color = Color(0, 0, 0, 1)
 
-[node name="UnitSetupPanel" type="PanelContainer" node_paths=PackedStringArray("sprite_rect", "unit_name_line_edit", "gender_option_button", "job_button", "level_spinbox", "hp_bar", "mp_bar", "ct_bar", "pa_label", "ma_label", "brave_label", "faith_label", "move_label", "jump_label", "speed_label", "evade_grid", "equipment_grid", "ability_grid", "innate_ability_container", "status_affinity_container", "weak_elements_label", "resist_elements_label", "immune_elements_label", "absorb_elements_label", "strengthen_elements_label")]
+[node name="UnitSetupPanel" type="PanelContainer" node_paths=PackedStringArray("sprite_rect", "unit_name_line_edit", "gender_option_button", "job_button", "level_spinbox", "hp_bar", "mp_bar", "ct_bar", "pa_label", "ma_label", "brave_label", "faith_label", "move_label", "jump_label", "speed_label", "evade_grid", "equipment_grid", "ability_grid", "passive_effect_container", "innate_ability_container", "status_affinity_container", "weak_elements_label", "resist_elements_label", "immune_elements_label", "absorb_elements_label", "strengthen_elements_label")]
 offset_right = 1184.0
 offset_bottom = 232.0
 script = ExtResource("1_fwwrv")
@@ -40,6 +40,7 @@ speed_label = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContaine
 evade_grid = NodePath("MarginContainer/HBoxContainer/VBoxContainer/EvadePanel/MarginContainer/EvadeGrid")
 equipment_grid = NodePath("MarginContainer/HBoxContainer/EquipmentPanel/MarginContainer/EquipmentSlots/EquipmentGrid")
 ability_grid = NodePath("MarginContainer/HBoxContainer/AbilityPanel/MarginContainer/AbilitySlots/AbilityGrid")
+passive_effect_container = NodePath("MarginContainer/HBoxContainer/PassiveEffectsPanel/MarginContainer/PassiveEffects")
 innate_ability_container = NodePath("MarginContainer/HBoxContainer/InnateAbilityPanel/MarginContainer/InnateAbilities/InnateAbilityGrid")
 status_affinity_container = NodePath("MarginContainer/HBoxContainer/StatusAffinityPanel/MarginContainer/ScrollContainer/StatusAffinityList")
 weak_elements_label = NodePath("MarginContainer/HBoxContainer/ElementAffinityPanel/MarginContainer/ElementAffinities/Weak")
@@ -486,6 +487,7 @@ layout_mode = 2
 text = "Select Ability"
 
 [node name="InnateAbilityPanel" type="PanelContainer" parent="MarginContainer/HBoxContainer"]
+visible = false
 layout_mode = 2
 size_flags_vertical = 3
 
@@ -516,6 +518,7 @@ layout_mode = 2
 text = "Ability"
 
 [node name="StatusAffinityPanel" type="PanelContainer" parent="MarginContainer/HBoxContainer"]
+visible = false
 layout_mode = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/StatusAffinityPanel"]
@@ -527,6 +530,7 @@ layout_mode = 2
 
 [node name="StatusAffinityList" type="VBoxContainer" parent="MarginContainer/HBoxContainer/StatusAffinityPanel/MarginContainer/ScrollContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="Title" type="Label" parent="MarginContainer/HBoxContainer/StatusAffinityPanel/MarginContainer/ScrollContainer/StatusAffinityList"]
 layout_mode = 2
@@ -546,6 +550,7 @@ layout_mode = 2
 text = "Immune Status"
 
 [node name="ElementAffinityPanel" type="PanelContainer" parent="MarginContainer/HBoxContainer"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -584,3 +589,18 @@ autowrap_mode = 3
 layout_mode = 2
 text = "Strengthen: Holy, Dark"
 autowrap_mode = 3
+
+[node name="PassiveEffectsPanel" type="PanelContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/PassiveEffectsPanel"]
+layout_mode = 2
+
+[node name="PassiveEffects" type="VBoxContainer" parent="MarginContainer/HBoxContainer/PassiveEffectsPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="MarginContainer/HBoxContainer/PassiveEffectsPanel/MarginContainer/PassiveEffects"]
+layout_mode = 2
+text = "Passive Effects"
+horizontal_alignment = 1

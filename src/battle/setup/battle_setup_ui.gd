@@ -72,6 +72,8 @@ func initial_setup() -> void:
 	for team_num: int in 2:
 		add_team("Team" + str(team_num))
 	
+	if tile_highlight != null:
+		tile_highlight.queue_free()
 	unit_setup.setup(battle_manager.units[0]) # default to first unit
 	var unit_tile: TerrainTile = battle_manager.units[0].tile_position
 	var new_tile_highlight: MeshInstance3D = unit_tile.get_tile_mesh()

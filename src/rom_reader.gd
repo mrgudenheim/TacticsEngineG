@@ -49,14 +49,11 @@ var triggered_actions: Dictionary[String, TriggeredAction] = {} # [unique_name, 
 var passive_effects: Dictionary[String, PassiveEffect] = {} # [unique_name, TriggeredAction]
 var abilities: Dictionary[String, Ability] = {} # [unique_name, Ability]
 
-# BATTLE.BIN tables
-var battle_bin_data: BattleBinData = BattleBinData.new()
 
-# SCUS.942.41 tables
-var scus_data: ScusData = ScusData.new()
-
-# WLDCORE.BIN tables
-var wldcore_data: WldcoreData = WldcoreData.new()
+var battle_bin_data: BattleBinData = BattleBinData.new() # BATTLE.BIN tables
+var scus_data: ScusData = ScusData.new() # SCUS.942.41 tables
+var wldcore_data: WldcoreData = WldcoreData.new() # WLDCORE.BIN tables
+var attack_out_data: AttackOutData = AttackOutData.new() # ATTACK.OUT tables
 
 # Images
 # https://github.com/Glain/FFTPatcher/blob/master/ShishiSpriteEditor/PSXImages.xml#L148
@@ -121,6 +118,7 @@ func process_rom() -> void:
 	scus_data.init_from_scus()
 	battle_bin_data.init_from_battle_bin()
 	wldcore_data.init_from_wldcore()
+	attack_out_data.init_from_attack_out()
 	
 	cache_associated_files()
 	

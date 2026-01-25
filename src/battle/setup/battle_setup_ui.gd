@@ -46,6 +46,7 @@ func _process(delta: float) -> void:
 		new_tile_highlight.position = cursor_tile.get_world_position(true) + Vector3(0, 0.025, 0)
 
 
+# Input from the subviewport never reaches here...
 # func _unhandled_input(event: InputEvent) -> void:
 # 	if event.is_action_released("primary_action"): # snap unit to tile when released
 # 			# check if unit can end movement on tile
@@ -72,6 +73,12 @@ func initial_setup() -> void:
 		add_team("Team" + str(team_num))
 	
 	unit_setup.setup(battle_manager.units[0]) # default to first unit
+	var unit_tile: TerrainTile = battle_manager.units[0].tile_position
+	var new_tile_highlight: MeshInstance3D = unit_tile.get_tile_mesh()
+	new_tile_highlight.material_override = battle_manager.tile_highlights[Color.BLUE] # use pre-existing materials
+	add_child(new_tile_highlight)
+	tile_highlight = new_tile_highlight
+	new_tile_highlight.position = unit_tile.get_world_position(true) + Vector3(0, 0.025, 0)
 	
 	if not start_button.pressed.is_connected(battle_manager.start_battle):
 		start_button.pressed.connect(battle_manager.start_battle)
@@ -192,4 +199,4 @@ func update_unit_dragging(unit: UnitData, event: InputEvent) -> void:
 		
 		unit.char_body.global_position = unit.tile_position.get_world_position()
 		unit_dragged = null
-		tile_highlight.queue_free()
+		# tile_highlight.queue_free()

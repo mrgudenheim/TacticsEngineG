@@ -15,7 +15,7 @@ extends Control
 
 @export var unit_dragged: UnitData
 @export var tile_highlight: Node3D
-
+@export var unit_setup: UnitSetupPanel
 
 func _process(delta: float) -> void:
 	if unit_dragged != null:
@@ -154,6 +154,8 @@ func adjust_height(tab_idx: int) -> void:
 func update_unit_dragging(unit: UnitData, event: InputEvent) -> void:
 	if event.is_action_pressed("primary_action") and unit_dragged == null:
 		unit_dragged = unit # TODO only drag one unit at a time
+		unit_setup.setup(unit)
+		unit_setup.visible = true
 		# unit.char_body is moved in _process
 	elif event.is_action_released("primary_action") and unit_dragged != null: # snap unit to tile when released
 		# check if unit can end movement on tile

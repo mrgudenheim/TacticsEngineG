@@ -73,7 +73,13 @@ func setup(unit: UnitData) -> void:
 	ct_bar.value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	# ct_bar.value_label.grow_horizontal = GrowDirection.GROW_DIRECTION_BEGIN
 
-	# TODO hook up buttons to update Unit data
+	# clear connections for when panel is reused
+	Utilities.disconnect_all_connections(unit_name_line_edit.text_submitted)
+	Utilities.disconnect_all_connections(level_spinbox.value_changed)
+	Utilities.disconnect_all_connections(job_button.pressed)
+	Utilities.disconnect_all_connections(unit.data_updated)
+
+	# hook up buttons to update Unit data
 	unit_name_line_edit.text_submitted.connect(func(new_name: String): unit.unit_nickname = new_name)
 	level_spinbox.value_changed.connect(func(new_value): update_level(unit, new_value))
 	# TODO update gender - sprite and stats

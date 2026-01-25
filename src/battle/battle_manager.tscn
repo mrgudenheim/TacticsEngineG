@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://card26cltbba1"]
+[gd_scene load_steps=30 format=3 uid="uid://card26cltbba1"]
 
 [ext_resource type="Script" uid="uid://cd31vmh881wm5" path="res://src/battle/battle_manager.gd" id="1_hnd0w"]
 [ext_resource type="PackedScene" uid="uid://buljw4afjva1d" path="res://src/content_scripts/Map/map.tscn" id="2_1os5c"]
@@ -14,6 +14,7 @@
 [ext_resource type="PackedScene" uid="uid://djqalqt20isme" path="res://src/battle/setup/job_select_button.tscn" id="14_f2r6p"]
 [ext_resource type="PackedScene" uid="uid://h7281h60pnbl" path="res://src/battle/setup/team_setup.tscn" id="14_kb1q2"]
 [ext_resource type="Script" uid="uid://b7qofr54bmos3" path="res://src/battle/setup/battle_setup_ui.gd" id="14_l2dig"]
+[ext_resource type="PackedScene" uid="uid://b2bfuf828p6i6" path="res://src/battle/setup/unit_setup_panel.tscn" id="15_qgxlc"]
 [ext_resource type="Script" uid="uid://df08xhig8ojgj" path="res://src/battle/setup/job_select_control.gd" id="16_bp08t"]
 [ext_resource type="Script" uid="uid://cectjl7guvpqa" path="res://src/content_scripts/actions/action_button.gd" id="16_l2dig"]
 [ext_resource type="Script" uid="uid://cu0evj643fugd" path="res://src/battle/setup/item_select_control.gd" id="17_bp08t"]
@@ -281,7 +282,7 @@ layout_mode = 2
 text = "Game State"
 horizontal_alignment = 1
 
-[node name="BattleSetup" type="Control" parent="." node_paths=PackedStringArray("battle_manager", "start_button", "battle_setup_container", "job_select_control", "item_select_control", "ability_select_control")]
+[node name="BattleSetup" type="Control" parent="." node_paths=PackedStringArray("battle_manager", "start_button", "battle_setup_container", "job_select_control", "item_select_control", "ability_select_control", "unit_setup")]
 visible = false
 layout_mode = 3
 anchor_top = 0.124000005
@@ -299,6 +300,7 @@ team_setup_scene = ExtResource("14_kb1q2")
 job_select_control = NodePath("JobSelectScrollArea")
 item_select_control = NodePath("ItemSelectScrollArea")
 ability_select_control = NodePath("AbilitySelectScrollArea")
+unit_setup = NodePath("BattleSetupTabContainer/Map/VBoxContainer/UnitSetupPanel")
 
 [node name="BattleSetupTabContainer" type="TabContainer" parent="BattleSetup"]
 layout_mode = 1
@@ -319,6 +321,7 @@ layout_mode = 2
 
 [node name="MapDropdown" type="OptionButton" parent="BattleSetup/BattleSetupTabContainer/Map/VBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 0
 
 [node name="MapSize" type="Label" parent="BattleSetup/BattleSetupTabContainer/Map/VBoxContainer"]
 layout_mode = 2
@@ -349,6 +352,10 @@ transform = Transform3D(0.707107, -0.315509, 0.632814, 0, 0.894934, 0.446198, -0
 [node name="Maps" type="Node3D" parent="BattleSetup/BattleSetupTabContainer/Map/VBoxContainer/SubViewportContainer/SubViewport/BattleView"]
 
 [node name="Units" type="Node3D" parent="BattleSetup/BattleSetupTabContainer/Map/VBoxContainer/SubViewportContainer/SubViewport/BattleView"]
+
+[node name="UnitSetupPanel" parent="BattleSetup/BattleSetupTabContainer/Map/VBoxContainer" instance=ExtResource("15_qgxlc")]
+visible = false
+layout_mode = 2
 
 [node name="JobSelectScrollArea" type="ScrollContainer" parent="BattleSetup" node_paths=PackedStringArray("job_select_button_container")]
 visible = false

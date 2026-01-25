@@ -23,6 +23,9 @@ func _process(delta: float) -> void:
 		
 		var current_tile: TerrainTile = battle_manager.current_tile_hover
 		if tile_highlight != null:
+			if current_tile == null:
+				return
+			
 			var tile_highlight_pos = tile_highlight.global_position - Vector3(0, 0.025, 0)
 			if tile_highlight_pos == current_tile.get_world_position(true): # do nothing if tile has not changed
 				return

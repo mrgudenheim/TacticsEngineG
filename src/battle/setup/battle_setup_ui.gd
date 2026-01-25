@@ -156,7 +156,7 @@ func update_unit_dragging(unit: UnitData, event: InputEvent) -> void:
 		unit_dragged = unit # TODO only drag one unit at a time
 		# unit.char_body is moved in _process
 	elif event.is_action_released("primary_action") and unit_dragged != null: # snap unit to tile when released
-		# TODO check if unit can end movement on tile
+		# check if unit can end movement on tile
 		var tile: TerrainTile = battle_manager.current_tile_hover
 		var can_end_on_tile: bool = tile.no_walk == 0 and tile.no_stand_select == 0 and tile.no_cursor == 0
 		if can_end_on_tile and not unit.prohibited_terrain.has(tile.surface_type_id): # lava, etc.

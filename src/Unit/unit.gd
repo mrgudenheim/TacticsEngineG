@@ -1450,6 +1450,9 @@ func update_passive_effects(exclude_passives: PackedStringArray = []) -> void:
 	update_triggered_actions(all_passive_effects)
 	update_equipable_item_types(all_passive_effects)
 
+	update_prohibited_terrain(all_passive_effects)
+	update_terrain_costs(all_passive_effects)
+
 	if global_battle_manager != null:
 		if not global_battle_manager.battle_is_running:
 			stats[StatType.HP].set_value(stats[StatType.HP].max_value) # TODO only set hp = max hp when updating unit not in battle, update on passive effects

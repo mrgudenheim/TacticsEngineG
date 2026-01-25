@@ -300,7 +300,7 @@ team_setup_scene = ExtResource("14_kb1q2")
 job_select_control = NodePath("JobSelectScrollArea")
 item_select_control = NodePath("ItemSelectScrollArea")
 ability_select_control = NodePath("AbilitySelectScrollArea")
-unit_setup = NodePath("BattleSetupTabContainer/Map/VBoxContainer/UnitSetupPanel")
+unit_setup = NodePath("BattleSetupTabContainer/Map/VBoxContainer/FoldableContainer/UnitSetupPanel")
 
 [node name="BattleSetupTabContainer" type="TabContainer" parent="BattleSetup"]
 layout_mode = 1
@@ -341,7 +341,11 @@ transform = Transform3D(0.707107, -0.315509, 0.632814, 0, 0.894934, 0.446198, -0
 
 [node name="Units" type="Node3D" parent="BattleSetup/BattleSetupTabContainer/Map/VBoxContainer/SubViewportContainer/SubViewport/BattleView"]
 
-[node name="UnitSetupPanel" parent="BattleSetup/BattleSetupTabContainer/Map/VBoxContainer" instance=ExtResource("15_qgxlc")]
+[node name="FoldableContainer" type="FoldableContainer" parent="BattleSetup/BattleSetupTabContainer/Map/VBoxContainer"]
+layout_mode = 2
+title = "Unit Setup"
+
+[node name="UnitSetupPanel" parent="BattleSetup/BattleSetupTabContainer/Map/VBoxContainer/FoldableContainer" instance=ExtResource("15_qgxlc")]
 layout_mode = 2
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="BattleSetup/BattleSetupTabContainer/Map"]

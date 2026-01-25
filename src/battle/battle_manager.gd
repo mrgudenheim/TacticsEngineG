@@ -209,6 +209,7 @@ func on_map_selected(index: int) -> void:
 
 func start_battle() -> void:
 	battle_setup.visible = false
+	battle_setup.tile_highlight.queue_free()
 	for unit: UnitData in units:
 		unit.unit_input_event.disconnect(battle_setup.update_unit_dragging)
 	

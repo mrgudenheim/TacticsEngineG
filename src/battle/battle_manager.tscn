@@ -419,3 +419,7 @@ offset_left = -89.0
 offset_bottom = 28.0
 grow_horizontal = 0
 text = "Start Battle!"
+
+[connection signal="ability_select_pressed" from="BattleSetup/BattleSetupTabContainer/Map/VBoxContainer/FoldableContainer/UnitSetupPanel" to="BattleSetup" method="setup_ability_select"]
+[connection signal="item_select_pressed" from="BattleSetup/BattleSetupTabContainer/Map/VBoxContainer/FoldableContainer/UnitSetupPanel" to="BattleSetup" method="setup_item_select"]
+[connection signal="job_select_pressed" from="BattleSetup/BattleSetupTabContainer/Map/VBoxContainer/FoldableContainer/UnitSetupPanel" to="BattleSetup" method="setup_job_select"]

@@ -9,7 +9,7 @@ var scenario_data: Array[ScenarioData] = []
 var deployment_data_start: int = 0xbbd4
 var deployment_data_num_entries: int = 0x2ff + 1
 var deployment_data_entry_length: int = 12
-var deployment_data: Array[DeploymentData] = []
+var deployment_data: Array[DeploymentZoneData] = []
 
 class ScenarioData:
 	var scenario_id: int = 0
@@ -41,13 +41,13 @@ class ScenarioData:
 		post_scenario_step = bytes.decode_u8(20) # 0x80 = go to world map, 0x81 = go to next scenario, 0x82 = reset game
 		event_script_id = bytes.decode_u16(22)
 
-class DeploymentData:
+class DeploymentZoneData:
 	var deployment_zone_bitmap: int = 0 # 0x01ffffff is full 5x5 grid
 	var deployment_map: Dictionary[Vector2i, bool] = {}
 	var deployment_zone_center_x: int = 0
 	var deployment_zone_center_y: int = 0
-	var orientation: int = 0 # 0 = West, 1 = South, 2 = East, 3 = North
-	var orientation_bitmap_rotated: int = 0 # 0 = West, 1 = South, 2 = East, 3 = North
+	var unit_facing: int = 0 # relative to deployment zone: 0 = West, 1 = South, 2 = East, 3 = North
+	var zone_facing: int = 0 # 0 = West, 1 = South, 2 = East, 3 = North
 	var max_squad_size: int = 1
 	var map_id: int = 0
 	var deployment_id: int = 0
@@ -64,8 +64,8 @@ class DeploymentData:
 			var is_present: bool = deployment_zone_bitmap & (idx**2) != 0
 			deployment_map[coordinates] = is_present
 		
-		orientation = (bytes.decode_u8(7) & 0xf0) >> 4 # 0 = West, 1 = South, 2 = East, 3 = North
-		orientation_bitmap_rotated = bytes.decode_u8(7) & 0x0f # 0 = West, 1 = South, 2 = East, 3 = North
+		unit_facing = (bytes.decode_u8(7) & 0xf0) >> 4 # 0 = West, 1 = South, 2 = East, 3 = North
+		zone_facing = bytes.decode_u8(7) & 0x0f # 0 = West, 1 = South, 2 = East, 3 = North
 		max_squad_size = bytes.decode_u8(8)
 		map_id = bytes.decode_u8(9)
 		deployment_id = bytes.decode_u16(10)
@@ -88,4 +88,4 @@ func init_from_attack_out() -> void:
 		var deployment_bytes_start: int = idx * deployment_data_entry_length
 		var deployment_entry_bytes: PackedByteArray = deployment_table_bytes.slice(deployment_bytes_start, deployment_bytes_start + deployment_data_entry_length)
 
-		deployment_data.append(DeploymentData.new(deployment_entry_bytes))
+		deployment_data.append(DeploymentZoneData.new(deployment_entry_bytes))

@@ -486,7 +486,8 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData
 	units.append(new_unit)
 	new_unit.initialize_unit()
 	new_unit.tile_position = tile_position
-	new_unit.char_body.global_position = Vector3(tile_position.location.x + 0.5, randi_range(15, 20), tile_position.location.y + 0.5)
+	#new_unit.char_body.global_position = Vector3(tile_position.location.x + 0.5, randi_range(15, 20), tile_position.location.y + 0.5)
+	new_unit.char_body.global_position = Vector3(tile_position.location.x + 0.5, tile_position.get_world_position().y + 0.25, tile_position.location.y + 0.5)
 	new_unit.update_unit_facing([Vector3.FORWARD, Vector3.BACK, Vector3.LEFT, Vector3.RIGHT].pick_random())
 	if job_id < 0x5e: # non-monster
 		new_unit.stat_basis = [UnitData.StatBasis.MALE, UnitData.StatBasis.FEMALE].pick_random()

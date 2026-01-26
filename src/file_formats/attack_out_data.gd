@@ -43,6 +43,7 @@ class ScenarioData:
 
 class DeploymentData:
 	var deployment_zone_bitmap: int = 0 # 0x01ffffff is full 5x5 grid
+	var deployment_map: Dictionary[Vector2i, bool] = {}
 	var deployment_zone_center_x: int = 0
 	var deployment_zone_center_y: int = 0
 	var orientation: int = 0 # 0 = West, 1 = South, 2 = East, 3 = North
@@ -55,6 +56,14 @@ class DeploymentData:
 		deployment_zone_bitmap = bytes.decode_u32(0) # 0x01ffffff is full 5x5 grid
 		deployment_zone_center_x = bytes.decode_u8(4)
 		deployment_zone_center_y = bytes.decode_u8(5)
+		
+		for idx: int in 25:
+			var coord_x: int = (idx % 5) - 2 + deployment_zone_center_x
+			var coord_y: int = floori(idx / 5.0) - 2 + deployment_zone_center_y
+			var coordinates: Vector2i = Vector2i(coord_x, coord_y)
+			var is_present: bool = deployment_zone_bitmap & (idx**2) != 0
+			deployment_map[coordinates] = is_present
+		
 		orientation = (bytes.decode_u8(7) & 0xf0) >> 4 # 0 = West, 1 = South, 2 = East, 3 = North
 		orientation_bitmap_rotated = bytes.decode_u8(7) & 0x0f # 0 = West, 1 = South, 2 = East, 3 = North
 		max_squad_size = bytes.decode_u8(8)

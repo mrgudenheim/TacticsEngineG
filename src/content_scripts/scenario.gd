@@ -14,13 +14,13 @@ func add_to_global_list(will_overwrite: bool = false) -> void:
 	if ["", "unique_name"].has(unique_name):
 		unique_name = display_name.to_snake_case()
 	
-	if RomReader.status_effects.keys().has(unique_name) and will_overwrite:
+	if RomReader.scenarios.keys().has(unique_name) and will_overwrite:
 		push_warning("Overwriting existing scenario: " + unique_name)
-	elif RomReader.status_effects.keys().has(unique_name) and not will_overwrite:
+	elif RomReader.scenarios.keys().has(unique_name) and not will_overwrite:
 		var num: int = 2
 		var formatted_num: String = "%02d" % num
 		var new_unique_name: String = unique_name + "_" + formatted_num
-		while RomReader.status_effects.keys().has(new_unique_name):
+		while RomReader.scenarios.keys().has(new_unique_name):
 			num += 1
 			formatted_num = "%02d" % num
 			new_unique_name = unique_name + "_" + formatted_num
@@ -28,7 +28,7 @@ func add_to_global_list(will_overwrite: bool = false) -> void:
 		push_warning("Scenario list already contains: " + unique_name + ". Incrementing unique_name to: " + new_unique_name)
 		unique_name = new_unique_name
 	
-	RomReader.status_effects[unique_name] = self
+	RomReader.scenarios[unique_name] = self
 
 
 func to_json() -> String:

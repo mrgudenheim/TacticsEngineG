@@ -7,7 +7,10 @@ const FILE_SUFFIX: String = "scenario"
 @export var display_name: String = "display_name"
 @export var description: String = "description"
 
-
+@export var map_id: int = 0
+# TODO multiple maps? mirroring maps?
+# @export var units_data: Array[UnitData] = [] # TODO separate unit data from node into Resource
+@export var deployment_zone: Array[Vector2i] = []
 
 
 func add_to_global_list(will_overwrite: bool = false) -> void:

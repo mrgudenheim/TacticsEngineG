@@ -56,21 +56,22 @@ class DeploymentZoneData:
 		deployment_zone_bitmap = bytes.decode_u32(0) # 0x01ffffff is full 5x5 grid
 		deployment_zone_center_x = bytes.decode_u8(4)
 		deployment_zone_center_y = bytes.decode_u8(5)
-		
-		for idx: int in 25:
-			var is_present: bool = deployment_zone_bitmap & (idx**2) != 0
-			if is_present:
-				var coord_x: int = (idx % 5) - 2 + deployment_zone_center_x
-				var coord_y: int = floori(idx / 5.0) - 2 + deployment_zone_center_y
-				var coordinates: Vector2i = Vector2i(coord_x, coord_y)
-				
-				deployment_map.append(coordinates)
-		
 		unit_facing = (bytes.decode_u8(7) & 0xf0) >> 4 # 0 = West, 1 = South, 2 = East, 3 = North
 		zone_facing = bytes.decode_u8(7) & 0x0f # 0 = West, 1 = South, 2 = East, 3 = North
 		max_squad_size = bytes.decode_u8(8)
 		map_id = bytes.decode_u8(9)
 		deployment_id = bytes.decode_u16(10)
+
+		for idx: int in 25:
+			var is_present: bool = deployment_zone_bitmap & (idx**2) != 0
+			if is_present:
+				# get coordinates where 0,0 is center of 5x5 zone
+				var base_x: int = (idx % 5) - 2
+				var base_y: int = floori(idx / 5.0) - 2
+				var rotated_coords: Vector2i = Vector2i(Vector2(base_x, base_y).rotated(zone_facing * PI / 2).round())
+				var map_coordinates: Vector2i = rotated_coords + Vector2i(deployment_zone_center_x, deployment_zone_center_y) # convert coords to map coordinates
+				
+				deployment_map.append(map_coordinates)
 
 
 func init_from_attack_out() -> void:

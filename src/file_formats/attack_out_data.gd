@@ -43,7 +43,6 @@ class ScenarioData:
 
 class DeploymentZoneData:
 	var deployment_zone_bitmap: int = 0 # 0x01ffffff is full 5x5 grid
-	var deployment_map: Array[Vector2i] = []
 	var deployment_zone_center_x: int = 0
 	var deployment_zone_center_y: int = 0
 	var unit_facing: int = 0 # relative to deployment zone: 0 = West, 1 = South, 2 = East, 3 = North
@@ -51,6 +50,7 @@ class DeploymentZoneData:
 	var max_squad_size: int = 1
 	var map_id: int = 0
 	var deployment_id: int = 0
+	var deployment_map: Array[Vector2i] = [] # stores map coordinates of deployment tiles
 	
 	func _init(bytes: PackedByteArray) -> void:
 		deployment_zone_bitmap = bytes.decode_u32(0) # 0x01ffffff is full 5x5 grid

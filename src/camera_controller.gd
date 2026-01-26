@@ -40,6 +40,7 @@ var is_transitioning: bool = false
 var transition_start_pos: Vector3
 var transition_time: float = 0.0
 
+var pan_direction: Vector2 = Vector2.ZERO
 
 enum Direction {
 	NORTHWEST,
@@ -73,6 +74,10 @@ func _process(delta: float) -> void:
 			is_transitioning = false
 	elif follow_node != null:
 		global_position = follow_node.global_position
+	elif follow_node == null:
+		var transform_basis = transform.basis
+		transform_basis.y = Vector3.DOWN # camera should not move in/out of the direction it is facing
+		position += (transform_basis * Vector3(pan_direction.x, pan_direction.y, 0)) * zoom * (pan_speed_max / 5.0) * delta
 
 
 func start_transitioning() -> void:
@@ -92,7 +97,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		start_rotating_camera(-1)
 	elif event.is_action_pressed(&"camera_rotate_right", true):
 		start_rotating_camera(1)
-	#else:
+	elif follow_node == null:
+		pan_direction = Input.get_vector(&"camera_left", &"camera_right", &"camera_up", &"camera_down")
 		#var dir := Input.get_vector(&"camera_left", &"camera_right", &"camera_up", &"camera_down")
 		#if dir != Vector2.ZERO:
 			#pan_camera(dir)
@@ -111,18 +117,18 @@ func zoom_camera(dir: int) -> void:
 		
 
 
-func pan_camera(dir: Vector2) -> void:
-	var new_position: Vector3 = Vector3.ZERO
-	var offset: Vector2 = dir * zoom * pan_speed_max
-	
-	var new_x = self.position.x + offset.x
-	var new_y = self.position.y - offset.y
-	var new_z = self.position.z
-	new_position = Vector3(new_x, new_y, new_z)
-	
-	var tween := create_tween().set_parallel()
-	tween.set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_IN)
-	tween.tween_property(self, "position", new_position, 0.05)
+#func pan_camera(dir: Vector2) -> void:
+	#var new_position: Vector3 = Vector3.ZERO
+	#var offset: Vector2 = dir * zoom * pan_speed_max
+	#
+	#var new_x = self.position.x + offset.x
+	#var new_y = self.position.y - offset.y
+	#var new_z = self.position.z
+	#new_position = Vector3(new_x, new_y, new_z)
+	#
+	#var tween := create_tween().set_parallel()
+	#tween.set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_IN)
+	#tween.tween_property(self, "position", new_position, 0.05)
 
 
 func start_rotating_camera(dir: int) -> void:

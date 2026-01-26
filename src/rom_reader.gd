@@ -48,7 +48,7 @@ var actions: Dictionary[String, Action] = {} # [unique_name, Action]
 var triggered_actions: Dictionary[String, TriggeredAction] = {} # [unique_name, TriggeredAction]
 var passive_effects: Dictionary[String, PassiveEffect] = {} # [unique_name, TriggeredAction]
 var abilities: Dictionary[String, Ability] = {} # [unique_name, Ability]
-
+var scenarios: Dictionary[String, Scenario] = {} # [unique_name, Scenario]
 
 var battle_bin_data: BattleBinData = BattleBinData.new() # BATTLE.BIN tables
 var scus_data: ScusData = ScusData.new() # SCUS.942.41 tables
@@ -95,9 +95,16 @@ func clear_data() -> void:
 	maps.clear()
 	vfx.clear()
 	fft_abilities.clear()
+	fft_entds.clear()
 	items_array.clear()
+	items.clear()
 	status_effects.clear()
 	jobs_data.clear()
+	actions.clear()
+	triggered_actions.clear()
+	passive_effects.clear()
+	abilities.clear()
+	scenarios.clear()
 
 
 func process_rom() -> void:

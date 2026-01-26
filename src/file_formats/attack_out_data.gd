@@ -43,7 +43,7 @@ class ScenarioData:
 
 class DeploymentZoneData:
 	var deployment_zone_bitmap: int = 0 # 0x01ffffff is full 5x5 grid
-	var deployment_map: Dictionary[Vector2i, bool] = {}
+	var deployment_map: Array[Vector2i] = []
 	var deployment_zone_center_x: int = 0
 	var deployment_zone_center_y: int = 0
 	var unit_facing: int = 0 # relative to deployment zone: 0 = West, 1 = South, 2 = East, 3 = North
@@ -58,11 +58,13 @@ class DeploymentZoneData:
 		deployment_zone_center_y = bytes.decode_u8(5)
 		
 		for idx: int in 25:
-			var coord_x: int = (idx % 5) - 2 + deployment_zone_center_x
-			var coord_y: int = floori(idx / 5.0) - 2 + deployment_zone_center_y
-			var coordinates: Vector2i = Vector2i(coord_x, coord_y)
 			var is_present: bool = deployment_zone_bitmap & (idx**2) != 0
-			deployment_map[coordinates] = is_present
+			if is_present:
+				var coord_x: int = (idx % 5) - 2 + deployment_zone_center_x
+				var coord_y: int = floori(idx / 5.0) - 2 + deployment_zone_center_y
+				var coordinates: Vector2i = Vector2i(coord_x, coord_y)
+				
+				deployment_map.append(coordinates)
 		
 		unit_facing = (bytes.decode_u8(7) & 0xf0) >> 4 # 0 = West, 1 = South, 2 = East, 3 = North
 		zone_facing = bytes.decode_u8(7) & 0x0f # 0 = West, 1 = South, 2 = East, 3 = North

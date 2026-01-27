@@ -35,7 +35,8 @@ var spr_id_file_idxs: PackedInt32Array = [] # 0x60 starts generic jobs
 
 var shps: Array[Shp] = []
 var seqs: Array[Seq] = []
-var maps: Array[MapData] = []
+var maps_array: Array[MapData] = []
+var maps: Dictionary[String, MapData] = {}
 var vfx: Array[VisualEffectData] = []
 var fft_abilities: Array[FftAbilityData] = []
 var fft_entds: Array[FftEntd] = []
@@ -92,6 +93,7 @@ func clear_data() -> void:
 	spr_file_name_to_id.clear()
 	shps.clear()
 	seqs.clear()
+	maps_array.clear()
 	maps.clear()
 	vfx.clear()
 	fft_abilities.clear()
@@ -538,8 +540,8 @@ func process_file_records(sectors: PackedInt32Array, folder_name: String = "") -
 				record.type_index = seqs.size()
 				seqs.append(Seq.new(record.name))
 			elif file_extension == "GNS":
-				record.type_index = maps.size()
-				maps.append(MapData.new(record.name))
+				record.type_index = maps_array.size()
+				maps_array.append(MapData.new(record.name))
 			
 			byte_index += record_length
 			if byte_index < DATA_BYTES_PER_SECTOR:

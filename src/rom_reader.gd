@@ -130,6 +130,15 @@ func process_rom() -> void:
 	attack_out_data.init_from_attack_out()
 	
 	cache_associated_files()
+
+	for map_idx: int in maps_array.size():
+		var map_data: MapData = maps_array[map_idx]
+		map_data.unique_name = map_data.file_name.trim_suffix(".GNS")
+		if map_idx != 0 and map_idx <= RomReader.fft_text.map_names.size():
+			map_data.display_name = RomReader.fft_text.map_names[map_idx - 1]
+			map_data.unique_name += " " + map_data.display_name
+		map_data.unique_name = map_data.unique_name.to_snake_case()
+		maps[map_data.unique_name] = map_data
 	
 	for ability_id: int in NUM_ABILITIES:
 		var new_fft_ability: FftAbilityData = FftAbilityData.new(ability_id)

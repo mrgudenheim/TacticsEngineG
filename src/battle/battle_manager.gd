@@ -236,6 +236,7 @@ func load_scenario(new_scenario: Scenario) -> void:
 
 		var mesh_aabb: AABB = map_chunk_data.mesh.get_aabb()
 		# modify mesh based on mirroring and so bottom left corner is at (0, 0, 0)
+		# TODO handle rotation
 		if map_chunk_scale != Vector3.ONE or mesh_aabb.position != Vector3.ZERO:
 			var surface_arrays: Array[Array] = map_chunk_data.mesh.surface_get_arrays(0)
 			var original_mesh_center: Vector3 = mesh_aabb.get_center()
@@ -257,6 +258,7 @@ func load_scenario(new_scenario: Scenario) -> void:
 		new_map_instance.collision_shape.shape = new_map_instance.mesh_instance.mesh.create_trimesh_shape()
 
 		# add terrain tiles to total_tiles
+		# TODO handle rotation
 		for tile: TerrainTile in map_chunk.map_data.terrain_tiles:
 			if tile.no_cursor == 1:
 				continue

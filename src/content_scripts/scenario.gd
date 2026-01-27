@@ -18,6 +18,7 @@ class MapChunk extends Resource:
 	@export var unique_name: String = "unique_name"
 	@export var mirror_xyz: Array[bool] = [false, false, false] # mirror y of fft maps to have postive y be up, invert x or z to mirror the map
 	@export var corner_position: Vector3 = Vector3.ZERO
+	@export var rotation: int = 0 # values 0, 1, 2, 3 for 90 degree rotation increments
 
 
 func add_to_global_list(will_overwrite: bool = false) -> void:

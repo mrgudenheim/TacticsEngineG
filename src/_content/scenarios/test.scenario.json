@@ -1,12 +1,22 @@
 {
-	"unique_name": "test0",
-
+	"deployment_zones": [],
+	"description": "description",
+	"display_name": "display_name",
 	"map_chunks": [
 		{
-			"unique_name": "map116",
-			"mirror_xyz": [false, false, false],
-			"corner_position": [0, 0, 0],
-			"rotation": 0
+			"corner_position": [
+				0,
+				0,
+				0
+			],
+			"mirror_xyz": [
+				false,
+				true,
+				false
+			],
+			"rotation": 0,
+			"unique_name": "map_116"
 		}
-	]
+	],
+	"unique_name": "test0"
 }

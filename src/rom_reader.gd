@@ -192,6 +192,15 @@ func process_rom() -> void:
 	import_custom_data()
 	connect_data_references()
 
+	# var new_scenario: Scenario = Scenario.new()
+	# new_scenario.unique_name = "test1"
+	# var new_map_chunk: Scenario.MapChunk = Scenario.MapChunk.new()
+	# new_map_chunk.unique_name = maps_array[116].unique_name
+	# new_map_chunk.mirror_xyz = [false, true, false]
+	# new_map_chunk.corner_position = Vector3i.ZERO
+	# new_scenario.map_chunks.append(new_map_chunk)
+	# Utilities.save_json(new_scenario)
+
 	# var vfx_scripts: Dictionary[String, PackedStringArray] = {}
 	# var output_array: PackedStringArray = []
 	# for vfx_file in vfx:
@@ -753,6 +762,7 @@ func import_custom_data() -> void:
 		"status_effects",
 		"items",
 		"abilities",
+		"scenarios",
 	]
 
 	for content_folder: String in folder_names:

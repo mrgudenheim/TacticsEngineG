@@ -50,6 +50,14 @@ func object_properties_to_dictionary(object: Object, exclude_property_names: Pac
 				var color: Color = object.get(property["name"])
 				var new_array: Array = [color.r, color.g, color.b, color.a]
 				property_dict[property["name"]] = new_array
+			elif property["type"] == TYPE_VECTOR3 or property["type"] == TYPE_VECTOR3I:
+				var vector = object.get(property["name"])
+				var new_array: Array = [vector.x, vector.y, vector.z]
+				property_dict[property["name"]] = new_array
+			elif property["type"] == TYPE_VECTOR2 or property["type"] == TYPE_VECTOR2I:
+				var vector = object.get(property["name"])
+				var new_array: Array = [vector.x, vector.y]
+				property_dict[property["name"]] = new_array
 			else:
 				property_dict[property["name"]] = object.get(property["name"])
 		elif object.get(property["name"]).has_method("to_dictionary"):

@@ -1,7 +1,7 @@
 class_name Scenario
 extends Resource
 
-const SAVE_DIRECTORY_PATH: String = "user://overrides/scenario/"
+const SAVE_DIRECTORY_PATH: String = "user://overrides/scenarios/"
 const FILE_SUFFIX: String = "scenario"
 @export var unique_name: String = "unique_name"
 @export var display_name: String = "display_name"
@@ -17,8 +17,8 @@ class MapChunk extends Resource:
 	@export var mirror_xyz: Array[bool] = [false, false, false] # mirror y of fft maps to have postive y be up, invert x or z to mirror the map
 	@export var corner_position: Vector3i = Vector3i.ZERO
 	@export var rotation: int = 0 # values 0, 1, 2, 3 for 90 degree rotation increments
-
-	func to_json() -> String:
+	
+	func to_dictionary() -> Dictionary:
 		var properties_to_exclude: PackedStringArray = [
 			"RefCounted",
 			"Resource",
@@ -28,23 +28,26 @@ class MapChunk extends Resource:
 			"resource_scene_unique_id",
 			"script",
 		]
-		return Utilities.object_properties_to_json(self, properties_to_exclude)
-
-
-	static func create_from_json(json_string: String) -> Scenario:
-		var property_dict: Dictionary = JSON.parse_string(json_string)
-		var new_scenario: Scenario = create_from_dictionary(property_dict)
 		
-		return new_scenario
+		return Utilities.object_properties_to_dictionary(self, properties_to_exclude)
 
-
-	static func create_from_dictionary(property_dict: Dictionary) -> Scenario:
-		var new_scenario: Scenario = Scenario.new()
+	static func create_from_dictionary(property_dict: Dictionary) -> MapChunk:
+		var new_map_chunk: MapChunk = MapChunk.new()
 		for property_name in property_dict.keys():
-			new_scenario.set(property_name, property_dict[property_name])
+			if property_name == "corner_position":
+				var vector_as_array = property_dict[property_name]
+				var new_corner_position: Vector3i = Vector3i(roundi(vector_as_array[0]), roundi(vector_as_array[1]), roundi(vector_as_array[2]))
+				new_map_chunk.set(property_name, new_corner_position)
+			elif property_name == "mirror_xyz":
+				var array = property_dict[property_name]
+				var new_mirror_xyz: Array[bool] = []
+				new_mirror_xyz.assign(array)
+				new_map_chunk.set(property_name, new_mirror_xyz)
+			else:
+				new_map_chunk.set(property_name, property_dict[property_name])
 
-		new_scenario.emit_changed()
-		return new_scenario
+		new_map_chunk.emit_changed()
+		return new_map_chunk
 
 
 func add_to_global_list(will_overwrite: bool = false) -> void:
@@ -91,7 +94,16 @@ static func create_from_json(json_string: String) -> Scenario:
 static func create_from_dictionary(property_dict: Dictionary) -> Scenario:
 	var new_scenario: Scenario = Scenario.new()
 	for property_name in property_dict.keys():
-		new_scenario.set(property_name, property_dict[property_name])
+		if property_name == "map_chunks":
+			var new_map_chunks: Array[MapChunk] = []
+			var map_chunks_array = property_dict[property_name]
+			for map_chunk_dict: Dictionary in map_chunks_array:
+				var new_map_chunk: MapChunk = MapChunk.create_from_dictionary(map_chunk_dict)
+				new_map_chunks.append(new_map_chunk)
+
+			new_scenario.set(property_name, new_map_chunks)
+		else:
+			new_scenario.set(property_name, property_dict[property_name])
 
 	new_scenario.emit_changed()
 	return new_scenario

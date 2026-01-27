@@ -668,14 +668,14 @@ func get_map(new_map_data: MapData, map_position: Vector3, map_scale: Vector3, g
 	new_map_instance.map_data = new_map_data
 	
 	if gltf_map_mesh != null:
-		new_map_instance.mesh.queue_free()
+		new_map_instance.mesh_instance.queue_free()
 		var new_gltf_mesh: MeshInstance3D = gltf_map_mesh.duplicate()
 		new_map_instance.add_child(new_gltf_mesh)
-		new_map_instance.mesh = new_gltf_mesh
-		new_map_instance.mesh.rotation_degrees = Vector3.ZERO
+		new_map_instance.mesh_instance = new_gltf_mesh
+		new_map_instance.mesh_instance.rotation_degrees = Vector3.ZERO
 	else:
-		new_map_instance.mesh.mesh = new_map_data.mesh
-	new_map_instance.mesh.scale = map_scale
+		new_map_instance.mesh_instance.mesh = new_map_data.mesh
+	new_map_instance.mesh_instance.scale = map_scale
 	new_map_instance.position = map_position
 	#new_map_instance.global_rotation_degrees = Vector3(0, 0, 0)
 	
@@ -683,9 +683,9 @@ func get_map(new_map_data: MapData, map_position: Vector3, map_scale: Vector3, g
 	
 	#var shape_mesh: ConcavePolygonShape3D = new_map_data.mesh.create_trimesh_shape()
 	if map_scale == Vector3.ONE:
-		new_map_instance.collision_shape.shape = new_map_instance.mesh.mesh.create_trimesh_shape()
+		new_map_instance.collision_shape.shape = new_map_instance.mesh_instance.mesh.create_trimesh_shape()
 	else:
-		new_map_instance.collision_shape.shape = get_scaled_collision_shape(new_map_instance.mesh.mesh, map_scale)
+		new_map_instance.collision_shape.shape = get_scaled_collision_shape(new_map_instance.mesh_instance.mesh, map_scale)
 	
 	new_map_instance.play_animations(new_map_data)
 	new_map_instance.input_event.connect(on_map_input_event)
@@ -715,7 +715,7 @@ func instantiate_map(map_idx: int, mirror_chunks: bool, offset: Vector3 = Vector
 	var new_map: Map = get_map(map_data, offset, Vector3(1, 1, 1))
 	var map_name: String = map_data.file_name.trim_suffix(".GNS")
 	new_map.name = map_name
-	new_map.mesh.name = map_name
+	new_map.mesh_instance.name = map_name
 	
 	
 	var imported_mesh: MeshInstance3D = null
@@ -760,7 +760,7 @@ func initialize_map_tiles() -> void:
 				continue
 			
 			var total_location: Vector2i = tile.location
-			var map_scale: Vector2i = Vector2i(map_chunk.mesh.scale.x, map_chunk.mesh.scale.z)
+			var map_scale: Vector2i = Vector2i(map_chunk.mesh_instance.scale.x, map_chunk.mesh_instance.scale.z)
 			total_location = total_location * map_scale
 			var mirror_shift: Vector2i = map_scale # ex. (0,0) should be (-1, -1) when mirrored across x and y
 			if map_scale.x == 1:
@@ -773,8 +773,8 @@ func initialize_map_tiles() -> void:
 				total_map_tiles[total_location] = []
 			var total_tile: TerrainTile = tile.duplicate()
 			total_tile.location = total_location
-			total_tile.tile_scale.x = map_chunk.mesh.scale.x
-			total_tile.tile_scale.z = map_chunk.mesh.scale.z
+			total_tile.tile_scale.x = map_chunk.mesh_instance.scale.x
+			total_tile.tile_scale.z = map_chunk.mesh_instance.scale.z
 			total_tile.height_bottom += map_chunk.position.y / MapData.HEIGHT_SCALE
 			total_tile.height_mid = total_tile.height_bottom + (total_tile.slope_height / 2.0)
 			total_map_tiles[total_location].append(total_tile)

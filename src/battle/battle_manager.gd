@@ -207,6 +207,92 @@ func on_map_selected(index: int) -> void:
 	hide_debug_ui()
 
 
+func load_scenario(new_scenario: Scenario) -> void:
+	# setup map chunks
+	for map_chunk: Scenario.MapChunk in new_scenario.map_chunks:
+		var map_chunk_data: MapData = RomReader.maps[map_chunk.unique_name]
+		if not map_chunk_data.is_initialized:
+			map_chunk_data.init_map()
+
+		var new_map_instance: Map = map_tscn.instantiate()
+		new_map_instance.map_data = map_chunk_data
+		new_map_instance.name = map_chunk_data.unique_name
+		
+		# if gltf_map_mesh != null:
+		# 	new_map_instance.mesh.queue_free()
+		# 	var new_gltf_mesh: MeshInstance3D = gltf_map_mesh.duplicate()
+		# 	new_map_instance.add_child(new_gltf_mesh)
+		# 	new_map_instance.mesh = new_gltf_mesh
+		# 	new_map_instance.mesh.rotation_degrees = Vector3.ZERO
+		# else:
+
+		var map_chunk_scale: Vector3 = Vector3.ONE
+		if map_chunk.mirror_xyz[0]:
+			map_chunk_scale.x = -1
+		if map_chunk.mirror_xyz[1]:
+			map_chunk_scale.y = -1
+		if map_chunk.mirror_xyz[2]:
+			map_chunk_scale.z = -1
+
+		var mesh_aabb: AABB = map_chunk_data.mesh.get_aabb()
+		# modify mesh based on mirroring and so bottom left corner is at (0, 0, 0)
+		if map_chunk_scale != Vector3.ONE or mesh_aabb.position != Vector3.ZERO:
+			var surface_arrays: Array[Array] = map_chunk_data.mesh.surface_get_arrays(0)
+			var original_mesh_center: Vector3 = mesh_aabb.get_center()
+			for vertex_idx: int in surface_arrays[Mesh.ARRAY_VERTEX].size():
+				var vertex: Vector3 = surface_arrays[Mesh.ARRAY_VERTEX][vertex_idx]
+				vertex = vertex - original_mesh_center # shift center to be at (0, 0, 0) to make moving after mirroring easy
+				vertex = vertex * map_chunk_scale # apply mirroring
+				vertex = vertex + (mesh_aabb.size / 2.0) # shift so mesh_aabb start will be at (0, 0, 0)
+				
+				surface_arrays[Mesh.ARRAY_VERTEX][vertex_idx] = vertex
+
+			var modified_mesh: ArrayMesh = ArrayMesh.new()
+			modified_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surface_arrays)
+			new_map_instance.mesh_instance.mesh = modified_mesh
+
+
+		new_map_instance.position = map_chunk.corner_position
+		new_map_instance.set_mesh_shader(map_chunk_data.albedo_texture_indexed, map_chunk_data.texture_palettes)
+		new_map_instance.collision_shape.shape = new_map_instance.mesh_instance.mesh.create_trimesh_shape()
+
+		# add terrain tiles to total_tiles
+		for tile: TerrainTile in map_chunk.map_data.terrain_tiles:
+			if tile.no_cursor == 1:
+				continue
+			
+			var total_location: Vector2i = tile.location
+			var map_scale: Vector2i = Vector2i(roundi(map_chunk_scale.x), roundi(map_chunk_scale.z))
+			total_location = total_location * map_scale
+			
+			var mirror_shift: Vector2i = Vector2i.ZERO # ex. (0,0) should be (-1, -1) when mirrored across x and y
+			if map_scale.x == -1:
+				mirror_shift.x = -1
+				mirror_shift.x += roundi(mesh_aabb.size.x)
+			if map_scale.y == -1:
+				mirror_shift.y = -1
+				mirror_shift.y += roundi(mesh_aabb.size.z)
+				
+			total_location = total_location + mirror_shift
+
+			# total_location = total_location + Vector2i(map_chunk.position.x, map_chunk.position.z)
+			if not total_map_tiles.has(total_location):
+				total_map_tiles[total_location] = []
+			var total_tile: TerrainTile = tile.duplicate()
+			total_tile.location = total_location
+			total_tile.tile_scale.x = map_chunk_scale.x
+			total_tile.tile_scale.z = map_chunk_scale.z
+			total_tile.height_bottom += map_chunk.position.y / MapData.HEIGHT_SCALE
+			total_tile.height_mid = total_tile.height_bottom + (total_tile.slope_height / 2.0)
+			total_map_tiles[total_location].append(total_tile)
+		
+		new_map_instance.play_animations(map_chunk_data)
+		new_map_instance.input_event.connect(on_map_input_event)
+	
+		maps.add_child(new_map_instance)
+		
+
+
 func start_battle() -> void:
 	battle_setup.visible = false
 	battle_setup.tile_highlight.queue_free()

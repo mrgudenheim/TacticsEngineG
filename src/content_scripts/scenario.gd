@@ -8,9 +8,16 @@ const FILE_SUFFIX: String = "scenario"
 @export var description: String = "description"
 
 @export var map_id: int = 0
+@export var map_chunks: Array[MapChunk] = []
 # TODO multiple maps? mirroring maps?
 # @export var units_data: Array[UnitData] = [] # TODO separate unit data from node into Resource
-@export var deployment_zone: Array[Vector2i] = []
+@export var deployment_zones: Array[PackedVector2Array] = []
+
+
+class MapChunk extends Resource:
+	@export var unique_name: String = "unique_name"
+	@export var mirror_xyz: Array[bool] = [false, false, false] # mirror y of fft maps to have postive y be up, invert x or z to mirror the map
+	@export var corner_position: Vector3 = Vector3.ZERO
 
 
 func add_to_global_list(will_overwrite: bool = false) -> void:

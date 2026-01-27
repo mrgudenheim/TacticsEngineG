@@ -173,7 +173,7 @@ func on_map_selected(index: int) -> void:
 	
 	var start_time: int = Time.get_ticks_msec()
 	
-	var map_data: MapData = RomReader.maps[index]
+	var map_data: MapData = RomReader.maps_array[index]
 	if not map_data.is_initialized:
 		map_data.init_map()
 	map_size_label.text = "Map Size: " + str(map_data.map_width) + " x " + str(map_data.map_length) + " (" + str(map_data.map_width * map_data.map_length) + ")"
@@ -708,7 +708,7 @@ func get_scaled_collision_shape(mesh: Mesh, collision_scale: Vector3) -> Concave
 func instantiate_map(map_idx: int, mirror_chunks: bool, offset: Vector3 = Vector3.ZERO) -> Node3D:
 	var map_holder: Node3D = Node3D.new()
 	
-	var map_data: MapData = RomReader.maps[map_idx]
+	var map_data: MapData = RomReader.maps_array[map_idx]
 	if not map_data.is_initialized:
 		map_data.init_map()
 	

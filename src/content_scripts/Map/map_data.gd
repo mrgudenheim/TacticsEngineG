@@ -1,10 +1,15 @@
 #https://ffhacktics.com/wiki/Maps/Mesh
 class_name MapData
+extends Resource
 
 const TILE_SIDE_LENGTH: int = 28
 const UNITS_PER_HEIGHT: int = 12
 const SCALE: float = 1.0 / TILE_SIDE_LENGTH
 const HEIGHT_SCALE: float = UNITS_PER_HEIGHT / (TILE_SIDE_LENGTH * 1.0)
+
+var unique_name: String = "unique_name"
+var display_name: String = "display_name"
+var description: String = "description"
 
 var is_initialized: bool = false
 
@@ -638,7 +643,7 @@ func swap_palette(palette_id: int, new_palette: PackedColorArray, map: Map) -> v
 	var new_mesh_material: Material = mesh.surface_get_material(0)
 	new_mesh_material.set_texture(BaseMaterial3D.TEXTURE_ALBEDO, new_texture)
 	#mesh.surface_set_material(0, new_mesh_material)
-	map.mesh.mesh.surface_set_material(0, new_mesh_material)
+	map.mesh_instance.mesh.surface_set_material(0, new_mesh_material)
 
 
 func animate_palette(texture_anim: TextureAnimationData, map: Map, anim_fps: float) -> void:
@@ -646,7 +651,7 @@ func animate_palette(texture_anim: TextureAnimationData, map: Map, anim_fps: flo
 	var dir: int = 1
 	var colors_per_palette: int = 16
 	
-	var map_shader_material: ShaderMaterial = map.mesh.material_override as ShaderMaterial
+	var map_shader_material: ShaderMaterial = map.mesh_instance.material_override as ShaderMaterial
 	while frame_id < texture_anim.num_frames:
 		if not is_instance_valid(map):
 			break
@@ -675,7 +680,7 @@ func animate_uv(texture_anim: TextureAnimationData, map: Map, anim_idx: int, ani
 	var frame_id: int = 0
 	var dir: int = 1
 	
-	var map_shader_material: ShaderMaterial = map.mesh.material_override as ShaderMaterial
+	var map_shader_material: ShaderMaterial = map.mesh_instance.material_override as ShaderMaterial
 	while frame_id < texture_anim.num_frames:
 		if not is_instance_valid(map):
 			break

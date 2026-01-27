@@ -1,7 +1,7 @@
 class_name Map
 extends StaticBody3D
 
-@export var mesh: MeshInstance3D
+@export var mesh_instance: MeshInstance3D
 @export var collision_shape: CollisionShape3D
 @export var map_shader: Shader
 var map_data: MapData
@@ -33,7 +33,7 @@ func play_animations(local_map_data: MapData) -> void:
 			frame_positions[anim_id] = Vector2(local_map_data.texture_animations[anim_id].frame1_x / float(MapData.TEXTURE_SIZE.x * num_palettes), 
 					(local_map_data.texture_animations[anim_id].frame1_y + (256 * local_map_data.texture_animations[anim_id].texture_page)) / float(MapData.TEXTURE_SIZE.y))
 	
-	var map_shader_material: ShaderMaterial = mesh.material_override as ShaderMaterial
+	var map_shader_material: ShaderMaterial = mesh_instance.material_override as ShaderMaterial
 	map_shader_material.set_shader_parameter("canvas_pos", canvas_positions)
 	map_shader_material.set_shader_parameter("canvas_size", canvas_sizes)
 	map_shader_material.set_shader_parameter("frame_pos", frame_positions)
@@ -53,4 +53,4 @@ func set_mesh_shader(texture: Texture2D, texture_palettes: PackedColorArray) -> 
 	new_mesh_material.shader = map_shader
 	new_mesh_material.set_shader_parameter("albedo_texture_color_indicies", texture)
 	new_mesh_material.set_shader_parameter("palettes_colors", texture_palettes)
-	mesh.material_override = new_mesh_material
+	mesh_instance.material_override = new_mesh_material

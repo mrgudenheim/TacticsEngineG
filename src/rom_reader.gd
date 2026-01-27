@@ -797,6 +797,10 @@ func import_custom_data() -> void:
 								var new_content: ItemData = ItemData.create_from_json(file_text)
 								if not items.keys().has(new_content.unique_name): # TODO allow overwriting content
 									new_content.add_to_global_list()
+							"scenario":
+								var new_content: Scenario = Scenario.create_from_json(file_text)
+								if not scenarios.keys().has(new_content.unique_name): # TODO allow overwriting content
+									new_content.add_to_global_list()
 				file_name = dir.get_next()
 			dir.list_dir_end()
 		else:

@@ -7,9 +7,7 @@ const FILE_SUFFIX: String = "scenario"
 @export var display_name: String = "display_name"
 @export var description: String = "description"
 
-@export var map_id: int = 0
 @export var map_chunks: Array[MapChunk] = []
-# TODO multiple maps? mirroring maps?
 # @export var units_data: Array[UnitData] = [] # TODO separate unit data from node into Resource
 @export var deployment_zones: Array[PackedVector2Array] = []
 
@@ -17,8 +15,36 @@ const FILE_SUFFIX: String = "scenario"
 class MapChunk extends Resource:
 	@export var unique_name: String = "unique_name"
 	@export var mirror_xyz: Array[bool] = [false, false, false] # mirror y of fft maps to have postive y be up, invert x or z to mirror the map
-	@export var corner_position: Vector3 = Vector3.ZERO
+	@export var corner_position: Vector3i = Vector3i.ZERO
 	@export var rotation: int = 0 # values 0, 1, 2, 3 for 90 degree rotation increments
+
+	func to_json() -> String:
+		var properties_to_exclude: PackedStringArray = [
+			"RefCounted",
+			"Resource",
+			"resource_local_to_scene",
+			"resource_path",
+			"resource_name",
+			"resource_scene_unique_id",
+			"script",
+		]
+		return Utilities.object_properties_to_json(self, properties_to_exclude)
+
+
+	static func create_from_json(json_string: String) -> Scenario:
+		var property_dict: Dictionary = JSON.parse_string(json_string)
+		var new_scenario: Scenario = create_from_dictionary(property_dict)
+		
+		return new_scenario
+
+
+	static func create_from_dictionary(property_dict: Dictionary) -> Scenario:
+		var new_scenario: Scenario = Scenario.new()
+		for property_name in property_dict.keys():
+			new_scenario.set(property_name, property_dict[property_name])
+
+		new_scenario.emit_changed()
+		return new_scenario
 
 
 func add_to_global_list(will_overwrite: bool = false) -> void:

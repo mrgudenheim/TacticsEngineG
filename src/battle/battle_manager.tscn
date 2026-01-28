@@ -61,11 +61,11 @@ load_rom_button = NodePath("DebugOptions/MarginContainer/VBoxContainer2/LoadRom"
 camera_controller = NodePath("BattleSetup/BattleSetupTabContainer/Map/VBoxContainer/SubViewportContainer/SubViewport/BattleView/CameraController")
 background_gradient = NodePath("BackgroundCanvasLayer/TextureRect")
 menu_list = NodePath("DebugOptions/MarginContainer/VBoxContainer2/VBoxContainer")
-map_dropdown = NodePath("BattleSetup/BattleSetupTabContainer/Map/VBoxContainer2/MapDropdown")
+map_dropdown = NodePath("BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapDropdown")
 orthographic_check = NodePath("DebugOptions/MarginContainer/VBoxContainer2/VBoxContainer/OrthographicCheckBox")
 menu_reminder = NodePath("DebugOptions/MarginContainer/VBoxContainer2/MenuReminder")
-map_size_label = NodePath("BattleSetup/BattleSetupTabContainer/Map/VBoxContainer2/MapSize")
-expand_map_check = NodePath("BattleSetup/BattleSetupTabContainer/Map/VBoxContainer2/ExpandMap")
+map_size_label = NodePath("BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapSize")
+expand_map_check = NodePath("BattleSetup/BattleSetupTabContainer/Map/FloatingUi/ExpandMap")
 maps = NodePath("BattleSetup/BattleSetupTabContainer/Map/VBoxContainer/SubViewportContainer/SubViewport/BattleView/Maps")
 map_tscn = ExtResource("2_1os5c")
 tile_highlights = Dictionary[Color, Material]({
@@ -282,8 +282,7 @@ layout_mode = 2
 text = "Game State"
 horizontal_alignment = 1
 
-[node name="BattleSetup" type="Control" parent="." node_paths=PackedStringArray("battle_manager", "start_button", "battle_setup_container", "job_select_control", "item_select_control", "ability_select_control", "unit_setup")]
-visible = false
+[node name="BattleSetup" type="Control" parent="." node_paths=PackedStringArray("battle_manager", "start_button", "load_scenario_button", "battle_setup_container", "job_select_control", "item_select_control", "ability_select_control", "unit_setup", "show_map_tiles_check")]
 layout_mode = 3
 anchor_top = 0.124000005
 anchor_right = 1.0
@@ -293,7 +292,8 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("14_l2dig")
 battle_manager = NodePath("..")
-start_button = NodePath("StartBattle")
+start_button = NodePath("HBoxContainer/StartBattle")
+load_scenario_button = NodePath("HBoxContainer/LoadScenario")
 unit_scene = ExtResource("4_wfrm2")
 battle_setup_container = NodePath("BattleSetupTabContainer")
 team_setup_scene = ExtResource("14_kb1q2")
@@ -301,6 +301,7 @@ job_select_control = NodePath("JobSelectScrollArea")
 item_select_control = NodePath("ItemSelectScrollArea")
 ability_select_control = NodePath("AbilitySelectScrollArea")
 unit_setup = NodePath("BattleSetupTabContainer/Map/VBoxContainer/FoldableContainer/UnitSetupPanel")
+show_map_tiles_check = NodePath("BattleSetupTabContainer/Map/FloatingUi/ShowMapTiles")
 
 [node name="BattleSetupTabContainer" type="TabContainer" parent="BattleSetup"]
 layout_mode = 1
@@ -328,8 +329,8 @@ stretch = true
 transparent_bg = true
 handle_input_locally = false
 physics_object_picking = true
-size = Vector2i(2, 2)
-render_target_update_mode = 0
+size = Vector2i(1516, 434)
+render_target_update_mode = 4
 
 [node name="BattleView" type="Node3D" parent="BattleSetup/BattleSetupTabContainer/Map/VBoxContainer/SubViewportContainer/SubViewport"]
 
@@ -348,22 +349,26 @@ title = "Unit Setup"
 [node name="UnitSetupPanel" parent="BattleSetup/BattleSetupTabContainer/Map/VBoxContainer/FoldableContainer" instance=ExtResource("15_qgxlc")]
 layout_mode = 2
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="BattleSetup/BattleSetupTabContainer/Map"]
+[node name="FloatingUi" type="VBoxContainer" parent="BattleSetup/BattleSetupTabContainer/Map"]
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
 
-[node name="MapDropdown" type="OptionButton" parent="BattleSetup/BattleSetupTabContainer/Map/VBoxContainer2"]
+[node name="MapDropdown" type="OptionButton" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi"]
 layout_mode = 2
 size_flags_horizontal = 0
 
-[node name="MapSize" type="Label" parent="BattleSetup/BattleSetupTabContainer/Map/VBoxContainer2"]
+[node name="MapSize" type="Label" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi"]
 layout_mode = 2
 text = "Map Size: X x Y"
 
-[node name="ExpandMap" type="CheckBox" parent="BattleSetup/BattleSetupTabContainer/Map/VBoxContainer2"]
+[node name="ExpandMap" type="CheckBox" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi"]
 layout_mode = 2
 text = "Expand Map"
+
+[node name="ShowMapTiles" type="CheckBox" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi"]
+layout_mode = 2
+text = "Show Map Tiles"
 
 [node name="JobSelectScrollArea" type="ScrollContainer" parent="BattleSetup" node_paths=PackedStringArray("job_select_button_container")]
 visible = false
@@ -410,14 +415,21 @@ ability_select_button_scene = ExtResource("20_ok2a6")
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="StartBattle" type="Button" parent="BattleSetup"]
+[node name="HBoxContainer" type="HBoxContainer" parent="BattleSetup"]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -89.0
-offset_bottom = 28.0
+offset_bottom = 40.0
 grow_horizontal = 0
+
+[node name="LoadScenario" type="Button" parent="BattleSetup/HBoxContainer"]
+layout_mode = 2
+text = "Load Scenario"
+
+[node name="StartBattle" type="Button" parent="BattleSetup/HBoxContainer"]
+layout_mode = 2
 text = "Start Battle!"
 
 [connection signal="ability_select_pressed" from="BattleSetup/BattleSetupTabContainer/Map/VBoxContainer/FoldableContainer/UnitSetupPanel" to="BattleSetup" method="setup_ability_select"]

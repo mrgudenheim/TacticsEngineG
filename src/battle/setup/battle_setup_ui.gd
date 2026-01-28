@@ -3,6 +3,7 @@ extends Control
 
 @export var battle_manager: BattleManager
 @export var start_button: Button
+@export var load_scenario_button: Button
 @export var unit_scene: PackedScene
 
 @export var battle_setup_container: TabContainer
@@ -16,6 +17,9 @@ extends Control
 @export var unit_dragged: UnitData
 @export var tile_highlight: Node3D
 @export var unit_setup: UnitSetupPanel
+
+@export var show_map_tiles_check: CheckBox
+@export var map_tile_highlights: Array[Node3D] = []
 
 func _process(delta: float) -> void:
 	if unit_dragged != null:
@@ -89,6 +93,9 @@ func initial_setup() -> void:
 	
 	if not start_button.pressed.is_connected(battle_manager.start_battle):
 		start_button.pressed.connect(battle_manager.start_battle)
+	
+	if not show_map_tiles_check.toggled.is_connected(show_all_tiles):
+		show_map_tiles_check.toggled.connect(show_all_tiles)
 	#battle_setup_container.tab_clicked.connect(adjust_height)
 
 
@@ -179,6 +186,31 @@ func add_team(new_team_name: String) -> Team:
 	new_team_setup.setup(new_team)
 	
 	return new_team
+
+
+func show_all_tiles(show_tiles: bool = true, highlight_color: Color = Color.WHITE) -> void:
+	for tile_highlight_node: Node3D in map_tile_highlights:
+		tile_highlight_node.queue_free()
+	
+	map_tile_highlights.clear()
+	if not show_tiles:
+		return
+	
+	for tile_stack: Array in battle_manager.total_map_tiles.values():
+		for tile: TerrainTile in tile_stack:
+			var can_end_on_tile: bool = (tile.no_walk == 0 
+					and tile.no_stand_select == 0 
+					and tile.no_cursor == 0)
+			if can_end_on_tile:
+				highlight_color = Color.BLUE
+				
+			var new_tile_highlight: MeshInstance3D = tile.get_tile_mesh()
+			new_tile_highlight.material_override = battle_manager.tile_highlights[highlight_color] # use pre-existing materials
+			add_child(new_tile_highlight)
+			tile_highlight = new_tile_highlight
+			new_tile_highlight.position = tile.get_world_position(true) + Vector3(0, 0.025, 0)
+
+			map_tile_highlights.append(new_tile_highlight)
 
 
 func adjust_height(tab_idx: int) -> void:

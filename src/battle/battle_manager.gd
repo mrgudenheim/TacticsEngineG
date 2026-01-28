@@ -293,6 +293,7 @@ func load_scenario(new_scenario: Scenario) -> void:
 
 		# add terrain tiles to total_tiles
 		# TODO handle rotation
+		var map_tile_offset: Vector2i = Vector2i(map_chunk.corner_position.x, map_chunk.corner_position.z)
 		for tile: TerrainTile in map_chunk_data.terrain_tiles:
 			if tile.no_cursor == 1:
 				continue
@@ -309,7 +310,7 @@ func load_scenario(new_scenario: Scenario) -> void:
 				mirror_shift.y = -1
 				mirror_shift.y += roundi(mesh_aabb.size.z)
 				
-			total_location = total_location + mirror_shift
+			total_location = total_location + mirror_shift + map_tile_offset
 
 			# total_location = total_location + Vector2i(map_chunk.position.x, map_chunk.position.z)
 			if not total_map_tiles.has(total_location):

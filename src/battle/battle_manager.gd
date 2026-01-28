@@ -172,24 +172,26 @@ func on_map_selected(index: int) -> void:
 	var map_file_name: String = map_dropdown.get_item_text(index)
 	
 	var start_time: int = Time.get_ticks_msec()
-	
-	var map_data: MapData = RomReader.maps_array[index]
-	if not map_data.is_initialized:
-		map_data.init_map()
-	map_size_label.text = "Map Size: " + str(map_data.map_width) + " x " + str(map_data.map_length) + " (" + str(map_data.map_width * map_data.map_length) + ")"
-	
-	background_gradient.texture.gradient.colors[0] = map_data.background_gradient_bottom
-	background_gradient.texture.gradient.colors[1] = map_data.background_gradient_top
-	
-	texture_viewer.texture = map_data.albedo_texture
-	
+
 	clear_maps()
 	clear_units()
 	teams.clear()
 	
-	maps.add_child(instantiate_map(index, not walled_maps.has(index)))
-	#maps.add_child(instantiate_map(0x09, not walled_maps.has(index), Vector3(30, 0 * MapData.HEIGHT_SCALE, 0))) # 0x09 = Igros Citadel
-	initialize_map_tiles()
+	# var map_data: MapData = RomReader.maps_array[index]
+	# if not map_data.is_initialized:
+	# 	map_data.init_map()
+	# map_size_label.text = "Map Size: " + str(map_data.map_width) + " x " + str(map_data.map_length) + " (" + str(map_data.map_width * map_data.map_length) + ")"
+	
+	# background_gradient.texture.gradient.colors[0] = map_data.background_gradient_bottom
+	# background_gradient.texture.gradient.colors[1] = map_data.background_gradient_top
+	
+	# maps.add_child(instantiate_map(index, not walled_maps.has(index)))
+	# #maps.add_child(instantiate_map(0x09, not walled_maps.has(index), Vector3(30, 0 * MapData.HEIGHT_SCALE, 0))) # 0x09 = Igros Citadel
+	# initialize_map_tiles()
+
+	# texture_viewer.texture = map_data.albedo_texture
+
+	load_scenario(RomReader.scenarios["test0"])
 	
 	#var map_width_range: Vector2i = Vector2i(0, map_data.map_width)
 	#var map_length_range: Vector2i = Vector2i(0, map_data.map_length)
@@ -238,7 +240,7 @@ func load_scenario(new_scenario: Scenario) -> void:
 		# modify mesh based on mirroring and so bottom left corner is at (0, 0, 0)
 		# TODO handle rotation
 		if map_chunk_scale != Vector3.ONE or mesh_aabb.position != Vector3.ZERO:
-			var surface_arrays: Array[Array] = map_chunk_data.mesh.surface_get_arrays(0)
+			var surface_arrays: Array = map_chunk_data.mesh.surface_get_arrays(0)
 			var original_mesh_center: Vector3 = mesh_aabb.get_center()
 			for vertex_idx: int in surface_arrays[Mesh.ARRAY_VERTEX].size():
 				var vertex: Vector3 = surface_arrays[Mesh.ARRAY_VERTEX][vertex_idx]
@@ -247,10 +249,42 @@ func load_scenario(new_scenario: Scenario) -> void:
 				vertex = vertex + (mesh_aabb.size / 2.0) # shift so mesh_aabb start will be at (0, 0, 0)
 				
 				surface_arrays[Mesh.ARRAY_VERTEX][vertex_idx] = vertex
+			
+			# var new_array_index: Array = []
+			# new_array_index.resize(surface_arrays[Mesh.ARRAY_VERTEX].size())
+			# if mirrored along an odd number of axis polygons will render with the wrong facing
+			var sum_scale: int = roundi(map_chunk_scale.x) + roundi(map_chunk_scale.y) + roundi(map_chunk_scale.z)
+			if sum_scale % 2 == 1:
+				for idx: int in surface_arrays[Mesh.ARRAY_VERTEX].size() / 3:
+					var tri_idx: int = idx * 3
+					var temp_vertex: Vector3 = surface_arrays[Mesh.ARRAY_VERTEX][tri_idx]
+					surface_arrays[Mesh.ARRAY_VERTEX][tri_idx] = surface_arrays[Mesh.ARRAY_VERTEX][tri_idx + 2]
+					surface_arrays[Mesh.ARRAY_VERTEX][tri_idx + 2] = temp_vertex
 
+					var temp_uv: Vector2 = surface_arrays[Mesh.ARRAY_TEX_UV][tri_idx]
+					surface_arrays[Mesh.ARRAY_TEX_UV][tri_idx] = surface_arrays[Mesh.ARRAY_TEX_UV][tri_idx + 2]
+					surface_arrays[Mesh.ARRAY_TEX_UV][tri_idx + 2] = temp_uv
+
+					# TODO fix normals for mirrored mesh?
+
+					# var temp: Vector3 = surface_arrays[Mesh.ARRAY_VERTEX][tri_idx + 1]
+					# surface_arrays[Mesh.ARRAY_VERTEX][tri_idx + 1] = surface_arrays[Mesh.ARRAY_VERTEX][tri_idx + 2]
+					# surface_arrays[Mesh.ARRAY_VERTEX][tri_idx + 2] = temp
+
+					# var temp: Vector3 = surface_arrays[Mesh.ARRAY_VERTEX][tri_idx]
+					# surface_arrays[Mesh.ARRAY_VERTEX][tri_idx] = surface_arrays[Mesh.ARRAY_VERTEX][tri_idx + 1]
+					# surface_arrays[Mesh.ARRAY_VERTEX][tri_idx + 1] = temp
+
+				# 	new_array_index[tri_idx] = tri_idx + 2
+				# 	new_array_index[tri_idx + 1] = tri_idx + 1
+				# 	new_array_index[tri_idx + 2] = tri_idx
+				# surface_arrays[Mesh.ARRAY_INDEX] = new_array_index
+			
 			var modified_mesh: ArrayMesh = ArrayMesh.new()
 			modified_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surface_arrays)
 			new_map_instance.mesh_instance.mesh = modified_mesh
+		else:
+			new_map_instance.mesh_instance.mesh = map_chunk_data.mesh
 
 
 		new_map_instance.position = map_chunk.corner_position
@@ -259,7 +293,7 @@ func load_scenario(new_scenario: Scenario) -> void:
 
 		# add terrain tiles to total_tiles
 		# TODO handle rotation
-		for tile: TerrainTile in map_chunk.map_data.terrain_tiles:
+		for tile: TerrainTile in map_chunk_data.terrain_tiles:
 			if tile.no_cursor == 1:
 				continue
 			
@@ -284,7 +318,7 @@ func load_scenario(new_scenario: Scenario) -> void:
 			total_tile.location = total_location
 			total_tile.tile_scale.x = map_chunk_scale.x
 			total_tile.tile_scale.z = map_chunk_scale.z
-			total_tile.height_bottom += map_chunk.position.y / MapData.HEIGHT_SCALE
+			total_tile.height_bottom += map_chunk.corner_position.y / MapData.HEIGHT_SCALE
 			total_tile.height_mid = total_tile.height_bottom + (total_tile.slope_height / 2.0)
 			total_map_tiles[total_location].append(total_tile)
 		

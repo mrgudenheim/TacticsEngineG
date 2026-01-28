@@ -265,20 +265,7 @@ func load_scenario(new_scenario: Scenario) -> void:
 					surface_arrays[Mesh.ARRAY_TEX_UV][tri_idx] = surface_arrays[Mesh.ARRAY_TEX_UV][tri_idx + 2]
 					surface_arrays[Mesh.ARRAY_TEX_UV][tri_idx + 2] = temp_uv
 
-					# TODO fix normals for mirrored mesh?
-
-					# var temp: Vector3 = surface_arrays[Mesh.ARRAY_VERTEX][tri_idx + 1]
-					# surface_arrays[Mesh.ARRAY_VERTEX][tri_idx + 1] = surface_arrays[Mesh.ARRAY_VERTEX][tri_idx + 2]
-					# surface_arrays[Mesh.ARRAY_VERTEX][tri_idx + 2] = temp
-
-					# var temp: Vector3 = surface_arrays[Mesh.ARRAY_VERTEX][tri_idx]
-					# surface_arrays[Mesh.ARRAY_VERTEX][tri_idx] = surface_arrays[Mesh.ARRAY_VERTEX][tri_idx + 1]
-					# surface_arrays[Mesh.ARRAY_VERTEX][tri_idx + 1] = temp
-
-				# 	new_array_index[tri_idx] = tri_idx + 2
-				# 	new_array_index[tri_idx + 1] = tri_idx + 1
-				# 	new_array_index[tri_idx + 2] = tri_idx
-				# surface_arrays[Mesh.ARRAY_INDEX] = new_array_index
+					# TODO fix ordering of normals for mirrored mesh?
 			
 			var modified_mesh: ArrayMesh = ArrayMesh.new()
 			modified_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surface_arrays)
@@ -319,7 +306,7 @@ func load_scenario(new_scenario: Scenario) -> void:
 			total_tile.location = total_location
 			total_tile.tile_scale.x = map_chunk_scale.x
 			total_tile.tile_scale.z = map_chunk_scale.z
-			total_tile.height_bottom += map_chunk.corner_position.y / MapData.HEIGHT_SCALE
+			total_tile.height_bottom += (map_chunk.corner_position.y + 0.75) / MapData.HEIGHT_SCALE # TODO why does 0.75 need to be added to map corner_position.y?
 			total_tile.height_mid = total_tile.height_bottom + (total_tile.slope_height / 2.0)
 			total_map_tiles[total_location].append(total_tile)
 		
@@ -613,7 +600,7 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData
 	new_unit.initialize_unit()
 	new_unit.tile_position = tile_position
 	#new_unit.char_body.global_position = Vector3(tile_position.location.x + 0.5, randi_range(15, 20), tile_position.location.y + 0.5)
-	new_unit.char_body.global_position = Vector3(tile_position.location.x + 0.5, tile_position.get_world_position().y + 1, tile_position.location.y + 0.5)
+	new_unit.char_body.global_position = Vector3(tile_position.location.x + 0.5, tile_position.get_world_position().y + 0.25, tile_position.location.y + 0.5)
 	new_unit.update_unit_facing([Vector3.FORWARD, Vector3.BACK, Vector3.LEFT, Vector3.RIGHT].pick_random())
 	if job_id < 0x5e: # non-monster
 		new_unit.stat_basis = [UnitData.StatBasis.MALE, UnitData.StatBasis.FEMALE].pick_random()

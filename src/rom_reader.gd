@@ -194,6 +194,12 @@ func process_rom() -> void:
 
 	# var new_scenario: Scenario = Scenario.new()
 	# new_scenario.unique_name = "test1"
+
+	# var new_zone: PackedVector2Array = []
+	# new_zone.append(Vector2(0, 0))
+	# new_zone.append(Vector2(1, 1))
+	# new_scenario.deployment_zones.append(new_zone)
+
 	# var new_map_chunk: Scenario.MapChunk = Scenario.MapChunk.new()
 	# new_map_chunk.unique_name = maps_array[116].unique_name
 	# new_map_chunk.mirror_xyz = [false, true, false]

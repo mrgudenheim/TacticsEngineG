@@ -9,7 +9,7 @@ const FILE_SUFFIX: String = "scenario"
 
 @export var map_chunks: Array[MapChunk] = []
 # @export var units_data: Array[UnitData] = [] # TODO separate unit data from node into Resource
-@export var deployment_zones: Array[PackedVector2Array] = []
+@export var deployment_zones: Array[PackedVector2Array] = [] # TODO what about locations with tiles at different hights?
 
 
 class MapChunk extends Resource:
@@ -102,6 +102,15 @@ static func create_from_dictionary(property_dict: Dictionary) -> Scenario:
 				new_map_chunks.append(new_map_chunk)
 
 			new_scenario.set(property_name, new_map_chunks)
+		elif property_name == "deployment_zones":
+			var new_deployment_zones: Array[PackedVector2Array] = []
+			var array_of_arrays = property_dict[property_name]
+			for zone in array_of_arrays:
+				var new_zone: PackedVector2Array = []
+				for location in zone:
+					new_zone.append(Vector2(location[0], location[1]))
+				new_deployment_zones.append(new_zone)
+			new_scenario.set(property_name, new_deployment_zones)
 		else:
 			new_scenario.set(property_name, property_dict[property_name])
 

@@ -28,7 +28,12 @@ func object_properties_to_dictionary(object: Object, exclude_property_names: Pac
 			if property["type"] == TYPE_ARRAY:
 				var new_array: Array = []
 				for element in object.get(property["name"]):
-					if not element is Object:
+					if element is PackedVector2Array:
+						var new_vector_array: Array = []
+						for vector: Vector2 in element:
+							new_vector_array.append([vector.x, vector.y])
+						new_array.append(new_vector_array)
+					elif not element is Object:
 						new_array.append(element)
 					elif not element.has_method("to_dictionary"):
 						new_array.append(element)
@@ -57,6 +62,12 @@ func object_properties_to_dictionary(object: Object, exclude_property_names: Pac
 			elif property["type"] == TYPE_VECTOR2 or property["type"] == TYPE_VECTOR2I:
 				var vector = object.get(property["name"])
 				var new_array: Array = [vector.x, vector.y]
+				property_dict[property["name"]] = new_array
+			elif property["type"] == TYPE_PACKED_VECTOR2_ARRAY:
+				var vector_array = object.get(property["name"])
+				var new_array: Array = []
+				for vector: Vector2 in vector_array:
+					new_array.append([vector.x, vector.y])
 				property_dict[property["name"]] = new_array
 			else:
 				property_dict[property["name"]] = object.get(property["name"])

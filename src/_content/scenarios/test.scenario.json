@@ -1,5 +1,16 @@
 {
-	"deployment_zones": [],
+	"deployment_zones": [
+		[
+			[
+				0.0,
+				0.0
+			],
+			[
+				1.0,
+				1.0
+			]
+		]
+	],
 	"description": "description",
 	"display_name": "display_name",
 	"map_chunks": [

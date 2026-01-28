@@ -7,6 +7,8 @@ const FILE_SUFFIX: String = "scenario"
 @export var display_name: String = "display_name"
 @export var description: String = "description"
 
+@export var background_gradient_top: Color = Color.LIGHT_GRAY
+@export var background_gradient_bottom: Color = Color.DARK_GRAY
 @export var map_chunks: Array[MapChunk] = []
 # @export var units_data: Array[UnitData] = [] # TODO separate unit data from node into Resource
 @export var deployment_zones: Array[PackedVector2Array] = [] # TODO what about locations with tiles at different hights?

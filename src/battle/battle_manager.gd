@@ -292,6 +292,9 @@ func load_scenario(new_scenario: Scenario) -> void:
 		new_map_instance.input_event.connect(on_map_input_event)
 	
 		maps.add_child(new_map_instance)
+
+	background_gradient.texture.gradient.colors[0] = new_scenario.background_gradient_bottom
+	background_gradient.texture.gradient.colors[1] = new_scenario.background_gradient_top
 		
 
 

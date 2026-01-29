@@ -1,0 +1,56 @@
+[gd_scene load_steps=2 format=3 uid="uid://dyajlcyhtfdbr"]
+
+[ext_resource type="PackedScene" uid="uid://dxvm0fphohpx4" path="res://src/utilities/ui/vector3i_edit.tscn" id="1_sf625"]
+
+[node name="MapChunkSettings" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="MapDropdown" type="OptionButton" parent="."]
+layout_mode = 0
+offset_top = 28.0
+offset_right = 32.0
+offset_bottom = 48.0
+size_flags_horizontal = 0
+size_flags_vertical = 4
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 24.0
+offset_right = 202.0
+offset_bottom = 52.0
+
+[node name="PositionVector3iEdit" parent="PanelContainer" instance=ExtResource("1_sf625")]
+layout_mode = 2
+
+[node name="PanelContainer2" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_left = 206.0
+offset_top = 24.0
+offset_right = 323.0
+offset_bottom = 52.0
+
+[node name="Mirror" type="HBoxContainer" parent="PanelContainer2"]
+layout_mode = 2
+
+[node name="xCheckBox" type="CheckBox" parent="PanelContainer2/Mirror"]
+layout_mode = 2
+text = "x"
+
+[node name="yCheckBox" type="CheckBox" parent="PanelContainer2/Mirror"]
+layout_mode = 2
+text = "y"
+
+[node name="zCheckBox" type="CheckBox" parent="PanelContainer2/Mirror"]
+layout_mode = 2
+text = "z"
+
+[node name="DeleteButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 327.0
+offset_top = 24.0
+offset_right = 379.0
+offset_bottom = 52.0
+size_flags_vertical = 4
+text = "Delete"

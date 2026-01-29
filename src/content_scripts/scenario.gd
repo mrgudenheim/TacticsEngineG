@@ -10,9 +10,10 @@ const FILE_SUFFIX: String = "scenario"
 @export var background_gradient_top: Color = Color.LIGHT_GRAY
 @export var background_gradient_bottom: Color = Color.DARK_BLUE
 @export var map_chunks: Array[MapChunk] = []
-# @export var units_data: Array[UnitData] = [] # TODO separate unit data from node into Resource
 @export var deployment_zones: Array[PackedVector2Array] = [] # TODO what about locations with tiles at different hights?
 
+# @export var units_data: Array[UnitData] = [] # TODO separate unit data from node into Resource
+# TODO scenario victory conditions
 
 class MapChunk extends Resource:
 	@export var unique_name: String = "unique_name"

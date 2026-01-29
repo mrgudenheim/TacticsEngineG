@@ -17,7 +17,7 @@
 [ext_resource type="PackedScene" uid="uid://b2bfuf828p6i6" path="res://src/battle/setup/unit_setup_panel.tscn" id="15_qgxlc"]
 [ext_resource type="Script" uid="uid://df08xhig8ojgj" path="res://src/battle/setup/job_select_control.gd" id="16_bp08t"]
 [ext_resource type="Script" uid="uid://cectjl7guvpqa" path="res://src/content_scripts/actions/action_button.gd" id="16_l2dig"]
-[ext_resource type="PackedScene" uid="uid://4b53llrdeigy" path="res://src/utilities/ui/vector_edit.tscn" id="16_yfaqf"]
+[ext_resource type="PackedScene" uid="uid://dyajlcyhtfdbr" path="res://src/battle/setup/map_chunk_settings.tscn" id="16_yfaqf"]
 [ext_resource type="Script" uid="uid://cu0evj643fugd" path="res://src/battle/setup/item_select_control.gd" id="17_bp08t"]
 [ext_resource type="PackedScene" uid="uid://b24ja5gvetaqq" path="res://src/battle/setup/item_select_button.tscn" id="18_d5yoq"]
 [ext_resource type="Script" uid="uid://bsflrccy2sry" path="res://src/battle/setup/ability_select_control.gd" id="18_pbg35"]
@@ -62,7 +62,7 @@ load_rom_button = NodePath("DebugOptions/MarginContainer/VBoxContainer2/LoadRom"
 camera_controller = NodePath("BattleSetup/BattleSetupTabContainer/Map/VBoxContainer/SubViewportContainer/SubViewport/BattleView/CameraController")
 background_gradient = NodePath("BackgroundCanvasLayer/TextureRect")
 menu_list = NodePath("DebugOptions/MarginContainer/VBoxContainer2/VBoxContainer")
-map_dropdown = NodePath("BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings/MapDropdown")
+map_dropdown = NodePath("")
 orthographic_check = NodePath("DebugOptions/MarginContainer/VBoxContainer2/VBoxContainer/OrthographicCheckBox")
 menu_reminder = NodePath("DebugOptions/MarginContainer/VBoxContainer2/MenuReminder")
 map_size_label = NodePath("BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapSize")
@@ -330,7 +330,7 @@ stretch = true
 transparent_bg = true
 handle_input_locally = false
 physics_object_picking = true
-size = Vector2i(2, 2)
+size = Vector2i(1516, 434)
 render_target_update_mode = 4
 
 [node name="BattleView" type="Node3D" parent="BattleSetup/BattleSetupTabContainer/Map/VBoxContainer/SubViewportContainer/SubViewport"]
@@ -402,33 +402,8 @@ horizontal_alignment = 1
 [node name="Spacer2" type="Control" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings"]
 layout_mode = 2
 
-[node name="MapDropdown" type="OptionButton" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings"]
+[node name="MapChunkSettings" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings" instance=ExtResource("16_yfaqf")]
 layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 4
-
-[node name="Position" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings" instance=ExtResource("16_yfaqf")]
-layout_mode = 2
-
-[node name="Mirror" type="HBoxContainer" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings"]
-layout_mode = 2
-
-[node name="xCheckBox" type="CheckBox" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings/Mirror"]
-layout_mode = 2
-text = "x"
-
-[node name="yCheckBox" type="CheckBox" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings/Mirror"]
-layout_mode = 2
-text = "y"
-
-[node name="zCheckBox" type="CheckBox" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings/Mirror"]
-layout_mode = 2
-text = "z"
-
-[node name="DeleteButton" type="Button" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings"]
-layout_mode = 2
-size_flags_vertical = 4
-text = "Delete"
 
 [node name="JobSelectScrollArea" type="ScrollContainer" parent="BattleSetup" node_paths=PackedStringArray("job_select_button_container")]
 visible = false

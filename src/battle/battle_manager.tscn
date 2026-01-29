@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://card26cltbba1"]
+[gd_scene load_steps=31 format=3 uid="uid://card26cltbba1"]
 
 [ext_resource type="Script" uid="uid://cd31vmh881wm5" path="res://src/battle/battle_manager.gd" id="1_hnd0w"]
 [ext_resource type="PackedScene" uid="uid://buljw4afjva1d" path="res://src/content_scripts/Map/map.tscn" id="2_1os5c"]
@@ -17,6 +17,7 @@
 [ext_resource type="PackedScene" uid="uid://b2bfuf828p6i6" path="res://src/battle/setup/unit_setup_panel.tscn" id="15_qgxlc"]
 [ext_resource type="Script" uid="uid://df08xhig8ojgj" path="res://src/battle/setup/job_select_control.gd" id="16_bp08t"]
 [ext_resource type="Script" uid="uid://cectjl7guvpqa" path="res://src/content_scripts/actions/action_button.gd" id="16_l2dig"]
+[ext_resource type="PackedScene" uid="uid://4b53llrdeigy" path="res://src/utilities/ui/vector_edit.tscn" id="16_yfaqf"]
 [ext_resource type="Script" uid="uid://cu0evj643fugd" path="res://src/battle/setup/item_select_control.gd" id="17_bp08t"]
 [ext_resource type="PackedScene" uid="uid://b24ja5gvetaqq" path="res://src/battle/setup/item_select_button.tscn" id="18_d5yoq"]
 [ext_resource type="Script" uid="uid://bsflrccy2sry" path="res://src/battle/setup/ability_select_control.gd" id="18_pbg35"]
@@ -329,7 +330,7 @@ stretch = true
 transparent_bg = true
 handle_input_locally = false
 physics_object_picking = true
-size = Vector2i(1516, 434)
+size = Vector2i(2, 2)
 render_target_update_mode = 4
 
 [node name="BattleView" type="Node3D" parent="BattleSetup/BattleSetupTabContainer/Map/VBoxContainer/SubViewportContainer/SubViewport"]
@@ -406,35 +407,8 @@ layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
 
-[node name="Position" type="HBoxContainer" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings"]
+[node name="Position" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings" instance=ExtResource("16_yfaqf")]
 layout_mode = 2
-
-[node name="xSpinBox" type="SpinBox" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings/Position"]
-layout_mode = 2
-size_flags_vertical = 4
-rounded = true
-allow_greater = true
-allow_lesser = true
-alignment = 2
-select_all_on_focus = true
-
-[node name="ySpinBox" type="SpinBox" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings/Position"]
-layout_mode = 2
-size_flags_vertical = 4
-rounded = true
-allow_greater = true
-allow_lesser = true
-alignment = 2
-select_all_on_focus = true
-
-[node name="zSpinBox" type="SpinBox" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings/Position"]
-layout_mode = 2
-size_flags_vertical = 4
-rounded = true
-allow_greater = true
-allow_lesser = true
-alignment = 2
-select_all_on_focus = true
 
 [node name="Mirror" type="HBoxContainer" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings"]
 layout_mode = 2

@@ -61,7 +61,7 @@ load_rom_button = NodePath("DebugOptions/MarginContainer/VBoxContainer2/LoadRom"
 camera_controller = NodePath("BattleSetup/BattleSetupTabContainer/Map/VBoxContainer/SubViewportContainer/SubViewport/BattleView/CameraController")
 background_gradient = NodePath("BackgroundCanvasLayer/TextureRect")
 menu_list = NodePath("DebugOptions/MarginContainer/VBoxContainer2/VBoxContainer")
-map_dropdown = NodePath("BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapDropdown")
+map_dropdown = NodePath("BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings/MapDropdown")
 orthographic_check = NodePath("DebugOptions/MarginContainer/VBoxContainer2/VBoxContainer/OrthographicCheckBox")
 menu_reminder = NodePath("DebugOptions/MarginContainer/VBoxContainer2/MenuReminder")
 map_size_label = NodePath("BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapSize")
@@ -301,7 +301,7 @@ job_select_control = NodePath("JobSelectScrollArea")
 item_select_control = NodePath("ItemSelectScrollArea")
 ability_select_control = NodePath("AbilitySelectScrollArea")
 unit_setup = NodePath("BattleSetupTabContainer/Map/VBoxContainer/FoldableContainer/UnitSetupPanel")
-show_map_tiles_check = NodePath("BattleSetupTabContainer/Map/FloatingUi/ShowMapTiles")
+show_map_tiles_check = NodePath("BattleSetupTabContainer/Map/FloatingUi/HBoxContainer/ShowMapTiles")
 
 [node name="BattleSetupTabContainer" type="TabContainer" parent="BattleSetup"]
 layout_mode = 1
@@ -354,21 +354,107 @@ layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
 
-[node name="MapDropdown" type="OptionButton" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi"]
+[node name="HBoxContainer" type="HBoxContainer" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi"]
 layout_mode = 2
-size_flags_horizontal = 0
+
+[node name="ShowMapTiles" type="CheckBox" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/HBoxContainer"]
+layout_mode = 2
+text = "Show Map Tiles"
+
+[node name="AddMapChunkButton" type="Button" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/HBoxContainer"]
+layout_mode = 2
+text = "Add Map Chunk"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi"]
+layout_mode = 2
+
+[node name="MapChunkSettings" type="HBoxContainer" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/VBoxContainer"]
+layout_mode = 2
 
 [node name="MapSize" type="Label" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi"]
+visible = false
 layout_mode = 2
 text = "Map Size: X x Y"
 
 [node name="ExpandMap" type="CheckBox" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi"]
+visible = false
 layout_mode = 2
 text = "Expand Map"
 
-[node name="ShowMapTiles" type="CheckBox" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi"]
+[node name="MapChunkSettings" type="GridContainer" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi"]
 layout_mode = 2
-text = "Show Map Tiles"
+columns = 4
+
+[node name="Spacer" type="Control" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings"]
+layout_mode = 2
+
+[node name="PositionLabel" type="Label" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings"]
+layout_mode = 2
+text = "Position"
+horizontal_alignment = 1
+
+[node name="MirrorLabel" type="Label" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings"]
+layout_mode = 2
+text = "Mirror"
+horizontal_alignment = 1
+
+[node name="Spacer2" type="Control" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings"]
+layout_mode = 2
+
+[node name="MapDropdown" type="OptionButton" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+
+[node name="Position" type="HBoxContainer" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings"]
+layout_mode = 2
+
+[node name="xSpinBox" type="SpinBox" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings/Position"]
+layout_mode = 2
+size_flags_vertical = 4
+rounded = true
+allow_greater = true
+allow_lesser = true
+alignment = 2
+select_all_on_focus = true
+
+[node name="ySpinBox" type="SpinBox" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings/Position"]
+layout_mode = 2
+size_flags_vertical = 4
+rounded = true
+allow_greater = true
+allow_lesser = true
+alignment = 2
+select_all_on_focus = true
+
+[node name="zSpinBox" type="SpinBox" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings/Position"]
+layout_mode = 2
+size_flags_vertical = 4
+rounded = true
+allow_greater = true
+allow_lesser = true
+alignment = 2
+select_all_on_focus = true
+
+[node name="Mirror" type="HBoxContainer" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings"]
+layout_mode = 2
+
+[node name="xCheckBox" type="CheckBox" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings/Mirror"]
+layout_mode = 2
+text = "x"
+
+[node name="yCheckBox" type="CheckBox" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings/Mirror"]
+layout_mode = 2
+text = "y"
+
+[node name="zCheckBox" type="CheckBox" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings/Mirror"]
+layout_mode = 2
+text = "z"
+
+[node name="DeleteButton" type="Button" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings"]
+layout_mode = 2
+size_flags_vertical = 4
+text = "Delete"
 
 [node name="JobSelectScrollArea" type="ScrollContainer" parent="BattleSetup" node_paths=PackedStringArray("job_select_button_container")]
 visible = false
@@ -423,6 +509,10 @@ anchor_right = 1.0
 offset_left = -89.0
 offset_bottom = 40.0
 grow_horizontal = 0
+
+[node name="ExportScenario" type="Button" parent="BattleSetup/HBoxContainer"]
+layout_mode = 2
+text = "Export Scenario"
 
 [node name="LoadScenario" type="Button" parent="BattleSetup/HBoxContainer"]
 layout_mode = 2

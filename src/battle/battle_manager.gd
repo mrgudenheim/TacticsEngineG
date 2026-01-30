@@ -27,7 +27,6 @@ var main_camera: Camera3D
 
 @export var maps: Node3D
 var total_map_tiles: Dictionary[Vector2i, Array] = {} # Array[TerrainTile]
-@export var map_tscn: PackedScene
 var current_tile_hover: TerrainTile # TODO remove? not used, get_tile() used instead?
 var current_cursor_map_position: Vector3
 @export var tile_highlights: Dictionary[Color, Material] = {}
@@ -112,7 +111,7 @@ func _ready() -> void:
 	
 	load_rom_button.file_selected.connect(RomReader.on_load_rom_dialog_file_selected)
 	RomReader.rom_loaded.connect(on_rom_loaded)
-	map_dropdown.item_selected.connect(queue_load_map)
+	#map_dropdown.item_selected.connect(queue_load_map)
 	orthographic_check.toggled.connect(camera_controller.on_orthographic_toggled)
 	#camera_controller.zoom_changed.connect(update_phantom_camera_spring)
 	expand_map_check.toggled.connect(func(toggled_on: bool): allow_mirror = toggled_on)
@@ -145,15 +144,17 @@ func on_rom_loaded() -> void:
 			var map_name: String = ""
 			if file_record.type_index != 0 and file_record.type_index <= RomReader.fft_text.map_names.size():
 				map_name = " " + RomReader.fft_text.map_names[file_record.type_index - 1]
-			map_dropdown.add_item(file_record.name + map_name)
+			#map_dropdown.add_item(file_record.name + map_name)
 	
 	var default_map_index: int = 56 # Orbonne
 	#default_map_index = 22 # Gariland
 	#default_map_index = 83 # zirekile falls
 	#default_map_index = 85 # mandalia plains
 	default_map_index = 116 # arena
-	map_dropdown.select(default_map_index)
-	map_dropdown.item_selected.emit(default_map_index)
+	#map_dropdown.select(default_map_index)
+	#map_dropdown.item_selected.emit(default_map_index)
+
+	battle_setup.initial_setup()
 
 
 func queue_load_map(index: int) -> void:
@@ -202,7 +203,6 @@ func on_map_selected(index: int) -> void:
 	push_warning("Time to create map (ms): " + str(Time.get_ticks_msec() - start_time))
 	push_warning("Map_created")
 	
-	battle_setup.initial_setup()
 	await update_units_pathfinding()
 	units.shuffle()
 	
@@ -210,13 +210,16 @@ func on_map_selected(index: int) -> void:
 
 
 func load_scenario(new_scenario: Scenario) -> void:
+	background_gradient.texture.gradient.colors[0] = new_scenario.background_gradient_bottom
+	background_gradient.texture.gradient.colors[1] = new_scenario.background_gradient_top
+
 	# setup map chunks
 	for map_chunk: Scenario.MapChunk in new_scenario.map_chunks:
 		var map_chunk_data: MapData = RomReader.maps[map_chunk.unique_name]
 		if not map_chunk_data.is_initialized:
 			map_chunk_data.init_map()
 
-		var new_map_instance: Map = map_tscn.instantiate()
+		var new_map_instance: MapChunkNodes = MapChunkNodes.instantiate()
 		new_map_instance.map_data = map_chunk_data
 		new_map_instance.name = map_chunk_data.unique_name
 		
@@ -273,10 +276,12 @@ func load_scenario(new_scenario: Scenario) -> void:
 		else:
 			new_map_instance.mesh_instance.mesh = map_chunk_data.mesh
 
-
-		new_map_instance.position = map_chunk.corner_position
 		new_map_instance.set_mesh_shader(map_chunk_data.albedo_texture_indexed, map_chunk_data.texture_palettes)
 		new_map_instance.collision_shape.shape = new_map_instance.mesh_instance.mesh.create_trimesh_shape()
+		
+		new_map_instance.play_animations(map_chunk_data)
+		new_map_instance.input_event.connect(on_map_input_event)
+		new_map_instance.position = map_chunk.corner_position
 
 		# add terrain tiles to total_tiles
 		# TODO handle rotation
@@ -309,15 +314,8 @@ func load_scenario(new_scenario: Scenario) -> void:
 			total_tile.height_bottom += (map_chunk.corner_position.y + 0.75) / MapData.HEIGHT_SCALE # TODO why does 0.75 need to be added to map corner_position.y?
 			total_tile.height_mid = total_tile.height_bottom + (total_tile.slope_height / 2.0)
 			total_map_tiles[total_location].append(total_tile)
-		
-		new_map_instance.play_animations(map_chunk_data)
-		new_map_instance.input_event.connect(on_map_input_event)
 	
 		maps.add_child(new_map_instance)
-
-	background_gradient.texture.gradient.colors[0] = new_scenario.background_gradient_bottom
-	background_gradient.texture.gradient.colors[1] = new_scenario.background_gradient_top
-		
 
 
 func start_battle() -> void:
@@ -775,9 +773,10 @@ func start_units_turn(unit: UnitData) -> void:
 	#new_unit.start_turn(self)
 
 
-func get_map(new_map_data: MapData, map_position: Vector3, map_scale: Vector3, gltf_map_mesh: MeshInstance3D = null) -> Map:
+func get_map(new_map_data: MapData, map_position: Vector3, map_scale: Vector3, gltf_map_mesh: MeshInstance3D = null) -> MapChunkNodes:
 	map_scale.y = -1 # vanilla used -y as up
-	var new_map_instance: Map = map_tscn.instantiate()
+	var new_map_instance: MapChunkNodes = MapChunkNodes.instantiate()
+	var x
 	new_map_instance.map_data = new_map_data
 	
 	if gltf_map_mesh != null:
@@ -825,7 +824,7 @@ func instantiate_map(map_idx: int, mirror_chunks: bool, offset: Vector3 = Vector
 	if not map_data.is_initialized:
 		map_data.init_map()
 	
-	var new_map: Map = get_map(map_data, offset, Vector3(1, 1, 1))
+	var new_map: MapChunkNodes = get_map(map_data, offset, Vector3(1, 1, 1))
 	var map_name: String = map_data.file_name.trim_suffix(".GNS")
 	new_map.name = map_name
 	new_map.mesh_instance.name = map_name
@@ -861,13 +860,13 @@ func instantiate_map(map_idx: int, mirror_chunks: bool, offset: Vector3 = Vector
 
 func initialize_map_tiles() -> void:
 	total_map_tiles.clear()
-	var map_chunks: Array[Map] = []
+	var map_chunks: Array[MapChunkNodes] = []
 	
 	for map_holder: Node3D in maps.get_children():
-		for map_chunk: Map in map_holder.get_children() as Array[Map]:
+		for map_chunk: MapChunkNodes in map_holder.get_children() as Array[MapChunkNodes]:
 			map_chunks.append(map_chunk)
 	
-	for map_chunk: Map in map_chunks:
+	for map_chunk: MapChunkNodes in map_chunks:
 		for tile: TerrainTile in map_chunk.map_data.terrain_tiles:
 			if tile.no_cursor == 1:
 				continue

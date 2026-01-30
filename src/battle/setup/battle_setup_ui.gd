@@ -18,6 +18,7 @@ extends Control
 @export var tile_highlight: Node3D
 @export var unit_setup: UnitSetupPanel
 
+@export var map_chunk_settings_container: GridContainer
 @export var show_map_tiles_check: CheckBox
 @export var map_tile_highlights: Array[Node3D] = []
 
@@ -72,6 +73,7 @@ func initial_setup() -> void:
 	visible = true
 	
 	populate_option_lists()
+	add_map_chunk_settings()
 	
 	for team_setup: TeamSetup in team_setups:
 		team_setup.name += "remove"
@@ -166,6 +168,23 @@ func update_unit_ability(unit: UnitData, slot: UnitData.AbilitySlot, new_ability
 	unit.equip_ability(slot, new_ability)
 	
 	desetup_ability_select()
+
+
+func add_map_chunk_settings() -> void:
+	var map_chunk_settings: MapChunkSettingsUi = MapChunkSettingsUi.instantiate()
+	add_child(map_chunk_settings)
+	map_chunk_settings.add_row_to_table(map_chunk_settings_container)
+	map_chunk_settings.map_mesh_changed.connect(update_map_chunk)
+
+
+func update_map_chunk(new_map_chunk_settings: MapChunkSettingsUi) -> void:
+	battle_manager.maps.add_child(new_map_chunk_settings.map_chunk_mesh)
+
+	# new_map_chunk_settings.map_chunk_mesh.play_animations(map_chunk_data)
+	# new_map_chunk_settings.map_chunk_mesh.input_event.connect(on_map_input_event)
+	# new_map_chunk_settings.map_chunk_mesh.position = new_map_chunk_settings.map_chunk.corner_position
+
+
 
 
 func add_team(new_team_name: String) -> Team:

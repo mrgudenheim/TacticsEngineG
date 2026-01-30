@@ -1,7 +1,6 @@
-[gd_scene load_steps=31 format=3 uid="uid://card26cltbba1"]
+[gd_scene load_steps=30 format=3 uid="uid://card26cltbba1"]
 
 [ext_resource type="Script" uid="uid://cd31vmh881wm5" path="res://src/battle/battle_manager.gd" id="1_hnd0w"]
-[ext_resource type="PackedScene" uid="uid://buljw4afjva1d" path="res://src/content_scripts/Map/map.tscn" id="2_1os5c"]
 [ext_resource type="Material" uid="uid://u6jhtav4x31l" path="res://src/content_scripts/Map/tile_highlight_red.material" id="4_f2r6p"]
 [ext_resource type="PackedScene" uid="uid://dkudrb304m7t1" path="res://src/Unit/unit.tscn" id="4_wfrm2"]
 [ext_resource type="Material" uid="uid://cejj0yxtkspad" path="res://src/content_scripts/Map/tile_highlight_black.material" id="6_l2dig"]
@@ -54,7 +53,7 @@ material = SubResource("StandardMaterial3D_p2e2h")
 [sub_resource type="BoxMesh" id="BoxMesh_cqdh8"]
 material = SubResource("StandardMaterial3D_tjj5r")
 
-[node name="BattleManager" type="Node3D" node_paths=PackedStringArray("texture_viewer", "reference_quad", "load_rom_button", "camera_controller", "background_gradient", "menu_list", "map_dropdown", "orthographic_check", "menu_reminder", "map_size_label", "expand_map_check", "maps", "battle_view", "action_menu", "action_button_list", "units_container", "controller", "battle_end_panel", "post_battle_messages", "start_new_battle_button", "game_state_label", "units_per_team_spinbox", "units_level_spinbox", "icon_counter", "battle_setup")]
+[node name="BattleManager" type="Node3D" node_paths=PackedStringArray("texture_viewer", "reference_quad", "load_rom_button", "camera_controller", "background_gradient", "menu_list", "orthographic_check", "menu_reminder", "map_size_label", "expand_map_check", "maps", "battle_view", "action_menu", "action_button_list", "units_container", "controller", "battle_end_panel", "post_battle_messages", "start_new_battle_button", "game_state_label", "units_per_team_spinbox", "units_level_spinbox", "icon_counter", "battle_setup")]
 script = ExtResource("1_hnd0w")
 texture_viewer = NodePath("SpriteViewer")
 reference_quad = NodePath("ReferenceQuad")
@@ -62,13 +61,11 @@ load_rom_button = NodePath("DebugOptions/MarginContainer/VBoxContainer2/LoadRom"
 camera_controller = NodePath("BattleSetup/BattleSetupTabContainer/Map/VBoxContainer/SubViewportContainer/SubViewport/BattleView/CameraController")
 background_gradient = NodePath("BackgroundCanvasLayer/TextureRect")
 menu_list = NodePath("DebugOptions/MarginContainer/VBoxContainer2/VBoxContainer")
-map_dropdown = NodePath("")
 orthographic_check = NodePath("DebugOptions/MarginContainer/VBoxContainer2/VBoxContainer/OrthographicCheckBox")
 menu_reminder = NodePath("DebugOptions/MarginContainer/VBoxContainer2/MenuReminder")
 map_size_label = NodePath("BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapSize")
 expand_map_check = NodePath("BattleSetup/BattleSetupTabContainer/Map/FloatingUi/ExpandMap")
 maps = NodePath("BattleSetup/BattleSetupTabContainer/Map/VBoxContainer/SubViewportContainer/SubViewport/BattleView/Maps")
-map_tscn = ExtResource("2_1os5c")
 tile_highlights = Dictionary[Color, Material]({
 Color(1, 0, 0, 1): ExtResource("4_f2r6p"),
 Color(0, 0, 1, 1): ExtResource("11_1os5c"),
@@ -283,7 +280,7 @@ layout_mode = 2
 text = "Game State"
 horizontal_alignment = 1
 
-[node name="BattleSetup" type="Control" parent="." node_paths=PackedStringArray("battle_manager", "start_button", "load_scenario_button", "battle_setup_container", "job_select_control", "item_select_control", "ability_select_control", "unit_setup", "show_map_tiles_check")]
+[node name="BattleSetup" type="Control" parent="." node_paths=PackedStringArray("battle_manager", "start_button", "load_scenario_button", "battle_setup_container", "job_select_control", "item_select_control", "ability_select_control", "unit_setup", "map_chunk_settings_container", "show_map_tiles_check")]
 layout_mode = 3
 anchor_top = 0.124000005
 anchor_right = 1.0
@@ -302,6 +299,7 @@ job_select_control = NodePath("JobSelectScrollArea")
 item_select_control = NodePath("ItemSelectScrollArea")
 ability_select_control = NodePath("AbilitySelectScrollArea")
 unit_setup = NodePath("BattleSetupTabContainer/Map/VBoxContainer/FoldableContainer/UnitSetupPanel")
+map_chunk_settings_container = NodePath("BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings")
 show_map_tiles_check = NodePath("BattleSetupTabContainer/Map/FloatingUi/HBoxContainer/ShowMapTiles")
 
 [node name="BattleSetupTabContainer" type="TabContainer" parent="BattleSetup"]
@@ -403,6 +401,7 @@ horizontal_alignment = 1
 layout_mode = 2
 
 [node name="MapChunkSettings" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings" instance=ExtResource("16_yfaqf")]
+visible = false
 layout_mode = 2
 
 [node name="JobSelectScrollArea" type="ScrollContainer" parent="BattleSetup" node_paths=PackedStringArray("job_select_button_container")]

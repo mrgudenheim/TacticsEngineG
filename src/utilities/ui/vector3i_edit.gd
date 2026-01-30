@@ -4,6 +4,8 @@ extends HBoxContainer
 
 signal vector_changed(vector: Vector3i)
 
+const scene: PackedScene = preload("res://src/utilities/ui/vector3i_edit.tscn")
+
 @export var vector: Vector3i:
 	get: return Vector3i(roundi(x_spinbox.value), roundi(y_spinbox.value), roundi(z_spinbox.value))
 	set(value):
@@ -13,6 +15,10 @@ signal vector_changed(vector: Vector3i)
 @onready var x_spinbox: SpinBox = $xSpinBox
 @onready var y_spinbox: SpinBox = $ySpinBox
 @onready var z_spinbox: SpinBox = $zSpinBox
+
+
+static func instantiate() -> Vector3iEdit:
+	return scene.instantiate()
 
 
 func _ready() -> void:

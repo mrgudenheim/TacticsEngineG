@@ -90,8 +90,8 @@ func init_map() -> void:
 
 func init_map_data(gns_bytes: PackedByteArray) -> void:
 	map_file_records = get_associated_files(gns_bytes)
-	push_warning("Map Mesh File: " + primary_mesh_data_record.file_name)
-	push_warning("Map Texture File: " + primary_texture_record.file_name)
+	push_warning("MapChunkNodes Mesh File: " + primary_mesh_data_record.file_name)
+	push_warning("MapChunkNodes Texture File: " + primary_texture_record.file_name)
 	create_map(RomReader.get_file_data(primary_mesh_data_record.file_name), 
 			RomReader.get_file_data(primary_texture_record.file_name))
 
@@ -632,7 +632,7 @@ func get_texture_pixel_colors_new_palette(new_palette: PackedColorArray) -> Pack
 	return new_pixel_colors
 
 
-func swap_palette(palette_id: int, new_palette: PackedColorArray, map: Map) -> void:
+func swap_palette(palette_id: int, new_palette: PackedColorArray, map: MapChunkNodes) -> void:
 	var new_pixel_colors: PackedColorArray = get_texture_pixel_colors_new_palette(new_palette)
 	var new_color_image: Image = get_texture_rgba8_image(0, new_pixel_colors)
 	
@@ -646,7 +646,7 @@ func swap_palette(palette_id: int, new_palette: PackedColorArray, map: Map) -> v
 	map.mesh_instance.mesh.surface_set_material(0, new_mesh_material)
 
 
-func animate_palette(texture_anim: TextureAnimationData, map: Map, anim_fps: float) -> void:
+func animate_palette(texture_anim: TextureAnimationData, map: MapChunkNodes, anim_fps: float) -> void:
 	var frame_id: int = 0
 	var dir: int = 1
 	var colors_per_palette: int = 16
@@ -676,7 +676,7 @@ func animate_palette(texture_anim: TextureAnimationData, map: Map, anim_fps: flo
 			frame_id += dir
 
 
-func animate_uv(texture_anim: TextureAnimationData, map: Map, anim_idx: int, anim_fps: float) -> void:
+func animate_uv(texture_anim: TextureAnimationData, map: MapChunkNodes, anim_idx: int, anim_fps: float) -> void:
 	var frame_id: int = 0
 	var dir: int = 1
 	

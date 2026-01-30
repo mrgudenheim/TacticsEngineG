@@ -1696,6 +1696,10 @@ func update_terrain_costs(all_passive_effects: Array[PassiveEffect]) -> void:
 	terrain_costs = new_terrain_costs
 
 
+func set_position_to_tile() -> void:
+	char_body.global_position = Vector3(tile_position.location.x + 0.5, tile_position.get_world_position().y + 0.25, tile_position.location.y + 0.5)
+
+
 func update_map_paths(map_tiles: Dictionary[Vector2i, Array], units: Array[UnitData], max_cost: int = 9999) -> void:
 	paths_set = false
 	var all_passive_effects: Array[PassiveEffect] = get_all_passive_effects()

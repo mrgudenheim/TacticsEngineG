@@ -199,7 +199,25 @@ func update_map(new_map_chunk_settings: MapChunkSettingsUi) -> void:
 	
 	show_all_tiles(false)
 	battle_manager.update_total_map_tiles(scenario.map_chunks)
+	update_unit_positions(battle_manager.units)
 	show_all_tiles(show_map_tiles_check.button_pressed)
+
+
+func update_unit_positions(units: Array[UnitData]) -> void:
+	for unit: UnitData in units:
+		if battle_manager.total_map_tiles.keys().has(unit.tile_position.location):
+			unit.tile_position = battle_manager.total_map_tiles[unit.tile_position.location][0]
+		else: # find nearest tile
+			var shortest_distance2: int = 9999
+			var closest_tile: TerrainTile = battle_manager.total_map_tiles.values()[0][0]
+			for xy: Vector2i in battle_manager.total_map_tiles.keys():
+				var this_distance2: int = xy.distance_squared_to(unit.tile_position.location)
+				if this_distance2 < shortest_distance2:
+					shortest_distance2 = this_distance2
+					closest_tile = battle_manager.total_map_tiles[xy][0]
+			unit.tile_position = closest_tile
+
+		unit.set_position_to_tile()
 
 
 func add_team(new_team_name: String) -> Team:

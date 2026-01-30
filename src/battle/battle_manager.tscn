@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://card26cltbba1"]
+[gd_scene load_steps=29 format=3 uid="uid://card26cltbba1"]
 
 [ext_resource type="Script" uid="uid://cd31vmh881wm5" path="res://src/battle/battle_manager.gd" id="1_hnd0w"]
 [ext_resource type="Material" uid="uid://u6jhtav4x31l" path="res://src/content_scripts/Map/tile_highlight_red.material" id="4_f2r6p"]
@@ -16,7 +16,6 @@
 [ext_resource type="PackedScene" uid="uid://b2bfuf828p6i6" path="res://src/battle/setup/unit_setup_panel.tscn" id="15_qgxlc"]
 [ext_resource type="Script" uid="uid://df08xhig8ojgj" path="res://src/battle/setup/job_select_control.gd" id="16_bp08t"]
 [ext_resource type="Script" uid="uid://cectjl7guvpqa" path="res://src/content_scripts/actions/action_button.gd" id="16_l2dig"]
-[ext_resource type="PackedScene" uid="uid://dyajlcyhtfdbr" path="res://src/battle/setup/map_chunk_settings.tscn" id="16_yfaqf"]
 [ext_resource type="Script" uid="uid://cu0evj643fugd" path="res://src/battle/setup/item_select_control.gd" id="17_bp08t"]
 [ext_resource type="PackedScene" uid="uid://b24ja5gvetaqq" path="res://src/battle/setup/item_select_button.tscn" id="18_d5yoq"]
 [ext_resource type="Script" uid="uid://bsflrccy2sry" path="res://src/battle/setup/ability_select_control.gd" id="18_pbg35"]
@@ -398,10 +397,6 @@ text = "Mirror"
 horizontal_alignment = 1
 
 [node name="Spacer2" type="Control" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings"]
-layout_mode = 2
-
-[node name="MapChunkSettings" parent="BattleSetup/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings" instance=ExtResource("16_yfaqf")]
-visible = false
 layout_mode = 2
 
 [node name="JobSelectScrollArea" type="ScrollContainer" parent="BattleSetup" node_paths=PackedStringArray("job_select_button_container")]

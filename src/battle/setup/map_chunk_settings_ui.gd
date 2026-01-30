@@ -13,8 +13,8 @@ const settings_ui_scene: PackedScene = preload("res://src/battle/setup/map_chunk
 @export var position_edit: Vector3iEdit
 @export var mirror_bools: Array[CheckBox]
 
-@export var map_chunk: Scenario.MapChunk
-@export var map_chunk_mesh: MapChunkNodes
+@export var map_chunk: Scenario.MapChunk = Scenario.MapChunk.new()
+@export var map_chunk_nodes: MapChunkNodes
 
 
 static func instantiate() -> MapChunkSettingsUi:
@@ -33,6 +33,7 @@ func _ready() -> void:
 		default_index = 0
 	
 	chunk_name_dropdown.select(default_index)
+	chunk_name_dropdown.item_selected.emit(default_index)
 
 
 func _exit_tree() -> void:
@@ -42,8 +43,8 @@ func _exit_tree() -> void:
 		mirror_bools_container.queue_free()
 		delete_button.queue_free()
 		
-		if map_chunk_mesh != null:
-			map_chunk_mesh.queue_free()
+		if map_chunk_nodes != null:
+			map_chunk_nodes.queue_free()
 
 
 func add_row_to_table(settings_table: Container) -> void:
@@ -54,9 +55,11 @@ func add_row_to_table(settings_table: Container) -> void:
 
 
 func on_map_selected(dropdown_item_index: int) -> void:
-	var map_chunk_unique_name: String = chunk_name_dropdown.get_item_text(dropdown_item_index)
-	map_chunk_mesh.queue_free()
-	map_chunk_mesh = get_map_mesh(map_chunk_unique_name)
+	map_chunk.unique_name = chunk_name_dropdown.get_item_text(dropdown_item_index)
+	if map_chunk_nodes != null:
+		map_chunk_nodes.queue_free()
+	map_chunk.mirror_xyz[1] = true # vanilla maps need to be mirrored along y
+	map_chunk_nodes = get_map_mesh(map_chunk.unique_name)
 	map_chunk_settings_changed.emit(self)
 
 

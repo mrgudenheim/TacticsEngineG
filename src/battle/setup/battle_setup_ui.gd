@@ -174,15 +174,15 @@ func add_map_chunk_settings() -> void:
 	var map_chunk_settings: MapChunkSettingsUi = MapChunkSettingsUi.instantiate()
 	add_child(map_chunk_settings)
 	map_chunk_settings.add_row_to_table(map_chunk_settings_container)
-	map_chunk_settings.map_mesh_changed.connect(update_map_chunk)
+	map_chunk_settings.map_chunk_settings_changed.connect(update_map_chunk)
 
 
 func update_map_chunk(new_map_chunk_settings: MapChunkSettingsUi) -> void:
-	battle_manager.maps.add_child(new_map_chunk_settings.map_chunk_mesh)
+	battle_manager.maps.add_child(new_map_chunk_settings.map_chunk_nodes)
 
-	# new_map_chunk_settings.map_chunk_mesh.play_animations(map_chunk_data)
-	# new_map_chunk_settings.map_chunk_mesh.input_event.connect(on_map_input_event)
-	# new_map_chunk_settings.map_chunk_mesh.position = new_map_chunk_settings.map_chunk.corner_position
+	new_map_chunk_settings.map_chunk_nodes.play_animations(new_map_chunk_settings.map_chunk_nodes.map_data)
+	new_map_chunk_settings.map_chunk_nodes.input_event.connect(battle_manager.on_map_input_event)
+	new_map_chunk_settings.map_chunk_nodes.position = new_map_chunk_settings.map_chunk.corner_position
 
 
 

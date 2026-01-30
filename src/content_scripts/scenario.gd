@@ -20,6 +20,7 @@ class MapChunk extends Resource:
 	@export var mirror_xyz: Array[bool] = [false, false, false] # mirror y of fft maps to have postive y be up, invert x or z to mirror the map
 	@export var corner_position: Vector3i = Vector3i.ZERO
 	@export var rotation: int = 0 # values 0, 1, 2, 3 for 90 degree rotation increments
+	var mirror_scale: Vector3i = Vector3i.ONE
 	
 	func to_dictionary() -> Dictionary:
 		var properties_to_exclude: PackedStringArray = [
@@ -33,6 +34,18 @@ class MapChunk extends Resource:
 		]
 		
 		return Utilities.object_properties_to_dictionary(self, properties_to_exclude)
+
+
+	func set_mirror_xyz(new_mirror_xyz: Array[bool]) -> void:
+		mirror_xyz = new_mirror_xyz
+
+		if mirror_xyz[0]:
+			mirror_scale.x = -1
+		if mirror_xyz[1]:
+			mirror_scale.y = -1
+		if mirror_xyz[2]:
+			mirror_scale.z = -1
+
 
 	static func create_from_dictionary(property_dict: Dictionary) -> MapChunk:
 		var new_map_chunk: MapChunk = MapChunk.new()

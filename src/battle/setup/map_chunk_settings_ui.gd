@@ -58,8 +58,12 @@ func on_map_selected(dropdown_item_index: int) -> void:
 	map_chunk.unique_name = chunk_name_dropdown.get_item_text(dropdown_item_index)
 	if map_chunk_nodes != null:
 		map_chunk_nodes.queue_free()
-	map_chunk.mirror_xyz[1] = true # vanilla maps need to be mirrored along y
-	map_chunk.mirror_xyz[0] = true # mirror along x to get the un-mirrored look after mirroring along y
+
+	# vanilla maps need to be mirrored along y
+	# mirror along x to get the un-mirrored look after mirroring along y	
+	map_chunk.set_mirror_xyz([true, true, false])
+	# map_chunk.mirror_xyz[1] = true 
+	# map_chunk.mirror_xyz[0] = true 
 	map_chunk_nodes = get_map_mesh(map_chunk.unique_name)
 	map_chunk_settings_changed.emit(self)
 
@@ -81,24 +85,16 @@ func get_map_mesh(map_chunk_unique_name: String) -> MapChunkNodes:
 	# 	new_map_instance.mesh.rotation_degrees = Vector3.ZERO
 	# else:
 
-	var map_chunk_scale: Vector3 = Vector3.ONE
-	if map_chunk.mirror_xyz[0]:
-		map_chunk_scale.x = -1
-	if map_chunk.mirror_xyz[1]:
-		map_chunk_scale.y = -1
-	if map_chunk.mirror_xyz[2]:
-		map_chunk_scale.z = -1
-
 	var mesh_aabb: AABB = map_chunk_data.mesh.get_aabb()
 	# modify mesh based on mirroring and so bottom left corner is at (0, 0, 0)
 	# TODO handle rotation
-	if map_chunk_scale != Vector3.ONE or mesh_aabb.position != Vector3.ZERO:
+	if map_chunk.mirror_scale != Vector3i.ONE or mesh_aabb.position != Vector3.ZERO:
 		var surface_arrays: Array = map_chunk_data.mesh.surface_get_arrays(0)
 		var original_mesh_center: Vector3 = mesh_aabb.get_center()
 		for vertex_idx: int in surface_arrays[Mesh.ARRAY_VERTEX].size():
 			var vertex: Vector3 = surface_arrays[Mesh.ARRAY_VERTEX][vertex_idx]
 			vertex = vertex - original_mesh_center # shift center to be at (0, 0, 0) to make moving after mirroring easy
-			vertex = vertex * map_chunk_scale # apply mirroring
+			vertex = vertex * Vector3(map_chunk.mirror_scale) # apply mirroring
 			vertex = vertex + (mesh_aabb.size / 2.0) # shift so mesh_aabb start will be at (0, 0, 0)
 			
 			surface_arrays[Mesh.ARRAY_VERTEX][vertex_idx] = vertex
@@ -106,7 +102,7 @@ func get_map_mesh(map_chunk_unique_name: String) -> MapChunkNodes:
 		# var new_array_index: Array = []
 		# new_array_index.resize(surface_arrays[Mesh.ARRAY_VERTEX].size())
 		# if mirrored along an odd number of axis polygons will render with the wrong facing
-		var sum_scale: int = roundi(map_chunk_scale.x) + roundi(map_chunk_scale.y) + roundi(map_chunk_scale.z)
+		var sum_scale: int = map_chunk.mirror_scale.x + map_chunk.mirror_scale.y + map_chunk.mirror_scale.z
 		if sum_scale % 2 == 1:
 			for idx: int in surface_arrays[Mesh.ARRAY_VERTEX].size() / 3:
 				var tri_idx: int = idx * 3

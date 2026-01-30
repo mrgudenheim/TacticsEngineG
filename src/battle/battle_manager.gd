@@ -231,24 +231,16 @@ func load_scenario(new_scenario: Scenario) -> void:
 		# 	new_map_instance.mesh.rotation_degrees = Vector3.ZERO
 		# else:
 
-		var map_chunk_scale: Vector3 = Vector3.ONE
-		if map_chunk.mirror_xyz[0]:
-			map_chunk_scale.x = -1
-		if map_chunk.mirror_xyz[1]:
-			map_chunk_scale.y = -1
-		if map_chunk.mirror_xyz[2]:
-			map_chunk_scale.z = -1
-
 		var mesh_aabb: AABB = map_chunk_data.mesh.get_aabb()
 		# modify mesh based on mirroring and so bottom left corner is at (0, 0, 0)
 		# TODO handle rotation
-		if map_chunk_scale != Vector3.ONE or mesh_aabb.position != Vector3.ZERO:
+		if map_chunk.mirror_scale != Vector3i.ONE or mesh_aabb.position != Vector3.ZERO:
 			var surface_arrays: Array = map_chunk_data.mesh.surface_get_arrays(0)
 			var original_mesh_center: Vector3 = mesh_aabb.get_center()
 			for vertex_idx: int in surface_arrays[Mesh.ARRAY_VERTEX].size():
 				var vertex: Vector3 = surface_arrays[Mesh.ARRAY_VERTEX][vertex_idx]
 				vertex = vertex - original_mesh_center # shift center to be at (0, 0, 0) to make moving after mirroring easy
-				vertex = vertex * map_chunk_scale # apply mirroring
+				vertex = vertex * Vector3(map_chunk.mirror_scale) # apply mirroring
 				vertex = vertex + (mesh_aabb.size / 2.0) # shift so mesh_aabb start will be at (0, 0, 0)
 				
 				surface_arrays[Mesh.ARRAY_VERTEX][vertex_idx] = vertex
@@ -256,7 +248,7 @@ func load_scenario(new_scenario: Scenario) -> void:
 			# var new_array_index: Array = []
 			# new_array_index.resize(surface_arrays[Mesh.ARRAY_VERTEX].size())
 			# if mirrored along an odd number of axis polygons will render with the wrong facing
-			var sum_scale: int = roundi(map_chunk_scale.x) + roundi(map_chunk_scale.y) + roundi(map_chunk_scale.z)
+			var sum_scale: int = map_chunk.mirror_scale.x + map_chunk.mirror_scale.y + map_chunk.mirror_scale.z
 			if sum_scale % 2 == 1:
 				for idx: int in surface_arrays[Mesh.ARRAY_VERTEX].size() / 3:
 					var tri_idx: int = idx * 3
@@ -291,7 +283,7 @@ func load_scenario(new_scenario: Scenario) -> void:
 				continue
 			
 			var total_location: Vector2i = tile.location
-			var map_scale: Vector2i = Vector2i(roundi(map_chunk_scale.x), roundi(map_chunk_scale.z))
+			var map_scale: Vector2i = Vector2i(map_chunk.mirror_scale.x, map_chunk.mirror_scale.z)
 			total_location = total_location * map_scale
 			
 			var mirror_shift: Vector2i = Vector2i.ZERO # ex. (0,0) should be (-1, -1) when mirrored across x and y
@@ -309,13 +301,52 @@ func load_scenario(new_scenario: Scenario) -> void:
 				total_map_tiles[total_location] = []
 			var total_tile: TerrainTile = tile.duplicate()
 			total_tile.location = total_location
-			total_tile.tile_scale.x = map_chunk_scale.x
-			total_tile.tile_scale.z = map_chunk_scale.z
+			total_tile.tile_scale.x = map_chunk.mirror_scale.x
+			total_tile.tile_scale.z = map_chunk.mirror_scale.z
 			total_tile.height_bottom += (map_chunk.corner_position.y + 0.75) / MapData.HEIGHT_SCALE # TODO why does 0.75 need to be added to map corner_position.y?
 			total_tile.height_mid = total_tile.height_bottom + (total_tile.slope_height / 2.0)
 			total_map_tiles[total_location].append(total_tile)
 	
 		maps.add_child(new_map_instance)
+
+
+func update_total_map_tiles(map_chunks: Array[Scenario.MapChunk]) -> void:
+	total_map_tiles.clear()
+
+	for map_chunk: Scenario.MapChunk in map_chunks:
+		var map_chunk_data: MapData = RomReader.maps[map_chunk.unique_name]
+		
+		var map_tile_offset: Vector2i = Vector2i(map_chunk.corner_position.x, map_chunk.corner_position.z)
+		for tile: TerrainTile in map_chunk_data.terrain_tiles:
+			if tile.no_cursor == 1:
+				continue
+			
+			var total_location: Vector2i = tile.location
+			var map_scale: Vector2i = Vector2i(map_chunk.mirror_scale.x, map_chunk.mirror_scale.z)
+			total_location = total_location * map_scale
+			
+			var mesh_aabb: AABB = map_chunk_data.mesh.get_aabb()
+			var mirror_shift: Vector2i = Vector2i.ZERO # ex. (0,0) should be (-1, -1) when mirrored across x and y
+			if map_scale.x == -1:
+				mirror_shift.x = -1
+				mirror_shift.x += roundi(mesh_aabb.size.x)
+			if map_scale.y == -1:
+				mirror_shift.y = -1
+				mirror_shift.y += roundi(mesh_aabb.size.z)
+				
+			total_location = total_location + mirror_shift + map_tile_offset
+
+			# total_location = total_location + Vector2i(map_chunk.position.x, map_chunk.position.z)
+			if not total_map_tiles.has(total_location):
+				total_map_tiles[total_location] = []
+			var total_tile: TerrainTile = tile.duplicate()
+			total_tile.location = total_location
+			total_tile.tile_scale.x = map_chunk.mirror_scale.x
+			total_tile.tile_scale.z = map_chunk.mirror_scale.z
+			total_tile.height_bottom += (map_chunk.corner_position.y + 0.75) / MapData.HEIGHT_SCALE # TODO why does 0.75 need to be added to map corner_position.y?
+			total_tile.height_mid = total_tile.height_bottom + (total_tile.slope_height / 2.0)
+			total_map_tiles[total_location].append(total_tile)
+
 
 
 func start_battle() -> void:

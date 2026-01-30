@@ -245,8 +245,6 @@ func show_all_tiles(show_tiles: bool = true, highlight_color: Color = Color.WHIT
 			new_tile_highlight.position = tile.get_world_position(true) + Vector3(0, 0.025, 0)
 
 			map_tile_highlights.append(new_tile_highlight)
-	
-	var x: int = 0
 
 
 func adjust_height(tab_idx: int) -> void:

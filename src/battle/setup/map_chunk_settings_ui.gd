@@ -59,6 +59,7 @@ func on_map_selected(dropdown_item_index: int) -> void:
 	if map_chunk_nodes != null:
 		map_chunk_nodes.queue_free()
 	map_chunk.mirror_xyz[1] = true # vanilla maps need to be mirrored along y
+	map_chunk.mirror_xyz[0] = true # mirror along x to get the un-mirrored look after mirroring along y
 	map_chunk_nodes = get_map_mesh(map_chunk.unique_name)
 	map_chunk_settings_changed.emit(self)
 

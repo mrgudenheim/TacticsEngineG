@@ -25,10 +25,16 @@ func _ready() -> void:
 	delete_button.pressed.connect(queue_free)
 	chunk_name_dropdown.item_selected.connect(on_map_selected)
 	
+	# vanilla maps need to be mirrored along y
+	# mirror along x to get the un-mirrored look after mirroring along y	
+	map_chunk.set_mirror_xyz([true, true, false])
+
 	for map_data: MapData in RomReader.maps.values():
 		chunk_name_dropdown.add_item(map_data.unique_name)
 	
-	var default_index: int = RomReader.maps.keys().find("map_056_orbonne_monastery")
+	var default_map_unique_name: String = "map_056_orbonne_monastery"
+	# default_map_unique_name = "map_091_thieves_fort"
+	var default_index: int = RomReader.maps.keys().find(default_map_unique_name)
 	if default_index == -1:
 		default_index = 0
 	
@@ -59,16 +65,11 @@ func on_map_selected(dropdown_item_index: int) -> void:
 	if map_chunk_nodes != null:
 		map_chunk_nodes.queue_free()
 
-	# vanilla maps need to be mirrored along y
-	# mirror along x to get the un-mirrored look after mirroring along y	
-	map_chunk.set_mirror_xyz([true, true, false])
-	# map_chunk.mirror_xyz[1] = true 
-	# map_chunk.mirror_xyz[0] = true 
-	map_chunk_nodes = get_map_mesh(map_chunk.unique_name)
+	map_chunk_nodes = get_map_chunk_nodes(map_chunk.unique_name)
 	map_chunk_settings_changed.emit(self)
 
 
-func get_map_mesh(map_chunk_unique_name: String) -> MapChunkNodes:
+func get_map_chunk_nodes(map_chunk_unique_name: String) -> MapChunkNodes:
 	var map_chunk_data: MapData = RomReader.maps[map_chunk_unique_name]
 	if not map_chunk_data.is_initialized:
 		map_chunk_data.init_map()

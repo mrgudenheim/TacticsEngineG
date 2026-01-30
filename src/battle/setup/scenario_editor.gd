@@ -175,10 +175,9 @@ func update_unit_ability(unit: UnitData, slot: UnitData.AbilitySlot, new_ability
 func add_map_chunk_settings() -> void:
 	var map_chunk_settings: MapChunkSettingsUi = MapChunkSettingsUi.instantiate()
 	map_chunk_settings.map_chunk_settings_changed.connect(update_map_chunk)
-	add_child(map_chunk_settings)
 	map_chunk_settings.add_row_to_table(map_chunk_settings_container)
-
 	scenario.map_chunks.append(map_chunk_settings.map_chunk)
+	add_child(map_chunk_settings)
 
 
 func update_map_chunk(new_map_chunk_settings: MapChunkSettingsUi) -> void:
@@ -187,6 +186,10 @@ func update_map_chunk(new_map_chunk_settings: MapChunkSettingsUi) -> void:
 	new_map_chunk_settings.map_chunk_nodes.play_animations(new_map_chunk_settings.map_chunk_nodes.map_data)
 	new_map_chunk_settings.map_chunk_nodes.input_event.connect(battle_manager.on_map_input_event)
 	new_map_chunk_settings.map_chunk_nodes.position = new_map_chunk_settings.map_chunk.corner_position
+
+	show_all_tiles(false)
+	battle_manager.update_total_map_tiles(scenario.map_chunks)
+	show_all_tiles(show_map_tiles_check.button_pressed)
 
 
 

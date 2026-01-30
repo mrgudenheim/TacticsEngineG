@@ -315,6 +315,7 @@ func update_total_map_tiles(map_chunks: Array[Scenario.MapChunk]) -> void:
 
 	for map_chunk: Scenario.MapChunk in map_chunks:
 		var map_chunk_data: MapData = RomReader.maps[map_chunk.unique_name]
+		var mesh_aabb: AABB = map_chunk_data.mesh.get_aabb()
 		
 		var map_tile_offset: Vector2i = Vector2i(map_chunk.corner_position.x, map_chunk.corner_position.z)
 		for tile: TerrainTile in map_chunk_data.terrain_tiles:
@@ -325,7 +326,6 @@ func update_total_map_tiles(map_chunks: Array[Scenario.MapChunk]) -> void:
 			var map_scale: Vector2i = Vector2i(map_chunk.mirror_scale.x, map_chunk.mirror_scale.z)
 			total_location = total_location * map_scale
 			
-			var mesh_aabb: AABB = map_chunk_data.mesh.get_aabb()
 			var mirror_shift: Vector2i = Vector2i.ZERO # ex. (0,0) should be (-1, -1) when mirrored across x and y
 			if map_scale.x == -1:
 				mirror_shift.x = -1
@@ -343,7 +343,7 @@ func update_total_map_tiles(map_chunks: Array[Scenario.MapChunk]) -> void:
 			total_tile.location = total_location
 			total_tile.tile_scale.x = map_chunk.mirror_scale.x
 			total_tile.tile_scale.z = map_chunk.mirror_scale.z
-			total_tile.height_bottom += (map_chunk.corner_position.y + 0.75) / MapData.HEIGHT_SCALE # TODO why does 0.75 need to be added to map corner_position.y?
+			total_tile.height_bottom += roundi((map_chunk.corner_position.y + mesh_aabb.end.y) / MapData.HEIGHT_SCALE) # TODO why does 0.75 need to be added to map corner_position.y?
 			total_tile.height_mid = total_tile.height_bottom + (total_tile.slope_height / 2.0)
 			total_map_tiles[total_location].append(total_tile)
 

@@ -100,7 +100,7 @@ var walled_maps: PackedInt32Array = [
 	104,
 ]
 
-@export var battle_setup: BattleSetupUi
+@export var scenario_editor: ScenarioEditor
 
 const SCALE: float = 1.0 / MapData.TILE_SIDE_LENGTH
 const SCALED_UNITS_PER_HEIGHT: float = SCALE * MapData.UNITS_PER_HEIGHT
@@ -138,7 +138,7 @@ func on_rom_loaded() -> void:
 	push_warning("on rom loaded")
 	load_rom_button.visible = false
 	
-	# TODO move to battle_setup
+	# TODO move to scenario_editor
 	for file_record: FileRecord in RomReader.file_records.values():
 		if file_record.name.contains(".GNS"):
 			var map_name: String = ""
@@ -154,7 +154,7 @@ func on_rom_loaded() -> void:
 	#map_dropdown.select(default_map_index)
 	#map_dropdown.item_selected.emit(default_map_index)
 
-	battle_setup.initial_setup()
+	scenario_editor.initial_setup()
 
 
 func queue_load_map(index: int) -> void:
@@ -350,10 +350,10 @@ func update_total_map_tiles(map_chunks: Array[Scenario.MapChunk]) -> void:
 
 
 func start_battle() -> void:
-	battle_setup.visible = false
-	battle_setup.tile_highlight.queue_free()
+	scenario_editor.visible = false
+	scenario_editor.tile_highlight.queue_free()
 	for unit: UnitData in units:
-		unit.unit_input_event.disconnect(battle_setup.update_unit_dragging)
+		unit.unit_input_event.disconnect(scenario_editor.update_unit_dragging)
 	
 	battle_view.reparent(self)
 	# get list of units again; reparenting temporarily removes the unit from the tree and Units auto remove themselves from the Array when they leave the tree
@@ -667,7 +667,7 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData
 	new_unit.ai_controller.strategy = UnitAi.Strategy.BEST
 
 	new_unit.unit_battle_details_ui.setup(new_unit)
-	new_unit.unit_input_event.connect(battle_setup.update_unit_dragging)
+	new_unit.unit_input_event.connect(scenario_editor.update_unit_dragging)
 	
 	return new_unit
 

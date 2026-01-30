@@ -1,5 +1,7 @@
-class_name BattleSetupUi
+class_name ScenarioEditor
 extends Control
+
+@export var scenario: Scenario = Scenario.new()
 
 @export var battle_manager: BattleManager
 @export var start_button: Button
@@ -175,6 +177,8 @@ func add_map_chunk_settings() -> void:
 	map_chunk_settings.map_chunk_settings_changed.connect(update_map_chunk)
 	add_child(map_chunk_settings)
 	map_chunk_settings.add_row_to_table(map_chunk_settings_container)
+
+	scenario.map_chunks.append(map_chunk_settings.map_chunk)
 
 
 func update_map_chunk(new_map_chunk_settings: MapChunkSettingsUi) -> void:

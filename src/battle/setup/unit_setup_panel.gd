@@ -98,6 +98,12 @@ func setup(unit: UnitData) -> void:
 	
 	Utilities.disconnect_all_connections(palette_option_button.item_selected)
 	palette_option_button.item_selected.connect(set_palette)
+
+	Utilities.disconnect_all_connections(team_option_button.item_selected)
+	team_option_button.item_selected.connect(set_team)
+
+	Utilities.disconnect_all_connections(controller_option_button.item_selected)
+	controller_option_button.item_selected.connect(set_controller)
 	
 	# on unit data changed:
 	# remove invalid equipment
@@ -301,6 +307,14 @@ func set_palette(new_palette_idx: int) -> void:
 	if unit_data != null:
 		unit_data.set_sprite_palette(new_palette_idx)
 
+
+func set_team(new_team_idx: int) -> void:
+	unit_data.team = unit_data.global_battle_manager.teams[new_team_idx]
+
+
+func set_controller(new_controller_idx: int) -> void:
+	# TODO set unit controller
+	pass
 
 func update_level(unit: UnitData, new_level: int) -> void:
 	unit.generate_leveled_raw_stats(new_level, unit.job_data)

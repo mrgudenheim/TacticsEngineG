@@ -4,6 +4,9 @@ extends Node3D
 signal map_input_event(action_instance: ActionInstance, camera: Camera3D, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) # TODO should action_instance be removed from signal?
 signal unit_created(new_unit: UnitData)
 
+const SCALE: float = 1.0 / MapData.TILE_SIDE_LENGTH
+const SCALED_UNITS_PER_HEIGHT: float = SCALE * MapData.UNITS_PER_HEIGHT
+
 # debug vars
 @export var use_test_teams: bool = false
 @export var texture_viewer: Sprite3D # for debugging
@@ -101,9 +104,6 @@ var walled_maps: PackedInt32Array = [
 ]
 
 @export var scenario_editor: ScenarioEditor
-
-const SCALE: float = 1.0 / MapData.TILE_SIDE_LENGTH
-const SCALED_UNITS_PER_HEIGHT: float = SCALE * MapData.UNITS_PER_HEIGHT
 
 
 func _ready() -> void:

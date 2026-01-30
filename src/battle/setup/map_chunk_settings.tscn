@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://85yekig5g046" path="res://src/battle/setup/map_chunk_settings_ui.gd" id="1_mm4sl"]
 [ext_resource type="PackedScene" uid="uid://dxvm0fphohpx4" path="res://src/utilities/ui/vector3i_edit.tscn" id="1_sf625"]
 
-[node name="MapChunkSettings" type="Control" node_paths=PackedStringArray("chunk_name_dropdown", "position_edit_container", "mirror_bools_container", "delete_button", "position_edit")]
+[node name="MapChunkSettings" type="Control" node_paths=PackedStringArray("chunk_name_dropdown", "position_edit_container", "mirror_bools_container", "delete_button", "position_edit", "mirror_checkboxes")]
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_mm4sl")
@@ -12,6 +12,7 @@ position_edit_container = NodePath("PanelContainer")
 mirror_bools_container = NodePath("PanelContainer2")
 delete_button = NodePath("DeleteButton")
 position_edit = NodePath("PanelContainer/PositionVector3iEdit")
+mirror_checkboxes = [NodePath("PanelContainer2/Mirror/xCheckBox"), NodePath("PanelContainer2/Mirror/yCheckBox"), NodePath("PanelContainer2/Mirror/zCheckBox")]
 
 [node name="MapDropdown" type="OptionButton" parent="."]
 layout_mode = 0

@@ -39,12 +39,9 @@ class MapChunk extends Resource:
 	func set_mirror_xyz(new_mirror_xyz: Array[bool]) -> void:
 		mirror_xyz = new_mirror_xyz
 
-		if mirror_xyz[0]:
-			mirror_scale.x = -1
-		if mirror_xyz[1]:
-			mirror_scale.y = -1
-		if mirror_xyz[2]:
-			mirror_scale.z = -1
+		mirror_scale.x = -1 if mirror_xyz[0] else 1
+		mirror_scale.y = -1 if mirror_xyz[1] else 1
+		mirror_scale.z = -1 if mirror_xyz[2] else 1
 
 
 	static func create_from_dictionary(property_dict: Dictionary) -> MapChunk:

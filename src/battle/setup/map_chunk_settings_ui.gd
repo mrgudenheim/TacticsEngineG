@@ -12,7 +12,7 @@ const settings_ui_scene: PackedScene = preload("res://src/battle/setup/map_chunk
 @export var delete_button: Button
 
 @export var position_edit: Vector3iEdit
-@export var mirror_bools: Array[CheckBox]
+@export var mirror_checkboxes: Array[CheckBox]
 
 @export var map_chunk: Scenario.MapChunk = Scenario.MapChunk.new()
 @export var map_chunk_nodes: MapChunkNodes
@@ -24,12 +24,15 @@ static func instantiate() -> MapChunkSettingsUi:
 
 func _ready() -> void:
 	delete_button.pressed.connect(queue_free)
-	chunk_name_dropdown.item_selected.connect(on_map_selected)
+	chunk_name_dropdown.item_selected.connect(on_chunk_selected)
 	position_edit.vector_changed.connect(set_map_chunk_position)
 	
 	# vanilla maps need to be mirrored along y
 	# mirror along x to get the un-mirrored look after mirroring along y	
 	map_chunk.set_mirror_xyz([true, true, false])
+	for idx: int in mirror_checkboxes.size():
+		mirror_checkboxes[idx].button_pressed = map_chunk.mirror_xyz[idx]
+		mirror_checkboxes[idx].toggled.connect(on_mirror_changed)
 
 	for map_data: MapData in RomReader.maps.values():
 		chunk_name_dropdown.add_item(map_data.unique_name)
@@ -63,13 +66,23 @@ func add_row_to_table(settings_table: Container) -> void:
 	delete_button.reparent(settings_table)
 
 
-func on_map_selected(dropdown_item_index: int) -> void:
+func on_chunk_selected(dropdown_item_index: int) -> void:
 	map_chunk.unique_name = chunk_name_dropdown.get_item_text(dropdown_item_index)
 	if map_chunk_nodes != null:
 		map_chunk_nodes.queue_free()
 
 	map_chunk_nodes = get_map_chunk_nodes(map_chunk.unique_name)
 	map_chunk_nodes_changed.emit(self)
+
+
+func on_mirror_changed(_toggled_on: bool) -> void:
+	var new_mirror_xyz: Array[bool] = [false, false, false]
+	for idx: int in mirror_checkboxes.size():
+		new_mirror_xyz[idx] = mirror_checkboxes[idx].button_pressed
+	map_chunk.set_mirror_xyz(new_mirror_xyz)
+
+	on_chunk_selected(chunk_name_dropdown.selected)
+	# map_chunk_nodes_changed.emit(self)
 
 
 func get_map_chunk_nodes(map_chunk_unique_name: String) -> MapChunkNodes:
@@ -107,7 +120,8 @@ func get_map_chunk_nodes(map_chunk_unique_name: String) -> MapChunkNodes:
 		# new_array_index.resize(surface_arrays[Mesh.ARRAY_VERTEX].size())
 		# if mirrored along an odd number of axis polygons will render with the wrong facing
 		var sum_scale: int = map_chunk.mirror_scale.x + map_chunk.mirror_scale.y + map_chunk.mirror_scale.z
-		if sum_scale % 2 == 1:
+		#var sum_scale: int = -3 + maxi(0, map_chunk.mirror_scale.x) + maxi(0, map_chunk.mirror_scale.y) + maxi(0, map_chunk.mirror_scale.z)
+		if sum_scale == 1 or sum_scale == -3:
 			for idx: int in surface_arrays[Mesh.ARRAY_VERTEX].size() / 3:
 				var tri_idx: int = idx * 3
 				var temp_vertex: Vector3 = surface_arrays[Mesh.ARRAY_VERTEX][tri_idx]

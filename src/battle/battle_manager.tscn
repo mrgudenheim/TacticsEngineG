@@ -279,7 +279,7 @@ layout_mode = 2
 text = "Game State"
 horizontal_alignment = 1
 
-[node name="ScenarioEditor" type="Control" parent="." node_paths=PackedStringArray("battle_manager", "start_button", "load_scenario_button", "battle_setup_container", "job_select_control", "item_select_control", "ability_select_control", "unit_setup", "map_chunk_settings_container", "show_map_tiles_check")]
+[node name="ScenarioEditor" type="Control" parent="." node_paths=PackedStringArray("battle_manager", "start_button", "load_scenario_button", "battle_setup_container", "job_select_control", "item_select_control", "ability_select_control", "unit_setup", "add_map_chunk_button", "map_chunk_settings_container", "show_map_tiles_check")]
 layout_mode = 3
 anchor_top = 0.124000005
 anchor_right = 1.0
@@ -298,6 +298,7 @@ job_select_control = NodePath("JobSelectScrollArea")
 item_select_control = NodePath("ItemSelectScrollArea")
 ability_select_control = NodePath("AbilitySelectScrollArea")
 unit_setup = NodePath("BattleSetupTabContainer/Map/VBoxContainer/FoldableContainer/UnitSetupPanel")
+add_map_chunk_button = NodePath("BattleSetupTabContainer/Map/FloatingUi/HBoxContainer/AddMapChunkButton")
 map_chunk_settings_container = NodePath("BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings")
 show_map_tiles_check = NodePath("BattleSetupTabContainer/Map/FloatingUi/HBoxContainer/ShowMapTiles")
 

@@ -2,6 +2,7 @@ class_name MapChunkSettingsUi
 extends Control
 
 signal map_chunk_settings_changed(new_map_chunk_settings: MapChunkSettingsUi)
+signal map_chunk_nodes_changed(new_map_chunk_settings: MapChunkSettingsUi)
 
 const settings_ui_scene: PackedScene = preload("res://src/battle/setup/map_chunk_settings.tscn")
 
@@ -24,6 +25,7 @@ static func instantiate() -> MapChunkSettingsUi:
 func _ready() -> void:
 	delete_button.pressed.connect(queue_free)
 	chunk_name_dropdown.item_selected.connect(on_map_selected)
+	position_edit.vector_changed.connect(set_map_chunk_position)
 	
 	# vanilla maps need to be mirrored along y
 	# mirror along x to get the un-mirrored look after mirroring along y	
@@ -44,13 +46,14 @@ func _ready() -> void:
 
 func _exit_tree() -> void:
 	if is_queued_for_deletion():
+		if map_chunk_nodes != null:
+			map_chunk_nodes.queue_free()
+			map_chunk_settings_changed.emit(self)
+		
 		chunk_name_dropdown.queue_free()
 		position_edit_container.queue_free()
 		mirror_bools_container.queue_free()
 		delete_button.queue_free()
-		
-		if map_chunk_nodes != null:
-			map_chunk_nodes.queue_free()
 
 
 func add_row_to_table(settings_table: Container) -> void:
@@ -66,7 +69,7 @@ func on_map_selected(dropdown_item_index: int) -> void:
 		map_chunk_nodes.queue_free()
 
 	map_chunk_nodes = get_map_chunk_nodes(map_chunk.unique_name)
-	map_chunk_settings_changed.emit(self)
+	map_chunk_nodes_changed.emit(self)
 
 
 func get_map_chunk_nodes(map_chunk_unique_name: String) -> MapChunkNodes:
@@ -127,3 +130,11 @@ func get_map_chunk_nodes(map_chunk_unique_name: String) -> MapChunkNodes:
 	new_map_instance.collision_shape.shape = new_map_instance.mesh_instance.mesh.create_trimesh_shape()
 	
 	return new_map_instance
+
+
+func set_map_chunk_position(new_position: Vector3i) -> void:
+	map_chunk.corner_position = new_position
+	map_chunk_nodes.position = new_position
+	map_chunk_nodes.position.y = map_chunk_nodes.position.y * MapData.HEIGHT_SCALE
+
+	map_chunk_settings_changed.emit(self)

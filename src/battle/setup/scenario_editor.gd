@@ -20,6 +20,7 @@ extends Control
 @export var tile_highlight: Node3D
 @export var unit_setup: UnitSetupPanel
 
+@export var add_map_chunk_button: Button
 @export var map_chunk_settings_container: GridContainer
 @export var show_map_tiles_check: CheckBox
 @export var map_tile_highlights: Array[Node3D] = []
@@ -73,6 +74,7 @@ func _process(delta: float) -> void:
 
 func initial_setup() -> void:
 	visible = true
+	add_map_chunk_button.pressed.connect(add_map_chunk_settings)
 	
 	populate_option_lists()
 	add_map_chunk_settings()
@@ -174,19 +176,27 @@ func update_unit_ability(unit: UnitData, slot: UnitData.AbilitySlot, new_ability
 
 func add_map_chunk_settings() -> void:
 	var map_chunk_settings: MapChunkSettingsUi = MapChunkSettingsUi.instantiate()
-	map_chunk_settings.map_chunk_settings_changed.connect(update_map_chunk)
+	map_chunk_settings.map_chunk_nodes_changed.connect(update_map_chunk_nodes)
+	map_chunk_settings.map_chunk_settings_changed.connect(update_map)
 	map_chunk_settings.add_row_to_table(map_chunk_settings_container)
 	scenario.map_chunks.append(map_chunk_settings.map_chunk)
 	add_child(map_chunk_settings)
 
 
-func update_map_chunk(new_map_chunk_settings: MapChunkSettingsUi) -> void:
+func update_map_chunk_nodes(new_map_chunk_settings: MapChunkSettingsUi) -> void:
 	battle_manager.maps.add_child(new_map_chunk_settings.map_chunk_nodes)
 
 	new_map_chunk_settings.map_chunk_nodes.play_animations(new_map_chunk_settings.map_chunk_nodes.map_data)
 	new_map_chunk_settings.map_chunk_nodes.input_event.connect(battle_manager.on_map_input_event)
 	new_map_chunk_settings.map_chunk_nodes.position = new_map_chunk_settings.map_chunk.corner_position
 
+	update_map(new_map_chunk_settings)
+
+
+func update_map(new_map_chunk_settings: MapChunkSettingsUi) -> void:
+	if new_map_chunk_settings.is_queued_for_deletion():
+		scenario.map_chunks.erase(new_map_chunk_settings.map_chunk)
+	
 	show_all_tiles(false)
 	battle_manager.update_total_map_tiles(scenario.map_chunks)
 	show_all_tiles(show_map_tiles_check.button_pressed)
@@ -230,11 +240,13 @@ func show_all_tiles(show_tiles: bool = true, highlight_color: Color = Color.WHIT
 				
 			var new_tile_highlight: MeshInstance3D = tile.get_tile_mesh()
 			new_tile_highlight.material_override = battle_manager.tile_highlights[highlight_color] # use pre-existing materials
-			add_child(new_tile_highlight)
+			add_child.call_deferred(new_tile_highlight) # defer the call for when this function is called from _on_exit_tree
 			tile_highlight = new_tile_highlight
 			new_tile_highlight.position = tile.get_world_position(true) + Vector3(0, 0.025, 0)
 
 			map_tile_highlights.append(new_tile_highlight)
+	
+	var x: int = 0
 
 
 func adjust_height(tab_idx: int) -> void:

@@ -192,8 +192,6 @@ func update_map_chunk(new_map_chunk_settings: MapChunkSettingsUi) -> void:
 	show_all_tiles(show_map_tiles_check.button_pressed)
 
 
-
-
 func add_team(new_team_name: String) -> Team:
 	var new_team: Team = Team.new()
 	battle_manager.teams.append(new_team)

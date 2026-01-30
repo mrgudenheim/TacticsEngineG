@@ -327,7 +327,7 @@ stretch = true
 transparent_bg = true
 handle_input_locally = false
 physics_object_picking = true
-size = Vector2i(1516, 434)
+size = Vector2i(1516, 674)
 render_target_update_mode = 4
 
 [node name="BattleView" type="Node3D" parent="ScenarioEditor/BattleSetupTabContainer/Map/VBoxContainer/SubViewportContainer/SubViewport"]
@@ -342,9 +342,11 @@ transform = Transform3D(0.707107, -0.315509, 0.632814, 0, 0.894934, 0.446198, -0
 
 [node name="FoldableContainer" type="FoldableContainer" parent="ScenarioEditor/BattleSetupTabContainer/Map/VBoxContainer"]
 layout_mode = 2
-title = "Unit Setup"
+folded = true
+title = "Unit Editor"
 
 [node name="UnitSetupPanel" parent="ScenarioEditor/BattleSetupTabContainer/Map/VBoxContainer/FoldableContainer" instance=ExtResource("15_qgxlc")]
+visible = false
 layout_mode = 2
 
 [node name="FloatingUi" type="VBoxContainer" parent="ScenarioEditor/BattleSetupTabContainer/Map"]

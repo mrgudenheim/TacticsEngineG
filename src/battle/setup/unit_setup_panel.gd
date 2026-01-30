@@ -55,6 +55,11 @@ func setup(unit: UnitData) -> void:
 	
 	unit_name_line_edit.text = unit.unit_nickname
 	job_button.text = unit.job_data.display_name
+	
+	palette_option_button.clear()
+	for palette_idx: int in RomReader.sprs[unit.sprite_file_idx].color_palette.size()/16:
+		palette_option_button.add_item(str(palette_idx))
+	palette_option_button.select(unit.sprite_palette_id)
 
 	hp_bar.set_stat(str(UnitData.StatType.keys()[UnitData.StatType.HP]), unit.stats[UnitData.StatType.HP])
 	hp_bar.name_label.position.x = 5
@@ -80,23 +85,24 @@ func setup(unit: UnitData) -> void:
 	# ct_bar.value_label.grow_horizontal = GrowDirection.GROW_DIRECTION_BEGIN
 
 	# clear connections for when panel is reused
-	Utilities.disconnect_all_connections(unit_name_line_edit.text_submitted)
-	Utilities.disconnect_all_connections(level_spinbox.value_changed)
-	Utilities.disconnect_all_connections(job_button.pressed)
-	Utilities.disconnect_all_connections(unit.data_updated)
-
 	# hook up buttons to update Unit data
+	Utilities.disconnect_all_connections(unit_name_line_edit.text_submitted)
 	unit_name_line_edit.text_submitted.connect(func(new_name: String): unit.unit_nickname = new_name)
+	
+	Utilities.disconnect_all_connections(level_spinbox.value_changed)
 	level_spinbox.value_changed.connect(func(new_value): update_level(unit, new_value))
 	# TODO update gender - sprite and stats
-	
-	# TODO hook up job select button
+
+	Utilities.disconnect_all_connections(job_button.pressed)
 	job_button.pressed.connect(func(): job_select_pressed.emit(unit))
 	
-	# show job select list
-	# hookup job select buttons to update this units job
+	Utilities.disconnect_all_connections(palette_option_button.item_selected)
+	palette_option_button.item_selected.connect(set_palette)
+	
+	# on unit data changed:
 	# remove invalid equipment
 	# generate battle stats (aka apply stat multipliers)
+	Utilities.disconnect_all_connections(unit.data_updated) # TODO is the unit.data_updated signal used for anything else?
 	unit.data_updated.connect(update_ui)
 
 	update_ui(unit)
@@ -289,6 +295,11 @@ func get_total_evade_factor(unit: UnitData, unit_passive_effects: Array[PassiveE
 	var total_evade_value: int = roundi((1 - total_evade_factor) * 100)
 
 	return total_evade_value
+
+
+func set_palette(new_palette_idx: int) -> void:
+	if unit_data != null:
+		unit_data.set_sprite_palette(new_palette_idx)
 
 
 func update_level(unit: UnitData, new_level: int) -> void:

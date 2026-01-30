@@ -172,9 +172,9 @@ func update_unit_ability(unit: UnitData, slot: UnitData.AbilitySlot, new_ability
 
 func add_map_chunk_settings() -> void:
 	var map_chunk_settings: MapChunkSettingsUi = MapChunkSettingsUi.instantiate()
+	map_chunk_settings.map_chunk_settings_changed.connect(update_map_chunk)
 	add_child(map_chunk_settings)
 	map_chunk_settings.add_row_to_table(map_chunk_settings_container)
-	map_chunk_settings.map_chunk_settings_changed.connect(update_map_chunk)
 
 
 func update_map_chunk(new_map_chunk_settings: MapChunkSettingsUi) -> void:

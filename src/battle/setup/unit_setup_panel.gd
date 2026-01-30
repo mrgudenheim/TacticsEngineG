@@ -11,6 +11,11 @@ signal ability_select_pressed(unit: UnitData, slot: UnitData.AbilitySlot)
 @export var job_button: Button
 @export var level_spinbox: SpinBox
 
+@export var team_option_button: OptionButton
+@export var controller_option_button: OptionButton
+@export var palette_option_button: OptionButton
+@export var zodiac_option_button: OptionButton
+
 @export var hp_bar: StatBar
 @export var mp_bar: StatBar
 @export var ct_bar: StatBar

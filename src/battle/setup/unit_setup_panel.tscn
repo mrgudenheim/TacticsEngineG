@@ -18,15 +18,19 @@ font_size = 18
 outline_size = 6
 outline_color = Color(0, 0, 0, 1)
 
-[node name="UnitSetupPanel" type="PanelContainer" node_paths=PackedStringArray("sprite_rect", "unit_name_line_edit", "gender_option_button", "job_button", "level_spinbox", "hp_bar", "mp_bar", "ct_bar", "pa_label", "ma_label", "brave_label", "faith_label", "move_label", "jump_label", "speed_label", "evade_grid", "equipment_grid", "ability_grid", "passive_effect_container", "innate_ability_container", "status_affinity_container", "weak_elements_label", "resist_elements_label", "immune_elements_label", "absorb_elements_label", "strengthen_elements_label")]
+[node name="UnitSetupPanel" type="PanelContainer" node_paths=PackedStringArray("sprite_rect", "unit_name_line_edit", "gender_option_button", "job_button", "level_spinbox", "team_option_button", "controller_option_button", "palette_option_button", "zodiac_option_button", "hp_bar", "mp_bar", "ct_bar", "pa_label", "ma_label", "brave_label", "faith_label", "move_label", "jump_label", "speed_label", "evade_grid", "equipment_grid", "ability_grid", "passive_effect_container", "innate_ability_container", "status_affinity_container", "weak_elements_label", "resist_elements_label", "immune_elements_label", "absorb_elements_label", "strengthen_elements_label")]
 offset_right = 1184.0
 offset_bottom = 232.0
 script = ExtResource("1_fwwrv")
 sprite_rect = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/Sprite")
 unit_name_line_edit = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/UnitName")
 gender_option_button = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/Gender")
-job_button = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/JobSelect")
+job_button = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer2/JobSelect")
 level_spinbox = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/LevelSpinBox")
+team_option_button = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer2/TeamOptionButton")
+controller_option_button = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer2/ControllerOptionButton")
+palette_option_button = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer/Palette")
+zodiac_option_button = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/ZodiacOptionButton")
 hp_bar = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid/StatBar")
 mp_bar = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid/StatBar2")
 ct_bar = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/StatPanel/MarginContainer/StatGrid/StatBar3")
@@ -87,7 +91,7 @@ label_settings = SubResource("LabelSettings_v0g1v")
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer2"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer"]
+[node name="PaletteLabel" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/HBoxContainer"]
 layout_mode = 2
 text = "Palette:"
 
@@ -113,16 +117,12 @@ size_flags_horizontal = 3
 text = "UnitName"
 select_all_on_focus = true
 
-[node name="Gender" type="OptionButton" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
+[node name="Job" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
+visible = false
 layout_mode = 2
-selected = 0
-item_count = 3
-popup/item_0/text = "Male"
-popup/item_0/id = 0
-popup/item_1/text = "Female"
-popup/item_1/id = 1
-popup/item_2/text = "Monster"
-popup/item_2/id = 2
+size_flags_stretch_ratio = 0.25
+text = "Job"
+horizontal_alignment = 1
 
 [node name="Level" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
 layout_mode = 2
@@ -136,16 +136,63 @@ value = 1.0
 rounded = true
 select_all_on_focus = true
 
-[node name="Job" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
+[node name="Gender" type="OptionButton" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
 layout_mode = 2
-size_flags_stretch_ratio = 0.25
-text = "Job"
-horizontal_alignment = 1
+selected = 0
+item_count = 3
+popup/item_0/text = "Male"
+popup/item_0/id = 0
+popup/item_1/text = "Female"
+popup/item_1/id = 1
+popup/item_2/text = "Monster"
+popup/item_2/id = 2
 
-[node name="JobSelect" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
+[node name="ZodiacOptionButton" type="OptionButton" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+selected = 0
+item_count = 4
+popup/item_0/text = "Aries"
+popup/item_0/id = 0
+popup/item_1/text = "Taurus"
+popup/item_1/id = 1
+popup/item_2/text = "Sagittarius"
+popup/item_2/id = 2
+popup/item_3/text = "Capricorn"
+popup/item_3/id = 3
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer"]
+layout_mode = 2
+
+[node name="JobSelect" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer2"]
 custom_minimum_size = Vector2(60, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Select Job"
+
+[node name="TeamLabel" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+text = "Team:"
+
+[node name="TeamOptionButton" type="OptionButton" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+selected = 0
+item_count = 1
+popup/item_0/text = "1"
+popup/item_0/id = 0
+
+[node name="ControllerLabel" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+text = "Controller:"
+
+[node name="ControllerOptionButton" type="OptionButton" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+selected = 1
+item_count = 2
+popup/item_0/text = "AI"
+popup/item_0/id = 0
+popup/item_1/text = "Player 1"
+popup/item_1/id = 1
 
 [node name="StatPanel" type="PanelContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer"]
 layout_mode = 2

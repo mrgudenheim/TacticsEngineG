@@ -120,7 +120,6 @@ func get_map_chunk_nodes(map_chunk_unique_name: String) -> MapChunkNodes:
 		# new_array_index.resize(surface_arrays[Mesh.ARRAY_VERTEX].size())
 		# if mirrored along an odd number of axis polygons will render with the wrong facing
 		var sum_scale: int = map_chunk.mirror_scale.x + map_chunk.mirror_scale.y + map_chunk.mirror_scale.z
-		#var sum_scale: int = -3 + maxi(0, map_chunk.mirror_scale.x) + maxi(0, map_chunk.mirror_scale.y) + maxi(0, map_chunk.mirror_scale.z)
 		if sum_scale == 1 or sum_scale == -3:
 			for idx: int in surface_arrays[Mesh.ARRAY_VERTEX].size() / 3:
 				var tri_idx: int = idx * 3

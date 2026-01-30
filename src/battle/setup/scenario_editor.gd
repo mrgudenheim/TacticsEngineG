@@ -8,6 +8,9 @@ extends Control
 @export var load_scenario_button: Button
 @export var unit_scene: PackedScene
 
+@export var background_gradient_color_pickers: Array[ColorPickerButton]
+@export var background_gradient_colors: PackedColorArray = []
+
 @export var battle_setup_container: TabContainer
 @export var team_setups: Array[TeamSetup]
 @export var team_setup_scene: PackedScene
@@ -75,6 +78,10 @@ func _process(delta: float) -> void:
 func initial_setup() -> void:
 	visible = true
 	add_map_chunk_button.pressed.connect(add_map_chunk_settings)
+	for color_picker: ColorPickerButton in background_gradient_color_pickers:
+		background_gradient_colors.append(color_picker.color)
+		color_picker.color_changed.connect(update_background_gradient)
+	update_background_gradient()
 	
 	populate_option_lists()
 	add_map_chunk_settings()
@@ -218,6 +225,16 @@ func update_unit_positions(units: Array[UnitData]) -> void:
 			unit.tile_position = closest_tile
 
 		unit.set_position_to_tile()
+
+
+func update_background_gradient(_new_color: Color = Color.BLACK) -> void:
+	background_gradient_colors.clear()
+	for color_picker: ColorPickerButton in background_gradient_color_pickers:
+		background_gradient_colors.append(color_picker.color)
+	
+	battle_manager.background_gradient.texture.gradient.colors = background_gradient_colors
+	scenario.background_gradient_bottom = background_gradient_colors[0]
+	scenario.background_gradient_top = background_gradient_colors[1]
 
 
 func add_team(new_team_name: String) -> Team:

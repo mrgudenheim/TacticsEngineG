@@ -279,7 +279,7 @@ layout_mode = 2
 text = "Game State"
 horizontal_alignment = 1
 
-[node name="ScenarioEditor" type="Control" parent="." node_paths=PackedStringArray("battle_manager", "start_button", "load_scenario_button", "battle_setup_container", "job_select_control", "item_select_control", "ability_select_control", "unit_setup", "add_map_chunk_button", "map_chunk_settings_container", "show_map_tiles_check")]
+[node name="ScenarioEditor" type="Control" parent="." node_paths=PackedStringArray("battle_manager", "start_button", "load_scenario_button", "background_gradient_color_pickers", "battle_setup_container", "job_select_control", "item_select_control", "ability_select_control", "unit_setup", "add_map_chunk_button", "map_chunk_settings_container", "show_map_tiles_check")]
 layout_mode = 3
 anchor_top = 0.124000005
 anchor_right = 1.0
@@ -292,6 +292,7 @@ battle_manager = NodePath("..")
 start_button = NodePath("HBoxContainer/StartBattle")
 load_scenario_button = NodePath("HBoxContainer/LoadScenario")
 unit_scene = ExtResource("4_wfrm2")
+background_gradient_color_pickers = [NodePath("BattleSetupTabContainer/Map/FloatingUi/Gradient/BottomColorPickerButton"), NodePath("BattleSetupTabContainer/Map/FloatingUi/Gradient/TopColorPickerButton")]
 battle_setup_container = NodePath("BattleSetupTabContainer")
 team_setup_scene = ExtResource("14_kb1q2")
 job_select_control = NodePath("JobSelectScrollArea")
@@ -355,6 +356,23 @@ layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
 
+[node name="Gradient" type="HBoxContainer" parent="ScenarioEditor/BattleSetupTabContainer/Map/FloatingUi"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ScenarioEditor/BattleSetupTabContainer/Map/FloatingUi/Gradient"]
+layout_mode = 2
+text = "Background Gradient: "
+
+[node name="BottomColorPickerButton" type="ColorPickerButton" parent="ScenarioEditor/BattleSetupTabContainer/Map/FloatingUi/Gradient"]
+custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
+color = Color(0, 0, 0.09411765, 1)
+
+[node name="TopColorPickerButton" type="ColorPickerButton" parent="ScenarioEditor/BattleSetupTabContainer/Map/FloatingUi/Gradient"]
+custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
+color = Color(0.627451, 0.9098039, 0.9372549, 1)
+
 [node name="HBoxContainer" type="HBoxContainer" parent="ScenarioEditor/BattleSetupTabContainer/Map/FloatingUi"]
 layout_mode = 2
 
@@ -365,12 +383,6 @@ text = "Show Map Tiles"
 [node name="AddMapChunkButton" type="Button" parent="ScenarioEditor/BattleSetupTabContainer/Map/FloatingUi/HBoxContainer"]
 layout_mode = 2
 text = "Add Map Chunk"
-
-[node name="VBoxContainer" type="VBoxContainer" parent="ScenarioEditor/BattleSetupTabContainer/Map/FloatingUi"]
-layout_mode = 2
-
-[node name="MapChunkSettings" type="HBoxContainer" parent="ScenarioEditor/BattleSetupTabContainer/Map/FloatingUi/VBoxContainer"]
-layout_mode = 2
 
 [node name="MapSize" type="Label" parent="ScenarioEditor/BattleSetupTabContainer/Map/FloatingUi"]
 visible = false

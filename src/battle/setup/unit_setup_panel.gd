@@ -314,7 +314,11 @@ func set_team(new_team_idx: int) -> void:
 
 func set_controller(new_controller_idx: int) -> void:
 	# TODO set unit controller
-	pass
+	if new_controller_idx == 0:
+		unit_data.is_ai_controlled = true
+	else:
+		unit_data.is_ai_controlled = false
+		# TODO handle multiple player teams
 
 func update_level(unit: UnitData, new_level: int) -> void:
 	unit.generate_leveled_raw_stats(new_level, unit.job_data)

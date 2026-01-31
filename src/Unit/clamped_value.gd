@@ -1,15 +1,14 @@
 class_name ClampedValue
-extends RefCounted
+extends Resource
 
-signal changed(clamped_value: ClampedValue)
+signal value_changed(clamped_value: ClampedValue)
 
 var min_value: int = 0 # should not change
 var max_value: int = 100 # should not change (except when linked to another stat, ex hp_max)
 var base_value: int = 50 # should not change
-var current_value: int = 50 # typically used for stats that get changed until end of battle: hp, mp, ct, faith, brave, exp, lvl
+var current_value: int = 50 # typically used for stats that get value_changed until end of battle: hp, mp, ct, faith, brave, exp, lvl
 var modified_value: int: # typically used for stats that are modified from other things (equipment, etc): move, jump, speed, hp_max, mp_max
-	get:
-		return get_modified_value()
+	get: return get_modified_value()
 
 var modifiers: Array[Modifier] = []
 
@@ -40,7 +39,7 @@ func set_value(new_value: int) -> int:
 	var delta_value: int = new_value - current_value
 	current_value = new_value
 	
-	changed.emit(self)
+	value_changed.emit(self)
 	return delta_value
 
 
@@ -55,7 +54,7 @@ func add_value(value: int) -> int:
 	value = get_add_delta(value)
 	current_value += value
 	
-	changed.emit(self)
+	value_changed.emit(self)
 	return value
 
 
@@ -76,7 +75,7 @@ func set_max_value(new_max_value: int) -> int:
 	max_value = new_max_value
 	var delta_current: int = set_value(current_value)
 	
-	changed.emit(self)
+	value_changed.emit(self)
 	return delta_current
 
 
@@ -87,19 +86,19 @@ func set_min_value(new_min_value: int) -> int:
 	min_value = new_min_value
 	var delta_current: int = set_value(current_value)
 	
-	changed.emit(self)
+	value_changed.emit(self)
 	return delta_current
 
 
 func add_modifier(new_modifier: Modifier, emit_changed: bool = true) -> void:
 	modifiers.append(new_modifier)
 	if emit_changed:
-		changed.emit(self)
+		value_changed.emit(self)
 
 
 func remove_modifier(modifier: Modifier) -> void:
 	modifiers.erase(modifier)
-	changed.emit(self)
+	value_changed.emit(self)
 
 
 func update_max_from_clamped_value(max_clamped: ClampedValue):

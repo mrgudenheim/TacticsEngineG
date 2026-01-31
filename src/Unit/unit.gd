@@ -298,9 +298,9 @@ var actions_data: Dictionary[String, ActionInstance] = {}
 var submerged_depth: int = 0
 
 func _ready() -> void:
-	stats[StatType.HP_MAX].changed.connect(stats[StatType.HP].update_max_from_clamped_value)
-	stats[StatType.MP_MAX].changed.connect(stats[StatType.MP].update_max_from_clamped_value)
-	stats[StatType.HP].changed.connect(hp_changed)
+	stats[StatType.HP_MAX].value_changed.connect(stats[StatType.HP].update_max_from_clamped_value)
+	stats[StatType.MP_MAX].value_changed.connect(stats[StatType.MP].update_max_from_clamped_value)
+	stats[StatType.HP].value_changed.connect(hp_changed)
 
 	var hp_bar: StatBar = add_stat_bar(StatType.HP)
 	hp_bar.show_value = true
@@ -545,7 +545,7 @@ func update_stat_modifiers(all_passive_effects: Array[PassiveEffect]) -> void:
 			stats[stat_type].add_modifier(passive_effect.stat_modifiers[stat_type], false)
 	
 	for stat_type: StatType in StatType.values():
-		stats[stat_type].changed.emit(stats[stat_type])
+		stats[stat_type].value_changed.emit(stats[stat_type])
 
 
 func get_item_unique_name_for_slot(slot_type: ItemData.SlotType, item_level: int, random: bool = false) -> String:

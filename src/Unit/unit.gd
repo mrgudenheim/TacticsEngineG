@@ -22,6 +22,51 @@ signal turn_ended(this_unit: Unit)
 signal unit_input_event(unit_data: Unit, event: InputEvent)
 signal paths_updated()
 
+enum StatBasis {
+	MALE,
+	FEMALE,
+	OTHER,
+	MONSTER,
+}
+
+enum Gender {
+	MALE,
+	FEMALE,
+	OTHER,
+	MONSTER,
+}
+
+enum StatType {
+	HP,
+	HP_MAX,
+	MP,
+	MP_MAX,
+	CT,
+	MOVE,
+	JUMP,
+	SPEED,
+	PHYSICAL_ATTACK,
+	MAGIC_ATTACK,
+	BRAVE,
+	FAITH,
+	EXP,
+	LEVEL,
+}
+
+enum Facings {
+	NORTH,
+	EAST,
+	SOUTH,
+	WEST,
+}
+
+const FacingVectors: Dictionary[Facings, Vector3] = {
+	Facings.NORTH: Vector3.BACK,
+	Facings.EAST: Vector3.RIGHT,
+	Facings.SOUTH: Vector3.FORWARD,
+	Facings.WEST: Vector3.LEFT,
+}
+
 var global_battle_manager: BattleManager
 var team: Team
 var is_controlled_by_me: bool = false # for multiplayer games
@@ -121,39 +166,6 @@ class AbilitySlot:
 	
 	func _to_string() -> String:
 		return ability_slot_name + ": " + ability.display_name
-
-
-enum StatBasis {
-	MALE,
-	FEMALE,
-	OTHER,
-	MONSTER,
-}
-
-enum Gender {
-	MALE,
-	FEMALE,
-	OTHER,
-	MONSTER,
-}
-
-
-enum StatType {
-	HP,
-	HP_MAX,
-	MP,
-	MP_MAX,
-	CT,
-	MOVE,
-	JUMP,
-	SPEED,
-	PHYSICAL_ATTACK,
-	MAGIC_ATTACK,
-	BRAVE,
-	FAITH,
-	EXP,
-	LEVEL,
-}
 
 var stats: Dictionary[StatType, ClampedValue] = {
 	StatType.HP_MAX : ClampedValue.new(0, 999, 150),
@@ -302,20 +314,6 @@ var is_back_facing: bool = false
 var facing_vector: Vector3 = Vector3.FORWARD:
 	get:
 		return FacingVectors[facing]
-
-enum Facings {
-	NORTH,
-	EAST,
-	SOUTH,
-	WEST,
-	}
-
-const FacingVectors: Dictionary[Facings, Vector3] = {
-	Facings.NORTH: Vector3.BACK,
-	Facings.EAST: Vector3.RIGHT,
-	Facings.SOUTH: Vector3.FORWARD,
-	Facings.WEST: Vector3.LEFT,
-	}
 
 var is_in_air: bool = false
 var is_traveling_path: bool = false

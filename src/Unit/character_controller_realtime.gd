@@ -20,7 +20,7 @@ const CameraFacingVectors: Dictionary[Directions, Vector3] = {
 	}
 
 
-static var unit: UnitData
+static var unit: Unit
 
 
 func _physics_process(delta: float) -> void:

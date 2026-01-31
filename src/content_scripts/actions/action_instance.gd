@@ -5,7 +5,7 @@ signal action_completed(battle_manager: BattleManager)
 signal tile_hovered(tile: TerrainTile, action_instance: ActionInstance)
 
 var action: Action
-var user: UnitData
+var user: Unit
 var battle_manager: BattleManager
 
 var potential_targets: Array[TerrainTile]
@@ -22,7 +22,7 @@ var potential_targets_are_set: bool = false
 var action_preview_scene: PackedScene = preload("res://src/content_scripts/actions/action_preview.tscn")
 var action_previews: Array[ActionPreview] = []
 
-func _init(new_action: Action, new_user: UnitData, new_battle_manager: BattleManager) -> void:
+func _init(new_action: Action, new_user: Unit, new_battle_manager: BattleManager) -> void:
 	action = new_action
 	user = new_user
 	battle_manager = new_battle_manager
@@ -129,12 +129,12 @@ func stop_targeting() -> void:
 	action.targeting_strategy.stop_targeting(self)
 
 
-func get_target_units(target_tiles: Array[TerrainTile]) -> Array[UnitData]:
-	var target_units: Array[UnitData] = []
+func get_target_units(target_tiles: Array[TerrainTile]) -> Array[Unit]:
+	var target_units: Array[Unit] = []
 	for target_tile: TerrainTile in target_tiles:
-		var units_on_tile: Array[UnitData] = battle_manager.units.filter(func(unit: UnitData): return unit.tile_position == target_tile)
+		var units_on_tile: Array[Unit] = battle_manager.units.filter(func(unit: Unit): return unit.tile_position == target_tile)
 		
-		for unit: UnitData in units_on_tile:
+		for unit: Unit in units_on_tile:
 			if unit.get_nullify_statuses().is_empty(): # TODO check all passives not just statuses
 				target_units.append(unit)
 				continue
@@ -148,22 +148,22 @@ func get_target_units(target_tiles: Array[TerrainTile]) -> Array[UnitData]:
 				target_units.append(unit)
 
 		# units_on_tile = units_on_tile.filter(
-		# 	func(unit: UnitData): return unit.get_nullify_statuses().is_empty() or action_ignores_all_null_statuses(unit) or action_removes_null_status(unit))
+		# 	func(unit: Unit): return unit.get_nullify_statuses().is_empty() or action_ignores_all_null_statuses(unit) or action_removes_null_status(unit))
 		# target_units.append_array(units_on_tile)
 		#if unit_index == -1:
 			#continue
-		#var target_unit: UnitData = battle_manager.units[unit_index]
+		#var target_unit: Unit = battle_manager.units[unit_index]
 		#target_units.append(target_unit)
 	
 	return target_units
 
 
-# func action_ignores_all_null_statuses(unit: UnitData) -> bool:
+# func action_ignores_all_null_statuses(unit: Unit) -> bool:
 # 	return unit.get_nullify_statuses().all(
 # 			func(status: StatusEffect): return action.ignores_statuses.has(status.status_id))
 
 
-# func action_removes_null_status(unit: UnitData) -> bool:
+# func action_removes_null_status(unit: Unit) -> bool:
 # 	return unit.get_nullify_statuses().any(
 # 			func(status: StatusEffect): return action.will_remove_status and action.target_status_list.has(status.status_id)) # ignore action unless it would remove nullify
 
@@ -175,9 +175,9 @@ func get_ai_score() -> int:
 
 
 	var ai_score: int = 0
-	var target_units: Array[UnitData] = get_target_units(preview_targets)
+	var target_units: Array[Unit] = get_target_units(preview_targets)
 	
-	for target: UnitData in target_units:
+	for target: Unit in target_units:
 		var target_score: float = 0.0
 		for action_effect: ActionEffect in action.target_effects:
 			var effect_value: int = action_effect.get_ai_value(user, target, action.element)
@@ -208,7 +208,7 @@ func get_ai_score() -> int:
 	return ai_score
 
 
-func show_result_preview(target: UnitData) -> ActionPreview:
+func show_result_preview(target: Unit) -> ActionPreview:
 	var hit_chance_text: String = get_hit_chance_text(target)
 	var effects_text: String = get_effects_text(target)
 	var statuses_text: String = get_statuses_text(target)
@@ -231,7 +231,7 @@ func show_result_preview(target: UnitData) -> ActionPreview:
 	return preview
 
 
-func get_hit_chance_text(target: UnitData) -> String:
+func get_hit_chance_text(target: Unit) -> String:
 	# hit chance preview
 	var evade_direction: EvadeData.Directions = action.get_evade_direction(user, target)
 	var hit_chance_value: int = action.get_total_hit_chance(user, target, evade_direction)
@@ -240,7 +240,7 @@ func get_hit_chance_text(target: UnitData) -> String:
 	return hit_chance_text
 
 
-func get_effects_text(target: UnitData) -> String:
+func get_effects_text(target: Unit) -> String:
 	# effect preview
 	var all_effects_text: PackedStringArray = []
 	for action_effect: ActionEffect in action.target_effects:
@@ -252,7 +252,7 @@ func get_effects_text(target: UnitData) -> String:
 	return total_effect_text
 
 
-func get_statuses_text(target: UnitData) -> String:
+func get_statuses_text(target: Unit) -> String:
 	# status preview
 	if action.target_status_list.is_empty():
 		return ""
@@ -277,7 +277,7 @@ func get_statuses_text(target: UnitData) -> String:
 	return total_status_text
 
 
-func get_secondary_actions_text(target: UnitData) -> String:
+func get_secondary_actions_text(target: Unit) -> String:
 	# TODO show effects and statuses from secondary actions?
 	if action.secondary_actions2.is_empty():
 		return ""
@@ -306,7 +306,7 @@ func on_map_input_event(camera: Camera3D, event: InputEvent, event_position: Vec
 	tile_hovered.emit(tile, self, event)
 
 
-func on_unit_hovered(unit: UnitData, event: InputEvent):
+func on_unit_hovered(unit: Unit, event: InputEvent):
 	var tile: TerrainTile = unit.tile_position
 	if tile == null:
 		return

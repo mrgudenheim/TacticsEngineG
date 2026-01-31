@@ -178,7 +178,7 @@ func _init(idx: int = 0) -> void:
 		
 		# make attack action
 		weapon_attack_action = Action.new()
-		weapon_attack_action.target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, UnitData.StatType.HP))
+		weapon_attack_action.target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, Unit.StatType.HP))
 		
 		weapon_attack_action.target_effects[0].base_power_formula.values[0] = weapon_power
 		weapon_attack_action.element = weapon_element
@@ -333,8 +333,8 @@ func _init(idx: int = 0) -> void:
 		sub_index = idx - 0x90
 		hp_modifier = RomReader.scus_data.armour_hp_modifier[sub_index]
 		mp_modifier = RomReader.scus_data.armour_mp_modifier[sub_index]
-		passive_effect.stat_modifiers[UnitData.StatType.HP_MAX] = Modifier.new(hp_modifier)
-		passive_effect.stat_modifiers[UnitData.StatType.MP_MAX] = Modifier.new(mp_modifier)
+		passive_effect.stat_modifiers[Unit.StatType.HP_MAX] = Modifier.new(hp_modifier)
+		passive_effect.stat_modifiers[Unit.StatType.MP_MAX] = Modifier.new(mp_modifier)
 		
 	elif idx < 0xf0: # accessory data
 		sub_index = idx - 0xd0
@@ -350,7 +350,7 @@ func _init(idx: int = 0) -> void:
 		consumable_inflict_status_id = RomReader.scus_data.chem_item_inflict_status_id[sub_index]
 
 	# remove empty modifiers
-	for key: UnitData.StatType in passive_effect.stat_modifiers.keys():
+	for key: Unit.StatType in passive_effect.stat_modifiers.keys():
 		if passive_effect.stat_modifiers[key].value_formula.values[0] == 0:
 			passive_effect.stat_modifiers.erase(key)
 	
@@ -370,11 +370,11 @@ func set_item_attributes(item_attribute: ScusData.ItemAttribute) -> void:
 	move_modifier = item_attribute.move_modifier
 	jump_modifier = item_attribute.jump_modifier
 	
-	passive_effect.stat_modifiers[UnitData.StatType.PHYSICAL_ATTACK] = Modifier.new(item_attribute.pa_modifier)
-	passive_effect.stat_modifiers[UnitData.StatType.MAGIC_ATTACK] = Modifier.new(item_attribute.ma_modifier)
-	passive_effect.stat_modifiers[UnitData.StatType.SPEED] = Modifier.new(item_attribute.sp_modifier)
-	passive_effect.stat_modifiers[UnitData.StatType.MOVE] = Modifier.new(item_attribute.move_modifier)
-	passive_effect.stat_modifiers[UnitData.StatType.JUMP] = Modifier.new(item_attribute.jump_modifier)
+	passive_effect.stat_modifiers[Unit.StatType.PHYSICAL_ATTACK] = Modifier.new(item_attribute.pa_modifier)
+	passive_effect.stat_modifiers[Unit.StatType.MAGIC_ATTACK] = Modifier.new(item_attribute.ma_modifier)
+	passive_effect.stat_modifiers[Unit.StatType.SPEED] = Modifier.new(item_attribute.sp_modifier)
+	passive_effect.stat_modifiers[Unit.StatType.MOVE] = Modifier.new(item_attribute.move_modifier)
+	passive_effect.stat_modifiers[Unit.StatType.JUMP] = Modifier.new(item_attribute.jump_modifier)
 	
 	passive_effect.status_always = item_attribute.status_always
 	passive_effect.status_immune = item_attribute.status_immune
@@ -433,7 +433,7 @@ static func create_from_dictionary(property_dict: Dictionary) -> ItemData:
 	var new_item: ItemData = ItemData.new()
 	for property_name in property_dict.keys():
 		if property_name == "stat_modifiers":
-			var new_stat_modifiers: Dictionary[UnitData.StatType, Modifier] = {}
+			var new_stat_modifiers: Dictionary[Unit.StatType, Modifier] = {}
 			var temp_dict = property_dict[property_name]
 			for key in temp_dict:
 				new_stat_modifiers[int(key)] = Modifier.create_from_dictionary(temp_dict[key])

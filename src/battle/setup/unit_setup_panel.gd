@@ -1,9 +1,9 @@
 class_name UnitSetupPanel
 extends Container
 
-signal job_select_pressed(unit: UnitData)
-signal item_select_pressed(unit: UnitData, slot: UnitData.EquipmentSlot)
-signal ability_select_pressed(unit: UnitData, slot: UnitData.AbilitySlot)
+signal job_select_pressed(unit: Unit)
+signal item_select_pressed(unit: Unit, slot: Unit.EquipmentSlot)
+signal ability_select_pressed(unit: Unit, slot: Unit.AbilitySlot)
 
 @export var sprite_rect: TextureRect
 @export var unit_name_line_edit: LineEdit
@@ -45,10 +45,10 @@ signal ability_select_pressed(unit: UnitData, slot: UnitData.AbilitySlot)
 @export var strengthen_elements_label: Label
 
 @export var unit_scene: PackedScene
-var unit_data: UnitData
+var unit_data: Unit
 
 
-func setup(unit: UnitData) -> void:
+func setup(unit: Unit) -> void:
 	unit_data = unit
 	if unit.job_data == null:
 		unit.set_job_id(0x01) # TODO set initial job correctly
@@ -61,14 +61,14 @@ func setup(unit: UnitData) -> void:
 		palette_option_button.add_item(str(palette_idx))
 	palette_option_button.select(unit.sprite_palette_id)
 
-	hp_bar.set_stat(str(UnitData.StatType.keys()[UnitData.StatType.HP]), unit.stats[UnitData.StatType.HP])
+	hp_bar.set_stat(str(Unit.StatType.keys()[Unit.StatType.HP]), unit.stats[Unit.StatType.HP])
 	hp_bar.name_label.position.x = 5
 	hp_bar.name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	hp_bar.value_label.position.x = hp_bar.size.x - hp_bar.value_label.size.x - 5
 	hp_bar.value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	# hp_bar.value_label.grow_horizontal = GrowDirection.GROW_DIRECTION_BEGIN
 	
-	mp_bar.set_stat(str(UnitData.StatType.keys()[UnitData.StatType.MP]), unit.stats[UnitData.StatType.MP])
+	mp_bar.set_stat(str(Unit.StatType.keys()[Unit.StatType.MP]), unit.stats[Unit.StatType.MP])
 	mp_bar.fill_color = Color.INDIAN_RED
 	mp_bar.name_label.position.x = 5
 	mp_bar.name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
@@ -76,7 +76,7 @@ func setup(unit: UnitData) -> void:
 	mp_bar.value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	# mp_bar.value_label.grow_horizontal = GrowDirection.GROW_DIRECTION_BEGIN
 
-	ct_bar.set_stat(str(UnitData.StatType.keys()[UnitData.StatType.CT]), unit.stats[UnitData.StatType.CT])
+	ct_bar.set_stat(str(Unit.StatType.keys()[Unit.StatType.CT]), unit.stats[Unit.StatType.CT])
 	ct_bar.fill_color = Color.WEB_GREEN
 	ct_bar.name_label.position.x = 5
 	ct_bar.name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
@@ -114,18 +114,18 @@ func setup(unit: UnitData) -> void:
 	update_ui(unit)
 
 
-func update_ui(unit: UnitData) -> void:
-	# update_stat_label(level_label, unit, UnitData.StatType.LEVEL)
+func update_ui(unit: Unit) -> void:
+	# update_stat_label(level_label, unit, Unit.StatType.LEVEL)
 	job_button.text = unit.job_data.display_name
-	level_spinbox.value = unit.stats[UnitData.StatType.LEVEL].get_modified_value()
+	level_spinbox.value = unit.stats[Unit.StatType.LEVEL].get_modified_value()
 	
-	update_stat_label(pa_label, unit, UnitData.StatType.PHYSICAL_ATTACK)
-	update_stat_label(ma_label, unit, UnitData.StatType.MAGIC_ATTACK)
-	update_stat_label(brave_label, unit, UnitData.StatType.BRAVE)
-	update_stat_label(faith_label, unit, UnitData.StatType.FAITH)
-	update_stat_label(move_label, unit, UnitData.StatType.MOVE)
-	update_stat_label(jump_label, unit, UnitData.StatType.JUMP)
-	update_stat_label(speed_label, unit, UnitData.StatType.SPEED)
+	update_stat_label(pa_label, unit, Unit.StatType.PHYSICAL_ATTACK)
+	update_stat_label(ma_label, unit, Unit.StatType.MAGIC_ATTACK)
+	update_stat_label(brave_label, unit, Unit.StatType.BRAVE)
+	update_stat_label(faith_label, unit, Unit.StatType.FAITH)
+	update_stat_label(move_label, unit, Unit.StatType.MOVE)
+	update_stat_label(jump_label, unit, Unit.StatType.JUMP)
+	update_stat_label(speed_label, unit, Unit.StatType.SPEED)
 
 	# update evade
 	var unit_passive_effects: Array[PassiveEffect] = unit.get_all_passive_effects()
@@ -158,7 +158,7 @@ func update_ui(unit: UnitData) -> void:
 	for child_idx: int in range(0, equipment_labels.size()):
 		equipment_labels[child_idx].queue_free()
 
-	for equip_slot: UnitData.EquipmentSlot in unit.equip_slots:
+	for equip_slot: Unit.EquipmentSlot in unit.equip_slots:
 		var new_slot_label: Label = Label.new()
 		new_slot_label.text = equip_slot.equipment_slot_name
 		equipment_grid.add_child(new_slot_label)
@@ -174,7 +174,7 @@ func update_ui(unit: UnitData) -> void:
 	for child_idx: int in range(0, ability_labels.size()):
 		ability_labels[child_idx].queue_free()
 
-	for ability_slot: UnitData.AbilitySlot in unit.ability_slots:
+	for ability_slot: Unit.AbilitySlot in unit.ability_slots:
 		var new_slot_label: Label = Label.new()
 		new_slot_label.text = ability_slot.ability_slot_name
 		ability_grid.add_child(new_slot_label)
@@ -271,15 +271,15 @@ func update_passive_effect_list_label(starting_text: String, text_list: PackedSt
 		passive_effect_container.add_child(new_label)
 
 
-func update_stat_label(stat_label: Label, unit: UnitData, stat_type: UnitData.StatType) -> void:
-	var stat_name: String = UnitData.StatType.find_key(stat_type).to_pascal_case()
+func update_stat_label(stat_label: Label, unit: Unit, stat_type: Unit.StatType) -> void:
+	var stat_name: String = Unit.StatType.find_key(stat_type).to_pascal_case()
 	var stat: ClampedValue = unit.stats[stat_type]
 	var stat_value: int = stat.get_modified_value()
 	# stat_label.text = stat_name + ": " + str(roundi(stat_value)) + "/" + str(roundi(stat.max_value))
 	stat_label.text = stat_name + ": " + str(roundi(stat_value)) # + "/" + str(roundi(stat.max_value))
 
 
-func get_total_evade_factor(unit: UnitData, unit_passive_effects: Array[PassiveEffect], evade_type: EvadeData.EvadeType, evade_direction: EvadeData.Directions) -> int:
+func get_total_evade_factor(unit: Unit, unit_passive_effects: Array[PassiveEffect], evade_type: EvadeData.EvadeType, evade_direction: EvadeData.Directions) -> int:
 	var evade_values: Dictionary[EvadeData.EvadeSource, int] = unit.get_evade_values(evade_type, evade_direction)
 
 	var total_evade_factor: float = 1.0
@@ -313,13 +313,12 @@ func set_team(new_team_idx: int) -> void:
 
 
 func set_controller(new_controller_idx: int) -> void:
-	# TODO set unit controller
 	if new_controller_idx == 0:
 		unit_data.is_ai_controlled = true
 	else:
 		unit_data.is_ai_controlled = false
 		# TODO handle multiple player teams
 
-func update_level(unit: UnitData, new_level: int) -> void:
+func update_level(unit: Unit, new_level: int) -> void:
 	unit.generate_leveled_raw_stats(new_level, unit.job_data)
 	unit.calc_battle_stats(unit.job_data)

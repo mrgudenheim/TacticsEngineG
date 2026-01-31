@@ -1,25 +1,25 @@
-class_name UnitData
+class_name Unit
 extends Node3D
 
 # https://ffhacktics.com/wiki/Miscellaneous_Unit_Data
 # https://ffhacktics.com/wiki/Battle_Stats
 
 signal initialized()
-signal data_updated(unit: UnitData)
+signal data_updated(unit: Unit)
 
 signal ability_assigned(id: int)
 signal ability_completed()
 signal primary_weapon_assigned(idx: int)
 signal image_changed(new_image: ImageTexture)
-signal knocked_out(unit: UnitData)
+signal knocked_out(unit: Unit)
 signal spritesheet_changed(new_spritesheet: ImageTexture)
-signal targeted_pre_action(this_unit: UnitData, action_instance: ActionInstance)
-signal targeted_post_action(this_unit: UnitData, action_instance: ActionInstance)
+signal targeted_pre_action(this_unit: Unit, action_instance: ActionInstance)
+signal targeted_post_action(this_unit: Unit, action_instance: ActionInstance)
 signal reached_tile()
-signal completed_move(this_unit: UnitData, tile_moved: int)
-signal turn_started(this_unit: UnitData)
-signal turn_ended(this_unit: UnitData)
-signal unit_input_event(unit_data: UnitData, event: InputEvent)
+signal completed_move(this_unit: Unit, tile_moved: int)
+signal turn_started(this_unit: Unit)
+signal turn_ended(this_unit: Unit)
+signal unit_input_event(unit_data: Unit, event: InputEvent)
 signal paths_updated()
 
 var global_battle_manager: BattleManager
@@ -1506,7 +1506,7 @@ func get_passive_effects_from_others(exclude_passives: PackedStringArray = []) -
 	var shared_passive_effects: Array[PassiveEffect] = []
 	
 	if global_battle_manager != null:
-		for unit: UnitData in global_battle_manager.units:
+		for unit: Unit in global_battle_manager.units:
 			var unit_passives: Array[PassiveEffect] = unit.get_native_passive_effects()
 			for passive_effect: PassiveEffect in unit_passives:
 				if passive_effect.effect_range == 0:
@@ -1700,7 +1700,7 @@ func set_position_to_tile() -> void:
 	char_body.global_position = Vector3(tile_position.location.x + 0.5, tile_position.get_world_position().y + 0.25, tile_position.location.y + 0.5)
 
 
-func update_map_paths(map_tiles: Dictionary[Vector2i, Array], units: Array[UnitData], max_cost: int = 9999) -> void:
+func update_map_paths(map_tiles: Dictionary[Vector2i, Array], units: Array[Unit], max_cost: int = 9999) -> void:
 	paths_set = false
 	var all_passive_effects: Array[PassiveEffect] = get_all_passive_effects()
 	update_prohibited_terrain(all_passive_effects)

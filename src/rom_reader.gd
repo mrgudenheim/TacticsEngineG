@@ -351,7 +351,7 @@ func process_rom() -> void:
 	
 	# new_passive_effect = PassiveEffect.new()
 	# new_passive_effect.unique_name = "monster_talk"
-	# new_passive_effect.add_applicable_target_stat_bases = [UnitData.StatBasis.MONSTER]
+	# new_passive_effect.add_applicable_target_stat_bases = [Unit.StatBasis.MONSTER]
 	# Utilities.save_json(new_passive_effect)
 
 	# new_passive_effect = PassiveEffect.new()
@@ -394,14 +394,14 @@ func process_rom() -> void:
 	# new_passive_effect = PassiveEffect.new()
 	# new_passive_effect.unique_name = "monster_skill"
 	# new_passive_effect.effect_range = 3
-	# new_passive_effect.unit_basis_filter = [UnitData.StatBasis.MONSTER]
+	# new_passive_effect.unit_basis_filter = [Unit.StatBasis.MONSTER]
 	# new_passive_effect.added_actions_names = ["choco_ball"] # TODO change to 'learned' flag for each job's unique action?
 	# Utilities.save_json(new_passive_effect)
 
 	# new_passive_effect = PassiveEffect.new()
 	# new_passive_effect.unique_name = "move+1"
-	# var stat_modifier_dict: Dictionary[UnitData.StatType, Modifier] = {
-	# 	UnitData.StatType.MOVE : Modifier.new(1, Modifier.ModifierType.ADD),
+	# var stat_modifier_dict: Dictionary[Unit.StatType, Modifier] = {
+	# 	Unit.StatType.MOVE : Modifier.new(1, Modifier.ModifierType.ADD),
 	# }
 	# new_passive_effect.stat_modifiers = stat_modifier_dict
 	# Utilities.save_json(new_passive_effect)
@@ -409,7 +409,7 @@ func process_rom() -> void:
 	# new_passive_effect = PassiveEffect.new()
 	# new_passive_effect.unique_name = "move+2"
 	# stat_modifier_dict = {
-	# 	UnitData.StatType.MOVE : Modifier.new(2, Modifier.ModifierType.ADD),
+	# 	Unit.StatType.MOVE : Modifier.new(2, Modifier.ModifierType.ADD),
 	# }
 	# new_passive_effect.stat_modifiers = stat_modifier_dict
 	# Utilities.save_json(new_passive_effect)
@@ -417,7 +417,7 @@ func process_rom() -> void:
 	# new_passive_effect = PassiveEffect.new()
 	# new_passive_effect.unique_name = "move+3"
 	# stat_modifier_dict = {
-	# 	UnitData.StatType.MOVE : Modifier.new(3, Modifier.ModifierType.ADD),
+	# 	Unit.StatType.MOVE : Modifier.new(3, Modifier.ModifierType.ADD),
 	# }
 	# new_passive_effect.stat_modifiers = stat_modifier_dict
 	# Utilities.save_json(new_passive_effect)
@@ -425,7 +425,7 @@ func process_rom() -> void:
 	# new_passive_effect = PassiveEffect.new()
 	# new_passive_effect.unique_name = "jump+1"
 	# stat_modifier_dict = {
-	# 	UnitData.StatType.JUMP : Modifier.new(1, Modifier.ModifierType.ADD),
+	# 	Unit.StatType.JUMP : Modifier.new(1, Modifier.ModifierType.ADD),
 	# }
 	# new_passive_effect.stat_modifiers = stat_modifier_dict
 	# Utilities.save_json(new_passive_effect)
@@ -433,7 +433,7 @@ func process_rom() -> void:
 	# new_passive_effect = PassiveEffect.new()
 	# new_passive_effect.unique_name = "jump+2"
 	# stat_modifier_dict = {
-	# 	UnitData.StatType.JUMP : Modifier.new(2, Modifier.ModifierType.ADD),
+	# 	Unit.StatType.JUMP : Modifier.new(2, Modifier.ModifierType.ADD),
 	# }
 	# new_passive_effect.stat_modifiers = stat_modifier_dict
 	# Utilities.save_json(new_passive_effect)
@@ -441,7 +441,7 @@ func process_rom() -> void:
 	# new_passive_effect = PassiveEffect.new()
 	# new_passive_effect.unique_name = "jump+3"
 	# stat_modifier_dict = {
-	# 	UnitData.StatType.JUMP : Modifier.new(3, Modifier.ModifierType.ADD),
+	# 	Unit.StatType.JUMP : Modifier.new(3, Modifier.ModifierType.ADD),
 	# }
 	# new_passive_effect.stat_modifiers = stat_modifier_dict
 	# Utilities.save_json(new_passive_effect)

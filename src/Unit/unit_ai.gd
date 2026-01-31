@@ -27,7 +27,7 @@ enum Strategy {
 	FLEE,
 }
 
-func choose_action(unit: UnitData) -> void:
+func choose_action(unit: Unit) -> void:
 	unit.global_battle_manager.game_state_label.text = unit.job_nickname + "-" + unit.unit_nickname + " AI choosing action"
 	
 	if Vector2i(floori(unit.char_body.position.x), floori(unit.char_body.position.z)) != unit.tile_position.location:
@@ -150,7 +150,7 @@ func choose_action(unit: UnitData) -> void:
 			# find closest enemy and move towards
 			var shortest_path_cost: int = -1
 			var shortest_path_target: TerrainTile
-			for other_unit: UnitData in unit.global_battle_manager.units:
+			for other_unit: Unit in unit.global_battle_manager.units:
 				if other_unit.team != unit.team and not other_unit.is_defeated: # if enemy
 					var other_unit_xy: Vector2i = other_unit.tile_position.location
 					var adjacent_tiles: Array[TerrainTile] = []
@@ -207,7 +207,7 @@ func choose_action(unit: UnitData) -> void:
 		var chosen_action: ActionInstance = eligible_actions.pick_random()
 		await action_targeted(unit, chosen_action) # random target
 
-func action_targeted(unit: UnitData, chosen_action: ActionInstance, target: TerrainTile = null, hover_target = null) -> void:
+func action_targeted(unit: Unit, chosen_action: ActionInstance, target: TerrainTile = null, hover_target = null) -> void:
 	#chosen_action.show_potential_targets() # TODO fix move targeting when updating paths/pathfinding is takes longer than delay (large maps with 10+ units)
 	chosen_action.potential_targets = await chosen_action.action.targeting_strategy.get_potential_targets(chosen_action)
 	chosen_action.start_targeting()
@@ -233,5 +233,5 @@ func action_targeted(unit: UnitData, chosen_action: ActionInstance, target: Terr
 			await wait_action_instance.action_completed
 
 
-func wait_for_delay(unit: UnitData) -> void:
+func wait_for_delay(unit: Unit) -> void:
 	await unit.get_tree().create_timer(action_delay).timeout

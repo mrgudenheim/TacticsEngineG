@@ -19,7 +19,7 @@ extends Control
 @export var item_select_control: ItemSelectControl
 @export var ability_select_control: AbilitySelectControl
 
-@export var unit_dragged: UnitData
+@export var unit_dragged: Unit
 @export var tile_highlight: Node3D
 @export var unit_setup: UnitSetupPanel
 
@@ -118,7 +118,7 @@ func populate_option_lists() -> void:
 	ability_select_control.populate_list()
 
 
-func setup_job_select(unit: UnitData) -> void:
+func setup_job_select(unit: Unit) -> void:
 	job_select_control.visible = true
 	for job_select_button: JobSelectButton in job_select_control.job_select_buttons:
 		job_select_button.selected.connect(func(new_job: JobData): update_unit_job(unit, new_job))
@@ -130,7 +130,7 @@ func desetup_job_select() -> void:
 		Utilities.disconnect_all_connections(job_select_button.selected)
 
 
-func setup_item_select(unit: UnitData, slot: UnitData.EquipmentSlot) -> void:
+func setup_item_select(unit: Unit, slot: Unit.EquipmentSlot) -> void:
 	item_select_control.visible = true
 	for item_select_button: ItemSelectButton in item_select_control.item_select_buttons:
 		if slot.slot_types.has(item_select_button.item_data.slot_type) and unit.equipable_item_types.has(item_select_button.item_data.item_type):
@@ -146,7 +146,7 @@ func desetup_item_select() -> void:
 		Utilities.disconnect_all_connections(item_select_button.selected)
 
 
-func setup_ability_select(unit: UnitData, slot: UnitData.AbilitySlot) -> void:
+func setup_ability_select(unit: Unit, slot: Unit.AbilitySlot) -> void:
 	ability_select_control.visible = true
 	for ability_select_button: AbilitySelectButton in ability_select_control.ability_select_buttons:
 		if slot.slot_types.has(ability_select_button.ability_data.slot_type):
@@ -162,20 +162,20 @@ func desetup_ability_select() -> void:
 		Utilities.disconnect_all_connections(ability_select_button.selected)
 
 
-func update_unit_job(unit: UnitData, new_job: JobData) -> void:
+func update_unit_job(unit: Unit, new_job: JobData) -> void:
 	unit.set_job_id(new_job.job_id)
 	# TODO update stats (apply multipliers, redo growths, etc.)
 	
 	desetup_job_select()
 
 
-func update_unit_equipment(unit: UnitData, slot: UnitData.EquipmentSlot, new_item: ItemData) -> void:
+func update_unit_equipment(unit: Unit, slot: Unit.EquipmentSlot, new_item: ItemData) -> void:
 	unit.set_equipment_slot(slot, new_item)
 	
 	desetup_item_select()
 
 
-func update_unit_ability(unit: UnitData, slot: UnitData.AbilitySlot, new_ability: Ability) -> void:
+func update_unit_ability(unit: Unit, slot: Unit.AbilitySlot, new_ability: Ability) -> void:
 	unit.equip_ability(slot, new_ability)
 	
 	desetup_ability_select()
@@ -210,8 +210,8 @@ func update_map(new_map_chunk_settings: MapChunkSettingsUi) -> void:
 	show_all_tiles(show_map_tiles_check.button_pressed)
 
 
-func update_unit_positions(units: Array[UnitData]) -> void:
-	for unit: UnitData in units:
+func update_unit_positions(units: Array[Unit]) -> void:
+	for unit: Unit in units:
 		if battle_manager.total_map_tiles.keys().has(unit.tile_position.location):
 			unit.tile_position = battle_manager.total_map_tiles[unit.tile_position.location][0]
 		else: # find nearest tile
@@ -292,7 +292,7 @@ func adjust_height(tab_idx: int) -> void:
 		battle_setup_container.offset_bottom = 0
 
 
-func update_unit_dragging(unit: UnitData, event: InputEvent) -> void:
+func update_unit_dragging(unit: Unit, event: InputEvent) -> void:
 	if event.is_action_pressed("primary_action") and unit_dragged == null:
 		unit_dragged = unit # TODO only drag one unit at a time
 		unit_setup.setup(unit)

@@ -3,7 +3,7 @@ extends Control
 
 signal spritesheet_changed(new_image: ImageTexture)
 
-@export var unit: UnitData
+@export var unit: Unit
 @export var unit_char_body: CharacterBody3D
 @export var animation_manager: UnitAnimationManager
 

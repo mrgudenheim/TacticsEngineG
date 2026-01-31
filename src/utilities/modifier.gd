@@ -35,7 +35,7 @@ func _init(new_value: float = 1.0, new_type: ModifierType = ModifierType.ADD, ne
 # 			return -1
 
 
-func apply(to_value: int, user: UnitData = null, target: UnitData = null) -> int:
+func apply(to_value: int, user: Unit = null, target: Unit = null) -> int:
 	var formula_result: float = value_formula.get_base_value(user, target)
 
 	match type:

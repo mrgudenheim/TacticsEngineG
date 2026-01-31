@@ -22,7 +22,7 @@ const FILE_SUFFIX: String = "passive_effect"
 # used to modify Action required_target_job_uname, required_target_status_uname, required_target_stat_basis
 @export var add_applicable_target_jobs: PackedStringArray = [] # job unique names
 @export var add_applicable_target_statuses: PackedStringArray = [] # status unique names
-@export var add_applicable_target_stat_bases: Array[UnitData.StatBasis] = []  # male, female, monsters
+@export var add_applicable_target_stat_bases: Array[Unit.StatBasis] = []  # male, female, monsters
 @export var include_evade_sources: Array[EvadeData.EvadeSource] = []
 # @export var evade_datas: Array[EvadeData] = [] # TODO move evade data to PassiveEffect from JobData, ItemData, etc.
 
@@ -34,7 +34,7 @@ var added_actions: Array[Action] = []
 @export var added_triggered_actions_names: PackedStringArray = []
 var added_triggered_actions: Array[TriggeredAction] = []
 @export var added_equipment_types_equipable: Array[ItemData.ItemType] = [] # equip_x support abilities
-@export var stat_modifiers: Dictionary[UnitData.StatType, Modifier] = {}
+@export var stat_modifiers: Dictionary[Unit.StatType, Modifier] = {}
 @export var ct_gain_modifier: Modifier = Modifier.new(1.0, Modifier.ModifierType.MULT)
 
 # move modifiers
@@ -62,7 +62,7 @@ var added_triggered_actions: Array[TriggeredAction] = []
 @export var effect_range: int = 0
 @export var vertical_tolerance: float = 3
 @export var unit_team_filter: Array[FilterTeam] = [FilterTeam.FRIENDLY]
-@export var unit_basis_filter: Array[UnitData.StatBasis] = []
+@export var unit_basis_filter: Array[Unit.StatBasis] = []
 
 enum FilterTeam {
 	FRIENDLY,
@@ -120,7 +120,7 @@ static func create_from_dictionary(property_dict: Dictionary) -> PassiveEffect:
 	var new_passive_effect: PassiveEffect = PassiveEffect.new()
 	for property_name in property_dict.keys():
 		if property_name == "stat_modifiers":
-			var new_stat_modifiers: Dictionary[UnitData.StatType, Modifier] = {}
+			var new_stat_modifiers: Dictionary[Unit.StatType, Modifier] = {}
 			var temp_dict = property_dict[property_name]
 			for key in temp_dict:
 				new_stat_modifiers[int(key)] = Modifier.create_from_dictionary(temp_dict[key])

@@ -2,7 +2,7 @@ class_name BattleManager
 extends Node3D
 
 signal map_input_event(action_instance: ActionInstance, camera: Camera3D, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int) # TODO should action_instance be removed from signal?
-signal unit_created(new_unit: UnitData)
+signal unit_created(new_unit: Unit)
 
 const SCALE: float = 1.0 / MapData.TILE_SIDE_LENGTH
 const SCALED_UNITS_PER_HEIGHT: float = SCALE * MapData.UNITS_PER_HEIGHT
@@ -39,7 +39,7 @@ var current_cursor_map_position: Vector3
 @export var action_menu: Control
 @export var action_button_list: BoxContainer
 @export var units_container: Node3D
-@export var units: Array[UnitData] = []
+@export var units: Array[Unit] = []
 @export var teams: Array[Team] = []
 @export var unit_tscn: PackedScene
 @export var controller: UnitControllerRT
@@ -48,7 +48,7 @@ var current_cursor_map_position: Vector3
 @export var battle_end_panel: Control
 @export var post_battle_messages: Control
 @export var start_new_battle_button: Button
-@export var active_unit: UnitData
+@export var active_unit: Unit
 @export var game_state_label: Label
 @export var units_per_team_spinbox: SpinBox
 @export var units_per_team: int = 5:
@@ -351,7 +351,7 @@ func update_total_map_tiles(map_chunks: Array[Scenario.MapChunk]) -> void:
 func start_battle() -> void:
 	scenario_editor.visible = false
 	scenario_editor.tile_highlight.queue_free()
-	for unit: UnitData in units:
+	for unit: Unit in units:
 		unit.unit_input_event.disconnect(scenario_editor.update_unit_dragging)
 	
 	battle_view.reparent(self)
@@ -412,7 +412,7 @@ func start_battle() -> void:
 			##var rand_job: int = team_1_job_ids.pick_random()
 			##while [0x2c, 0x31].has(rand_job): # prevent jobs without idle frames - 0x2c (Alma2) and 0x31 (Ajora) do not have walking frames
 				##rand_job = randi_range(0x01, 0x8d)
-			##var new_unit: UnitData = spawn_unit(get_random_stand_terrain_tile(), rand_job, team1)
+			##var new_unit: Unit = spawn_unit(get_random_stand_terrain_tile(), rand_job, team1)
 			##new_unit.is_ai_controlled = false
 		##
 		##for random_unit: int in units_per_team:
@@ -420,7 +420,7 @@ func start_battle() -> void:
 			###var rand_job: int = randi_range(0x5e, 0x8d) # monsters
 			##while [0x2c, 0x31].has(rand_job): # prevent jobs without idle frames - 0x2c (Alma2) and 0x31 (Ajora) do not have walking frames
 				##rand_job = randi_range(0x01, 0x8d)
-			##var new_unit: UnitData = spawn_unit(get_random_stand_terrain_tile(), rand_job, team2)
+			##var new_unit: Unit = spawn_unit(get_random_stand_terrain_tile(), rand_job, team2)
 			###new_unit.is_ai_controlled = false
 	#
 	#await update_units_pathfinding()
@@ -437,7 +437,7 @@ func add_test_teams_to_map() -> void:
 	################## unit 1
 	#var spawn_tile: TerrainTile = total_map_tiles[Vector2i(1, 1)][0] # [Vector2i(x, y)][layer]
 	#var job_id: int = 0x05 # 0x05 is Delita holy knight
-	#var new_unit: UnitData = spawn_unit(spawn_tile, job_id, teams[0]) 
+	#var new_unit: Unit = spawn_unit(spawn_tile, job_id, teams[0]) 
 	#new_unit.is_ai_controlled = false
 	#new_unit.set_primary_weapon(0x1d) # item_id - 0x1d is ice brand
 	#
@@ -448,9 +448,9 @@ func add_test_teams_to_map() -> void:
 	#new_unit.equip_ability(new_unit.ability_slots[3], RomReader.abilities["abandon"]) # support
 	#new_unit.equip_ability(new_unit.ability_slots[4], RomReader.abilities["move_get_hp"]) # movement
 	#
-	#new_unit.generate_raw_stats(UnitData.StatBasis.MALE) # StatBasis Options: MALE, FEMALE, OTHER, MONSTER
+	#new_unit.generate_raw_stats(Unit.StatBasis.MALE) # StatBasis Options: MALE, FEMALE, OTHER, MONSTER
 	#var level: int = 40
-	#new_unit.stats[UnitData.StatType.LEVEL].set_value(level)
+	#new_unit.stats[Unit.StatType.LEVEL].set_value(level)
 	#new_unit.generate_leveled_stats(level, new_unit.job_data)
 	#new_unit.generate_battle_stats(new_unit.job_data)
 	#
@@ -474,9 +474,9 @@ func add_test_teams_to_map() -> void:
 	#new_unit.equip_ability(new_unit.ability_slots[3], RomReader.abilities["attack_up"]) # support
 	#new_unit.equip_ability(new_unit.ability_slots[4], RomReader.abilities["move+1"]) # movement
 	#
-	#new_unit.generate_raw_stats(UnitData.StatBasis.MALE) # StatBasis Options: MALE, FEMALE, OTHER, MONSTER
+	#new_unit.generate_raw_stats(Unit.StatBasis.MALE) # StatBasis Options: MALE, FEMALE, OTHER, MONSTER
 	#level = 40
-	#new_unit.stats[UnitData.StatType.LEVEL].set_value(level)
+	#new_unit.stats[Unit.StatType.LEVEL].set_value(level)
 	#new_unit.generate_leveled_stats(level, new_unit.job_data)
 	#new_unit.generate_battle_stats(new_unit.job_data)
 	#
@@ -489,21 +489,21 @@ func add_test_teams_to_map() -> void:
 	
 	# add player unit
 	#var random_tile: TerrainTile = get_random_stand_terrain_tile()
-	#var new_unit: UnitData = spawn_unit(random_tile, 0x05, teams[0]) # 0x05 is Delita holy knight
+	#var new_unit: Unit = spawn_unit(random_tile, 0x05, teams[0]) # 0x05 is Delita holy knight
 	#new_unit.is_ai_controlled = false
 	#new_unit.set_primary_weapon(0x1d) # ice brand
 	
-	# var new_ramza: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x01, teams[0])
+	# var new_ramza: Unit = spawn_unit(get_random_stand_terrain_tile(), 0x01, teams[0])
 	
 	# add non-player unit
-	# var new_unit2: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x07, teams[1]) # 0x07 is Algus
+	# var new_unit2: Unit = spawn_unit(get_random_stand_terrain_tile(), 0x07, teams[1]) # 0x07 is Algus
 	# new_unit2.set_primary_weapon(0x4e) # crossbow
 	
 	## set up what to do when target unit is knocked out
 	#new_unit2.knocked_out.connect(load_random_map_delay)
 	#new_unit2.knocked_out.connect(increment_counter)
 	
-	#var new_unit3: UnitData = spawn_unit(get_random_stand_terrain_tile(), 0x11, teams[1]) # 0x11 is Gafgorian dark knight
+	#var new_unit3: Unit = spawn_unit(get_random_stand_terrain_tile(), 0x11, teams[1]) # 0x11 is Gafgorian dark knight
 	#new_unit3.set_primary_weapon(0x17) # blood sword
 	
 	#var specific_jobs: PackedInt32Array = [
@@ -576,7 +576,7 @@ func add_test_teams_to_map() -> void:
 	#test_triggered_action.action_idx = -1 # primary attack special case
 	#test_triggered_action.trigger_chance_formula.values = [1.0]
 	#test_triggered_action.trigger_chance_formula.formula = FormulaData.Formulas.BRAVExV1
-	#test_triggered_action.user_stat_thresholds = { UnitData.StatType.HP : 5 }
+	#test_triggered_action.user_stat_thresholds = { Unit.StatType.HP : 5 }
 	#test_triggered_action.targeting = TriggeredAction.TargetingTypes.INITIATOR
 	#test_triggered_action.name = "Test Trigger"
 	#
@@ -608,20 +608,20 @@ func add_test_teams_to_map() -> void:
 		#unit.is_ai_controlled = false
 
 
-func spawn_random_unit(team: Team) -> UnitData:
+func spawn_random_unit(team: Team) -> Unit:
 	var rand_job: int = range(1, RomReader.jobs_data.size()).pick_random()
 	while [0x2c, 0x31].has(rand_job): # prevent jobs without idle frames - 0x2c (Alma2) and 0x31 (Ajora) do not have walking frames
 		rand_job = randi_range(0x01, 0x8d)
 	var tile_location: TerrainTile = get_random_stand_terrain_tile()
-	var new_unit: UnitData = spawn_unit(tile_location, rand_job, team)
+	var new_unit: Unit = spawn_unit(tile_location, rand_job, team)
 	new_unit.is_ai_controlled = false
 	
 	unit_created.emit(new_unit)
 	return new_unit
 
 
-func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData:
-	var new_unit: UnitData = unit_tscn.instantiate()
+func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> Unit:
+	var new_unit: Unit = unit_tscn.instantiate()
 	units_container.add_child(new_unit)
 	new_unit.global_battle_manager = self
 	units.append(new_unit)
@@ -631,9 +631,9 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData
 	new_unit.char_body.global_position = Vector3(tile_position.location.x + 0.5, tile_position.get_world_position().y + 0.25, tile_position.location.y + 0.5)
 	new_unit.update_unit_facing([Vector3.FORWARD, Vector3.BACK, Vector3.LEFT, Vector3.RIGHT].pick_random())
 	if job_id < 0x5e: # non-monster
-		new_unit.stat_basis = [UnitData.StatBasis.MALE, UnitData.StatBasis.FEMALE].pick_random()
+		new_unit.stat_basis = [Unit.StatBasis.MALE, Unit.StatBasis.FEMALE].pick_random()
 	else:
-		new_unit.stat_basis = UnitData.StatBasis.MONSTER
+		new_unit.stat_basis = Unit.StatBasis.MONSTER
 	new_unit.set_job_id(job_id)
 	if range(0x4a, 0x5e).has(job_id):
 		new_unit.set_sprite_palette(range(0,5).pick_random())
@@ -672,7 +672,7 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> UnitData
 
 
 func update_units_pathfinding() -> void:
-	#for unit: UnitData in units:
+	#for unit: Unit in units:
 		#var max_move_cost: int = 9999
 		#if unit != active_unit:
 			#max_move_cost = unit.move_current # stop pathfinding early for non-active units, only need potential move targets, not path to every possible tile
@@ -706,7 +706,7 @@ func process_clock_tick() -> void:
 	game_state_label.text = "processing new clock tick"
 	
 	# increment status ticks
-	for unit: UnitData in units:
+	for unit: Unit in units:
 		var statuses_to_remove: Array[StatusEffect] = []
 		for status: StatusEffect in unit.current_statuses:
 			safe_to_load_map = false
@@ -741,16 +741,16 @@ func process_clock_tick() -> void:
 		for status: StatusEffect in statuses_to_remove:
 			unit.remove_status(status)
 	
-	for unit: UnitData in units: # increment each units ct by speed
+	for unit: Unit in units: # increment each units ct by speed
 		if not unit.current_statuses.any(func(status: StatusEffect): return status.freezes_ct): # check status that prevent ct gain (stop, sleep, etc.)
 			var ct_gain: int = unit.speed_current
 			for status: StatusEffect in unit.current_statuses:
 				ct_gain = status.passive_effect.ct_gain_modifier.apply(ct_gain)
-			unit.stats[UnitData.StatType.CT].add_value(ct_gain) 
+			unit.stats[Unit.StatType.CT].add_value(ct_gain) 
 	
 	# execute unit turns, ties decided by unit index in units[]
 	# TODO keep looping until all units ct_current < 100
-	for unit: UnitData in units:
+	for unit: Unit in units:
 		if unit.ct_current >= 100:
 			safe_to_load_map = false
 			await start_units_turn(unit)
@@ -783,7 +783,7 @@ func check_end_conditions() -> bool:
 	return false
 
 
-func start_units_turn(unit: UnitData) -> void:
+func start_units_turn(unit: Unit) -> void:
 	controller.unit = unit
 	active_unit = unit
 	
@@ -796,7 +796,7 @@ func start_units_turn(unit: UnitData) -> void:
 # TODO handle event timeline
 #func process_next_event() -> void:
 	#event_num = (event_num + 1) % units.size()
-	#var new_unit: UnitData = units[event_num]
+	#var new_unit: Unit = units[event_num]
 	#controller.unit = new_unit
 	#phantom_camera.follow_target = new_unit.char_body
 	#
@@ -940,7 +940,7 @@ func get_random_stand_terrain_tile() -> TerrainTile:
 		if tile.no_stand_select != 0 or tile.no_walk != 0:
 			continue
 		
-		if units.any(func(unit: UnitData): return unit.tile_position == tile):
+		if units.any(func(unit: Unit): return unit.tile_position == tile):
 			continue
 		
 		break
@@ -956,7 +956,7 @@ func clear_maps() -> void:
 
 
 func clear_units() -> void:
-	for unit: UnitData in units:
+	for unit: Unit in units:
 		unit.queue_free()
 	
 	units.clear()
@@ -964,7 +964,7 @@ func clear_units() -> void:
 		#child.queue_free()
 
 
-func load_random_map_delay(_unit: UnitData) -> void:
+func load_random_map_delay(_unit: Unit) -> void:
 	await get_tree().create_timer(3).timeout
 	
 	load_random_map()
@@ -976,7 +976,7 @@ func load_random_map() -> void:
 	map_dropdown.item_selected.emit(new_map_idx)
 
 
-func increment_counter(unit: UnitData) -> void:
+func increment_counter(unit: Unit) -> void:
 	var knocked_out_icon: Image = unit.animation_manager.global_shp.get_assembled_frame(0x17, unit.animation_manager.global_spr.spritesheet, 0, 0, 0, 0)
 	knocked_out_icon = knocked_out_icon.get_region(Rect2i(40, 50, 40, 40))
 	

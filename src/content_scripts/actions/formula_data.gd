@@ -93,7 +93,7 @@ func _init(new_formula: Formulas = Formulas.V1, new_values: PackedFloat64Array =
 	reverse_sign = new_reverse_sign
 
 
-func get_result(user: UnitData, target: UnitData, element: Action.ElementTypes) -> float:
+func get_result(user: Unit, target: Unit, element: Action.ElementTypes) -> float:
 	var result: float = get_base_value(user, target)
 	
 	match user_faith_modifier:
@@ -117,7 +117,7 @@ func get_result(user: UnitData, target: UnitData, element: Action.ElementTypes) 
 	return result
 
 
-func get_base_value(user: UnitData, target: UnitData) -> float:
+func get_base_value(user: Unit, target: Unit) -> float:
 	var base_value: float = values[0]
 	var wp: int 
 	if not user == null:
@@ -207,21 +207,21 @@ func get_base_value(user: UnitData, target: UnitData) -> float:
 	return base_value
 
 
-func faith_modify(value: float, unit: UnitData) -> float:
+func faith_modify(value: float, unit: Unit) -> float:
 	return value * unit.faith_current / 100.0
 
 
-func unfaith_modify(value: float, unit: UnitData) -> float:
+func unfaith_modify(value: float, unit: Unit) -> float:
 	return value * (100 - unit.faith_current) / 100.0
 
 
-func zodiac_modify(value: float, user: UnitData, target: UnitData) -> float:
+func zodiac_modify(value: float, user: Unit, target: Unit) -> float:
 	# TODO user vs target zodiac compatability
 	
 	return value
 
 
-func element_modify(value: float, user: UnitData, target: UnitData, element: Action.ElementTypes) -> float:
+func element_modify(value: float, user: Unit, target: Unit, element: Action.ElementTypes) -> float:
 	if target.elemental_cancel.has(element):
 		return 0.0
 	

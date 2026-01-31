@@ -3,7 +3,7 @@ extends Resource
 
 @export var base_power_formula: FormulaData = FormulaData.new(FormulaData.Formulas.PAxV1, [5, 0], FormulaData.FaithModifier.NONE, FormulaData.FaithModifier.NONE, true, true)
 @export var type: EffectType = EffectType.UNIT_STAT
-@export var effect_stat_type: UnitData.StatType = UnitData.StatType.HP
+@export var effect_stat_type: Unit.StatType = Unit.StatType.HP
 @export var show_ui: bool = true
 @export var transfer_to_user: bool = false # absorb, steal
 @export var apply_to_user: bool = false
@@ -21,7 +21,7 @@ enum EffectType {
 }
 
 
-func _init(new_type: EffectType = EffectType.UNIT_STAT, new_effect_stat: UnitData.StatType = UnitData.StatType.HP, new_show_ui: bool = true, new_transfer_to_user: bool = false, new_set_value: bool = false) -> void:
+func _init(new_type: EffectType = EffectType.UNIT_STAT, new_effect_stat: Unit.StatType = Unit.StatType.HP, new_show_ui: bool = true, new_transfer_to_user: bool = false, new_set_value: bool = false) -> void:
 	type = new_type
 	effect_stat_type = new_effect_stat
 	show_ui = new_show_ui
@@ -29,11 +29,11 @@ func _init(new_type: EffectType = EffectType.UNIT_STAT, new_effect_stat: UnitDat
 	set_value = new_set_value
 
 
-func get_value(user: UnitData, target: UnitData, element: Action.ElementTypes) -> int:
+func get_value(user: Unit, target: Unit, element: Action.ElementTypes) -> int:
 	return roundi(base_power_formula.get_result(user, target, element))
 
 
-func get_ai_value(user: UnitData, target: UnitData, element: Action.ElementTypes) -> int:
+func get_ai_value(user: Unit, target: Unit, element: Action.ElementTypes) -> int:
 	var nominal_value: int = roundi(base_power_formula.get_result(user, target, element))
 	var is_friendly: bool = target.team == user.team
 	var ai_value: int = nominal_value
@@ -59,7 +59,7 @@ func set_effect_label() -> void:
 	label = EffectType.keys()[type]
 	
 	if type == EffectType.UNIT_STAT:
-		label = UnitData.StatType.keys()[effect_stat_type]
+		label = Unit.StatType.keys()[effect_stat_type]
 	if type == EffectType.CURRENCY:
 		label = "Gold"
 
@@ -77,7 +77,7 @@ func get_text(value: int) -> String:
 	return text
 
 
-func apply_value(apply_unit: UnitData, value: int) -> int:
+func apply_value(apply_unit: Unit, value: int) -> int:
 	match type:
 		EffectType.UNIT_STAT:
 			if set_value:
@@ -103,8 +103,8 @@ func apply_value(apply_unit: UnitData, value: int) -> int:
 	
 	return value
 
-func apply(user: UnitData, target: UnitData, value: int) -> int:
-	var apply_unit: UnitData = target
+func apply(user: Unit, target: Unit, value: int) -> int:
+	var apply_unit: Unit = target
 	if apply_to_user:
 		apply_unit = user
 	

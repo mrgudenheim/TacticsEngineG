@@ -90,7 +90,7 @@ func target_tile(tile: TerrainTile, action_instance: ActionInstance, event: Inpu
 
 # TODO allow cost based on Unit Move value or action range value, allow vertical jumping or horizontal leapint to use a parameter or unit stat
 ## map_tiles is Dictionary[Vector2i, Array[TerrainTile]], returns path to every tile
-func get_map_paths(user: UnitData, map_tiles: Dictionary[Vector2i, Array], units: Array[UnitData], max_cost: int = 9999) -> Dictionary[TerrainTile, TerrainTile]:
+func get_map_paths(user: Unit, map_tiles: Dictionary[Vector2i, Array], units: Array[Unit], max_cost: int = 9999) -> Dictionary[TerrainTile, TerrainTile]:
 	user.map_paths.clear()
 	user.path_costs.clear()
 	
@@ -174,7 +174,7 @@ func get_map_path(start_tile: TerrainTile, target_tile: TerrainTile, came_from: 
 	return path
 
 
-func get_map_path_neighbors(user: UnitData, current_tile: TerrainTile, map_tiles: Dictionary[Vector2i, Array], units: Array[UnitData]) -> Array[TerrainTile]:
+func get_map_path_neighbors(user: Unit, current_tile: TerrainTile, map_tiles: Dictionary[Vector2i, Array], units: Array[Unit]) -> Array[TerrainTile]:
 	var neighbors: Array[TerrainTile]
 	const adjacent_offsets: Array[Vector2i] = [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]
 	
@@ -189,7 +189,7 @@ func get_map_path_neighbors(user: UnitData, current_tile: TerrainTile, map_tiles
 					continue
 				elif not user.ignore_height and abs(tile.height_mid - current_tile.height_mid) > user.jump_current: # restrict movement based on current jomp, TODO allow jump height as parameter?
 					continue
-				elif units.any(func(unit: UnitData): return unit.tile_position == tile and not unit.is_defeated): # prevent moving on top or through other units
+				elif units.any(func(unit: Unit): return unit.tile_position == tile and not unit.is_defeated): # prevent moving on top or through other units
 					continue # TODO allow moving through knocked out units
 				# TODO prevent trying to move vertically through floors/ceilings
 				else:
@@ -202,7 +202,7 @@ func get_map_path_neighbors(user: UnitData, current_tile: TerrainTile, map_tiles
 	return neighbors
 
 
-func get_leaping_neighbors(user: UnitData, current_tile: TerrainTile, map_tiles: Dictionary[Vector2i, Array], units: Array[UnitData], offset_direction: Vector2i, walk_neighbors: Array[TerrainTile]) -> Array[TerrainTile]:
+func get_leaping_neighbors(user: Unit, current_tile: TerrainTile, map_tiles: Dictionary[Vector2i, Array], units: Array[Unit], offset_direction: Vector2i, walk_neighbors: Array[TerrainTile]) -> Array[TerrainTile]:
 	var leap_neighbors: Array[TerrainTile] = []
 	var max_leap_distance: int = user.jump_current / 2
 	
@@ -227,13 +227,13 @@ func get_leaping_neighbors(user: UnitData, current_tile: TerrainTile, map_tiles:
 				elif tile.height_mid > current_tile.height_mid: # can't leap up
 					continue
 				# TODO prevent trying to move vertically through floors/ceilings
-				elif units.any(func(unit: UnitData): return unit.tile_position == tile): # prevent moving on top or through other units
+				elif units.any(func(unit: Unit): return unit.tile_position == tile): # prevent moving on top or through other units
 					continue # TODO allow moving through knocked out units
 				elif intermediate_tiles.any(func(intermediate_tile: TerrainTile): return intermediate_tile.height_mid > current_tile.height_mid): # prevent leaping through taller intermediate tiles
 					continue # TODO fix leap check for leaping under a bridge/ceiling
 				elif intermediate_tiles.any(func(intermediate_tile: TerrainTile): 
 					var can_leap: bool = true
-					if units.any(func(unit: UnitData): return unit.tile_position == intermediate_tile):
+					if units.any(func(unit: Unit): return unit.tile_position == intermediate_tile):
 						can_leap = current_tile.height_mid >= intermediate_tile.height_mid + 3 # prevent leaping over units taller than starting height
 					return not can_leap): 
 					continue

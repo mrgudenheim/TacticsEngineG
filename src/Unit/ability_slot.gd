@@ -3,6 +3,7 @@ extends Resource
 
 var ability_slot_name: String = "[Ability Slot]"
 var slot_types: Array[Ability.SlotType] = []
+var ability_unique_name: String
 var ability_idx: int = 0
 var ability: Ability = Ability.new()
 

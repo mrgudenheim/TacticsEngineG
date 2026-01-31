@@ -31,7 +31,9 @@ func _ready() -> void:
 	
 	ability_id_spin.value_changed.connect(_on_ability_id_value_changed)
 	unit.ability_assigned.connect(func(id): ability_id_spin.value = id)
-	unit.primary_weapon_assigned.connect(weapon_options.select)
+	
+	unit.primary_weapon_assigned.connect(func(weapon_unique_name: String): weapon_options.select(RomReader.items.keys().find(weapon_unique_name)))
+	# unit.primary_weapon_assigned.connect(weapon_options.select)
 
 func _process(delta: float) -> void:
 	if camera != null:

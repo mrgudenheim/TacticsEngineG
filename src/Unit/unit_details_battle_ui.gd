@@ -140,7 +140,7 @@ func update_ui(unit: Unit) -> void:
 	for child_idx: int in range(0, equipment_labels.size()):
 		equipment_labels[child_idx].queue_free()
 
-	for equip_slot: Unit.EquipmentSlot in unit.equip_slots:
+	for equip_slot: EquipmentSlot in unit.equip_slots:
 		var new_slot_label: Label = Label.new()
 		new_slot_label.text = equip_slot.equipment_slot_name
 		equipment_grid.add_child(new_slot_label)

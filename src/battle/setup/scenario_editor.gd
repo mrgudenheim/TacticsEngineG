@@ -130,7 +130,7 @@ func desetup_job_select() -> void:
 		Utilities.disconnect_all_connections(job_select_button.selected)
 
 
-func setup_item_select(unit: Unit, slot: Unit.EquipmentSlot) -> void:
+func setup_item_select(unit: Unit, slot: EquipmentSlot) -> void:
 	item_select_control.visible = true
 	for item_select_button: ItemSelectButton in item_select_control.item_select_buttons:
 		if slot.slot_types.has(item_select_button.item_data.slot_type) and unit.equipable_item_types.has(item_select_button.item_data.item_type):
@@ -169,7 +169,7 @@ func update_unit_job(unit: Unit, new_job: JobData) -> void:
 	desetup_job_select()
 
 
-func update_unit_equipment(unit: Unit, slot: Unit.EquipmentSlot, new_item: ItemData) -> void:
+func update_unit_equipment(unit: Unit, slot: EquipmentSlot, new_item: ItemData) -> void:
 	unit.set_equipment_slot(slot, new_item)
 	
 	desetup_item_select()

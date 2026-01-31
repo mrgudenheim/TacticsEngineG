@@ -13,10 +13,43 @@ var modified_value: int: # typically used for stats that are modified from other
 var modifiers: Array[Modifier] = []
 
 
+static func create_from_dictionary(property_dict: Dictionary) -> UnitData:
+	var new_unit_data: UnitData = UnitData.new()
+	for property_name in property_dict.keys():
+		# if property_name == "corner_position":
+		# 	var vector_as_array = property_dict[property_name]
+		# 	var new_corner_position: Vector3i = Vector3i(roundi(vector_as_array[0]), roundi(vector_as_array[1]), roundi(vector_as_array[2]))
+		# 	new_unit_data.set(property_name, new_corner_position)
+		# elif property_name == "mirror_xyz":
+		# 	var array = property_dict[property_name]
+		# 	var new_mirror_xyz: Array[bool] = []
+		# 	new_mirror_xyz.assign(array)
+		# 	new_unit_data.set(property_name, new_mirror_xyz)
+		# else:
+			new_unit_data.set(property_name, property_dict[property_name])
+
+	new_unit_data.emit_changed()
+	return new_unit_data
+
+
 func _init(new_min_value: int = 0, new_max_value: int = 100, new_current_value: int = 50) -> void:
 	min_value = new_min_value
 	max_value = new_max_value
 	current_value = new_current_value
+
+
+func to_dictionary() -> Dictionary:
+	var properties_to_exclude: PackedStringArray = [
+		"RefCounted",
+		"Resource",
+		"resource_local_to_scene",
+		"resource_path",
+		"resource_name",
+		"resource_scene_unique_id",
+		"script",
+	]
+	
+	return Utilities.object_properties_to_dictionary(self, properties_to_exclude)
 
 
 func get_unclampped_modified_value(preview_value: int = current_value) -> int:

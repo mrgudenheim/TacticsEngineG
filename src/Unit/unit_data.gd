@@ -3,29 +3,34 @@ extends Resource
 
 @export var display_name: String = "display name"
 @export var level: int = 0
-@export var gender: String = "gender"
+@export var gender: String = "gender" # male, female, monster, ramza
 @export var zodiac: String = "zodiac" # TODO should zodiac be derived from birthday?
 @export var job_unique_name: String = "job_unique_name"
 @export var team: int = 0
 @export var controller: int = 0 # 0 = AI, 1 = Player 1, etc.
 @export var sprite_unique_name: String = "sprite_unique_name"
 @export var palette_id: int = 0
-
-# Stats
-
-# equipment
-
-# abilities
-
-# position
-
-# current statuses - to be used for saving/loading mid battle
-
-
+@export var facing_direction: String = "direction" # north, south, east, west
 
 # job levels
 # jp per job
 # abilities learned
+
+# Stats
+@export var stats: Dictionary[Unit.StatType, ClampedValue]
+@export var stats_raw: Dictionary[Unit.StatType, float]
+
+# equipment
+@export var primary_weapon_unique_name: String
+@export var equip_slots: Array[EquipmentSlot]
+
+# abilities
+@export var ability_slots: Array[AbilitySlot]
+
+# position
+@export var tile_position: Vector3i # tile_position.get_world_position
+
+# current statuses - to be used for saving/loading mid battle
 
 
 static func create_from_dictionary(property_dict: Dictionary) -> UnitData:

@@ -164,75 +164,55 @@ var stats_raw: Dictionary[StatType, float] = {
 
 
 var unit_exp: int = 0:
-	get:
-		return stats[StatType.EXP].current_value
+	get: return stats[StatType.EXP].current_value
 var level: int = 0:
-	get:
-		return stats[StatType.LEVEL].current_value
+	get: return stats[StatType.LEVEL].current_value
 
 var brave_base: int = 70
 var brave_current: int = 70:
-	get:
-		return stats[StatType.BRAVE].modified_value
+	get: return stats[StatType.BRAVE].modified_value
 var faith_base: int = 70
 var faith_current: int = 70:
-	get:
-		return stats[StatType.FAITH].modified_value
+	get: return stats[StatType.FAITH].modified_value
 
 var ct_current: int = 0:
-	get:
-		return stats[StatType.CT].current_value
-var ct_max: int = 100
+	get: return stats[StatType.CT].current_value
+var ct_max: int = 100:
+	get: return stats[StatType.CT].max_value
 
 var hp_max_base: int = 100:
-	get:
-		return stats[StatType.HP_MAX].base_value
+	get: return stats[StatType.HP_MAX].base_value
 var hp_max: int = 100:
-	get:
-		return stats[StatType.HP_MAX].modified_value
+	get: return stats[StatType.HP_MAX].modified_value
 var hp_current: int = 70:
-	get:
-		return stats[StatType.HP].current_value
+	get: return stats[StatType.HP].current_value
 var mp_max_base: int = 100:
-	get:
-		return stats[StatType.MP_MAX].base_value
+	get: return stats[StatType.MP_MAX].base_value
 var mp_max: int = 100:
-	get:
-		return stats[StatType.MP_MAX].modified_value
+	get: return stats[StatType.MP_MAX].modified_value
 var mp_current: int = 70:
-	get:
-		return stats[StatType.MP].current_value
+	get: return stats[StatType.MP].current_value
 
 var physical_attack_base: int = 5:
-	get:
-		return stats[StatType.PHYSICAL_ATTACK].base_value
+	get: return stats[StatType.PHYSICAL_ATTACK].base_value
 var physical_attack_current: int = 5:
-	get:
-		return stats[StatType.PHYSICAL_ATTACK].modified_value
+	get: return stats[StatType.PHYSICAL_ATTACK].modified_value
 var magical_attack_base: int = 5:
-	get:
-		return stats[StatType.MAGIC_ATTACK].base_value
+	get: return stats[StatType.MAGIC_ATTACK].base_value
 var magical_attack_current: int = 5:
-	get:
-		return stats[StatType.MAGIC_ATTACK].modified_value
+	get: return stats[StatType.MAGIC_ATTACK].modified_value
 var speed_base: int = 5:
-	get:
-		return stats[StatType.SPEED].base_value
+	get: return stats[StatType.SPEED].base_value
 var speed_current: int = 5:
-	get:
-		return stats[StatType.SPEED].modified_value
+	get: return stats[StatType.SPEED].modified_value
 var move_base: int = 5:
-	get:
-		return stats[StatType.MOVE].base_value
+	get: return stats[StatType.MOVE].base_value
 var move_current: int = 5:
-	get:
-		return stats[StatType.MOVE].modified_value
+	get: return stats[StatType.MOVE].modified_value
 var jump_base: int = 5:
-	get:
-		return stats[StatType.JUMP].base_value
+	get: return stats[StatType.JUMP].base_value
 var jump_current: int = 3:
-	get:
-		return stats[StatType.JUMP].modified_value
+	get: return stats[StatType.JUMP].modified_value
 
 var always_statuses: PackedStringArray = []
 var immune_statuses: PackedStringArray = []

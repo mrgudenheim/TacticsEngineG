@@ -80,6 +80,22 @@ enum Formulas {
 }
 
 
+static func create_from_json(json_string: String) -> FormulaData:
+	var property_dict: Dictionary = JSON.parse_string(json_string)
+	var new_formula: FormulaData = create_from_dictionary(property_dict)
+
+	return new_formula
+
+
+static func create_from_dictionary(property_dict: Dictionary) -> FormulaData:
+	var new_formula: FormulaData = FormulaData.new()
+	for property_name in property_dict.keys():
+		new_formula.set(property_name, property_dict[property_name])
+
+	new_formula.emit_changed()
+	return new_formula
+
+
 func _init(new_formula: Formulas = Formulas.V1, new_values: PackedFloat64Array = [100.0, 1.0], 
 		new_user_faith_modifier: FaithModifier = FaithModifier.NONE, new_target_faith_modifier: FaithModifier = FaithModifier.NONE, 
 		new_modified_by_element: bool = true, new_modified_by_zodiac: bool = true, 
@@ -254,19 +270,3 @@ func to_dictionary() -> Dictionary:
 	]
 	
 	return Utilities.object_properties_to_dictionary(self, properties_to_exclude)
-
-
-static func create_from_json(json_string: String) -> FormulaData:
-	var property_dict: Dictionary = JSON.parse_string(json_string)
-	var new_formula: FormulaData = create_from_dictionary(property_dict)
-
-	return new_formula
-
-
-static func create_from_dictionary(property_dict: Dictionary) -> FormulaData:
-	var new_formula: FormulaData = FormulaData.new()
-	for property_name in property_dict.keys():
-		new_formula.set(property_name, property_dict[property_name])
-
-	new_formula.emit_changed()
-	return new_formula

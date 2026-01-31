@@ -9,7 +9,7 @@ signal data_updated(unit: Unit)
 
 signal ability_assigned(id: int)
 signal ability_completed()
-signal primary_weapon_assigned(idx: int)
+signal primary_weapon_assigned(item_unique_name: String)
 signal image_changed(new_image: ImageTexture)
 signal knocked_out(unit: Unit)
 signal spritesheet_changed(new_spritesheet: ImageTexture)
@@ -388,7 +388,7 @@ func initialize_unit() -> void:
 	# 0xc8 blood suck
 	# 0x9b stasis sword
 	set_ability(0x9b)
-	set_primary_weapon(101) # 1 - dagger, 72 - mythril gun, 101 - mythril spear
+	set_primary_weapon("mythril_spear") # 1 - dagger, 72 - mythril gun, 101 - mythril spear
 	# TODO use equipment_slots
 	set_sprite_by_file_idx(98) # RAMUZA.SPR # TODO use sprite_id?
 	#set_sprite_by_file_name("RAMUZA.SPR")
@@ -515,9 +515,9 @@ func generate_random_abilities() -> void:
 	var random_support: Ability = RomReader.abilities.values().filter(func(ability: Ability): return ability.slot_type == Ability.SlotType.SUPPORT).pick_random()
 	var random_movement: Ability = RomReader.abilities.values().filter(func(ability: Ability): return ability.slot_type == Ability.SlotType.MOVEMENT).pick_random()
 
-	ability_slots[2].ability = random_reaction
-	ability_slots[3].ability =  random_support
-	ability_slots[4].ability =  random_movement
+	ability_slots[2].ability_unique_name = random_reaction.unique_name
+	ability_slots[3].ability_unique_name =  random_support.unique_name
+	ability_slots[4].ability_unique_name =  random_movement.unique_name
 
 	var all_passive_effects: Array[PassiveEffect] = get_all_passive_effects()
 	update_passive_effects()
@@ -537,19 +537,19 @@ func generate_equipment() -> void:
 	#if not ["TYPE1.SEQ", "TYPE3.SEQ"].has(animation_manager.global_seq.file_name): # monsters don't have equipment
 		#return
 	
-	equip_slots[0].item_idx = get_item_idx_for_slot(ItemData.SlotType.WEAPON, level) # RH
-	equip_slots[1].item_idx = get_item_idx_for_slot(ItemData.SlotType.SHIELD, level) # LH
-	equip_slots[2].item_idx = get_item_idx_for_slot(ItemData.SlotType.HEADGEAR, level) # headgear
-	equip_slots[3].item_idx = get_item_idx_for_slot(ItemData.SlotType.ARMOR, level) # armor
-	equip_slots[4].item_idx = get_item_idx_for_slot(ItemData.SlotType.ACCESSORY, level, true) # accessory
+	equip_slots[0].item_unique_name = get_item_unique_name_for_slot(ItemData.SlotType.WEAPON, level) # RH
+	equip_slots[1].item_unique_name = get_item_unique_name_for_slot(ItemData.SlotType.SHIELD, level) # LH
+	equip_slots[2].item_unique_name = get_item_unique_name_for_slot(ItemData.SlotType.HEADGEAR, level) # headgear
+	equip_slots[3].item_unique_name = get_item_unique_name_for_slot(ItemData.SlotType.ARMOR, level) # armor
+	equip_slots[4].item_unique_name = get_item_unique_name_for_slot(ItemData.SlotType.ACCESSORY, level, true) # accessory
 	
-	set_primary_weapon(equip_slots[0].item_idx)
+	set_primary_weapon(equip_slots[0].item_unique_name)
 	
 	update_passive_effects()
 
 
 func set_equipment_slot(slot: EquipmentSlot, item: ItemData):
-	slot.item_idx = item.item_idx
+	slot.item_unique_name = item.unique_name
 	
 	update_passive_effects()
 
@@ -568,26 +568,26 @@ func update_stat_modifiers(all_passive_effects: Array[PassiveEffect]) -> void:
 		stats[stat_type].changed.emit(stats[stat_type])
 
 
-func get_item_idx_for_slot(slot_type: ItemData.SlotType, item_level: int, random: bool = false) -> int:
+func get_item_unique_name_for_slot(slot_type: ItemData.SlotType, item_level: int, random: bool = false) -> String:
 	var valid_items: Array[ItemData] = []
-	valid_items.assign(RomReader.items_array.filter(func(item: ItemData): 
+	valid_items.assign(RomReader.items.values().filter(func(item: ItemData): 
 		var slot_type_is_valid: bool = item.slot_type == slot_type
 		var level_is_valid: bool = item.min_level <= item_level
 		var type_is_valid: bool = equipable_item_types.has(item.item_type) # TODO allow forcing specifc type based on ability requirements
 		return slot_type_is_valid and level_is_valid and type_is_valid))
-	var item_idx: int = 0
+	var item_unique_name: String = ""
 	if not valid_items.is_empty():
 		if random:
-			item_idx = valid_items.pick_random().item_idx
+			item_unique_name = valid_items.pick_random().unique_name
 		else:
 			valid_items.sort_custom(func(item_a: ItemData, item_b: ItemData): return item_a.min_level > item_b.min_level)
-			item_idx = valid_items[0].item_idx # pick highest level item
+			item_unique_name = valid_items[0].unique_name # pick highest level item
 			#item = valid_items.pick_random()
-	return item_idx
+	return item_unique_name
 
 
 func equip_ability(slot: AbilitySlot, ability: Ability):
-	slot.ability = ability
+	slot.ability_unique_name = ability.unique_name
 
 	update_passive_effects()
 
@@ -1316,9 +1316,9 @@ func set_ability(new_ability_id: int) -> void:
 	ability_assigned.emit(new_ability_id)
 
 
-func set_primary_weapon(new_weapon_id: int) -> void:
-	equip_slots[0].item_idx = new_weapon_id
-	primary_weapon = RomReader.items_array[new_weapon_id]
+func set_primary_weapon(new_weapon_unique_name: String) -> void:
+	equip_slots[0].item_unique_name = new_weapon_unique_name
+	primary_weapon = RomReader.items[new_weapon_unique_name]
 	#animation_manager.weapon_id = new_weapon_id
 	#var weapon_palette_id = RomReader.battle_bin_data.weapon_graphic_palettes_1[primary_weapon.id]
 	animation_manager.unit_sprites_manager.sprite_weapon.texture = animation_manager.wep_spr.create_frame_grid_texture(
@@ -1327,7 +1327,7 @@ func set_primary_weapon(new_weapon_id: int) -> void:
 	attack_action = primary_weapon.weapon_attack_action
 	var all_passive_effects: Array[PassiveEffect] = get_all_passive_effects()
 	set_available_actions(all_passive_effects)
-	primary_weapon_assigned.emit(new_weapon_id)
+	primary_weapon_assigned.emit(new_weapon_unique_name)
 
 
 # https://ffhacktics.com/wiki/Determine_Status_Bubble_Parameters
@@ -1609,7 +1609,7 @@ func on_sprite_idx_selected(index: int) -> void:
 	if shp.file_name == "TYPE2.SHP":
 		if animation_manager.wep_shp.file_name != "WEP2.SHP":
 			animation_manager.wep_shp = RomReader.shps[RomReader.file_records["WEP2.SHP"].type_index]
-			set_primary_weapon(primary_weapon.item_idx) # get new texture based on wep2.shp
+			set_primary_weapon(primary_weapon.unique_name) # get new texture based on wep2.shp
 			animation_changed = true
 		animation_manager.wep_seq = RomReader.seqs[RomReader.file_records["WEP2.SEQ"].type_index]
 	

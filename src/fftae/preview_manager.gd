@@ -38,7 +38,7 @@ func initialize() -> void:
 		var equipment_type_name: String = ""
 		if RomReader.items_array[weapon_index].item_type < RomReader.fft_text.equipment_types.size():
 			equipment_type_name = " (" + RomReader.fft_text.equipment_types[RomReader.items_array[weapon_index].item_type] + ")"
-		weapon_options.add_item(str(weapon_index) + " - " + RomReader.items_array[weapon_index].display_name + equipment_type_name)
+		weapon_options.add_item(RomReader.items_array[weapon_index].unique_name)
 	
 	weapon_options.select(unit.primary_weapon.item_idx)
 	
@@ -90,7 +90,7 @@ func enable_ui() -> void:
 func _on_weapon_options_item_selected(index: int) -> void:
 	#unit.animation_manager._on_weapon_options_item_selected(index)
 	#unit.animation_manager.weapon_id = index
-	unit.set_primary_weapon(index)
+	unit.set_primary_weapon(weapon_options.get_item_text(index))
 	#unit.debug_menu.weapon_options.select(index)
 
 

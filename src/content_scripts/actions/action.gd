@@ -100,7 +100,7 @@ var separate_status: bool = false
 
 @export var status_prevents_use_any: Array[String] = [] # silence, dont move, dont act, etc.
 @export var required_equipment_type: Array[ItemData.ItemType] = [] # sword, gun, etc.
-@export var required_equipment_idx: PackedInt32Array = [] # materia_blade, etc.
+@export var required_equipment_unique_name: PackedStringArray = [] # materia_blade, etc.
 
 @export var required_target_job_uname: PackedStringArray = [] # dragon, etc.
 @export var required_target_status_uname: PackedStringArray = [] # undead
@@ -236,11 +236,11 @@ func is_usable(action_instance: ActionInstance) -> bool:
 		var user_has_enough_mp: bool = action_instance.user.mp_current >= action_instance.action.mp_cost
 		var user_has_equipment_type: bool = required_equipment_type.is_empty() or required_equipment_type.has(action_instance.user.primary_weapon.item_type) # TODO check all unit.equip_slots, not just primary_weapon
 		var user_has_equipment: bool = false
-		if required_equipment_idx.is_empty():
+		if required_equipment_unique_name.is_empty():
 			user_has_equipment = true
 		else:
 			for equipment_slot: EquipmentSlot in action_instance.user.equip_slots:
-				if required_equipment_idx.has(equipment_slot.item_idx): # TODO allow actions that require combination of items
+				if required_equipment_unique_name.has(equipment_slot.item_unique_name): # TODO allow actions that require combination of items
 					user_has_equipment = true
 					break
 		

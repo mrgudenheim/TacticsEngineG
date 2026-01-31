@@ -5,7 +5,7 @@ signal need_new_unit(team: Team)
 
 signal unit_job_select_pressed(unit: Unit)
 signal unit_item_select_pressed(unit: Unit, slot: Unit.EquipmentSlot)
-signal unit_ability_select_pressed(unit: Unit, slot: Unit.AbilitySlot)
+signal unit_ability_select_pressed(unit: Unit, slot: AbilitySlot)
 
 @export var team: Team
 @export var unit_list: Container

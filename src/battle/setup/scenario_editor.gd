@@ -146,7 +146,7 @@ func desetup_item_select() -> void:
 		Utilities.disconnect_all_connections(item_select_button.selected)
 
 
-func setup_ability_select(unit: Unit, slot: Unit.AbilitySlot) -> void:
+func setup_ability_select(unit: Unit, slot: AbilitySlot) -> void:
 	ability_select_control.visible = true
 	for ability_select_button: AbilitySelectButton in ability_select_control.ability_select_buttons:
 		if slot.slot_types.has(ability_select_button.ability_data.slot_type):
@@ -175,7 +175,7 @@ func update_unit_equipment(unit: Unit, slot: Unit.EquipmentSlot, new_item: ItemD
 	desetup_item_select()
 
 
-func update_unit_ability(unit: Unit, slot: Unit.AbilitySlot, new_ability: Ability) -> void:
+func update_unit_ability(unit: Unit, slot: AbilitySlot, new_ability: Ability) -> void:
 	unit.equip_ability(slot, new_ability)
 	
 	desetup_ability_select()

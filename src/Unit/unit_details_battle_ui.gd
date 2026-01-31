@@ -154,7 +154,7 @@ func update_ui(unit: Unit) -> void:
 	for child_idx: int in range(0, ability_labels.size()):
 		ability_labels[child_idx].queue_free()
 
-	for ability_slot: Unit.AbilitySlot in unit.ability_slots:
+	for ability_slot: AbilitySlot in unit.ability_slots:
 		var new_slot_label: Label = Label.new()
 		new_slot_label.text = ability_slot.ability_slot_name
 		ability_grid.add_child(new_slot_label)

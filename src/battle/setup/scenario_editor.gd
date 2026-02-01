@@ -6,6 +6,7 @@ extends Control
 @export var battle_manager: BattleManager
 @export var start_button: Button
 @export var load_scenario_button: Button
+@export var export_scenario_button: Button
 
 @export var background_gradient_color_pickers: Array[ColorPickerButton]
 @export var background_gradient_colors: PackedColorArray = []
@@ -109,6 +110,9 @@ func initial_setup() -> void:
 	if not show_map_tiles_check.toggled.is_connected(show_all_tiles):
 		show_map_tiles_check.toggled.connect(show_all_tiles)
 	#battle_setup_container.tab_clicked.connect(adjust_height)
+
+	if not export_scenario_button.pressed.is_connected(export_scenario):
+		export_scenario_button.pressed.connect(export_scenario)
 
 
 func populate_option_lists() -> void:
@@ -307,3 +311,11 @@ func update_unit_dragging(unit: Unit, event: InputEvent) -> void:
 		unit.char_body.global_position = unit.tile_position.get_world_position()
 		unit_dragged = null
 		# tile_highlight.queue_free()
+
+
+func export_scenario() -> void:
+	for unit: Unit in battle_manager.units:
+		var new_unit_data: UnitData = UnitData.new()
+		new_unit_data.init_from_unit(unit)
+		scenario.units_data.append(new_unit_data)
+	Utilities.save_json(scenario)

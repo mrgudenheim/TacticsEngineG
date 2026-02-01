@@ -60,6 +60,8 @@ enum Facings {
 	WEST,
 }
 
+const unit_scene: PackedScene = preload("res://src/Unit/unit.tscn")
+
 const FacingVectors: Dictionary[Facings, Vector3] = {
 	Facings.NORTH: Vector3.BACK,
 	Facings.EAST: Vector3.RIGHT,
@@ -295,6 +297,11 @@ var actions_data: Dictionary[String, ActionInstance] = {}
 @export var mid_jump_animation: int = 0x3e
 
 var submerged_depth: int = 0
+
+
+static func instantiate() -> Unit:
+	return unit_scene.instantiate()
+
 
 func _ready() -> void:
 	stats[StatType.HP_MAX].value_changed.connect(stats[StatType.HP].update_max_from_clamped_value)

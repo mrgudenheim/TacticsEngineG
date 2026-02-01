@@ -6,7 +6,6 @@ extends Control
 @export var battle_manager: BattleManager
 @export var start_button: Button
 @export var load_scenario_button: Button
-@export var unit_scene: PackedScene
 
 @export var background_gradient_color_pickers: Array[ColorPickerButton]
 @export var background_gradient_colors: PackedColorArray = []

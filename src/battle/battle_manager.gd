@@ -41,7 +41,6 @@ var current_cursor_map_position: Vector3
 @export var units_container: Node3D
 @export var units: Array[Unit] = []
 @export var teams: Array[Team] = []
-@export var unit_tscn: PackedScene
 @export var controller: UnitControllerRT
 @export var battle_is_running: bool = false
 @export var safe_to_load_map: bool = true
@@ -621,7 +620,7 @@ func spawn_random_unit(team: Team) -> Unit:
 
 
 func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> Unit:
-	var new_unit: Unit = unit_tscn.instantiate()
+	var new_unit: Unit = Unit.instantiate()
 	units_container.add_child(new_unit)
 	new_unit.global_battle_manager = self
 	units.append(new_unit)
@@ -667,6 +666,57 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> Unit:
 
 	new_unit.unit_battle_details_ui.setup(new_unit)
 	new_unit.unit_input_event.connect(scenario_editor.update_unit_dragging)
+	
+	return new_unit
+
+
+func spawn_unit_from_unit_data(unit_data: UnitData) -> Unit:
+	var new_unit: Unit = Unit.instantiate()
+	# units_container.add_child(new_unit)
+	# new_unit.global_battle_manager = self
+	# units.append(new_unit)
+	# new_unit.initialize_unit()
+	# new_unit.tile_position = tile_position
+	# #new_unit.char_body.global_position = Vector3(tile_position.location.x + 0.5, randi_range(15, 20), tile_position.location.y + 0.5)
+	# new_unit.char_body.global_position = Vector3(tile_position.location.x + 0.5, tile_position.get_world_position().y + 0.25, tile_position.location.y + 0.5)
+	# new_unit.update_unit_facing([Vector3.FORWARD, Vector3.BACK, Vector3.LEFT, Vector3.RIGHT].pick_random())
+	# if job_id < 0x5e: # non-monster
+	# 	new_unit.stat_basis = [Unit.StatBasis.MALE, Unit.StatBasis.FEMALE].pick_random()
+	# else:
+	# 	new_unit.stat_basis = Unit.StatBasis.MONSTER
+	# new_unit.set_job_id(job_id)
+	# if range(0x4a, 0x5e).has(job_id):
+	# 	new_unit.set_sprite_palette(range(0,5).pick_random())
+	# new_unit.generate_level_zero_raw_stats(new_unit.stat_basis)
+	# new_unit.generate_leveled_raw_stats(units_level, new_unit.job_data)
+	# new_unit.calc_battle_stats(new_unit.job_data)
+	
+	# camera_controller.rotated.connect(new_unit.char_body.set_rotation_degrees) # have sprite update as camera rotates
+	
+	# new_unit.update_stat_bars_scale(camera_controller.zoom)
+	# camera_controller.zoom_changed.connect(new_unit.update_stat_bars_scale)
+	
+	# new_unit.icon.texture = RomReader.frame_bin_texture # TODO clean up status icon stuff
+	# new_unit.icon2.texture = RomReader.frame_bin_texture
+	
+	# new_unit.generate_random_abilities()
+	# new_unit.primary_weapon_assigned.connect(func(weapon_unique_name: String): new_unit.update_actions(self))
+	# new_unit.generate_equipment()
+	# #var unit_actions: Array[Action] = new_unit.get_skillset_actions()
+	# #if unit_actions.any(func(action: Action): return not action.required_equipment_type.is_empty()):
+	# 	#while not unit_actions.any(func(action: Action): return action.required_equipment_type.has(new_unit.primary_weapon.item_type)):
+	# 		#new_unit.set_primary_weapon(randi_range(0, 0x79)) # random weapon
+	
+	# new_unit.name = new_unit.job_nickname + "-" + new_unit.unit_nickname
+	
+	# new_unit.team = team
+	# team.units.append(new_unit)
+	
+	# new_unit.is_ai_controlled = true
+	# new_unit.ai_controller.strategy = UnitAi.Strategy.BEST
+
+	# new_unit.unit_battle_details_ui.setup(new_unit)
+	# new_unit.unit_input_event.connect(scenario_editor.update_unit_dragging)
 	
 	return new_unit
 

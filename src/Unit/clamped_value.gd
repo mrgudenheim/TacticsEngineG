@@ -10,7 +10,7 @@ signal value_changed(clamped_value: ClampedValue)
 var modified_value: int: # typically used for stats that are modified from other things (equipment, etc): move, jump, speed, hp_max, mp_max
 	get: return get_modified_value()
 
-@export var modifiers: Array[Modifier] = []
+var modifiers: Array[Modifier] = [] # should only come from passive_effects
 
 
 static func create_from_dictionary(property_dict: Dictionary) -> UnitData:

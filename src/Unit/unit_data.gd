@@ -3,7 +3,7 @@ extends Resource
 
 @export var display_name: String = "display name"
 @export var level: int = 0
-@export var gender: String = "gender" # male, female, monster, ramza
+@export var gender: String = "gender" # male, female, other, monster
 @export var zodiac: String = "zodiac" # TODO should zodiac be derived from birthday?
 @export var job_unique_name: String = "job_unique_name"
 @export var team: int = 0

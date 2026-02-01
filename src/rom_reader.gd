@@ -559,13 +559,19 @@ func process_file_records(sectors: PackedInt32Array, folder_name: String = "") -
 				vfx.append(VisualEffectData.new(record.name))
 			elif file_extension == "SPR":
 				record.type_index = sprs.size()
-				sprs.append(Spr.new(record.name))
+				var new_spr: Spr = Spr.new(record.name)
+				sprs.append(new_spr)
+				spritesheets[new_spr.file_name.to_snake_case()] = new_spr
 			elif file_extension == "SHP":
 				record.type_index = shps_array.size()
-				shps_array.append(Shp.new(record.name))
+				var new_shp: Shp = Shp.new(record.name)
+				shps_array.append(new_shp)
+				shps[new_shp.file_name.to_snake_case()] = new_shp
 			elif file_extension == "SEQ":
 				record.type_index = seqs_array.size()
-				seqs_array.append(Seq.new(record.name))
+				var new_seq: Seq = Seq.new(record.name)
+				seqs_array.append(new_seq)
+				seqs[new_seq.file_name.to_snake_case()] = new_seq
 			elif file_extension == "GNS":
 				record.type_index = maps_array.size()
 				maps_array.append(MapData.new(record.name))

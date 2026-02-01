@@ -60,7 +60,7 @@ enum Facings {
 	WEST,
 }
 
-const unit_scene: PackedScene = preload("res://src/Unit/unit.tscn")
+static var unit_scene: PackedScene = load("res://src/Unit/unit.tscn")
 
 const FacingVectors: Dictionary[Facings, Vector3] = {
 	Facings.NORTH: Vector3.BACK,

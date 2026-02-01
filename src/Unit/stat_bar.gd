@@ -1,6 +1,8 @@
 class_name StatBar
 extends TextureProgressBar
 
+const stat_bar_tscn: PackedScene = preload("res://src/Unit/stat_bar.tscn")
+
 @export var name_label: Label
 @export var value_label: Label
 @export var visual_max: float = 0.0:
@@ -22,6 +24,10 @@ extends TextureProgressBar
 	set(new_value):
 		fill_color = new_value
 		tint_progress = new_value
+
+
+static func instantiate() -> StatBar:
+	return stat_bar_tscn.instantiate()
 
 
 func set_stat(stat_name: String, stat: ClampedValue) -> void:

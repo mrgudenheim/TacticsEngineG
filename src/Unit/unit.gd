@@ -78,7 +78,6 @@ var ai_controller: UnitAi = UnitAi.new()
 @export var popup_texts: PopupTextContainer
 @export var stat_bars_position: Control
 @export var stat_bars_container: Container
-@export var stat_bar_tscn: PackedScene
 @export var unit_battle_details_ui: UnitDetailsBattleUi
 @export var icon: UnitIcon
 @export var icon2: Sprite3D
@@ -333,7 +332,7 @@ func _exit_tree() -> void:
 
 
 func add_stat_bar(stat_type: StatType) -> StatBar:
-	var new_stat_bar: StatBar = stat_bar_tscn.instantiate()
+	var new_stat_bar: StatBar = StatBar.instantiate()
 	new_stat_bar.set_stat(str(StatType.keys()[stat_type]), stats[stat_type])
 	stat_bars_container.add_child(new_stat_bar)
 

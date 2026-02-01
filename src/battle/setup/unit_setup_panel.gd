@@ -309,6 +309,7 @@ func set_palette(new_palette_idx: int) -> void:
 
 
 func set_team(new_team_idx: int) -> void:
+	unit_data.team_id = new_team_idx
 	unit_data.team = unit_data.global_battle_manager.teams[new_team_idx]
 
 

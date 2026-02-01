@@ -13,7 +13,7 @@ const FILE_SUFFIX: String = "scenario"
 @export var deployment_zones: Array[PackedVector2Array] = [] # TODO what about locations with tiles at different hights?
 @export var global_passive_effect_names: PackedStringArray = [] #  TODO add ui to add global passive effects
 
-# @export var units_data: Array[UnitData] = [] # TODO separate unit data from node into Resource
+@export var units_data: Array[UnitData] = []
 # TODO scenario victory conditions
 
 

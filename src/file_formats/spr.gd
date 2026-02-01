@@ -337,7 +337,7 @@ func set_spritesheet_data(new_sprite_id: int) -> void:
 func create_frame_grid(anim_ptr_idx: int = 0, other_idx: int = 0, wep_v_offset: int = 0, submerged_depth: int = 0, different_shp_name: String = "") -> Image:
 	if different_shp_name == "":
 		different_shp_name = shp_name
-	var shp: Shp = RomReader.shps[RomReader.file_records[different_shp_name].type_index]
+	var shp: Shp = RomReader.shps_array[RomReader.file_records[different_shp_name].type_index]
 	if not shp.is_initialized:
 		shp.set_data_from_shp_bytes(RomReader.get_file_data(shp_name))
 	var num_cells_wide: int = 16

@@ -354,12 +354,12 @@ func initialize_unit() -> void:
 	debug_menu.populate_options()
 	
 	animation_manager.wep_spr = RomReader.sprs[RomReader.file_records["WEP.SPR"].type_index]
-	animation_manager.wep_shp = RomReader.shps[RomReader.file_records["WEP1.SHP"].type_index]
-	animation_manager.wep_seq = RomReader.seqs[RomReader.file_records["WEP1.SEQ"].type_index]
+	animation_manager.wep_shp = RomReader.shps_array[RomReader.file_records["WEP1.SHP"].type_index]
+	animation_manager.wep_seq = RomReader.seqs_array[RomReader.file_records["WEP1.SEQ"].type_index]
 	
 	animation_manager.eff_spr = RomReader.sprs[RomReader.file_records["EFF.SPR"].type_index]
-	animation_manager.eff_shp = RomReader.shps[RomReader.file_records["EFF1.SHP"].type_index]
-	animation_manager.eff_seq = RomReader.seqs[RomReader.file_records["EFF1.SEQ"].type_index]
+	animation_manager.eff_shp = RomReader.shps_array[RomReader.file_records["EFF1.SHP"].type_index]
+	animation_manager.eff_seq = RomReader.seqs_array[RomReader.file_records["EFF1.SEQ"].type_index]
 	
 	animation_manager.unit_sprites_manager.sprite_effect.texture = animation_manager.eff_spr.create_frame_grid_texture(0, 0, 0, 0, 0)
 	
@@ -368,7 +368,7 @@ func initialize_unit() -> void:
 	animation_manager.unit_sprites_manager.sprite_item.texture = ImageTexture.create_from_image(RomReader.sprs[RomReader.file_records["ITEM.BIN"].type_index].spritesheet)
 	
 	animation_manager.other_spr = RomReader.sprs[RomReader.file_records["OTHER.SPR"].type_index]
-	animation_manager.other_shp = RomReader.shps[RomReader.file_records["OTHER.SHP"].type_index]
+	animation_manager.other_shp = RomReader.shps_array[RomReader.file_records["OTHER.SHP"].type_index]
 	
 	# 1 cure
 	# 0xc8 blood suck
@@ -1583,21 +1583,21 @@ func on_sprite_idx_selected(index: int) -> void:
 	
 	animation_manager.global_spr = spr
 	
-	var shp: Shp = RomReader.shps[RomReader.file_records[spr.shp_name].type_index]
+	var shp: Shp = RomReader.shps_array[RomReader.file_records[spr.shp_name].type_index]
 	if not shp.is_initialized:
 		shp.set_data_from_shp_bytes(RomReader.get_file_data(shp.file_name))
 	
-	var seq: Seq = RomReader.seqs[RomReader.file_records[spr.seq_name].type_index]
+	var seq: Seq = RomReader.seqs_array[RomReader.file_records[spr.seq_name].type_index]
 	if not seq.is_initialized:
 		seq.set_data_from_seq_bytes(RomReader.get_file_data(seq.file_name))
 	
 	var animation_changed: bool = false
 	if shp.file_name == "TYPE2.SHP":
 		if animation_manager.wep_shp.file_name != "WEP2.SHP":
-			animation_manager.wep_shp = RomReader.shps[RomReader.file_records["WEP2.SHP"].type_index]
+			animation_manager.wep_shp = RomReader.shps_array[RomReader.file_records["WEP2.SHP"].type_index]
 			set_primary_weapon(primary_weapon.unique_name) # get new texture based on wep2.shp
 			animation_changed = true
-		animation_manager.wep_seq = RomReader.seqs[RomReader.file_records["WEP2.SEQ"].type_index]
+		animation_manager.wep_seq = RomReader.seqs_array[RomReader.file_records["WEP2.SEQ"].type_index]
 	
 	if shp != animation_manager.global_shp or seq != animation_manager.global_seq:
 		animation_changed = true

@@ -4,7 +4,7 @@ extends Resource
 const SAVE_DIRECTORY_PATH: String = "user://overrides/scenarios/"
 const FILE_SUFFIX: String = "scenario"
 @export var unique_name: String = "unique_name"
-@export var display_name: String = "display_name"
+@export var display_name: String = "display_name" # TODO add ui to set scenario name
 @export var description: String = "description"
 
 @export var background_gradient_top: Color = Color.LIGHT_GRAY

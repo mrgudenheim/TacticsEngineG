@@ -32,9 +32,12 @@ const NUM_WEAPONS = 122
 var sprs: Array[Spr] = []
 var spr_file_name_to_id: Dictionary[String, int] = {}
 var spr_id_file_idxs: PackedInt32Array = [] # 0x60 starts generic jobs
+var spritesheets: Dictionary[String, Spr] = {} # [unique_name (eg. filename without extension), Spr] TODO fill with data
 
-var shps: Array[Shp] = []
-var seqs: Array[Seq] = []
+var shps_array: Array[Shp] = []
+var shps: Dictionary[String, Shp] = {} # [unique_name (eg. filename without extension), Spr] TODO fill with data
+var seqs_array: Array[Seq] = []
+var seqs: Dictionary[String, Seq] = {} # [unique_name (eg. filename without extension), Spr] TODO fill with data
 var maps_array: Array[MapData] = []
 var maps: Dictionary[String, MapData] = {}
 var vfx: Array[VisualEffectData] = []
@@ -91,8 +94,8 @@ func clear_data() -> void:
 	lba_to_file_name.clear()
 	sprs.clear()
 	spr_file_name_to_id.clear()
-	shps.clear()
-	seqs.clear()
+	shps_array.clear()
+	seqs_array.clear()
 	maps_array.clear()
 	maps.clear()
 	vfx.clear()
@@ -179,7 +182,7 @@ func process_rom() -> void:
 				#if ((frame_data.vram_bytes[1] & 0x02) >> 1) == 0:
 					#push_warning([ability_id, ability.name, ability.vfx_data.vfx_id, frameset_idx, frame_idx])
 	
-	# for seq: Seq in seqs:
+	# for seq: Seq in seqs_array:
 	# 	seq.set_data_from_seq_bytes(get_file_data(seq.file_name))
 	# 	seq.write_wiki_table()
 	
@@ -558,11 +561,11 @@ func process_file_records(sectors: PackedInt32Array, folder_name: String = "") -
 				record.type_index = sprs.size()
 				sprs.append(Spr.new(record.name))
 			elif file_extension == "SHP":
-				record.type_index = shps.size()
-				shps.append(Shp.new(record.name))
+				record.type_index = shps_array.size()
+				shps_array.append(Shp.new(record.name))
 			elif file_extension == "SEQ":
-				record.type_index = seqs.size()
-				seqs.append(Seq.new(record.name))
+				record.type_index = seqs_array.size()
+				seqs_array.append(Seq.new(record.name))
 			elif file_extension == "GNS":
 				record.type_index = maps_array.size()
 				maps_array.append(MapData.new(record.name))
@@ -593,10 +596,10 @@ func cache_associated_files() -> void:
 				if file_name != "WEP.SPR":
 					spr.set_spritesheet_data(spr_file_name_to_id[file_name])
 			"SHP":
-				var shp: Shp = shps[type_index]
+				var shp: Shp = shps_array[type_index]
 				shp.set_data_from_shp_bytes(get_file_data(file_name))
 			"SEQ":
-				var seq: Seq = seqs[type_index]
+				var seq: Seq = seqs_array[type_index]
 				seq.set_data_from_seq_bytes(get_file_data(file_name))
 	
 	# getting effect / weapon trail / glint
@@ -915,8 +918,8 @@ func write_all_spritesheet_region_data() -> void:
 func write_spritesheet_region_data(seq_index: int, shp_index: int) -> void:
 	var regions: Array[SpritesheetRegionData] = []
 	
-	var seq: Seq = seqs[seq_index] # 0 - arute, 1 - cyoko, 4 - kanzen, 5 - mon, 8 - type1, 10 - type3
-	var shp: Shp = shps[shp_index] # 0 - arute, 1 - cyoko, 4 - kanzen, 5 - mon, 7 - type1, 8 - type2
+	var seq: Seq = seqs_array[seq_index] # 0 - arute, 1 - cyoko, 4 - kanzen, 5 - mon, 8 - type1, 10 - type3
+	var shp: Shp = shps_array[shp_index] # 0 - arute, 1 - cyoko, 4 - kanzen, 5 - mon, 7 - type1, 8 - type2
 
 	if not seq.is_initialized:
 		seq.set_data_from_seq_bytes(RomReader.get_file_data(seq.file_name))

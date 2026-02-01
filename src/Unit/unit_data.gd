@@ -8,7 +8,7 @@ extends Resource
 @export var job_unique_name: String = "job_unique_name"
 @export var team: int = 0
 @export var controller: int = 0 # 0 = AI, 1 = Player 1, etc.
-@export var sprite_unique_name: String = "sprite_unique_name"
+@export var spritesheeet_unique_name: String = "spritesheeet_unique_name" # TODO get sprite file name?
 @export var palette_id: int = 0
 @export var facing_direction: String = "direction" # north, south, east, west
 
@@ -74,7 +74,7 @@ func init_from_unit(unit: Unit) -> void:
 	job_unique_name = unit.job_data.unique_name
 	team = unit.team_id
 	controller = 0 if unit.is_ai_controlled else 1 # 0 = AI, 1 = Player 1, etc.
-	sprite_unique_name = "sprite_unique_name"
+	spritesheeet_unique_name = "spritesheeet_unique_name"
 	palette_id = unit.sprite_palette_id
 	facing_direction = Unit.Facings.keys()[unit.facing] # NORTH, SOUTH, EAST, WEST
 

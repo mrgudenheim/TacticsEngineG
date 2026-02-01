@@ -44,7 +44,7 @@ var seq: Seq:
 	get:
 		var file_name: String = ui_manager.seq_options.get_item_text(ui_manager.seq_options.selected)
 		
-		var new_seq: Seq = RomReader.seqs[RomReader.file_records[file_name].type_index]
+		var new_seq: Seq = RomReader.seqs_array[RomReader.file_records[file_name].type_index]
 		if not new_seq.is_initialized:
 			new_seq.set_data_from_seq_bytes(RomReader.get_file_data(new_seq.file_name))
 		
@@ -55,7 +55,7 @@ var shp: Shp:
 	get:
 		var file_name: String = ui_manager.shp_options.get_item_text(ui_manager.shp_options.selected)
 		
-		var new_shp: Shp = RomReader.shps[RomReader.file_records[file_name].type_index]
+		var new_shp: Shp = RomReader.shps_array[RomReader.file_records[file_name].type_index]
 		if not new_shp.is_initialized:
 			new_shp.set_data_from_shp_bytes(RomReader.get_file_data(new_shp.file_name))
 		
@@ -184,9 +184,9 @@ func get_xml() -> String:
 	
 	var files_changed: PackedStringArray = []
 	var xml_files: PackedStringArray = []
-	for seq_file: Seq in RomReader.seqs:
+	for seq_file: Seq in RomReader.seqs_array:
 	#for file_name: String in seqs.keys():
-		var seq_temp: Seq = RomReader.seqs[RomReader.file_records[seq_file.file_name].type_index]
+		var seq_temp: Seq = RomReader.seqs_array[RomReader.file_records[seq_file.file_name].type_index]
 		var seq_bytes: PackedByteArray = seq_temp.get_seq_bytes()
 		if RomReader.get_file_data(seq_file.file_name) == seq_bytes or not seq_file.is_initialized:
 			continue
@@ -483,14 +483,14 @@ func _on_seq_file_options_item_selected(index: int, select_shp: bool = true) -> 
 	
 	UiManager.option_button_select_text(ui_manager.shp_options, seq.shp_name)
 	ui_manager.shp_options.item_selected.emit(ui_manager.shp_options.selected)
-	preview_manager.unit.animation_manager.global_seq = RomReader.seqs[index]
+	preview_manager.unit.animation_manager.global_seq = RomReader.seqs_array[index]
 	preview_manager.unit.animation_manager._on_animation_changed()
 
 
 func _on_shp_file_options_item_selected(index: int) -> void:
 	frame_list_container.get_parent().get_parent().get_parent().name = shp.file_name + " Frames"
 	populate_frame_list(frame_list_container, shp)
-	preview_manager.unit.animation_manager.global_shp = RomReader.shps[index]
+	preview_manager.unit.animation_manager.global_shp = RomReader.shps_array[index]
 	preview_manager.unit.animation_manager._on_animation_changed()
 
 

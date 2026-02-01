@@ -4,7 +4,7 @@ extends Control
 signal map_chunk_settings_changed(new_map_chunk_settings: MapChunkSettingsUi)
 signal map_chunk_nodes_changed(new_map_chunk_settings: MapChunkSettingsUi)
 
-const settings_ui_scene: PackedScene = preload("res://src/battle/setup/map_chunk_settings.tscn")
+const settings_ui_scene: PackedScene = preload("res://src/battle/editor/map_chunk_settings.tscn")
 
 @export var chunk_name_dropdown: OptionButton
 @export var position_edit_container: Container

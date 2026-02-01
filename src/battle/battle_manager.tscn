@@ -1,8 +1,7 @@
-[gd_scene load_steps=29 format=3 uid="uid://card26cltbba1"]
+[gd_scene load_steps=28 format=3 uid="uid://card26cltbba1"]
 
 [ext_resource type="Script" uid="uid://cd31vmh881wm5" path="res://src/battle/battle_manager.gd" id="1_hnd0w"]
 [ext_resource type="Material" uid="uid://u6jhtav4x31l" path="res://src/content_scripts/Map/tile_highlight_red.material" id="4_f2r6p"]
-[ext_resource type="PackedScene" uid="uid://dkudrb304m7t1" path="res://src/Unit/unit.tscn" id="4_wfrm2"]
 [ext_resource type="Material" uid="uid://cejj0yxtkspad" path="res://src/content_scripts/Map/tile_highlight_black.material" id="6_l2dig"]
 [ext_resource type="Material" uid="uid://bfoayeqxxbv0f" path="res://src/content_scripts/Map/tile_highlight_yellow.material" id="7_f2r6p"]
 [ext_resource type="Material" uid="uid://bmwuufa37jci2" path="res://src/content_scripts/Map/tile_highlight_white.material" id="8_kb1q2"]
@@ -10,16 +9,16 @@
 [ext_resource type="Script" uid="uid://cl143w048iago" path="res://src/Unit/character_controller_realtime.gd" id="10_d5yoq"]
 [ext_resource type="Material" uid="uid://emgoiswtrorw" path="res://src/content_scripts/Map/tile_highlight_blue.material" id="11_1os5c"]
 [ext_resource type="PackedScene" uid="uid://7tn6b6eup5na" path="res://src/camera_controller.tscn" id="12_l2dig"]
-[ext_resource type="PackedScene" uid="uid://djqalqt20isme" path="res://src/battle/setup/job_select_button.tscn" id="14_f2r6p"]
-[ext_resource type="PackedScene" uid="uid://h7281h60pnbl" path="res://src/battle/setup/team_setup.tscn" id="14_kb1q2"]
-[ext_resource type="Script" uid="uid://b7qofr54bmos3" path="res://src/battle/setup/scenario_editor.gd" id="14_l2dig"]
-[ext_resource type="PackedScene" uid="uid://b2bfuf828p6i6" path="res://src/battle/setup/unit_setup_panel.tscn" id="15_qgxlc"]
-[ext_resource type="Script" uid="uid://df08xhig8ojgj" path="res://src/battle/setup/job_select_control.gd" id="16_bp08t"]
+[ext_resource type="PackedScene" uid="uid://djqalqt20isme" path="res://src/battle/editor/job_select_button.tscn" id="14_f2r6p"]
+[ext_resource type="PackedScene" uid="uid://h7281h60pnbl" path="res://src/battle/editor/team_setup.tscn" id="14_kb1q2"]
+[ext_resource type="Script" uid="uid://b7qofr54bmos3" path="res://src/battle/editor/scenario_editor.gd" id="14_l2dig"]
+[ext_resource type="PackedScene" uid="uid://b2bfuf828p6i6" path="res://src/battle/editor/unit_setup_panel.tscn" id="15_qgxlc"]
+[ext_resource type="Script" uid="uid://df08xhig8ojgj" path="res://src/battle/editor/job_select_control.gd" id="16_bp08t"]
 [ext_resource type="Script" uid="uid://cectjl7guvpqa" path="res://src/content_scripts/actions/action_button.gd" id="16_l2dig"]
-[ext_resource type="Script" uid="uid://cu0evj643fugd" path="res://src/battle/setup/item_select_control.gd" id="17_bp08t"]
-[ext_resource type="PackedScene" uid="uid://b24ja5gvetaqq" path="res://src/battle/setup/item_select_button.tscn" id="18_d5yoq"]
-[ext_resource type="Script" uid="uid://bsflrccy2sry" path="res://src/battle/setup/ability_select_control.gd" id="18_pbg35"]
-[ext_resource type="PackedScene" uid="uid://ckvy5kybckxkh" path="res://src/battle/setup/ability_select_button.tscn" id="20_ok2a6"]
+[ext_resource type="Script" uid="uid://cu0evj643fugd" path="res://src/battle/editor/item_select_control.gd" id="17_bp08t"]
+[ext_resource type="PackedScene" uid="uid://b24ja5gvetaqq" path="res://src/battle/editor/item_select_button.tscn" id="18_d5yoq"]
+[ext_resource type="Script" uid="uid://bsflrccy2sry" path="res://src/battle/editor/ability_select_control.gd" id="18_pbg35"]
+[ext_resource type="PackedScene" uid="uid://ckvy5kybckxkh" path="res://src/battle/editor/ability_select_button.tscn" id="20_ok2a6"]
 
 [sub_resource type="Environment" id="Environment_njvnp"]
 background_mode = 3
@@ -76,7 +75,6 @@ battle_view = NodePath("ScenarioEditor/BattleSetupTabContainer/Map/VBoxContainer
 action_menu = NodePath("ActionMenu")
 action_button_list = NodePath("ActionMenu/ActionButtonsList")
 units_container = NodePath("ScenarioEditor/BattleSetupTabContainer/Map/VBoxContainer/SubViewportContainer/SubViewport/BattleView/Units")
-unit_tscn = ExtResource("4_wfrm2")
 controller = NodePath("CharacterController")
 battle_end_panel = NodePath("BattleEnd")
 post_battle_messages = NodePath("BattleEnd/VBoxContainer/Messages")

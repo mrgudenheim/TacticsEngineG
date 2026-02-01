@@ -54,6 +54,12 @@ static func create_from_dictionary(property_dict: Dictionary) -> UnitData:
 				var new_equip_slot: EquipmentSlot = EquipmentSlot.create_from_dictionary(equip_slot_dictionary)
 				new_equip_slots.append(new_equip_slot)
 			new_unit_data.set(property_name, new_equip_slots)
+		elif property_name == "stats_raw":
+			var dict: Dictionary = property_dict[property_name]
+			var new_stats_raw: Dictionary[Unit.StatType, float] = {}
+			for stat_type in dict.keys():
+				new_stats_raw[int(stat_type)] = dict[stat_type]
+			new_unit_data.set(property_name, new_stats_raw)
 		else:
 			new_unit_data.set(property_name, property_dict[property_name])
 

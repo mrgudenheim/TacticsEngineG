@@ -6,7 +6,7 @@ extends Resource
 @export var gender: String = "gender" # male, female, other, monster
 @export var zodiac: String = "zodiac" # TODO should zodiac be derived from birthday?
 @export var job_unique_name: String = "job_unique_name"
-@export var team: int = 0
+@export var team_idx: int = 0
 @export var controller: int = 0 # 0 = AI, 1 = Player 1, etc.
 @export var spritesheeet_file_name: String = "spritesheeet_file_name.spr" # TODO get sprite file name?
 @export var palette_id: int = 0
@@ -36,16 +36,25 @@ extends Resource
 static func create_from_dictionary(property_dict: Dictionary) -> UnitData:
 	var new_unit_data: UnitData = UnitData.new()
 	for property_name in property_dict.keys():
-		# if property_name == "corner_position":
-		# 	var vector_as_array = property_dict[property_name]
-		# 	var new_corner_position: Vector3i = Vector3i(roundi(vector_as_array[0]), roundi(vector_as_array[1]), roundi(vector_as_array[2]))
-		# 	new_unit_data.set(property_name, new_corner_position)
-		# elif property_name == "mirror_xyz":
-		# 	var array = property_dict[property_name]
-		# 	var new_mirror_xyz: Array[bool] = []
-		# 	new_mirror_xyz.assign(array)
-		# 	new_unit_data.set(property_name, new_mirror_xyz)
-		# else:
+		if property_name == "tile_position":
+			var vector_as_array = property_dict[property_name]
+			var new_tile_position: Vector3 = Vector3(vector_as_array[0], vector_as_array[1], vector_as_array[2])
+			new_unit_data.set(property_name, new_tile_position)
+		elif property_name == "ability_slots":
+			var array = property_dict[property_name]
+			var new_ability_slots: Array[AbilitySlot] = []
+			for ability_slot_dictionary: Dictionary in array:
+				var new_ability_slot: AbilitySlot = AbilitySlot.create_from_dictionary(ability_slot_dictionary)
+				new_ability_slots.append(new_ability_slot)
+			new_unit_data.set(property_name, new_ability_slots)
+		elif property_name == "equip_slots":
+			var array = property_dict[property_name]
+			var new_equip_slots: Array[EquipmentSlot] = []
+			for equip_slot_dictionary: Dictionary in array:
+				var new_equip_slot: EquipmentSlot = EquipmentSlot.create_from_dictionary(equip_slot_dictionary)
+				new_equip_slots.append(new_equip_slot)
+			new_unit_data.set(property_name, new_equip_slots)
+		else:
 			new_unit_data.set(property_name, property_dict[property_name])
 
 	new_unit_data.emit_changed()
@@ -72,7 +81,7 @@ func init_from_unit(unit: Unit) -> void:
 	gender = Unit.Gender.keys()[unit.gender] # male, female, other, monster
 	zodiac = "zodiac" # TODO should zodiac be derived from birthday?
 	job_unique_name = unit.job_data.unique_name
-	team = unit.team_id
+	team_idx = unit.team_id
 	controller = 0 if unit.is_ai_controlled else 1 # 0 = AI, 1 = Player 1, etc.
 	spritesheeet_file_name = unit.sprite_file_name
 	palette_id = unit.sprite_palette_id

@@ -8,23 +8,21 @@ var ability: Ability:
 	get: return RomReader.abilities[ability_unique_name]
 
 
-static func create_from_dictionary(property_dict: Dictionary) -> UnitData:
-	var new_unit_data: UnitData = UnitData.new()
+static func create_from_dictionary(property_dict: Dictionary) -> AbilitySlot:
+	var new_ability_slot: AbilitySlot = AbilitySlot.new()
 	for property_name in property_dict.keys():
-		# if property_name == "corner_position":
-		# 	var vector_as_array = property_dict[property_name]
-		# 	var new_corner_position: Vector3i = Vector3i(roundi(vector_as_array[0]), roundi(vector_as_array[1]), roundi(vector_as_array[2]))
-		# 	new_unit_data.set(property_name, new_corner_position)
-		# elif property_name == "mirror_xyz":
-		# 	var array = property_dict[property_name]
-		# 	var new_mirror_xyz: Array[bool] = []
-		# 	new_mirror_xyz.assign(array)
-		# 	new_unit_data.set(property_name, new_mirror_xyz)
-		# else:
-			new_unit_data.set(property_name, property_dict[property_name])
+		if property_name == "slot_types":
+			var array = property_dict[property_name]
+			var new_slot_types: Array[Ability.SlotType] = []
+			for type in array:
+				# new_slot_types.append(Ability.SlotType[type])
+				new_slot_types.append(roundi(type))
+			new_ability_slot.set(property_name, new_slot_types)
+		else:
+			new_ability_slot.set(property_name, property_dict[property_name])
 
-	new_unit_data.emit_changed()
-	return new_unit_data
+	new_ability_slot.emit_changed()
+	return new_ability_slot
 
 
 func _init(new_name: String = "", new_slot_types: Array[Ability.SlotType] = [], new_ability_unique_name: String = "") -> void:

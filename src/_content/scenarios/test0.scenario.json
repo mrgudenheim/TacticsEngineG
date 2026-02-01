@@ -1,18 +1,20 @@
 {
-	"deployment_zones": [
-		[
-			[
-				0.0,
-				0.0
-			],
-			[
-				1.0,
-				1.0
-			]
-		]
+	"background_gradient_bottom": [
+		0.0,
+		0.0,
+		0.0941176488995552,
+		1.0
 	],
+	"background_gradient_top": [
+		0.627451002597809,
+		0.909803926944733,
+		0.937254905700684,
+		1.0
+	],
+	"deployment_zones": [],
 	"description": "description",
 	"display_name": "display_name",
+	"global_passive_effect_names": [],
 	"map_chunks": [
 		{
 			"corner_position": [
@@ -26,22 +28,1506 @@
 				false
 			],
 			"rotation": 0,
-			"unique_name": "map_022_magic_city_gariland"
-		},
-		{
-			"corner_position": [
-				10,
-				0,
-				0
-			],
-			"mirror_xyz": [
-				false,
-				true,
-				false
-			],
-			"rotation": 0,
-			"unique_name": "map_116"
+			"unique_name": "map_056_orbonne_monastery"
 		}
 	],
-	"unique_name": "test0"
+	"unique_name": "test0",
+	"units_data": [
+		{
+			"ability_slots": [
+				{
+					"ability_slot_name": "Skillset 1",
+					"ability_unique_name": "",
+					"slot_types": [
+						0
+					]
+				},
+				{
+					"ability_slot_name": "Skillset 2",
+					"ability_unique_name": "",
+					"slot_types": [
+						0
+					]
+				},
+				{
+					"ability_slot_name": "Reaction",
+					"ability_unique_name": "absorb_used_mp",
+					"slot_types": [
+						1
+					]
+				},
+				{
+					"ability_slot_name": "Support",
+					"ability_unique_name": "equip_change",
+					"slot_types": [
+						2
+					]
+				},
+				{
+					"ability_slot_name": "Movement",
+					"ability_unique_name": "move_get_jp",
+					"slot_types": [
+						3
+					]
+				}
+			],
+			"controller": 1,
+			"display_name": "Dorna",
+			"equip_slots": [
+				{
+					"equipment_slot_name": "RH",
+					"item_unique_name": "",
+					"slot_types": [
+						128,
+						64
+					]
+				},
+				{
+					"equipment_slot_name": "LH",
+					"item_unique_name": "",
+					"slot_types": [
+						128,
+						64
+					]
+				},
+				{
+					"equipment_slot_name": "Head",
+					"item_unique_name": "",
+					"slot_types": [
+						32
+					]
+				},
+				{
+					"equipment_slot_name": "Body",
+					"item_unique_name": "",
+					"slot_types": [
+						16
+					]
+				},
+				{
+					"equipment_slot_name": "Accesory",
+					"item_unique_name": "",
+					"slot_types": [
+						8
+					]
+				}
+			],
+			"facing_direction": "SOUTH",
+			"gender": "MALE",
+			"job_unique_name": "red_dragon",
+			"level": 40,
+			"palette_id": 2,
+			"primary_weapon_unique_name": "",
+			"spritesheeet_file_name": "DORA1.SPR",
+			"stats": {
+				"0": {
+					"base_value": 50,
+					"current_value": 371,
+					"max_value": 371,
+					"min_value": 0
+				},
+				"1": {
+					"base_value": 371,
+					"current_value": 371,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"2": {
+					"base_value": 50,
+					"current_value": 22,
+					"max_value": 22,
+					"min_value": 0
+				},
+				"3": {
+					"base_value": 22,
+					"current_value": 22,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"4": {
+					"base_value": 50,
+					"current_value": 25,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"5": {
+					"base_value": 5,
+					"current_value": 5,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"6": {
+					"base_value": 3,
+					"current_value": 3,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"7": {
+					"base_value": 9,
+					"current_value": 9,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"8": {
+					"base_value": 14,
+					"current_value": 14,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"9": {
+					"base_value": 33,
+					"current_value": 33,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"10": {
+					"base_value": 50,
+					"current_value": 70,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"11": {
+					"base_value": 50,
+					"current_value": 65,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"12": {
+					"base_value": 50,
+					"current_value": 99,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"13": {
+					"base_value": 50,
+					"current_value": 40,
+					"max_value": 99,
+					"min_value": 0
+				}
+			},
+			"stats_raw": {
+				"1": 3871819.71428571,
+				"3": 323911.161290322,
+				"7": 120022.325581395,
+				"8": 163840.0,
+				"9": 550034.285714286
+			},
+			"team": 0,
+			"tile_position": [
+				1.5,
+				2.57142853736877,
+				0.5
+			],
+			"zodiac": "zodiac"
+		},
+		{
+			"ability_slots": [
+				{
+					"ability_slot_name": "Skillset 1",
+					"ability_unique_name": "",
+					"slot_types": [
+						0
+					]
+				},
+				{
+					"ability_slot_name": "Skillset 2",
+					"ability_unique_name": "",
+					"slot_types": [
+						0
+					]
+				},
+				{
+					"ability_slot_name": "Reaction",
+					"ability_unique_name": "speed_save",
+					"slot_types": [
+						1
+					]
+				},
+				{
+					"ability_slot_name": "Support",
+					"ability_unique_name": "equip_shield",
+					"slot_types": [
+						2
+					]
+				},
+				{
+					"ability_slot_name": "Movement",
+					"ability_unique_name": "fly",
+					"slot_types": [
+						3
+					]
+				}
+			],
+			"controller": 1,
+			"display_name": "Zalbag",
+			"equip_slots": [
+				{
+					"equipment_slot_name": "RH",
+					"item_unique_name": "",
+					"slot_types": [
+						128,
+						64
+					]
+				},
+				{
+					"equipment_slot_name": "LH",
+					"item_unique_name": "",
+					"slot_types": [
+						128,
+						64
+					]
+				},
+				{
+					"equipment_slot_name": "Head",
+					"item_unique_name": "",
+					"slot_types": [
+						32
+					]
+				},
+				{
+					"equipment_slot_name": "Body",
+					"item_unique_name": "",
+					"slot_types": [
+						16
+					]
+				},
+				{
+					"equipment_slot_name": "Accesory",
+					"item_unique_name": "",
+					"slot_types": [
+						8
+					]
+				}
+			],
+			"facing_direction": "WEST",
+			"gender": "MALE",
+			"job_unique_name": "steel_giant",
+			"level": 40,
+			"palette_id": 0,
+			"primary_weapon_unique_name": "",
+			"spritesheeet_file_name": "TETSU.SPR",
+			"stats": {
+				"0": {
+					"base_value": 50,
+					"current_value": 365,
+					"max_value": 365,
+					"min_value": 0
+				},
+				"1": {
+					"base_value": 365,
+					"current_value": 365,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"2": {
+					"base_value": 50,
+					"current_value": 0,
+					"max_value": 0,
+					"min_value": 0
+				},
+				"3": {
+					"base_value": 0,
+					"current_value": 0,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"4": {
+					"base_value": 50,
+					"current_value": 25,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"5": {
+					"base_value": 3,
+					"current_value": 3,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"6": {
+					"base_value": 3,
+					"current_value": 3,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"7": {
+					"base_value": 7,
+					"current_value": 7,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"8": {
+					"base_value": 16,
+					"current_value": 16,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"9": {
+					"base_value": 0,
+					"current_value": 0,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"10": {
+					"base_value": 50,
+					"current_value": 70,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"11": {
+					"base_value": 50,
+					"current_value": 65,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"12": {
+					"base_value": 50,
+					"current_value": 99,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"13": {
+					"base_value": 50,
+					"current_value": 40,
+					"max_value": 99,
+					"min_value": 0
+				}
+			},
+			"stats_raw": {
+				"1": 5203026.0,
+				"3": 195445.544554455,
+				"7": 122374.320987655,
+				"8": 187623.225806452,
+				"9": 114363.564356436
+			},
+			"team": 0,
+			"tile_position": [
+				0.5,
+				2.57142853736877,
+				1.5
+			],
+			"zodiac": "zodiac"
+		},
+		{
+			"ability_slots": [
+				{
+					"ability_slot_name": "Skillset 1",
+					"ability_unique_name": "",
+					"slot_types": [
+						0
+					]
+				},
+				{
+					"ability_slot_name": "Skillset 2",
+					"ability_unique_name": "",
+					"slot_types": [
+						0
+					]
+				},
+				{
+					"ability_slot_name": "Reaction",
+					"ability_unique_name": "counter_geomancy",
+					"slot_types": [
+						1
+					]
+				},
+				{
+					"ability_slot_name": "Support",
+					"ability_unique_name": "defend",
+					"slot_types": [
+						2
+					]
+				},
+				{
+					"ability_slot_name": "Movement",
+					"ability_unique_name": "teleport_2",
+					"slot_types": [
+						3
+					]
+				}
+			],
+			"controller": 1,
+			"display_name": "Jeanne",
+			"equip_slots": [
+				{
+					"equipment_slot_name": "RH",
+					"item_unique_name": "",
+					"slot_types": [
+						128,
+						64
+					]
+				},
+				{
+					"equipment_slot_name": "LH",
+					"item_unique_name": "",
+					"slot_types": [
+						128,
+						64
+					]
+				},
+				{
+					"equipment_slot_name": "Head",
+					"item_unique_name": "",
+					"slot_types": [
+						32
+					]
+				},
+				{
+					"equipment_slot_name": "Body",
+					"item_unique_name": "",
+					"slot_types": [
+						16
+					]
+				},
+				{
+					"equipment_slot_name": "Accesory",
+					"item_unique_name": "",
+					"slot_types": [
+						8
+					]
+				}
+			],
+			"facing_direction": "NORTH",
+			"gender": "MALE",
+			"job_unique_name": "job_name_05",
+			"level": 40,
+			"palette_id": 0,
+			"primary_weapon_unique_name": "",
+			"spritesheeet_file_name": "10M.SPR",
+			"stats": {
+				"0": {
+					"base_value": 50,
+					"current_value": 154,
+					"max_value": 154,
+					"min_value": 0
+				},
+				"1": {
+					"base_value": 154,
+					"current_value": 154,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"2": {
+					"base_value": 50,
+					"current_value": 35,
+					"max_value": 35,
+					"min_value": 0
+				},
+				"3": {
+					"base_value": 35,
+					"current_value": 35,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"4": {
+					"base_value": 50,
+					"current_value": 25,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"5": {
+					"base_value": 0,
+					"current_value": 0,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"6": {
+					"base_value": 0,
+					"current_value": 0,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"7": {
+					"base_value": 6,
+					"current_value": 6,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"8": {
+					"base_value": 8,
+					"current_value": 8,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"9": {
+					"base_value": 8,
+					"current_value": 8,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"10": {
+					"base_value": 50,
+					"current_value": 70,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"11": {
+					"base_value": 50,
+					"current_value": 65,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"12": {
+					"base_value": 50,
+					"current_value": 99,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"13": {
+					"base_value": 50,
+					"current_value": 40,
+					"max_value": 99,
+					"min_value": 0
+				}
+			},
+			"stats_raw": {
+				"1": 2537751.66666667,
+				"3": 583570.0,
+				"7": 114363.564356436,
+				"8": 146170.980392157,
+				"9": 146170.980392157
+			},
+			"team": 0,
+			"tile_position": [
+				8.5,
+				1.92857146263123,
+				9.5
+			],
+			"zodiac": "zodiac"
+		},
+		{
+			"ability_slots": [
+				{
+					"ability_slot_name": "Skillset 1",
+					"ability_unique_name": "",
+					"slot_types": [
+						0
+					]
+				},
+				{
+					"ability_slot_name": "Skillset 2",
+					"ability_unique_name": "",
+					"slot_types": [
+						0
+					]
+				},
+				{
+					"ability_slot_name": "Reaction",
+					"ability_unique_name": "finger_guard",
+					"slot_types": [
+						1
+					]
+				},
+				{
+					"ability_slot_name": "Support",
+					"ability_unique_name": "equip_shield",
+					"slot_types": [
+						2
+					]
+				},
+				{
+					"ability_slot_name": "Movement",
+					"ability_unique_name": "walk_on_water",
+					"slot_types": [
+						3
+					]
+				}
+			],
+			"controller": 1,
+			"display_name": "Oibaros",
+			"equip_slots": [
+				{
+					"equipment_slot_name": "RH",
+					"item_unique_name": "rune_blade",
+					"slot_types": [
+						128,
+						64
+					]
+				},
+				{
+					"equipment_slot_name": "LH",
+					"item_unique_name": "venetian_shield",
+					"slot_types": [
+						128,
+						64
+					]
+				},
+				{
+					"equipment_slot_name": "Head",
+					"item_unique_name": "grand_helmet",
+					"slot_types": [
+						32
+					]
+				},
+				{
+					"equipment_slot_name": "Body",
+					"item_unique_name": "reflect_mail",
+					"slot_types": [
+						16
+					]
+				},
+				{
+					"equipment_slot_name": "Accesory",
+					"item_unique_name": "cursed_ring",
+					"slot_types": [
+						8
+					]
+				}
+			],
+			"facing_direction": "WEST",
+			"gender": "MALE",
+			"job_unique_name": "arc_knight_02",
+			"level": 40,
+			"palette_id": 0,
+			"primary_weapon_unique_name": "rune_blade",
+			"spritesheeet_file_name": "ZARU.SPR",
+			"stats": {
+				"0": {
+					"base_value": 50,
+					"current_value": 527,
+					"max_value": 527,
+					"min_value": 0
+				},
+				"1": {
+					"base_value": 247,
+					"current_value": 247,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"2": {
+					"base_value": 50,
+					"current_value": 46,
+					"max_value": 46,
+					"min_value": 0
+				},
+				"3": {
+					"base_value": 46,
+					"current_value": 46,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"4": {
+					"base_value": 50,
+					"current_value": 25,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"5": {
+					"base_value": 4,
+					"current_value": 4,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"6": {
+					"base_value": 3,
+					"current_value": 3,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"7": {
+					"base_value": 8,
+					"current_value": 8,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"8": {
+					"base_value": 12,
+					"current_value": 12,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"9": {
+					"base_value": 7,
+					"current_value": 7,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"10": {
+					"base_value": 50,
+					"current_value": 70,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"11": {
+					"base_value": 50,
+					"current_value": 65,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"12": {
+					"base_value": 50,
+					"current_value": 99,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"13": {
+					"base_value": 50,
+					"current_value": 40,
+					"max_value": 99,
+					"min_value": 0
+				}
+			},
+			"stats_raw": {
+				"1": 2414780.45454546,
+				"3": 947684.846153845,
+				"7": 138428.081632653,
+				"8": 165940.512820513,
+				"9": 119034.775510204
+			},
+			"team": 0,
+			"tile_position": [
+				0.5,
+				2.14285707473755,
+				8.5
+			],
+			"zodiac": "zodiac"
+		},
+		{
+			"ability_slots": [
+				{
+					"ability_slot_name": "Skillset 1",
+					"ability_unique_name": "",
+					"slot_types": [
+						0
+					]
+				},
+				{
+					"ability_slot_name": "Skillset 2",
+					"ability_unique_name": "",
+					"slot_types": [
+						0
+					]
+				},
+				{
+					"ability_slot_name": "Reaction",
+					"ability_unique_name": "damage_split",
+					"slot_types": [
+						1
+					]
+				},
+				{
+					"ability_slot_name": "Support",
+					"ability_unique_name": "short_charge",
+					"slot_types": [
+						2
+					]
+				},
+				{
+					"ability_slot_name": "Movement",
+					"ability_unique_name": "ignore_terrain",
+					"slot_types": [
+						3
+					]
+				}
+			],
+			"controller": 1,
+			"display_name": "Ivana",
+			"equip_slots": [
+				{
+					"equipment_slot_name": "RH",
+					"item_unique_name": "air_knife",
+					"slot_types": [
+						128,
+						64
+					]
+				},
+				{
+					"equipment_slot_name": "LH",
+					"item_unique_name": "",
+					"slot_types": [
+						128,
+						64
+					]
+				},
+				{
+					"equipment_slot_name": "Head",
+					"item_unique_name": "flash_hat",
+					"slot_types": [
+						32
+					]
+				},
+				{
+					"equipment_slot_name": "Body",
+					"item_unique_name": "black_costume",
+					"slot_types": [
+						16
+					]
+				},
+				{
+					"equipment_slot_name": "Accesory",
+					"item_unique_name": "leather_mantle",
+					"slot_types": [
+						8
+					]
+				}
+			],
+			"facing_direction": "EAST",
+			"gender": "MALE",
+			"job_unique_name": "thief",
+			"level": 40,
+			"palette_id": 1,
+			"primary_weapon_unique_name": "air_knife",
+			"spritesheeet_file_name": "THIEF_M.SPR",
+			"stats": {
+				"0": {
+					"base_value": 50,
+					"current_value": 312,
+					"max_value": 312,
+					"min_value": 0
+				},
+				"1": {
+					"base_value": 124,
+					"current_value": 124,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"2": {
+					"base_value": 50,
+					"current_value": 39,
+					"max_value": 39,
+					"min_value": 0
+				},
+				"3": {
+					"base_value": 24,
+					"current_value": 24,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"4": {
+					"base_value": 50,
+					"current_value": 25,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"5": {
+					"base_value": 4,
+					"current_value": 4,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"6": {
+					"base_value": 4,
+					"current_value": 4,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"7": {
+					"base_value": 9,
+					"current_value": 9,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"8": {
+					"base_value": 8,
+					"current_value": 8,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"9": {
+					"base_value": 4,
+					"current_value": 4,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"10": {
+					"base_value": 50,
+					"current_value": 70,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"11": {
+					"base_value": 50,
+					"current_value": 65,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"12": {
+					"base_value": 50,
+					"current_value": 99,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"13": {
+					"base_value": 50,
+					"current_value": 40,
+					"max_value": 99,
+					"min_value": 0
+				}
+			},
+			"stats_raw": {
+				"1": 2262879.66666667,
+				"3": 806000.117647059,
+				"7": 141514.549450549,
+				"8": 146170.980392157,
+				"9": 116936.784313725
+			},
+			"team": 0,
+			"tile_position": [
+				5.5,
+				1.28571426868439,
+				1.5
+			],
+			"zodiac": "zodiac"
+		},
+		{
+			"ability_slots": [
+				{
+					"ability_slot_name": "Skillset 1",
+					"ability_unique_name": "",
+					"slot_types": [
+						0
+					]
+				},
+				{
+					"ability_slot_name": "Skillset 2",
+					"ability_unique_name": "",
+					"slot_types": [
+						0
+					]
+				},
+				{
+					"ability_slot_name": "Reaction",
+					"ability_unique_name": "dragon_spirit",
+					"slot_types": [
+						1
+					]
+				},
+				{
+					"ability_slot_name": "Support",
+					"ability_unique_name": "two_hands",
+					"slot_types": [
+						2
+					]
+				},
+				{
+					"ability_slot_name": "Movement",
+					"ability_unique_name": "move_find_item",
+					"slot_types": [
+						3
+					]
+				}
+			],
+			"controller": 1,
+			"display_name": "Dallas",
+			"equip_slots": [
+				{
+					"equipment_slot_name": "RH",
+					"item_unique_name": "air_knife",
+					"slot_types": [
+						128,
+						64
+					]
+				},
+				{
+					"equipment_slot_name": "LH",
+					"item_unique_name": "",
+					"slot_types": [
+						128,
+						64
+					]
+				},
+				{
+					"equipment_slot_name": "Head",
+					"item_unique_name": "",
+					"slot_types": [
+						32
+					]
+				},
+				{
+					"equipment_slot_name": "Body",
+					"item_unique_name": "light_robe",
+					"slot_types": [
+						16
+					]
+				},
+				{
+					"equipment_slot_name": "Accesory",
+					"item_unique_name": "wizard_mantle",
+					"slot_types": [
+						8
+					]
+				}
+			],
+			"facing_direction": "EAST",
+			"gender": "MALE",
+			"job_unique_name": "arc_witch",
+			"level": 40,
+			"palette_id": 0,
+			"primary_weapon_unique_name": "air_knife",
+			"spritesheeet_file_name": "BARU.SPR",
+			"stats": {
+				"0": {
+					"base_value": 50,
+					"current_value": 212,
+					"max_value": 212,
+					"min_value": 0
+				},
+				"1": {
+					"base_value": 137,
+					"current_value": 137,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"2": {
+					"base_value": 50,
+					"current_value": 114,
+					"max_value": 114,
+					"min_value": 0
+				},
+				"3": {
+					"base_value": 64,
+					"current_value": 64,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"4": {
+					"base_value": 50,
+					"current_value": 25,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"5": {
+					"base_value": 3,
+					"current_value": 3,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"6": {
+					"base_value": 3,
+					"current_value": 3,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"7": {
+					"base_value": 8,
+					"current_value": 8,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"8": {
+					"base_value": 8,
+					"current_value": 8,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"9": {
+					"base_value": 7,
+					"current_value": 7,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"10": {
+					"base_value": 50,
+					"current_value": 70,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"11": {
+					"base_value": 50,
+					"current_value": 65,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"12": {
+					"base_value": 50,
+					"current_value": 99,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"13": {
+					"base_value": 50,
+					"current_value": 40,
+					"max_value": 99,
+					"min_value": 0
+				}
+			},
+			"stats_raw": {
+				"1": 2252930.33333333,
+				"3": 1050972.0,
+				"7": 137236.277227723,
+				"8": 146170.980392157,
+				"9": 116936.784313725
+			},
+			"team": 0,
+			"tile_position": [
+				1.5,
+				2.57142853736877,
+				8.5
+			],
+			"zodiac": "zodiac"
+		},
+		{
+			"ability_slots": [
+				{
+					"ability_slot_name": "Skillset 1",
+					"ability_unique_name": "",
+					"slot_types": [
+						0
+					]
+				},
+				{
+					"ability_slot_name": "Skillset 2",
+					"ability_unique_name": "",
+					"slot_types": [
+						0
+					]
+				},
+				{
+					"ability_slot_name": "Reaction",
+					"ability_unique_name": "mp_switch",
+					"slot_types": [
+						1
+					]
+				},
+				{
+					"ability_slot_name": "Support",
+					"ability_unique_name": "equip_katana",
+					"slot_types": [
+						2
+					]
+				},
+				{
+					"ability_slot_name": "Movement",
+					"ability_unique_name": "walk_on_water",
+					"slot_types": [
+						3
+					]
+				}
+			],
+			"controller": 1,
+			"display_name": "Porksor",
+			"equip_slots": [
+				{
+					"equipment_slot_name": "RH",
+					"item_unique_name": "",
+					"slot_types": [
+						128,
+						64
+					]
+				},
+				{
+					"equipment_slot_name": "LH",
+					"item_unique_name": "",
+					"slot_types": [
+						128,
+						64
+					]
+				},
+				{
+					"equipment_slot_name": "Head",
+					"item_unique_name": "",
+					"slot_types": [
+						32
+					]
+				},
+				{
+					"equipment_slot_name": "Body",
+					"item_unique_name": "",
+					"slot_types": [
+						16
+					]
+				},
+				{
+					"equipment_slot_name": "Accesory",
+					"item_unique_name": "",
+					"slot_types": [
+						8
+					]
+				}
+			],
+			"facing_direction": "NORTH",
+			"gender": "MALE",
+			"job_unique_name": "_04",
+			"level": 40,
+			"palette_id": 0,
+			"primary_weapon_unique_name": "",
+			"spritesheeet_file_name": "LEDY.SPR",
+			"stats": {
+				"0": {
+					"base_value": 50,
+					"current_value": 182,
+					"max_value": 182,
+					"min_value": 0
+				},
+				"1": {
+					"base_value": 182,
+					"current_value": 182,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"2": {
+					"base_value": 50,
+					"current_value": 9,
+					"max_value": 9,
+					"min_value": 0
+				},
+				"3": {
+					"base_value": 9,
+					"current_value": 9,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"4": {
+					"base_value": 50,
+					"current_value": 25,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"5": {
+					"base_value": 8,
+					"current_value": 8,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"6": {
+					"base_value": 8,
+					"current_value": 8,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"7": {
+					"base_value": 8,
+					"current_value": 8,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"8": {
+					"base_value": 11,
+					"current_value": 11,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"9": {
+					"base_value": 26,
+					"current_value": 26,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"10": {
+					"base_value": 50,
+					"current_value": 70,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"11": {
+					"base_value": 50,
+					"current_value": 65,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"12": {
+					"base_value": 50,
+					"current_value": 99,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"13": {
+					"base_value": 50,
+					"current_value": 40,
+					"max_value": 99,
+					"min_value": 0
+				}
+			},
+			"stats_raw": {
+				"1": 2984670.0,
+				"3": 528856.096774194,
+				"7": 137236.277227723,
+				"8": 187623.225806452,
+				"9": 440027.428571429
+			},
+			"team": 0,
+			"tile_position": [
+				6.5,
+				1.71428573131561,
+				2.5
+			],
+			"zodiac": "zodiac"
+		},
+		{
+			"ability_slots": [
+				{
+					"ability_slot_name": "Skillset 1",
+					"ability_unique_name": "",
+					"slot_types": [
+						0
+					]
+				},
+				{
+					"ability_slot_name": "Skillset 2",
+					"ability_unique_name": "",
+					"slot_types": [
+						0
+					]
+				},
+				{
+					"ability_slot_name": "Reaction",
+					"ability_unique_name": "weapon_guard",
+					"slot_types": [
+						1
+					]
+				},
+				{
+					"ability_slot_name": "Support",
+					"ability_unique_name": "half_of_mp",
+					"slot_types": [
+						2
+					]
+				},
+				{
+					"ability_slot_name": "Movement",
+					"ability_unique_name": "move_underwater",
+					"slot_types": [
+						3
+					]
+				}
+			],
+			"controller": 1,
+			"display_name": "Ginger",
+			"equip_slots": [
+				{
+					"equipment_slot_name": "RH",
+					"item_unique_name": "rune_blade",
+					"slot_types": [
+						128,
+						64
+					]
+				},
+				{
+					"equipment_slot_name": "LH",
+					"item_unique_name": "",
+					"slot_types": [
+						128,
+						64
+					]
+				},
+				{
+					"equipment_slot_name": "Head",
+					"item_unique_name": "flash_hat",
+					"slot_types": [
+						32
+					]
+				},
+				{
+					"equipment_slot_name": "Body",
+					"item_unique_name": "light_robe",
+					"slot_types": [
+						16
+					]
+				},
+				{
+					"equipment_slot_name": "Accesory",
+					"item_unique_name": "leather_mantle",
+					"slot_types": [
+						8
+					]
+				}
+			],
+			"facing_direction": "WEST",
+			"gender": "MALE",
+			"job_unique_name": "squire",
+			"level": 40,
+			"palette_id": 0,
+			"primary_weapon_unique_name": "rune_blade",
+			"spritesheeet_file_name": "RAMUZA.SPR",
+			"stats": {
+				"0": {
+					"base_value": 50,
+					"current_value": 316,
+					"max_value": 316,
+					"min_value": 0
+				},
+				"1": {
+					"base_value": 153,
+					"current_value": 153,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"2": {
+					"base_value": 50,
+					"current_value": 133,
+					"max_value": 133,
+					"min_value": 0
+				},
+				"3": {
+					"base_value": 68,
+					"current_value": 68,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"4": {
+					"base_value": 50,
+					"current_value": 25,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"5": {
+					"base_value": 4,
+					"current_value": 4,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"6": {
+					"base_value": 3,
+					"current_value": 3,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"7": {
+					"base_value": 9,
+					"current_value": 9,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"8": {
+					"base_value": 7,
+					"current_value": 7,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"9": {
+					"base_value": 9,
+					"current_value": 9,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"10": {
+					"base_value": 50,
+					"current_value": 70,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"11": {
+					"base_value": 50,
+					"current_value": 65,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"12": {
+					"base_value": 50,
+					"current_value": 99,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"13": {
+					"base_value": 50,
+					"current_value": 40,
+					"max_value": 99,
+					"min_value": 0
+				}
+			},
+			"stats_raw": {
+				"1": 2010575.66666667,
+				"3": 1069033.33333333,
+				"7": 139264.0,
+				"8": 117964.8,
+				"9": 148793.469387755
+			},
+			"team": 0,
+			"tile_position": [
+				4.5,
+				1.71428573131561,
+				0.5
+			],
+			"zodiac": "zodiac"
+		}
+	]
 }

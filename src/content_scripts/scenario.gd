@@ -33,7 +33,6 @@ static func create_from_dictionary(property_dict: Dictionary) -> Scenario:
 			for map_chunk_dict: Dictionary in map_chunks_array:
 				var new_map_chunk: MapChunk = MapChunk.create_from_dictionary(map_chunk_dict)
 				new_map_chunks.append(new_map_chunk)
-
 			new_scenario.set(property_name, new_map_chunks)
 		elif property_name == "deployment_zones":
 			var new_deployment_zones: Array[PackedVector2Array] = []
@@ -44,6 +43,13 @@ static func create_from_dictionary(property_dict: Dictionary) -> Scenario:
 					new_zone.append(Vector2(location[0], location[1]))
 				new_deployment_zones.append(new_zone)
 			new_scenario.set(property_name, new_deployment_zones)
+		elif property_name == "units_data":
+			var new_units_data: Array[UnitData] = []
+			var new_units_data_array = property_dict[property_name]
+			for unit_data_dictionary: Dictionary in new_units_data_array:
+				var new_unit_data: UnitData = UnitData.create_from_dictionary(unit_data_dictionary)
+				new_units_data.append(new_unit_data)
+			new_scenario.set(property_name, new_units_data)
 		else:
 			new_scenario.set(property_name, property_dict[property_name])
 

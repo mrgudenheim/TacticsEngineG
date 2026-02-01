@@ -214,99 +214,76 @@ func load_scenario(new_scenario: Scenario) -> void:
 
 	# setup map chunks
 	for map_chunk: Scenario.MapChunk in new_scenario.map_chunks:
-		var map_chunk_data: MapData = RomReader.maps[map_chunk.unique_name]
-		if not map_chunk_data.is_initialized:
-			map_chunk_data.init_map()
-
-		var new_map_instance: MapChunkNodes = MapChunkNodes.instantiate()
-		new_map_instance.map_data = map_chunk_data
-		new_map_instance.name = map_chunk_data.unique_name
-		
-		# if gltf_map_mesh != null:
-		# 	new_map_instance.mesh.queue_free()
-		# 	var new_gltf_mesh: MeshInstance3D = gltf_map_mesh.duplicate()
-		# 	new_map_instance.add_child(new_gltf_mesh)
-		# 	new_map_instance.mesh = new_gltf_mesh
-		# 	new_map_instance.mesh.rotation_degrees = Vector3.ZERO
-		# else:
-
-		var mesh_aabb: AABB = map_chunk_data.mesh.get_aabb()
-		# modify mesh based on mirroring and so bottom left corner is at (0, 0, 0)
-		# TODO handle rotation
-		if map_chunk.mirror_scale != Vector3i.ONE or mesh_aabb.position != Vector3.ZERO:
-			var surface_arrays: Array = map_chunk_data.mesh.surface_get_arrays(0)
-			var original_mesh_center: Vector3 = mesh_aabb.get_center()
-			for vertex_idx: int in surface_arrays[Mesh.ARRAY_VERTEX].size():
-				var vertex: Vector3 = surface_arrays[Mesh.ARRAY_VERTEX][vertex_idx]
-				vertex = vertex - original_mesh_center # shift center to be at (0, 0, 0) to make moving after mirroring easy
-				vertex = vertex * Vector3(map_chunk.mirror_scale) # apply mirroring
-				vertex = vertex + (mesh_aabb.size / 2.0) # shift so mesh_aabb start will be at (0, 0, 0)
-				
-				surface_arrays[Mesh.ARRAY_VERTEX][vertex_idx] = vertex
-			
-			# var new_array_index: Array = []
-			# new_array_index.resize(surface_arrays[Mesh.ARRAY_VERTEX].size())
-			# if mirrored along an odd number of axis polygons will render with the wrong facing
-			var sum_scale: int = map_chunk.mirror_scale.x + map_chunk.mirror_scale.y + map_chunk.mirror_scale.z
-			if sum_scale % 2 == 1:
-				for idx: int in surface_arrays[Mesh.ARRAY_VERTEX].size() / 3:
-					var tri_idx: int = idx * 3
-					var temp_vertex: Vector3 = surface_arrays[Mesh.ARRAY_VERTEX][tri_idx]
-					surface_arrays[Mesh.ARRAY_VERTEX][tri_idx] = surface_arrays[Mesh.ARRAY_VERTEX][tri_idx + 2]
-					surface_arrays[Mesh.ARRAY_VERTEX][tri_idx + 2] = temp_vertex
-
-					var temp_uv: Vector2 = surface_arrays[Mesh.ARRAY_TEX_UV][tri_idx]
-					surface_arrays[Mesh.ARRAY_TEX_UV][tri_idx] = surface_arrays[Mesh.ARRAY_TEX_UV][tri_idx + 2]
-					surface_arrays[Mesh.ARRAY_TEX_UV][tri_idx + 2] = temp_uv
-
-					# TODO fix ordering of normals for mirrored mesh?
-			
-			var modified_mesh: ArrayMesh = ArrayMesh.new()
-			modified_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surface_arrays)
-			new_map_instance.mesh_instance.mesh = modified_mesh
-		else:
-			new_map_instance.mesh_instance.mesh = map_chunk_data.mesh
-
-		new_map_instance.set_mesh_shader(map_chunk_data.albedo_texture_indexed, map_chunk_data.texture_palettes)
-		new_map_instance.collision_shape.shape = new_map_instance.mesh_instance.mesh.create_trimesh_shape()
-		
-		new_map_instance.play_animations(map_chunk_data)
-		new_map_instance.input_event.connect(on_map_input_event)
-		new_map_instance.position = map_chunk.corner_position
-
-		# add terrain tiles to total_tiles
-		# TODO handle rotation
-		var map_tile_offset: Vector2i = Vector2i(map_chunk.corner_position.x, map_chunk.corner_position.z)
-		for tile: TerrainTile in map_chunk_data.terrain_tiles:
-			if tile.no_cursor == 1:
-				continue
-			
-			var total_location: Vector2i = tile.location
-			var map_scale: Vector2i = Vector2i(map_chunk.mirror_scale.x, map_chunk.mirror_scale.z)
-			total_location = total_location * map_scale
-			
-			var mirror_shift: Vector2i = Vector2i.ZERO # ex. (0,0) should be (-1, -1) when mirrored across x and y
-			if map_scale.x == -1:
-				mirror_shift.x = -1
-				mirror_shift.x += roundi(mesh_aabb.size.x)
-			if map_scale.y == -1:
-				mirror_shift.y = -1
-				mirror_shift.y += roundi(mesh_aabb.size.z)
-				
-			total_location = total_location + mirror_shift + map_tile_offset
-
-			# total_location = total_location + Vector2i(map_chunk.position.x, map_chunk.position.z)
-			if not total_map_tiles.has(total_location):
-				total_map_tiles[total_location] = []
-			var total_tile: TerrainTile = tile.duplicate()
-			total_tile.location = total_location
-			total_tile.tile_scale.x = map_chunk.mirror_scale.x
-			total_tile.tile_scale.z = map_chunk.mirror_scale.z
-			total_tile.height_bottom += (map_chunk.corner_position.y + 0.75) / MapData.HEIGHT_SCALE # TODO why does 0.75 need to be added to map corner_position.y?
-			total_tile.height_mid = total_tile.height_bottom + (total_tile.slope_height / 2.0)
-			total_map_tiles[total_location].append(total_tile)
+		load_map_chunk(map_chunk)
 	
-		maps.add_child(new_map_instance)
+	update_total_map_tiles(new_scenario.map_chunks)
+
+	for unit_data: UnitData in new_scenario.units_data:
+		spawn_unit_from_unit_data(unit_data)
+
+
+func load_map_chunk(map_chunk: Scenario.MapChunk) -> void:
+	var map_chunk_data: MapData = RomReader.maps[map_chunk.unique_name]
+	if not map_chunk_data.is_initialized:
+		map_chunk_data.init_map()
+
+	var new_map_instance: MapChunkNodes = MapChunkNodes.instantiate()
+	new_map_instance.map_data = map_chunk_data
+	new_map_instance.name = map_chunk_data.unique_name
+	
+	# if gltf_map_mesh != null:
+	# 	new_map_instance.mesh.queue_free()
+	# 	var new_gltf_mesh: MeshInstance3D = gltf_map_mesh.duplicate()
+	# 	new_map_instance.add_child(new_gltf_mesh)
+	# 	new_map_instance.mesh = new_gltf_mesh
+	# 	new_map_instance.mesh.rotation_degrees = Vector3.ZERO
+	# else:
+
+	var mesh_aabb: AABB = map_chunk_data.mesh.get_aabb()
+	# modify mesh based on mirroring and so bottom left corner is at (0, 0, 0)
+	# TODO handle rotation
+	if map_chunk.mirror_scale != Vector3i.ONE or mesh_aabb.position != Vector3.ZERO:
+		var surface_arrays: Array = map_chunk_data.mesh.surface_get_arrays(0)
+		var original_mesh_center: Vector3 = mesh_aabb.get_center()
+		for vertex_idx: int in surface_arrays[Mesh.ARRAY_VERTEX].size():
+			var vertex: Vector3 = surface_arrays[Mesh.ARRAY_VERTEX][vertex_idx]
+			vertex = vertex - original_mesh_center # shift center to be at (0, 0, 0) to make moving after mirroring easy
+			vertex = vertex * Vector3(map_chunk.mirror_scale) # apply mirroring
+			vertex = vertex + (mesh_aabb.size / 2.0) # shift so mesh_aabb start will be at (0, 0, 0)
+			
+			surface_arrays[Mesh.ARRAY_VERTEX][vertex_idx] = vertex
+		
+		# var new_array_index: Array = []
+		# new_array_index.resize(surface_arrays[Mesh.ARRAY_VERTEX].size())
+		# if mirrored along an odd number of axis polygons will render with the wrong facing
+		var sum_scale: int = map_chunk.mirror_scale.x + map_chunk.mirror_scale.y + map_chunk.mirror_scale.z
+		if sum_scale % 2 == 1:
+			for idx: int in surface_arrays[Mesh.ARRAY_VERTEX].size() / 3:
+				var tri_idx: int = idx * 3
+				var temp_vertex: Vector3 = surface_arrays[Mesh.ARRAY_VERTEX][tri_idx]
+				surface_arrays[Mesh.ARRAY_VERTEX][tri_idx] = surface_arrays[Mesh.ARRAY_VERTEX][tri_idx + 2]
+				surface_arrays[Mesh.ARRAY_VERTEX][tri_idx + 2] = temp_vertex
+
+				var temp_uv: Vector2 = surface_arrays[Mesh.ARRAY_TEX_UV][tri_idx]
+				surface_arrays[Mesh.ARRAY_TEX_UV][tri_idx] = surface_arrays[Mesh.ARRAY_TEX_UV][tri_idx + 2]
+				surface_arrays[Mesh.ARRAY_TEX_UV][tri_idx + 2] = temp_uv
+
+				# TODO fix ordering of normals for mirrored mesh?
+		
+		var modified_mesh: ArrayMesh = ArrayMesh.new()
+		modified_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surface_arrays)
+		new_map_instance.mesh_instance.mesh = modified_mesh
+	else:
+		new_map_instance.mesh_instance.mesh = map_chunk_data.mesh
+
+	new_map_instance.set_mesh_shader(map_chunk_data.albedo_texture_indexed, map_chunk_data.texture_palettes)
+	new_map_instance.collision_shape.shape = new_map_instance.mesh_instance.mesh.create_trimesh_shape()
+	
+	new_map_instance.play_animations(map_chunk_data)
+	new_map_instance.input_event.connect(on_map_input_event)
+	new_map_instance.position = map_chunk.corner_position
+
+	maps.add_child(new_map_instance)
 
 
 func update_total_map_tiles(map_chunks: Array[Scenario.MapChunk]) -> void:
@@ -672,51 +649,71 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> Unit:
 
 func spawn_unit_from_unit_data(unit_data: UnitData) -> Unit:
 	var new_unit: Unit = Unit.instantiate()
-	# units_container.add_child(new_unit)
-	# new_unit.global_battle_manager = self
-	# units.append(new_unit)
-	# new_unit.initialize_unit()
-	# new_unit.tile_position = tile_position
-	# #new_unit.char_body.global_position = Vector3(tile_position.location.x + 0.5, randi_range(15, 20), tile_position.location.y + 0.5)
+	units_container.add_child(new_unit)
+	new_unit.global_battle_manager = self
+	units.append(new_unit)
+	new_unit.initialize_unit()
+
+	for tile_list: Array[TerrainTile] in total_map_tiles.values():
+		for tile: TerrainTile in tile_list:
+			if tile.get_world_position() == unit_data.tile_position:
+				new_unit.tile_position = tile
+				break
+		if new_unit.tile_position != null:
+			break
+	if new_unit.tile_position == null: # default to first tile
+		new_unit.tile_position = total_map_tiles.values()[0][0]
+
+	new_unit.set_position_to_tile()
+	#new_unit.char_body.global_position = Vector3(tile_position.location.x + 0.5, randi_range(15, 20), tile_position.location.y + 0.5)
 	# new_unit.char_body.global_position = Vector3(tile_position.location.x + 0.5, tile_position.get_world_position().y + 0.25, tile_position.location.y + 0.5)
-	# new_unit.update_unit_facing([Vector3.FORWARD, Vector3.BACK, Vector3.LEFT, Vector3.RIGHT].pick_random())
+	new_unit.update_unit_facing(Unit.FacingVectors[Unit.Facings[unit_data.facing_direction]])
 	# if job_id < 0x5e: # non-monster
 	# 	new_unit.stat_basis = [Unit.StatBasis.MALE, Unit.StatBasis.FEMALE].pick_random()
 	# else:
 	# 	new_unit.stat_basis = Unit.StatBasis.MONSTER
-	# new_unit.set_job_id(job_id)
+	new_unit.set_job_id(RomReader.jobs_data[unit_data.job_unique_name].job_id)
 	# if range(0x4a, 0x5e).has(job_id):
 	# 	new_unit.set_sprite_palette(range(0,5).pick_random())
+	new_unit.set_sprite_by_file_name(unit_data.spritesheeet_file_name)
+	new_unit.set_sprite_palette(unit_data.palette_id)
 	# new_unit.generate_level_zero_raw_stats(new_unit.stat_basis)
 	# new_unit.generate_leveled_raw_stats(units_level, new_unit.job_data)
 	# new_unit.calc_battle_stats(new_unit.job_data)
+	new_unit.gender = Unit.Gender[unit_data.gender]
+	new_unit.level = unit_data.level
+	new_unit.stats_raw = unit_data.stats_raw
+	new_unit.stats = unit_data.stats
 	
-	# camera_controller.rotated.connect(new_unit.char_body.set_rotation_degrees) # have sprite update as camera rotates
+	camera_controller.rotated.connect(new_unit.char_body.set_rotation_degrees) # have sprite update as camera rotates
 	
-	# new_unit.update_stat_bars_scale(camera_controller.zoom)
-	# camera_controller.zoom_changed.connect(new_unit.update_stat_bars_scale)
+	new_unit.update_stat_bars_scale(camera_controller.zoom)
+	camera_controller.zoom_changed.connect(new_unit.update_stat_bars_scale)
 	
-	# new_unit.icon.texture = RomReader.frame_bin_texture # TODO clean up status icon stuff
-	# new_unit.icon2.texture = RomReader.frame_bin_texture
+	new_unit.icon.texture = RomReader.frame_bin_texture # TODO clean up status icon stuff
+	new_unit.icon2.texture = RomReader.frame_bin_texture
 	
-	# new_unit.generate_random_abilities()
-	# new_unit.primary_weapon_assigned.connect(func(weapon_unique_name: String): new_unit.update_actions(self))
-	# new_unit.generate_equipment()
-	# #var unit_actions: Array[Action] = new_unit.get_skillset_actions()
-	# #if unit_actions.any(func(action: Action): return not action.required_equipment_type.is_empty()):
-	# 	#while not unit_actions.any(func(action: Action): return action.required_equipment_type.has(new_unit.primary_weapon.item_type)):
-	# 		#new_unit.set_primary_weapon(randi_range(0, 0x79)) # random weapon
+	new_unit.ability_slots = unit_data.ability_slots
+	new_unit.primary_weapon_assigned.connect(func(weapon_unique_name: String): new_unit.update_actions(self))
+	new_unit.equip_slots = unit_data.equip_slots
+	new_unit.set_primary_weapon(unit_data.primary_weapon_unique_name)
+	#var unit_actions: Array[Action] = new_unit.get_skillset_actions()
+	#if unit_actions.any(func(action: Action): return not action.required_equipment_type.is_empty()):
+		#while not unit_actions.any(func(action: Action): return action.required_equipment_type.has(new_unit.primary_weapon.item_type)):
+			#new_unit.set_primary_weapon(randi_range(0, 0x79)) # random weapon
 	
-	# new_unit.name = new_unit.job_nickname + "-" + new_unit.unit_nickname
+	new_unit.unit_nickname = unit_data.display_name
+	new_unit.name = new_unit.job_nickname + "-" + new_unit.unit_nickname
 	
-	# new_unit.team = team
-	# team.units.append(new_unit)
+	new_unit.team = teams[unit_data.team_idx]
+	new_unit.team.units.append(new_unit)
 	
-	# new_unit.is_ai_controlled = true
-	# new_unit.ai_controller.strategy = UnitAi.Strategy.BEST
+	new_unit.is_ai_controlled = true if unit_data.controller == 0 else false
+	new_unit.ai_controller.strategy = UnitAi.Strategy.BEST
 
-	# new_unit.unit_battle_details_ui.setup(new_unit)
-	# new_unit.unit_input_event.connect(scenario_editor.update_unit_dragging)
+	new_unit.update_passive_effects()
+	new_unit.unit_battle_details_ui.setup(new_unit)
+	new_unit.unit_input_event.connect(scenario_editor.update_unit_dragging)
 	
 	return new_unit
 

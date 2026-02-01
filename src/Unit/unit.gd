@@ -237,7 +237,8 @@ var job_jp: Dictionary[JobData, int] = {}
 var charging_abilities_ids: PackedInt32Array = []
 var charging_abilities_remaining_ct: PackedInt32Array = [] # TODO this should be tracked per ability?
 var sprite_id: int = 0
-var sprite_file_idx = 0
+var sprite_file_idx: int = 0
+var sprite_file_name: String = "sprite_file_name.spr"
 var portrait_palette_id: int = 0
 var unit_id: int = 0
 var special_job_skillset_id: int = 0
@@ -1499,6 +1500,7 @@ func set_sprite_by_file_idx(new_sprite_file_idx: int) -> void:
 	
 	sprite_file_idx = new_sprite_file_idx
 	var spr: Spr = RomReader.sprs[new_sprite_file_idx]
+	sprite_file_name = spr.file_name
 	if RomReader.spr_file_name_to_id.has(spr.file_name):
 		sprite_id = RomReader.spr_file_name_to_id[spr.file_name]
 	debug_menu.sprite_options.select(new_sprite_file_idx)
@@ -1512,8 +1514,8 @@ func set_sprite_by_file_idx(new_sprite_file_idx: int) -> void:
 	debug_menu.anim_id_spin.value = current_idle_animation_id
 
 
-func set_sprite_by_file_name(sprite_file_name: String) -> void:
-	var new_sprite_file_idx: int = RomReader.file_records[sprite_file_name].type_index
+func set_sprite_by_file_name(new_sprite_file_name: String) -> void:
+	var new_sprite_file_idx: int = RomReader.file_records[new_sprite_file_name].type_index
 	set_sprite_by_file_idx(new_sprite_file_idx)
 
 

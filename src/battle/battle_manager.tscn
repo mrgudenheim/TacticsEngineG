@@ -291,7 +291,6 @@ script = ExtResource("14_l2dig")
 battle_manager = NodePath("..")
 start_button = NodePath("HBoxContainer/StartBattle")
 load_scenario_button = NodePath("HBoxContainer/LoadScenario")
-unit_scene = ExtResource("4_wfrm2")
 background_gradient_color_pickers = [NodePath("BattleSetupTabContainer/Map/FloatingUi/Gradient/BottomColorPickerButton"), NodePath("BattleSetupTabContainer/Map/FloatingUi/Gradient/TopColorPickerButton")]
 battle_setup_container = NodePath("BattleSetupTabContainer")
 team_setup_scene = ExtResource("14_kb1q2")

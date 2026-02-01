@@ -806,9 +806,6 @@ func add_status(new_status: StatusEffect, ignore_immunity: bool = false) -> void
 		var action_instance: ActionInstance = ActionInstance.new(RomReader.actions[new_status.action_on_apply], self, global_battle_manager)
 		action_instance.submitted_targets = [tile_position] # TODO allow other targeting for status actions on turn end
 		await action_instance.use()
-
-	for stat: StatType in new_status.passive_effect.stat_modifiers.keys():
-		stats[stat].add_modifier(new_status.passive_effect.stat_modifiers[stat])
 	
 	var statuses_to_cancel: Array[StatusEffect] = []
 	for status_cancelled_id: String in new_status.status_cancels:

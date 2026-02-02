@@ -16,17 +16,7 @@ var modifiers: Array[Modifier] = [] # should only come from passive_effects
 static func create_from_dictionary(property_dict: Dictionary) -> ClampedValue:
 	var new_clamped_value: ClampedValue = ClampedValue.new()
 	for property_name in property_dict.keys():
-		# if property_name == "corner_position":
-		# 	var vector_as_array = property_dict[property_name]
-		# 	var new_corner_position: Vector3i = Vector3i(roundi(vector_as_array[0]), roundi(vector_as_array[1]), roundi(vector_as_array[2]))
-		# 	new_unit_data.set(property_name, new_corner_position)
-		# elif property_name == "mirror_xyz":
-		# 	var array = property_dict[property_name]
-		# 	var new_mirror_xyz: Array[bool] = []
-		# 	new_mirror_xyz.assign(array)
-		# 	new_unit_data.set(property_name, new_mirror_xyz)
-		# else:
-			new_clamped_value.set(property_name, property_dict[property_name])
+		new_clamped_value.set(property_name, property_dict[property_name])
 
 	new_clamped_value.emit_changed()
 	return new_clamped_value

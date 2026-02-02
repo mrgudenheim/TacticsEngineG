@@ -60,6 +60,13 @@ static func create_from_dictionary(property_dict: Dictionary) -> UnitData:
 			for stat_type in dict.keys():
 				new_stats_raw[int(stat_type)] = dict[stat_type]
 			new_unit_data.set(property_name, new_stats_raw)
+		elif property_name == "stats":
+			var dict: Dictionary = property_dict[property_name]
+			var new_stats: Dictionary[Unit.StatType, ClampedValue] = {}
+			for stat_type in dict.keys():
+				var new_clamped_value: ClampedValue = ClampedValue.create_from_dictionary(dict[stat_type])
+				new_stats[int(stat_type)] = new_clamped_value
+			new_unit_data.set(property_name, new_stats)
 		else:
 			new_unit_data.set(property_name, property_dict[property_name])
 

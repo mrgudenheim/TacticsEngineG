@@ -13,8 +13,8 @@ var modified_value: int: # typically used for stats that are modified from other
 var modifiers: Array[Modifier] = [] # should only come from passive_effects
 
 
-static func create_from_dictionary(property_dict: Dictionary) -> UnitData:
-	var new_unit_data: UnitData = UnitData.new()
+static func create_from_dictionary(property_dict: Dictionary) -> ClampedValue:
+	var new_clamped_value: ClampedValue = ClampedValue.new()
 	for property_name in property_dict.keys():
 		# if property_name == "corner_position":
 		# 	var vector_as_array = property_dict[property_name]
@@ -26,10 +26,10 @@ static func create_from_dictionary(property_dict: Dictionary) -> UnitData:
 		# 	new_mirror_xyz.assign(array)
 		# 	new_unit_data.set(property_name, new_mirror_xyz)
 		# else:
-			new_unit_data.set(property_name, property_dict[property_name])
+			new_clamped_value.set(property_name, property_dict[property_name])
 
-	new_unit_data.emit_changed()
-	return new_unit_data
+	new_clamped_value.emit_changed()
+	return new_clamped_value
 
 
 func _init(new_min_value: int = 0, new_max_value: int = 100, new_current_value: int = 50) -> void:

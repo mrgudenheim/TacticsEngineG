@@ -153,10 +153,10 @@ func on_rom_loaded() -> void:
 	#map_dropdown.select(default_map_index)
 	#map_dropdown.item_selected.emit(default_map_index)
 
-	scenario_editor.initial_setup()
-	# scenario_editor.initial_setup(RomReader.scenarios["test0"])
-	# if use_test_teams:
-	# 	load_scenario(RomReader.scenarios["test0"])
+	if use_test_teams:
+		scenario_editor.initial_setup(RomReader.scenarios["test0"])
+	else:
+		scenario_editor.initial_setup()
 
 
 func queue_load_map(index: int) -> void:
@@ -636,6 +636,7 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> Unit:
 	
 	new_unit.name = new_unit.job_nickname + "-" + new_unit.unit_nickname
 	
+	new_unit.team_id = teams.find(team)
 	new_unit.team = team
 	team.units.append(new_unit)
 	
@@ -700,7 +701,7 @@ func spawn_unit_from_unit_data(unit_data: UnitData) -> Unit:
 	if teams.size() < unit_data.team_idx + 1:
 		teams.resize(unit_data.team_idx + 1)
 		var new_team: Team = Team.new()
-		new_team.team_name = "Team" + str(unit_data.team_idx)
+		new_team.team_name = "Team" + str(unit_data.team_idx + 1)
 		teams[unit_data.team_idx] = new_team
 
 	new_unit.team = teams[unit_data.team_idx]

@@ -118,6 +118,8 @@ func update_ui(unit: Unit) -> void:
 	# update_stat_label(level_label, unit, Unit.StatType.LEVEL)
 	job_button.text = unit.job_data.display_name
 	level_spinbox.value = unit.stats[Unit.StatType.LEVEL].get_modified_value()
+
+	team_option_button.select(unit.team_id)
 	
 	update_stat_label(pa_label, unit, Unit.StatType.PHYSICAL_ATTACK)
 	update_stat_label(ma_label, unit, Unit.StatType.MAGIC_ATTACK)

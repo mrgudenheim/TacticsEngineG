@@ -138,7 +138,7 @@ func init_random_scenario() -> void:
 	for team_num: int in 2:
 		var new_team: Team = Team.new()
 		battle_manager.teams.append(new_team)
-		new_team.team_name = "Team" + str(team_num)
+		new_team.team_name = "Team" + str(team_num + 1)
 		
 		add_team(new_team)
 

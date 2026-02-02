@@ -41,6 +41,8 @@ enum FaithModifier {
 	UNFAITH,
 }
 
+# TODO remove specific formulas and allow any string using Expression
+# https://docs.godotengine.org/en/stable/classes/class_expression.html
 enum Formulas {
 	V1,
 	PAxV1,

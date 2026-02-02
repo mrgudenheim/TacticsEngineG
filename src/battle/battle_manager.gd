@@ -153,7 +153,8 @@ func on_rom_loaded() -> void:
 	#map_dropdown.select(default_map_index)
 	#map_dropdown.item_selected.emit(default_map_index)
 
-	scenario_editor.initial_setup()
+	# scenario_editor.initial_setup()
+	load_scenario(RomReader.scenarios["test0"])
 
 
 func queue_load_map(index: int) -> void:
@@ -190,8 +191,6 @@ func on_map_selected(index: int) -> void:
 	# initialize_map_tiles()
 
 	# texture_viewer.texture = map_data.albedo_texture
-
-	load_scenario(RomReader.scenarios["test0"])
 	
 	#var map_width_range: Vector2i = Vector2i(0, map_data.map_width)
 	#var map_length_range: Vector2i = Vector2i(0, map_data.map_length)
@@ -257,7 +256,7 @@ func load_map_chunk(map_chunk: Scenario.MapChunk) -> void:
 		# new_array_index.resize(surface_arrays[Mesh.ARRAY_VERTEX].size())
 		# if mirrored along an odd number of axis polygons will render with the wrong facing
 		var sum_scale: int = map_chunk.mirror_scale.x + map_chunk.mirror_scale.y + map_chunk.mirror_scale.z
-		if sum_scale % 2 == 1:
+		if sum_scale == 1 or sum_scale == -3:
 			for idx: int in surface_arrays[Mesh.ARRAY_VERTEX].size() / 3:
 				var tri_idx: int = idx * 3
 				var temp_vertex: Vector3 = surface_arrays[Mesh.ARRAY_VERTEX][tri_idx]
@@ -654,8 +653,10 @@ func spawn_unit_from_unit_data(unit_data: UnitData) -> Unit:
 	units.append(new_unit)
 	new_unit.initialize_unit()
 
-	for tile_list: Array[TerrainTile] in total_map_tiles.values():
-		for tile: TerrainTile in tile_list:
+	for tile_array: Array in total_map_tiles.values():
+		var xz_tiles: Array[TerrainTile] = []
+		xz_tiles.assign(tile_array)
+		for tile: TerrainTile in xz_tiles:
 			if tile.get_world_position() == unit_data.tile_position:
 				new_unit.tile_position = tile
 				break
@@ -665,21 +666,10 @@ func spawn_unit_from_unit_data(unit_data: UnitData) -> Unit:
 		new_unit.tile_position = total_map_tiles.values()[0][0]
 
 	new_unit.set_position_to_tile()
-	#new_unit.char_body.global_position = Vector3(tile_position.location.x + 0.5, randi_range(15, 20), tile_position.location.y + 0.5)
-	# new_unit.char_body.global_position = Vector3(tile_position.location.x + 0.5, tile_position.get_world_position().y + 0.25, tile_position.location.y + 0.5)
 	new_unit.update_unit_facing(Unit.FacingVectors[Unit.Facings[unit_data.facing_direction]])
-	# if job_id < 0x5e: # non-monster
-	# 	new_unit.stat_basis = [Unit.StatBasis.MALE, Unit.StatBasis.FEMALE].pick_random()
-	# else:
-	# 	new_unit.stat_basis = Unit.StatBasis.MONSTER
 	new_unit.set_job_id(RomReader.jobs_data[unit_data.job_unique_name].job_id)
-	# if range(0x4a, 0x5e).has(job_id):
-	# 	new_unit.set_sprite_palette(range(0,5).pick_random())
 	new_unit.set_sprite_by_file_name(unit_data.spritesheeet_file_name)
 	new_unit.set_sprite_palette(unit_data.palette_id)
-	# new_unit.generate_level_zero_raw_stats(new_unit.stat_basis)
-	# new_unit.generate_leveled_raw_stats(units_level, new_unit.job_data)
-	# new_unit.calc_battle_stats(new_unit.job_data)
 	new_unit.gender = Unit.Gender[unit_data.gender]
 	new_unit.level = unit_data.level
 	new_unit.stats_raw = unit_data.stats_raw
@@ -705,6 +695,10 @@ func spawn_unit_from_unit_data(unit_data: UnitData) -> Unit:
 	new_unit.unit_nickname = unit_data.display_name
 	new_unit.name = new_unit.job_nickname + "-" + new_unit.unit_nickname
 	
+	if teams.size() < unit_data.team_idx + 1:
+		teams.resize(unit_data.team_idx + 1)
+		teams[unit_data.team_idx] = Team.new()
+
 	new_unit.team = teams[unit_data.team_idx]
 	new_unit.team.units.append(new_unit)
 	

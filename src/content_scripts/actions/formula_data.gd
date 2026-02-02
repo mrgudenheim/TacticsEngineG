@@ -25,14 +25,14 @@ extends Resource
 
 # TODO default description of "Formula description could not be found"
 static var formula_descriptions: Dictionary[Formulas, String] = {
-	Formulas.PAxV1: "PAxWP",
-	Formulas.MAxV1: "MAxWP",
-	Formulas.AVG_PA_MAxV1: "AVG_PA_MAxWP",
-	Formulas.AVG_PA_SPxV1: "AVG_PA_SPxWP",
-	Formulas.PA_BRAVExV1: "PA_BRAVExWP",
-	Formulas.RANDOM_PAxV1: "RANDOM_PAxWP",
-	Formulas.V1xV1: "WPxWP",
-	Formulas.PA_BRAVExPA: "PA_BRAVExPA",
+	Formulas.PA_X_V1: "PAxWP",
+	Formulas.MA_X_V1: "MAxWP",
+	Formulas.AVG_PA_MA_X_V1: "AVG_PA_MAxWP",
+	Formulas.AVG_PA_SP_X_V1: "AVG_PA_SPxWP",
+	Formulas.PA_BRAVE_X_V1: "PA_BRAVExWP",
+	Formulas.RANDOM_PA_X_V1: "RANDOM_PAxWP",
+	Formulas.V1_X_V1: "WPxWP",
+	Formulas.PA_BRAVE_X_PA: "PA_BRAVExPA",
 }
 
 enum FaithModifier {
@@ -45,40 +45,40 @@ enum FaithModifier {
 # https://docs.godotengine.org/en/stable/classes/class_expression.html
 enum Formulas {
 	V1,
-	PAxV1,
-	MAxV1,
-	WPxV1,
-	AVG_PA_MAxV1,
-	AVG_PA_SPxV1,
-	PA_BRAVExV1,
-	RANDOM_PAxV1,
-	V1xV1,
-	PA_BRAVExPA,
-	MA_plus_V1,
-	MA_plus_V1xMA_div_2,
-	PA_plus_V1xMA_div_2,
-	PA_plus_WP_plus_V1,
-	SP_plus_V1,
-	LVLxSPxV1,
-	MIN_TARGET_EXP_or_SP_plus_V1,
-	PA_plus_V1,
-	PAxWP_plus_V1,
-	PAxWPxV1,
-	PAxPA_plus_V1_div_2,
-	RANDOM_V1xPAx3_plus_V2_div_2,
-	RANDOM_V1xPA,
-	USER_MAX_HPxV1,
-	USER_MAX_MPxV1,
-	TARGET_MAX_HPxV1,
-	TARGET_MAX_MPxV1,
-	USER_CURRENT_HP_minus_V1,
-	TARGET_CURRENT_MP_minus_V1,
-	TARGET_CURRENT_HP_minus_V1,
-	USER_MISSING_HPxV1,
-	TARGET_MISSING_HPxV1,
-	TARGET_CURRENT_HPxV1,
+	PA_X_V1,
+	MA_X_V1,
+	WP_X_V1,
+	AVG_PA_MA_X_V1,
+	AVG_PA_SP_X_V1,
+	PA_BRAVE_X_V1,
+	RANDOM_PA_X_V1,
+	V1_X_V1,
+	PA_BRAVE_X_PA,
+	MA_PLUS_V1,
+	MA_PLUS_V1_X_MA_DIV_2,
+	PA_PLUS_V1_X_MA_DIV_2,
+	PA_PLUS_WP_PLUS_V1,
+	SP_PLUS_V1,
+	LVL_X_SP_X_V1,
+	MIN_TARGET_EXP_OR_SP_PLUS_V1,
+	PA_PLUS_V1,
+	PA_X_WP_PLUS_V1,
+	PA_X_WP_X_V1,
+	PA_X_PA_PLUS_V1_DIV_2,
+	RANDOM_V1_X_PA_X_3_PLUS_V2_DIV_2,
+	RANDOM_V1_X_PA,
+	USER_MAX_HP_X_V1,
+	USER_MAX_MP_X_V1,
+	TARGET_MAX_HP_X_V1,
+	TARGET_MAX_MP_X_V1,
+	USER_CURRENT_HP_MINUS_V1,
+	TARGET_CURRENT_MP_MINUS_V1,
+	TARGET_CURRENT_HP_MINUS_V1,
+	USER_MISSING_HP_X_V1,
+	TARGET_MISSING_HP_X_V1,
+	TARGET_CURRENT_HP_X_V1,
 	RANDOM_V1_V2,
-	BRAVExV1,
+	BRAVE_X_V1,
 }
 
 
@@ -144,75 +144,75 @@ func get_base_value(user: Unit, target: Unit) -> float:
 	match formula:
 		Formulas.V1:
 			base_value = values[0]
-		Formulas.PAxV1:
+		Formulas.PA_X_V1:
 			base_value = user.physical_attack_current * values[0]
-		Formulas.MAxV1:
+		Formulas.MA_X_V1:
 			base_value = user.magical_attack_current * values[0]
-		Formulas.WPxV1:
+		Formulas.WP_X_V1:
 			base_value = wp * values[0]
-		Formulas.AVG_PA_MAxV1:
+		Formulas.AVG_PA_MA_X_V1:
 			base_value = ((user.physical_attack_current + user.magical_attack_current) / 2.0) * values[0]
-		Formulas.AVG_PA_SPxV1:
+		Formulas.AVG_PA_SP_X_V1:
 			base_value = ((user.physical_attack_current + user.speed_current) / 2.0) * values[0]
-		Formulas.PA_BRAVExV1:
+		Formulas.PA_BRAVE_X_V1:
 			base_value = (user.physical_attack_current * user.brave_current / 100.0) * values[0]
-		Formulas.RANDOM_PAxV1:
+		Formulas.RANDOM_PA_X_V1:
 			base_value = randi_range(1, user.physical_attack_current) * values[0]
-		Formulas.V1xV1:
+		Formulas.V1_X_V1:
 			base_value = values[0] * values[0]
-		Formulas.PA_BRAVExPA:
+		Formulas.PA_BRAVE_X_PA:
 			base_value = (user.physical_attack_current * user.brave_current / 100.0) * user.physical_attack_current
-		Formulas.MA_plus_V1:
+		Formulas.MA_PLUS_V1:
 			base_value = user.magical_attack_current + values[0] # MAplusV1
-		Formulas.MA_plus_V1xMA_div_2:
+		Formulas.MA_PLUS_V1_X_MA_DIV_2:
 			base_value = (user.magical_attack_current + values[0]) * user.magical_attack_current / 2.0 # 0x1e, 0x1f, 0x5e, 0x5f, 0x60 rafa/malak
-		Formulas.PA_plus_V1xMA_div_2:
+		Formulas.PA_PLUS_V1_X_MA_DIV_2:
 			base_value = (user.physical_attack_current + values[0]) * user.magical_attack_current / 2.0 # 0x24 geomancy
-		Formulas.PA_plus_WP_plus_V1:
+		Formulas.PA_PLUS_WP_PLUS_V1:
 			base_value = user.physical_attack_current + wp + values[0] # 0x25 break equipment
-		Formulas.SP_plus_V1:
+		Formulas.SP_PLUS_V1:
 			base_value = user.speed_current + values[0] # 0x26 steal equipment SPplusX
-		Formulas.LVLxSPxV1:
+		Formulas.LVL_X_SP_X_V1:
 			base_value = user.level * user.speed_current * values[0] # 0x27 steal gil LVLxSP
-		Formulas.MIN_TARGET_EXP_or_SP_plus_V1:
+		Formulas.MIN_TARGET_EXP_OR_SP_PLUS_V1:
 			base_value = minf(target.unit_exp, user.speed_current + values[0]) # 0x28 steal exp
-		Formulas.PA_plus_V1:
+		Formulas.PA_PLUS_V1:
 			base_value = user.physical_attack_current + values[0] # 0x2b, 0x2c PAplusY
-		Formulas.PAxWP_plus_V1:
+		Formulas.PA_X_WP_PLUS_V1:
 			base_value = user.physical_attack_current * (wp + values[0]) # 0x2d agrais sword skills
-		Formulas.PAxWPxV1:
+		Formulas.PA_X_WP_X_V1:
 			base_value = user.physical_attack_current * wp * values[0] # 0x2e, 0x2f, 0x30
-		Formulas.PAxPA_plus_V1_div_2:
+		Formulas.PA_X_PA_PLUS_V1_DIV_2:
 			base_value = (user.physical_attack_current + values[0]) * user.physical_attack_current / 2.0 # 0x31 monk skills
-		Formulas.RANDOM_V1xPAx3_plus_V2_div_2:
+		Formulas.RANDOM_V1_X_PA_X_3_PLUS_V2_DIV_2:
 			base_value = randi_range(1, values[0]) * ((user.physical_attack_current * 3) + values[1]) / 2.0 # 0x32 repeating fist # TODO 2 variables rndm to X, PA + Y
 			#base_value = user.physical_attack_current * values[0] / 2.0 # 0x34 chakra\
-		Formulas.RANDOM_V1xPA:
+		Formulas.RANDOM_V1_X_PA:
 			base_value = user.physical_attack_current * randi_range(1, values[0]) # 0x37
-		Formulas.USER_MAX_HPxV1:
+		Formulas.USER_MAX_HP_X_V1:
 			base_value = user.hp_max * values[0] # 0x3c wish, energy USER_MAX_HP
-		Formulas.USER_MAX_MPxV1:
+		Formulas.USER_MAX_MP_X_V1:
 			base_value = user.mp_max * values[0] # USER_MAX_MP
-		Formulas.TARGET_MAX_HPxV1:
+		Formulas.TARGET_MAX_HP_X_V1:
 			base_value = target.hp_max * values[0] # 0x09 wish, energy TARGET_MAX_HP
-		Formulas.TARGET_MAX_MPxV1:
+		Formulas.TARGET_MAX_MP_X_V1:
 			base_value = target.mp_max * values[0] # 0x09 wish, energy TARGET_MAX_HP
 		
-		Formulas.USER_CURRENT_HP_minus_V1:
+		Formulas.USER_CURRENT_HP_MINUS_V1:
 			base_value = user.hp_current - values[0] # 0x17, 0x3e TARGET_CURRENT_HP
-		Formulas.TARGET_CURRENT_MP_minus_V1:
+		Formulas.TARGET_CURRENT_MP_MINUS_V1:
 			base_value = target.mp_current - values[0] # 0x16 mute TARGET_CURRENT_MP
-		Formulas.TARGET_CURRENT_HP_minus_V1:
+		Formulas.TARGET_CURRENT_HP_MINUS_V1:
 			base_value = target.hp_current - values[0] # 0x17, 0x3e TARGET_CURRENT_HP
-		Formulas.USER_MISSING_HPxV1:
+		Formulas.USER_MISSING_HP_X_V1:
 			base_value = (user.hp_max - user.hp_current) * values[0] # 0x43 USER_MISSING_HP
-		Formulas.TARGET_MISSING_HPxV1:
+		Formulas.TARGET_MISSING_HP_X_V1:
 			base_value = (target.hp_max - target.hp_current) * values[0] # 0x45 TARGET_MISSING_HP
-		Formulas.TARGET_CURRENT_HPxV1:
+		Formulas.TARGET_CURRENT_HP_X_V1:
 			base_value = target.hp_current * values[0] # TARGET_CURRENT_HP, ai status score
 		Formulas.RANDOM_V1_V2:
 			base_value = randi_range(values[0], values[1]) # 0x4b RANDOM_RANGE
-		Formulas.BRAVExV1:
+		Formulas.BRAVE_X_V1:
 			base_value = user.brave_current * values[0] # reactions
 			
 			

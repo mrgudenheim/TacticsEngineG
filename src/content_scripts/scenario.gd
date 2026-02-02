@@ -92,7 +92,7 @@ func to_json() -> String:
 
 
 class MapChunk extends Resource:
-	@export var unique_name: String = "unique_name"
+	@export var unique_name: String = "map_unique_name"
 	@export var mirror_xyz: Array[bool] = [false, false, false] # mirror y of fft maps to have postive y be up, invert x or z to mirror the map
 	@export var corner_position: Vector3i = Vector3i.ZERO
 	@export var rotation: int = 0 # values 0, 1, 2, 3 for 90 degree rotation increments

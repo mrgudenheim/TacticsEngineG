@@ -14,12 +14,15 @@ const settings_ui_scene: PackedScene = preload("res://src/battle/editor/map_chun
 @export var position_edit: Vector3iEdit
 @export var mirror_checkboxes: Array[CheckBox]
 
-@export var map_chunk: Scenario.MapChunk = Scenario.MapChunk.new()
+# @export var map_chunk: Scenario.MapChunk = Scenario.MapChunk.new()
+@export var map_chunk: Scenario.MapChunk
 @export var map_chunk_nodes: MapChunkNodes
 
 
-static func instantiate() -> MapChunkSettingsUi:
-	return settings_ui_scene.instantiate()
+static func instantiate(new_map_chunk: Scenario.MapChunk = null) -> MapChunkSettingsUi:
+	var new_map_chunk_settings: MapChunkSettingsUi = settings_ui_scene.instantiate()
+	new_map_chunk_settings.map_chunk = new_map_chunk
+	return new_map_chunk_settings
 
 
 func _ready() -> void:
@@ -27,24 +30,30 @@ func _ready() -> void:
 	chunk_name_dropdown.item_selected.connect(on_chunk_selected)
 	position_edit.vector_changed.connect(set_map_chunk_position)
 	
-	# vanilla maps need to be mirrored along y
-	# mirror along x to get the un-mirrored look after mirroring along y	
-	map_chunk.set_mirror_xyz([true, true, false])
+	for map_data: MapData in RomReader.maps.values():
+		chunk_name_dropdown.add_item(map_data.unique_name)
+
+	var map_index: int = range(chunk_name_dropdown.item_count).pick_random()
+	if map_chunk.unique_name == "map_unique_name":
+		# vanilla maps need to be mirrored along y
+		# mirror along x to get the un-mirrored look after mirroring along y	
+		map_chunk.set_mirror_xyz([true, true, false])
+	else:
+		map_index = RomReader.maps.keys().find(map_chunk.unique_name)
+
+	
 	for idx: int in mirror_checkboxes.size():
 		mirror_checkboxes[idx].button_pressed = map_chunk.mirror_xyz[idx]
 		mirror_checkboxes[idx].toggled.connect(on_mirror_changed)
-
-	for map_data: MapData in RomReader.maps.values():
-		chunk_name_dropdown.add_item(map_data.unique_name)
 	
-	var default_map_unique_name: String = "map_056_orbonne_monastery"
+	# var default_map_unique_name: String = "map_056_orbonne_monastery"
 	# default_map_unique_name = "map_091_thieves_fort"
-	var default_index: int = RomReader.maps.keys().find(default_map_unique_name)
-	if default_index == -1:
-		default_index = 0
+	# var default_index: int = RomReader.maps.keys().find(default_map_unique_name)
+	# if default_index == -1:
+	# 	default_index = 0
 	
-	chunk_name_dropdown.select(default_index)
-	chunk_name_dropdown.item_selected.emit(default_index)
+	chunk_name_dropdown.select(map_index)
+	chunk_name_dropdown.item_selected.emit(map_index)
 
 
 func _exit_tree() -> void:

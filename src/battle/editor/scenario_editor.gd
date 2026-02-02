@@ -21,7 +21,7 @@ extends Control
 
 @export var unit_dragged: Unit
 @export var tile_highlight: Node3D
-@export var unit_setup: UnitSetupPanel
+@export var unit_editor: UnitSetupPanel
 
 @export var add_map_chunk_button: Button
 @export var map_chunk_settings_container: GridContainer
@@ -75,7 +75,7 @@ func _process(delta: float) -> void:
 # 			tile_highlight.queue_free()
 
 
-func initial_setup() -> void:
+func initial_setup(new_scenario: Scenario = null) -> void:
 	visible = true
 	add_map_chunk_button.pressed.connect(add_map_chunk_settings)
 	for color_picker: ColorPickerButton in background_gradient_color_pickers:
@@ -94,30 +94,53 @@ func initial_setup() -> void:
 	
 	populate_option_lists()
 
-	# TODO hook up loaded scenario? or generate random
-
-	update_background_gradient()
-	add_map_chunk_settings()
-	
 	for team_setup: TeamSetup in team_setups:
 		team_setup.name += "remove"
 		team_setup.queue_free()
 	team_setups.clear()
 
-	for team_num: int in 2:
-		add_team("Team" + str(team_num))
-	
+	if new_scenario != null:
+		scenario = new_scenario
+		
+		background_gradient_color_pickers[0].color = scenario.background_gradient_bottom
+		background_gradient_color_pickers[1].color = scenario.background_gradient_top
+		update_background_gradient()
+
+		for map_chunk: Scenario.MapChunk in scenario.map_chunks:
+			add_map_chunk_settings(map_chunk)
+		battle_manager.update_total_map_tiles(scenario.map_chunks)
+
+		for unit_data: UnitData in scenario.units_data:
+			battle_manager.spawn_unit_from_unit_data(unit_data)
+		
+		for team: Team in battle_manager.teams:
+			add_team(team)
+	else:
+		init_random_scenario()
+
+	# TODO hook up loaded scenario? or generate random
+
 	if tile_highlight != null:
 		tile_highlight.queue_free()
-	unit_setup.setup(battle_manager.units[0]) # default to first unit
+	unit_editor.setup(battle_manager.units[0]) # default to first unit
 	var unit_tile: TerrainTile = battle_manager.units[0].tile_position
 	var new_tile_highlight: MeshInstance3D = unit_tile.get_tile_mesh()
 	new_tile_highlight.material_override = battle_manager.tile_highlights[Color.BLUE] # use pre-existing materials
 	add_child(new_tile_highlight)
 	tile_highlight = new_tile_highlight
-	new_tile_highlight.position = unit_tile.get_world_position(true) + Vector3(0, 0.025, 0)
-	
-	
+	new_tile_highlight.position = unit_tile.get_world_position(true) + Vector3(0, 0.025, 0)	
+
+
+func init_random_scenario() -> void:
+	update_background_gradient()
+	add_map_chunk_settings()
+
+	for team_num: int in 2:
+		var new_team: Team = Team.new()
+		battle_manager.teams.append(new_team)
+		new_team.team_name = "Team" + str(team_num)
+		
+		add_team(new_team)
 
 
 func populate_option_lists() -> void:
@@ -189,12 +212,16 @@ func update_unit_ability(unit: Unit, slot: AbilitySlot, new_ability: Ability) ->
 	desetup_ability_select()
 
 
-func add_map_chunk_settings() -> void:
-	var map_chunk_settings: MapChunkSettingsUi = MapChunkSettingsUi.instantiate()
+func add_map_chunk_settings(new_map_chunk: Scenario.MapChunk = null) -> void:
+	if new_map_chunk == null:
+		new_map_chunk = Scenario.MapChunk.new()
+		scenario.map_chunks.append(new_map_chunk)
+	
+	var map_chunk_settings: MapChunkSettingsUi = MapChunkSettingsUi.instantiate(new_map_chunk)
 	map_chunk_settings.map_chunk_nodes_changed.connect(update_map_chunk_nodes)
 	map_chunk_settings.map_chunk_settings_changed.connect(update_map)
 	map_chunk_settings.add_row_to_table(map_chunk_settings_container)
-	scenario.map_chunks.append(map_chunk_settings.map_chunk)
+	
 	add_child(map_chunk_settings)
 
 
@@ -245,11 +272,7 @@ func update_background_gradient(_new_color: Color = Color.BLACK) -> void:
 	scenario.background_gradient_top = background_gradient_colors[1]
 
 
-func add_team(new_team_name: String) -> Team:
-	var new_team: Team = Team.new()
-	battle_manager.teams.append(new_team)
-	new_team.team_name = new_team_name
-	
+func add_team(new_team: Team) -> Team:	
 	var new_team_setup: TeamSetup = team_setup_scene.instantiate()
 	battle_setup_container.add_child(new_team_setup)
 	team_setups.append(new_team_setup)
@@ -303,8 +326,8 @@ func adjust_height(tab_idx: int) -> void:
 func update_unit_dragging(unit: Unit, event: InputEvent) -> void:
 	if event.is_action_pressed("primary_action") and unit_dragged == null:
 		unit_dragged = unit # TODO only drag one unit at a time
-		unit_setup.setup(unit)
-		unit_setup.visible = true
+		unit_editor.setup(unit)
+		unit_editor.visible = true
 		# unit.char_body is moved in _process
 	elif event.is_action_released("primary_action") and unit_dragged != null: # snap unit to tile when released
 		# check if unit can end movement on tile

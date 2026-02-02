@@ -21,8 +21,14 @@ func _ready() -> void:
 func setup(new_team: Team):
 	team = new_team
 	name = team.team_name
-	
-	on_num_units_changed(num_units_spinbox.value)
+
+	if team.units.size() > 0:
+		for unit: Unit in team.units:
+			add_unit_setup(unit)
+
+		num_units_spinbox.value = team.units.size()
+	else:
+		on_num_units_changed(num_units_spinbox.value)
 
 
 func on_num_units_changed(new_value: int) -> void:

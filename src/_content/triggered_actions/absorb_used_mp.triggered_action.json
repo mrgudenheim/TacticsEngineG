@@ -8,9 +8,7 @@
 	"display_name": "Absorb Used MP",
 	"excessive_hp_recovery_threshold": 0,
 	"only_trigger_if_usable": true,
-	"required_action_type": [
-		
-	],
+	"required_action_type": [],
 	"required_status_id": [],
 	"required_trigger_type": [
 		0

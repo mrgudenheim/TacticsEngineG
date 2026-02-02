@@ -28,6 +28,15 @@ func object_properties_to_dictionary(object: Object, exclude_property_names: Pac
 		if property["class_name"] == '' or object.get(property["name"]) == null or not (object.get(property["name"]) is Object):
 			if property["type"] == TYPE_ARRAY:
 				var new_array: Array = []
+
+				# check if element is enum to convert to String
+				var hint_string: String = property["hint_string"]
+				var element_is_enum: bool = hint_string.begins_with("2/2:")
+				var element_enum_dict: Dictionary[int, String] = {}
+				if element_is_enum:
+					var element_hint_string: String = hint_string.trim_prefix("2/2:").to_upper().replace(" ", "_")
+					element_enum_dict = get_enum_string_dict(element_hint_string)
+
 				for element in object.get(property["name"]):
 					if element is PackedVector2Array:
 						var new_vector_array: Array = []
@@ -35,7 +44,10 @@ func object_properties_to_dictionary(object: Object, exclude_property_names: Pac
 							new_vector_array.append([vector.x, vector.y])
 						new_array.append(new_vector_array)
 					elif not element is Object:
-						new_array.append(element)
+						if element_is_enum:
+							new_array.append(element_enum_dict[element])
+						else:
+							new_array.append(element)
 					elif not element.has_method("to_dictionary"):
 						new_array.append(element)
 					else:
@@ -43,14 +55,28 @@ func object_properties_to_dictionary(object: Object, exclude_property_names: Pac
 				property_dict[property["name"]] = new_array
 			elif property["type"] == TYPE_DICTIONARY: 
 				var new_dict: Dictionary = {}
+
+				# check if key is enum to convert to String
+				var hint_string: String = property["hint_string"]
+				var key_is_enum: bool = hint_string.begins_with("2/2:")
+				var key_enum_dict: Dictionary[int, String] = {}
+				if key_is_enum:
+					var key_hint_string: String = hint_string.get_slice(";", 0) # get key hint_string
+					key_hint_string = key_hint_string.trim_prefix("2/2:").to_upper().replace(" ", "_")
+					key_enum_dict = get_enum_string_dict(key_hint_string)
+				
 				for key in object.get(property["name"]).keys():
+					var new_key = key
+					if key_is_enum:
+						new_key = key_enum_dict[key]
+
 					var value = object.get(property["name"])[key]
 					if not value is Object:
-						new_dict[key] = value
+						new_dict[new_key] = value
 					elif not value.has_method("to_dictionary"):
-						new_dict[key] = value
+						new_dict[new_key] = value
 					else:
-						new_dict[key] = value.to_dictionary() # handle dictionary values that are resources
+						new_dict[new_key] = value.to_dictionary() # handle dictionary values that are resources
 				property_dict[property["name"]] = new_dict
 			elif property["type"] == TYPE_COLOR:
 				var color: Color = object.get(property["name"])
@@ -70,6 +96,9 @@ func object_properties_to_dictionary(object: Object, exclude_property_names: Pac
 				for vector: Vector2 in vector_array:
 					new_array.append([vector.x, vector.y])
 				property_dict[property["name"]] = new_array
+			elif property["hint"] == PROPERTY_HINT_ENUM:
+				var enum_dict: Dictionary[int, String] = get_enum_string_dict(property["hint_string"])
+				property_dict[property["name"]] = enum_dict[object.get(property["name"])]
 			else:
 				property_dict[property["name"]] = object.get(property["name"])
 		elif object.get(property["name"]).has_method("to_dictionary"):
@@ -78,6 +107,21 @@ func object_properties_to_dictionary(object: Object, exclude_property_names: Pac
 			property_dict[property["name"]] = object.get(property["name"])
 	
 	return property_dict
+
+
+func get_enum_string_dict(hint_string: String) -> Dictionary[int, String]:
+	var new_enum_dict: Dictionary[int, String] = {}
+	var regex = RegEx.new()
+	regex.compile("_(?=\\d+)") # Pattern: _ (underscore) followed by a positive lookahead for digits (\d+)
+
+	hint_string = hint_string.trim_prefix("2/2:").to_upper().replace(" ", "_")
+	for string in hint_string.split(","):
+		var enum_name: String = string.get_slice(":", 0)
+		enum_name = regex.sub(enum_name, "", true) # remove underscores followed by a number, ex. "V_1" should be "V1"
+		var enum_value: int = int(string.get_slice(":", 1))
+		new_enum_dict[enum_value] = enum_name
+		
+	return new_enum_dict
 
 
 func object_properties_to_json(object, exclude_property_names: PackedStringArray = []) -> String:

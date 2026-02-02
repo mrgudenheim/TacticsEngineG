@@ -1,12 +1,13 @@
 {
 	"chance_to_learn": 100.0,
+	"description": "[ability description]",
 	"display_ability_name": false,
 	"display_name": "Move Get-EXP",
 	"jp_cost": 0,
 	"learn_on_hit": false,
 	"learn_with_jp": true,
-	"slot_type": 3,
-	"spell_quote": "spell quote",
+	"passive_effect_name": "",
+	"slot_type": "MOVEMENT",
 	"triggered_actions_names": [
 		"move_get_exp"
 	],

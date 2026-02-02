@@ -1,12 +1,13 @@
 {
 	"chance_to_learn": 100.0,
+	"description": "[ability description]",
 	"display_ability_name": true,
 	"display_name": "PA Save",
 	"jp_cost": 0,
 	"learn_on_hit": false,
 	"learn_with_jp": true,
-	"slot_type": 1,
-	"spell_quote": "spell quote",
+	"passive_effect_name": "",
+	"slot_type": "REACTION",
 	"triggered_actions_names": [
 		"pa_save"
 	],

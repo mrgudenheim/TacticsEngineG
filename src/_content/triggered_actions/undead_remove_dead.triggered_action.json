@@ -9,22 +9,24 @@
 	"excessive_hp_recovery_threshold": 0,
 	"only_trigger_if_usable": false,
 	"required_action_type": [],
-	"required_status_id": ["dead"],
+	"required_status_id": [
+		"dead"
+	],
 	"required_trigger_type": [],
-	"requries_hit": 0,
-	"targeting": 1,
+	"requries_hit": "NONE",
+	"targeting": "SELF",
 	"trigger_chance_formula": {
-		"formula": 0,
+		"formula": "V1",
 		"is_modified_by_element": false,
 		"is_modified_by_zodiac": false,
 		"reverse_sign": false,
-		"target_faith_modifier": 0,
-		"user_faith_modifier": 0,
+		"target_faith_modifier": "NONE",
+		"user_faith_modifier": "NONE",
 		"values": [
 			50.0
 		]
 	},
-	"trigger_timing": 3,
+	"trigger_timing": "TURN_START",
 	"unique_name": "undead_remove_dead",
 	"user_stat_thresholds": {
 

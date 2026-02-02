@@ -669,11 +669,13 @@ func spawn_unit_from_unit_data(unit_data: UnitData) -> Unit:
 		new_unit.tile_position = total_map_tiles.values()[0][0]
 
 	new_unit.set_position_to_tile()
-	new_unit.update_unit_facing(Unit.FacingVectors[Unit.Facings[unit_data.facing_direction]])
+	# new_unit.update_unit_facing(Unit.FacingVectors[Unit.Facings[unit_data.facing_direction]])
+	new_unit.update_unit_facing(Unit.FacingVectors[unit_data.facing_direction])
 	new_unit.set_job_id(RomReader.jobs_data[unit_data.job_unique_name].job_id)
 	new_unit.set_sprite_by_file_name(unit_data.spritesheeet_file_name)
 	new_unit.set_sprite_palette(unit_data.palette_id)
-	new_unit.gender = Unit.Gender[unit_data.gender]
+	# new_unit.gender = Unit.Gender[unit_data.gender]
+	new_unit.gender = unit_data.gender
 	new_unit.level = unit_data.level
 	new_unit.stats_raw = unit_data.stats_raw
 	new_unit.stats = unit_data.stats

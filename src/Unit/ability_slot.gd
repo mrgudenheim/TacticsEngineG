@@ -16,7 +16,7 @@ static func create_from_dictionary(property_dict: Dictionary) -> AbilitySlot:
 			var new_slot_types: Array[Ability.SlotType] = []
 			for type in array:
 				# new_slot_types.append(Ability.SlotType[type])
-				new_slot_types.append(roundi(type))
+				new_slot_types.append(Ability.SlotType[type])
 			new_ability_slot.set(property_name, new_slot_types)
 		else:
 			new_ability_slot.set(property_name, property_dict[property_name])

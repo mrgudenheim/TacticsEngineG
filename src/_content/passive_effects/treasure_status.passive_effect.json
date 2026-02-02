@@ -1,14 +1,14 @@
 {
 	"action_charge_time_modifier": {
 		"order": 1,
-		"type": 1,
+		"type": "MULT",
 		"value_formula": {
-			"formula": 0,
+			"formula": "V1",
 			"is_modified_by_element": false,
 			"is_modified_by_zodiac": false,
 			"reverse_sign": false,
-			"target_faith_modifier": 0,
-			"user_faith_modifier": 0,
+			"target_faith_modifier": "NONE",
+			"user_faith_modifier": "NONE",
 			"values": [
 				1.0
 			]
@@ -16,14 +16,14 @@
 	},
 	"action_max_range_modifier": {
 		"order": 1,
-		"type": 1,
+		"type": "MULT",
 		"value_formula": {
-			"formula": 0,
+			"formula": "V1",
 			"is_modified_by_element": false,
 			"is_modified_by_zodiac": false,
 			"reverse_sign": false,
-			"target_faith_modifier": 0,
-			"user_faith_modifier": 0,
+			"target_faith_modifier": "NONE",
+			"user_faith_modifier": "NONE",
 			"values": [
 				1.0
 			]
@@ -31,14 +31,14 @@
 	},
 	"action_mp_modifier": {
 		"order": 1,
-		"type": 1,
+		"type": "MULT",
 		"value_formula": {
-			"formula": 0,
+			"formula": "V1",
 			"is_modified_by_element": false,
 			"is_modified_by_zodiac": false,
 			"reverse_sign": false,
-			"target_faith_modifier": 0,
-			"user_faith_modifier": 0,
+			"target_faith_modifier": "NONE",
+			"user_faith_modifier": "NONE",
 			"values": [
 				1.0
 			]
@@ -51,18 +51,18 @@
 	"added_actions_names": [],
 	"added_equipment_types_equipable": [],
 	"added_triggered_actions_names": [],
-	"ai_strategy": 0,
+	"ai_strategy": "PLAYER",
 	"can_react": false,
 	"ct_gain_modifier": {
 		"order": 1,
-		"type": 1,
+		"type": "MULT",
 		"value_formula": {
-			"formula": 0,
+			"formula": "V1",
 			"is_modified_by_element": false,
 			"is_modified_by_zodiac": false,
 			"reverse_sign": false,
-			"target_faith_modifier": 0,
-			"user_faith_modifier": 0,
+			"target_faith_modifier": "NONE",
+			"user_faith_modifier": "NONE",
 			"values": [
 				0.0
 			]
@@ -70,14 +70,14 @@
 	},
 	"depth_modifier": {
 		"order": 1,
-		"type": 1,
+		"type": "MULT",
 		"value_formula": {
-			"formula": 0,
+			"formula": "V1",
 			"is_modified_by_element": false,
 			"is_modified_by_zodiac": false,
 			"reverse_sign": false,
-			"target_faith_modifier": 0,
-			"user_faith_modifier": 0,
+			"target_faith_modifier": "NONE",
+			"user_faith_modifier": "NONE",
 			"values": [
 				1.0
 			]
@@ -97,14 +97,14 @@
 	},
 	"hit_chance_modifier_targeted": {
 		"order": 1,
-		"type": 1,
+		"type": "MULT",
 		"value_formula": {
-			"formula": 0,
+			"formula": "V1",
 			"is_modified_by_element": false,
 			"is_modified_by_zodiac": false,
 			"reverse_sign": false,
-			"target_faith_modifier": 0,
-			"user_faith_modifier": 0,
+			"target_faith_modifier": "NONE",
+			"user_faith_modifier": "NONE",
 			"values": [
 				1.0
 			]
@@ -112,14 +112,14 @@
 	},
 	"hit_chance_modifier_user": {
 		"order": 1,
-		"type": 1,
+		"type": "MULT",
 		"value_formula": {
-			"formula": 0,
+			"formula": "V1",
 			"is_modified_by_element": false,
 			"is_modified_by_zodiac": false,
 			"reverse_sign": false,
-			"target_faith_modifier": 0,
-			"user_faith_modifier": 0,
+			"target_faith_modifier": "NONE",
+			"user_faith_modifier": "NONE",
 			"values": [
 				1.0
 			]
@@ -130,14 +130,14 @@
 	"nullify_targeted": true,
 	"power_modifier_targeted": {
 		"order": 1,
-		"type": 1,
+		"type": "MULT",
 		"value_formula": {
-			"formula": 0,
+			"formula": "V1",
 			"is_modified_by_element": false,
 			"is_modified_by_zodiac": false,
 			"reverse_sign": false,
-			"target_faith_modifier": 0,
-			"user_faith_modifier": 0,
+			"target_faith_modifier": "NONE",
+			"user_faith_modifier": "NONE",
 			"values": [
 				1.0
 			]
@@ -145,14 +145,14 @@
 	},
 	"power_modifier_user": {
 		"order": 1,
-		"type": 1,
+		"type": "MULT",
 		"value_formula": {
-			"formula": 0,
+			"formula": "V1",
 			"is_modified_by_element": false,
 			"is_modified_by_zodiac": false,
 			"reverse_sign": false,
-			"target_faith_modifier": 0,
-			"user_faith_modifier": 0,
+			"target_faith_modifier": "NONE",
+			"user_faith_modifier": "NONE",
 			"values": [
 				1.0
 			]
@@ -174,7 +174,7 @@
 	"unique_name": "treasure_status",
 	"unit_basis_filter": [],
 	"unit_team_filter": [
-		0
+		"FRIENDLY"
 	],
 	"vertical_tolerance": 3.0
 }

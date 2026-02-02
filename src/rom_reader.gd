@@ -800,26 +800,34 @@ func import_custom_data() -> void:
 						match data_type:
 							"action":
 								var new_content: Action = Action.create_from_json(file_text)
+								Utilities.save_json(new_content)
 								if not actions.keys().has(new_content.unique_name):
 									new_content.add_to_global_list()
 							"ability":
 								var new_content: Ability = Ability.create_from_json(file_text)
+								Utilities.save_json(new_content)
 								if not abilities.keys().has(new_content.unique_name):
 									new_content.add_to_global_list()
 							"triggered_action":
 								var new_content: TriggeredAction = TriggeredAction.create_from_json(file_text)
+								if new_content.trigger_chance_formula.formula == 35:
+									new_content.trigger_chance_formula.formula = FormulaData.Formulas.BRAVE_X_V1
+								Utilities.save_json(new_content)
 								if not triggered_actions.keys().has(new_content.unique_name):
 									new_content.add_to_global_list()
 							"passive_effect":
 								var new_content: PassiveEffect = PassiveEffect.create_from_json(file_text)
+								Utilities.save_json(new_content)
 								if not passive_effects.keys().has(new_content.unique_name):
 									new_content.add_to_global_list()
 							"status_effect":
 								var new_content: StatusEffect = StatusEffect.create_from_json(file_text)
+								Utilities.save_json(new_content)
 								if not status_effects.keys().has(new_content.unique_name):
 									new_content.add_to_global_list()
 							"item":
 								var new_content: ItemData = ItemData.create_from_json(file_text)
+								Utilities.save_json(new_content)
 								if not items.keys().has(new_content.unique_name): # TODO allow overwriting content
 									new_content.add_to_global_list()
 							"scenario":

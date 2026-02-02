@@ -15,7 +15,7 @@ static func create_from_dictionary(property_dict: Dictionary) -> EquipmentSlot:
 			var array = property_dict[property_name]
 			var new_slot_types: Array[ItemData.SlotType] = []
 			for type in array:
-				new_slot_types.append(roundi(type))
+				new_slot_types.append(ItemData.SlotType[type])
 			new_equipment_slot.set(property_name, new_slot_types)
 		else:
 			new_equipment_slot.set(property_name, property_dict[property_name])

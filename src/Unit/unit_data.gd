@@ -3,14 +3,14 @@ extends Resource
 
 @export var display_name: String = "display name"
 @export var level: int = 0
-@export var gender: String = "gender" # male, female, other, monster
+@export var gender: Unit.Gender = Unit.Gender.MALE # male, female, other, monster
 @export var zodiac: String = "zodiac" # TODO should zodiac be derived from birthday?
 @export var job_unique_name: String = "job_unique_name"
 @export var team_idx: int = 0
 @export var controller: int = 0 # 0 = AI, 1 = Player 1, etc.
 @export var spritesheeet_file_name: String = "spritesheeet_file_name.spr" # TODO get sprite file name?
 @export var palette_id: int = 0
-@export var facing_direction: String = "direction" # north, south, east, west
+@export var facing_direction: Unit.Facings = Unit.Facings.NORTH # north, south, east, west
 
 # job levels
 # jp per job
@@ -65,7 +65,7 @@ static func create_from_dictionary(property_dict: Dictionary) -> UnitData:
 			var new_stats: Dictionary[Unit.StatType, ClampedValue] = {}
 			for stat_type in dict.keys():
 				var new_clamped_value: ClampedValue = ClampedValue.create_from_dictionary(dict[stat_type])
-				new_stats[int(stat_type)] = new_clamped_value
+				new_stats[Unit.StatType[stat_type]] = new_clamped_value
 			new_unit_data.set(property_name, new_stats)
 		else:
 			new_unit_data.set(property_name, property_dict[property_name])
@@ -91,14 +91,14 @@ func to_dictionary() -> Dictionary:
 func init_from_unit(unit: Unit) -> void:
 	display_name = unit.unit_nickname
 	level = unit.level
-	gender = Unit.Gender.keys()[unit.gender] # male, female, other, monster
+	gender = unit.gender # male, female, other, monster
 	zodiac = "zodiac" # TODO should zodiac be derived from birthday?
 	job_unique_name = unit.job_data.unique_name
 	team_idx = unit.team_id
 	controller = 0 if unit.is_ai_controlled else 1 # 0 = AI, 1 = Player 1, etc.
 	spritesheeet_file_name = unit.sprite_file_name
 	palette_id = unit.sprite_palette_id
-	facing_direction = Unit.Facings.keys()[unit.facing] # NORTH, SOUTH, EAST, WEST
+	facing_direction = unit.facing # NORTH, SOUTH, EAST, WEST
 
 	# job levels
 	# jp per job

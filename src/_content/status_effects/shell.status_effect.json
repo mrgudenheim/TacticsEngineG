@@ -5,14 +5,14 @@
 	"action_on_turn_start": "",
 	"action_on_x_ticks": "",
 	"ai_score_formula": {
-		"formula": 32,
+		"formula": "TARGET_CURRENT_HP_X_V1",
 		"is_modified_by_element": true,
 		"is_modified_by_zodiac": true,
 		"reverse_sign": true,
-		"target_faith_modifier": 0,
-		"user_faith_modifier": 0,
+		"target_faith_modifier": "NONE",
+		"user_faith_modifier": "NONE",
 		"values": [
-			0.1953125,
+			100.0,
 			1.0
 		]
 	},
@@ -26,10 +26,8 @@
 		"[P: (114, 232), S: (14, 12)]",
 		"[P: (100, 232), S: (14, 12)]"
 	],
-	"duration_type": 0,
-	"icon_rects": [
-		"[P: (86, 220), S: (14, 12)]"
-	],
+	"duration_type": "TICKS",
+	"icon_rects": [],
 	"idle_animation_id": -1,
 	"modulation_color": [
 		0.0,
@@ -58,7 +56,7 @@
 		"dead",
 		"jumping"
 	],
-	"status_cant_stack_flags": "[100, 0, 0, 0, 0]",
+	"status_cant_stack_flags": "[]",
 	"status_effect_name": "Shell",
 	"status_id": 27,
 	"unique_name": "shell",

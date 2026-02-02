@@ -1,13 +1,12 @@
 class_name EvadeData
 extends Resource
 
-var value: int = 0
-var source: EvadeSource
-var type: EvadeType = EvadeType.PHYSICAL
-var directions: Array[Directions] = [Directions.FRONT]
+@export var value: int = 0
+@export var source: EvadeSource
+@export var type: EvadeType = EvadeType.PHYSICAL
+@export var directions: Array[Directions] = [Directions.FRONT]
 var animation_id: int = -1:
-	get:
-		return animation_ids[source]
+	get: return animation_ids[source]
 
 static var animation_ids: Dictionary[EvadeSource, int] = {
 	EvadeSource.JOB : 0x30,
@@ -22,14 +21,12 @@ enum EvadeType {
 	MAGICAL,
 }
 
-
 enum EvadeSource {
 	JOB,
 	SHIELD,
 	ACCESSORY,
 	WEAPON,
 }
-
 
 enum Directions {
 	FRONT,
@@ -85,7 +82,16 @@ static func create_from_json(json_string: String) -> EvadeData:
 static func create_from_dictionary(property_dict: Dictionary) -> EvadeData:
 	var new_evade_data: EvadeData = EvadeData.new()
 	for property_name in property_dict.keys():
-		new_evade_data.set(property_name, property_dict[property_name])
+		# if property_name == "type":
+		# 	var new_type: EvadeType = EvadeType[property_dict[property_name]]
+		# 	new_evade_data.set(property_name, new_type)
+		# elif property_name == "directions":
+		# 	var new_directions: Array[Directions] = []
+		# 	for string: String in property_dict[property_name]:
+		# 		new_directions.append(Directions[string])
+		# 	new_evade_data.set(property_name, new_directions)
+		# else:
+			new_evade_data.set(property_name, property_dict[property_name])
 
 	new_evade_data.emit_changed()
 	return new_evade_data

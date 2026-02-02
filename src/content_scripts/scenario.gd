@@ -111,6 +111,7 @@ class MapChunk extends Resource:
 				var new_mirror_xyz: Array[bool] = []
 				new_mirror_xyz.assign(array)
 				new_map_chunk.set(property_name, new_mirror_xyz)
+				new_map_chunk.set_mirror_xyz(new_mirror_xyz)
 			else:
 				new_map_chunk.set(property_name, property_dict[property_name])
 

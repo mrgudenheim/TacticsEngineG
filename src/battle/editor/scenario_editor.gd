@@ -81,9 +81,22 @@ func initial_setup() -> void:
 	for color_picker: ColorPickerButton in background_gradient_color_pickers:
 		background_gradient_colors.append(color_picker.color)
 		color_picker.color_changed.connect(update_background_gradient)
-	update_background_gradient()
+	
+	if not start_button.pressed.is_connected(battle_manager.start_battle):
+		start_button.pressed.connect(battle_manager.start_battle)
+	
+	if not show_map_tiles_check.toggled.is_connected(show_all_tiles):
+		show_map_tiles_check.toggled.connect(show_all_tiles)
+	#battle_setup_container.tab_clicked.connect(adjust_height)
+
+	if not export_scenario_button.pressed.is_connected(export_scenario):
+		export_scenario_button.pressed.connect(export_scenario)
 	
 	populate_option_lists()
+
+	# TODO hook up loaded scenario? or generate random
+
+	update_background_gradient()
 	add_map_chunk_settings()
 	
 	for team_setup: TeamSetup in team_setups:
@@ -104,15 +117,7 @@ func initial_setup() -> void:
 	tile_highlight = new_tile_highlight
 	new_tile_highlight.position = unit_tile.get_world_position(true) + Vector3(0, 0.025, 0)
 	
-	if not start_button.pressed.is_connected(battle_manager.start_battle):
-		start_button.pressed.connect(battle_manager.start_battle)
 	
-	if not show_map_tiles_check.toggled.is_connected(show_all_tiles):
-		show_map_tiles_check.toggled.connect(show_all_tiles)
-	#battle_setup_container.tab_clicked.connect(adjust_height)
-
-	if not export_scenario_button.pressed.is_connected(export_scenario):
-		export_scenario_button.pressed.connect(export_scenario)
 
 
 func populate_option_lists() -> void:

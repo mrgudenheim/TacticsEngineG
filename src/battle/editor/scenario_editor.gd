@@ -342,6 +342,7 @@ func update_unit_dragging(unit: Unit, event: InputEvent) -> void:
 
 
 func export_scenario() -> void:
+	scenario.units_data.clear()
 	for unit: Unit in battle_manager.units:
 		var new_unit_data: UnitData = UnitData.new()
 		new_unit_data.init_from_unit(unit)

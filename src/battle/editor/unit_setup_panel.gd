@@ -322,6 +322,7 @@ func set_controller(new_controller_idx: int) -> void:
 		unit_data.is_ai_controlled = false
 		# TODO handle multiple player teams
 
+
 func update_level(unit: Unit, new_level: int) -> void:
 	unit.generate_leveled_raw_stats(new_level, unit.job_data)
 	unit.calc_battle_stats(unit.job_data)

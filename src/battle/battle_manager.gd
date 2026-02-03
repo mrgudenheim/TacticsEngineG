@@ -230,8 +230,9 @@ func update_total_map_tiles(map_chunks: Array[Scenario.MapChunk]) -> void:
 			if map_scale.y == -1:
 				mirror_shift.y = -1
 				mirror_shift.y += roundi(mesh_aabb.size.z)
-				
-			total_location = total_location + mirror_shift + map_tile_offset
+			
+			var quadrant_shift: Vector2i = Vector2i(roundi(mesh_aabb.position.x) * map_scale.x, roundi(mesh_aabb.position.z) * map_scale.y)
+			total_location = total_location + mirror_shift + map_tile_offset - quadrant_shift
 
 			# total_location = total_location + Vector2i(map_chunk.position.x, map_chunk.position.z)
 			if not total_map_tiles.has(total_location):

@@ -7,6 +7,8 @@ extends Control
 @export var start_button: Button
 @export var load_scenario_button: Button
 @export var export_scenario_button: Button
+@export var import_scenario_button: Button
+@export var import_file_dialog: FileDialog
 
 @export var background_gradient_color_pickers: Array[ColorPickerButton]
 @export var background_gradient_colors: PackedColorArray = []
@@ -91,6 +93,9 @@ func initial_setup(new_scenario: Scenario = null) -> void:
 
 	if not export_scenario_button.pressed.is_connected(export_scenario):
 		export_scenario_button.pressed.connect(export_scenario)
+	
+	if not import_scenario_button.pressed.is_connected(import_scenario):
+		import_scenario_button.pressed.connect(import_scenario)
 	
 	populate_option_lists()
 
@@ -348,3 +353,13 @@ func export_scenario() -> void:
 		new_unit_data.init_from_unit(unit)
 		scenario.units_data.append(new_unit_data)
 	Utilities.save_json(scenario)
+
+
+func import_scenario() -> void:
+	import_file_dialog.visible = true
+	
+	import_file_dialog.current_dir = "user://overrides/scenarios" # current_dir is not helpful for Windows native file dialaog
+	# import_file_dialog.current_dir = OS.get_system_dir(OS.SystemDir.SYSTEM_DIR_DOCUMENTS)
+	# https://docs.godotengine.org/en/stable/classes/class_filedialog.html#class-filedialog-property-current-dir
+
+	

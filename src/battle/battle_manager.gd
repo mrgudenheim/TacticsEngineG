@@ -154,9 +154,9 @@ func on_rom_loaded() -> void:
 	#map_dropdown.item_selected.emit(default_map_index)
 
 	if use_test_teams:
-		scenario_editor.initial_setup(RomReader.scenarios["test0"])
+		scenario_editor.init_scenario(RomReader.scenarios["test0"])
 	else:
-		scenario_editor.initial_setup()
+		scenario_editor.init_scenario()
 
 
 func queue_load_map(index: int) -> void:

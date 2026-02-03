@@ -27,6 +27,7 @@ extends Control
 
 @export var add_map_chunk_button: Button
 @export var map_chunk_settings_container: GridContainer
+@export var map_chunk_settings_list: Array[MapChunkSettingsUi]
 @export var show_map_tiles_check: CheckBox
 @export var map_tile_highlights: Array[Node3D] = []
 
@@ -77,7 +78,7 @@ func _process(delta: float) -> void:
 # 			tile_highlight.queue_free()
 
 
-func initial_setup(new_scenario: Scenario = null) -> void:
+func _ready() -> void:
 	visible = true
 	add_map_chunk_button.pressed.connect(add_map_chunk_settings)
 	for color_picker: ColorPickerButton in background_gradient_color_pickers:
@@ -94,15 +95,27 @@ func initial_setup(new_scenario: Scenario = null) -> void:
 	if not export_scenario_button.pressed.is_connected(export_scenario):
 		export_scenario_button.pressed.connect(export_scenario)
 	
-	if not import_scenario_button.pressed.is_connected(import_scenario):
-		import_scenario_button.pressed.connect(import_scenario)
+	if not import_scenario_button.pressed.is_connected(open_import_dialong):
+		import_scenario_button.pressed.connect(open_import_dialong)
+
+	if not import_file_dialog.file_selected.is_connected(import_scenario):
+		import_file_dialog.file_selected.connect(import_scenario)
 	
 	populate_option_lists()
 
+
+
+func init_scenario(new_scenario: Scenario = null) -> void:
 	for team_setup: TeamSetup in team_setups:
 		team_setup.name += "remove"
+		team_setup.num_units_spinbox.value = 0 # remoe all units
+		team_setup.num_units_spinbox.value_changed.emit(0)
 		team_setup.queue_free()
 	team_setups.clear()
+
+	# remove current map chunks
+	for map_chunk_settings_instance: MapChunkSettingsUi in map_chunk_settings_list:
+		map_chunk_settings_instance.queue_free()
 
 	if new_scenario != null:
 		scenario = new_scenario
@@ -222,12 +235,19 @@ func add_map_chunk_settings(new_map_chunk: Scenario.MapChunk = null) -> void:
 		new_map_chunk = Scenario.MapChunk.new()
 		scenario.map_chunks.append(new_map_chunk)
 	
-	var map_chunk_settings: MapChunkSettingsUi = MapChunkSettingsUi.instantiate(new_map_chunk)
-	map_chunk_settings.map_chunk_nodes_changed.connect(update_map_chunk_nodes)
-	map_chunk_settings.map_chunk_settings_changed.connect(update_map)
-	map_chunk_settings.add_row_to_table(map_chunk_settings_container)
+	var new_map_chunk_settings: MapChunkSettingsUi = MapChunkSettingsUi.instantiate(new_map_chunk)
+	new_map_chunk_settings.map_chunk_nodes_changed.connect(update_map_chunk_nodes)
+	new_map_chunk_settings.map_chunk_settings_changed.connect(update_map)
+	new_map_chunk_settings.add_row_to_table(map_chunk_settings_container)
+	map_chunk_settings_list.append(new_map_chunk_settings)
+	new_map_chunk_settings.deleted.connect(
+		func(deleted_map_chunk_settings: MapChunkSettingsUi): 
+			var idx: int = map_chunk_settings_list.find(new_map_chunk_settings)
+			if idx >= 0:
+				map_chunk_settings_list.remove_at(idx)
+	)
 	
-	add_child(map_chunk_settings)
+	add_child(new_map_chunk_settings)
 
 
 func update_map_chunk_nodes(new_map_chunk_settings: MapChunkSettingsUi) -> void:
@@ -355,11 +375,19 @@ func export_scenario() -> void:
 	Utilities.save_json(scenario)
 
 
-func import_scenario() -> void:
-	import_file_dialog.visible = true
-	
+func open_import_dialong() -> void:
+	# https://docs.godotengine.org/en/stable/classes/class_filedialog.html#class-filedialog-property-current-dir
 	import_file_dialog.current_dir = "user://overrides/scenarios" # current_dir is not helpful for Windows native file dialaog
 	# import_file_dialog.current_dir = OS.get_system_dir(OS.SystemDir.SYSTEM_DIR_DOCUMENTS)
-	# https://docs.godotengine.org/en/stable/classes/class_filedialog.html#class-filedialog-property-current-dir
-
 	
+	import_file_dialog.visible = true
+	# import_file_dialog.popup_file_dialog() # Godot 4.6
+
+
+func import_scenario(file_path: String) -> void:
+	var file := FileAccess.open(file_path, FileAccess.READ)
+	var file_text = file.get_as_text()
+	var new_scenario: Scenario = Scenario.create_from_json(file_text)
+	RomReader.scenarios[new_scenario.unique_name] = new_scenario # do not use "add_to_global_list" as it may set a new unique name
+	
+	init_scenario(new_scenario)

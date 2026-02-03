@@ -3,6 +3,7 @@ extends Control
 
 signal map_chunk_settings_changed(new_map_chunk_settings: MapChunkSettingsUi)
 signal map_chunk_nodes_changed(new_map_chunk_settings: MapChunkSettingsUi)
+signal deleted(new_map_chunk_settings: MapChunkSettingsUi)
 
 const settings_ui_scene: PackedScene = preload("res://src/battle/editor/map_chunk_settings.tscn")
 
@@ -67,6 +68,8 @@ func _exit_tree() -> void:
 		position_edit_container.queue_free()
 		mirror_bools_container.queue_free()
 		delete_button.queue_free()
+
+		deleted.emit(self)
 
 
 func add_row_to_table(settings_table: Container) -> void:

@@ -127,7 +127,11 @@ func init_scenario(new_scenario: Scenario = null) -> void:
 			add_team(team)
 	else:
 		var number: int = 1
-		scenario.unique_name = "new_scenario_01"
+		var new_scenario_num: String = scenario.unique_name.get_slice("new_scenario_", 1)
+		if new_scenario_num.is_valid_int():
+			number = int(new_scenario_num) + 1
+			
+		scenario.unique_name = "new_scenario_%02d" % number
 		while RomReader.scenarios.keys().has(scenario.unique_name):
 			number += 1
 			scenario.unique_name = "new_scenario_%02d" % number

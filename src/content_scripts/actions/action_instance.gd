@@ -316,6 +316,8 @@ func on_unit_hovered(unit: Unit, event: InputEvent):
 
 func queue_use() -> void:
 	battle_manager.game_state_label.text = user.job_nickname + "-" + user.unit_nickname + " using " + action.display_name
+	battle_manager.safe_to_load_map = false
+	
 	user.clear_action_buttons(battle_manager)
 	if deduct_action_points:
 		pay_action_point_costs()
@@ -335,6 +337,7 @@ func queue_use() -> void:
 		action_completed.emit(battle_manager)
 	else:
 		await use()
+	battle_manager.safe_to_load_map = true
 
 
 func use() -> void:

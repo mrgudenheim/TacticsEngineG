@@ -777,7 +777,6 @@ func start_units_turn(unit: Unit) -> void:
 func get_map(new_map_data: MapData, map_position: Vector3, map_scale: Vector3, gltf_map_mesh: MeshInstance3D = null) -> MapChunkNodes:
 	map_scale.y = -1 # vanilla used -y as up
 	var new_map_instance: MapChunkNodes = MapChunkNodes.instantiate()
-	var x
 	new_map_instance.map_data = new_map_data
 	
 	if gltf_map_mesh != null:

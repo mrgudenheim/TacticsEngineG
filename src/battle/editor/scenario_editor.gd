@@ -91,10 +91,17 @@ func _ready() -> void:
 	export_scenario_button.pressed.connect(export_scenario)
 	import_scenario_button.pressed.connect(open_import_dialong)
 	import_file_dialog.file_selected.connect(import_scenario)
-	new_scenario_button.pressed.connect(init_scenario)
+	new_scenario_button.pressed.connect(queue_new_scenario)
 	
 	populate_option_lists()
 
+
+func queue_new_scenario(new_scenario: Scenario = null):
+	if battle_manager.battle_is_running:
+		while not battle_manager.safe_to_load_map:
+			await get_tree().process_frame # TODO loop over safe_to_load_new_map, set false while awaiting processing
+	
+	init_scenario(new_scenario)
 
 
 func init_scenario(new_scenario: Scenario = null) -> void:
@@ -393,4 +400,4 @@ func import_scenario(file_path: String) -> void:
 	var new_scenario: Scenario = Scenario.create_from_json(file_text)
 	RomReader.scenarios[new_scenario.unique_name] = new_scenario # do not use "add_to_global_list" as it may set a new unique name
 	
-	init_scenario(new_scenario)
+	queue_new_scenario(new_scenario)

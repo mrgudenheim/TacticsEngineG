@@ -51,18 +51,14 @@ material = SubResource("StandardMaterial3D_p2e2h")
 [sub_resource type="BoxMesh" id="BoxMesh_cqdh8"]
 material = SubResource("StandardMaterial3D_tjj5r")
 
-[node name="BattleManager" type="Node3D" node_paths=PackedStringArray("texture_viewer", "reference_quad", "load_rom_button", "camera_controller", "background_gradient", "menu_list", "orthographic_check", "menu_reminder", "map_size_label", "expand_map_check", "maps", "battle_view", "action_menu", "action_button_list", "units_container", "controller", "battle_end_panel", "post_battle_messages", "start_new_battle_button", "game_state_label", "units_per_team_spinbox", "units_level_spinbox", "icon_counter", "scenario_editor")]
+[node name="BattleManager" type="Node3D" node_paths=PackedStringArray("texture_viewer", "reference_quad", "load_rom_button", "orthographic_check", "camera_controller", "background_gradient", "maps", "battle_view", "action_menu", "action_button_list", "units_container", "controller", "battle_end_panel", "post_battle_messages", "start_new_battle_button", "game_state_container", "game_state_label", "icon_counter", "scenario_editor")]
 script = ExtResource("1_hnd0w")
 texture_viewer = NodePath("SpriteViewer")
 reference_quad = NodePath("ReferenceQuad")
-load_rom_button = NodePath("DebugOptions/MarginContainer/VBoxContainer2/LoadRom")
+load_rom_button = NodePath("LoadRom")
+orthographic_check = NodePath("PanelContainer/MarginContainer/VBoxContainer/OrthographicCheckBox")
 camera_controller = NodePath("ScenarioEditor/BattleSetupTabContainer/Map/VBoxContainer/SubViewportContainer/SubViewport/BattleView/CameraController")
 background_gradient = NodePath("BackgroundCanvasLayer/TextureRect")
-menu_list = NodePath("")
-orthographic_check = NodePath("DebugOptions/MarginContainer/VBoxContainer2/OrthographicCheckBox")
-menu_reminder = NodePath("DebugOptions/MarginContainer/VBoxContainer2/MenuReminder")
-map_size_label = NodePath("ScenarioEditor/BattleSetupTabContainer/Map/FloatingUi/MapSize")
-expand_map_check = NodePath("ScenarioEditor/BattleSetupTabContainer/Map/FloatingUi/ExpandMap")
 maps = NodePath("ScenarioEditor/BattleSetupTabContainer/Map/VBoxContainer/SubViewportContainer/SubViewport/BattleView/Maps")
 tile_highlights = Dictionary[Color, Material]({
 Color(1, 0, 0, 1): ExtResource("4_f2r6p"),
@@ -79,41 +75,13 @@ controller = NodePath("CharacterController")
 battle_end_panel = NodePath("BattleEnd")
 post_battle_messages = NodePath("BattleEnd/VBoxContainer/Messages")
 start_new_battle_button = NodePath("BattleEnd/VBoxContainer/StartNewBattle")
+game_state_container = NodePath("GameState")
 game_state_label = NodePath("GameState/GameState")
-units_per_team_spinbox = NodePath("")
-units_level_spinbox = NodePath("")
 icon_counter = NodePath("IconGridContainer")
-allow_mirror = false
 scenario_editor = NodePath("ScenarioEditor")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_njvnp")
-
-[node name="DebugOptions" type="PanelContainer" parent="."]
-offset_right = 124.0
-offset_bottom = 92.0
-
-[node name="MarginContainer" type="MarginContainer" parent="DebugOptions"]
-layout_mode = 2
-theme_override_constants/margin_left = 5
-theme_override_constants/margin_top = 5
-theme_override_constants/margin_right = 5
-theme_override_constants/margin_bottom = 5
-
-[node name="VBoxContainer2" type="VBoxContainer" parent="DebugOptions/MarginContainer"]
-layout_mode = 2
-
-[node name="LoadRom" parent="DebugOptions/MarginContainer/VBoxContainer2" instance=ExtResource("9_pbg35")]
-layout_mode = 2
-
-[node name="OrthographicCheckBox" type="CheckBox" parent="DebugOptions/MarginContainer/VBoxContainer2"]
-layout_mode = 2
-button_pressed = true
-text = "Orthographic"
-
-[node name="MenuReminder" type="Label" parent="DebugOptions/MarginContainer/VBoxContainer2"]
-layout_mode = 2
-text = "Press ESCAPE to toggle menu"
 
 [node name="BackgroundCanvasLayer" type="CanvasLayer" parent="."]
 layer = -3
@@ -125,6 +93,38 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("GradientTexture2D_1dnhu")
+
+[node name="LoadRom" parent="." instance=ExtResource("9_pbg35")]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -57.0
+offset_top = -14.0
+offset_right = 57.0
+offset_bottom = 14.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="MenuReminder" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Press ESCAPE to toggle editor"
+
+[node name="OrthographicCheckBox" type="CheckBox" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+button_pressed = true
+text = "Orthographic"
 
 [node name="CharacterController" type="Node3D" parent="."]
 script = ExtResource("10_d5yoq")
@@ -232,6 +232,7 @@ layout_mode = 2
 text = "Start New Battle"
 
 [node name="GameState" type="PanelContainer" parent="."]
+visible = false
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
@@ -245,7 +246,8 @@ layout_mode = 2
 text = "Game State"
 horizontal_alignment = 1
 
-[node name="ScenarioEditor" type="Control" parent="." node_paths=PackedStringArray("battle_manager", "start_button", "load_scenario_button", "export_scenario_button", "import_scenario_button", "import_file_dialog", "new_scenario_button", "background_gradient_color_pickers", "battle_setup_container", "job_select_control", "item_select_control", "ability_select_control", "unit_editor", "add_map_chunk_button", "map_chunk_settings_container", "show_map_tiles_check")]
+[node name="ScenarioEditor" type="Control" parent="." node_paths=PackedStringArray("battle_manager", "start_button", "load_scenario_button", "export_scenario_button", "import_scenario_button", "import_file_dialog", "new_scenario_button", "background_gradient_color_pickers", "battle_subviewport", "battle_setup_container", "job_select_control", "item_select_control", "ability_select_control", "unit_editor", "add_map_chunk_button", "map_chunk_settings_container", "show_map_tiles_check")]
+visible = false
 layout_mode = 3
 anchor_top = 0.124000005
 anchor_right = 1.0
@@ -262,6 +264,7 @@ import_scenario_button = NodePath("HBoxContainer/ImportScenario")
 import_file_dialog = NodePath("HBoxContainer/ImportScenario/ImportFileDialog")
 new_scenario_button = NodePath("HBoxContainer/NewScenario")
 background_gradient_color_pickers = [NodePath("BattleSetupTabContainer/Map/FloatingUi/Gradient/BottomColorPickerButton"), NodePath("BattleSetupTabContainer/Map/FloatingUi/Gradient/TopColorPickerButton")]
+battle_subviewport = NodePath("BattleSetupTabContainer/Map/VBoxContainer/SubViewportContainer/SubViewport")
 battle_setup_container = NodePath("BattleSetupTabContainer")
 team_setup_scene = ExtResource("14_kb1q2")
 job_select_control = NodePath("JobSelectScrollArea")
@@ -299,7 +302,7 @@ transparent_bg = true
 handle_input_locally = false
 physics_object_picking = true
 size = Vector2i(1516, 674)
-render_target_update_mode = 4
+render_target_update_mode = 0
 
 [node name="BattleView" type="Node3D" parent="ScenarioEditor/BattleSetupTabContainer/Map/VBoxContainer/SubViewportContainer/SubViewport"]
 
@@ -357,11 +360,6 @@ text = "Add Map Chunk"
 visible = false
 layout_mode = 2
 text = "Map Size: X x Y"
-
-[node name="ExpandMap" type="CheckBox" parent="ScenarioEditor/BattleSetupTabContainer/Map/FloatingUi"]
-visible = false
-layout_mode = 2
-text = "Expand Map"
 
 [node name="MapChunkSettings" type="GridContainer" parent="ScenarioEditor/BattleSetupTabContainer/Map/FloatingUi"]
 layout_mode = 2

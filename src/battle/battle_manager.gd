@@ -17,16 +17,10 @@ const SCALED_UNITS_PER_HEIGHT: float = SCALE * MapData.UNITS_PER_HEIGHT
 #@export var phantom_camera: PhantomCamera3D
 @export var load_rom_button: LoadRomButton
 
+@export var orthographic_check: CheckBox
 @export var camera_controller: CameraController
 var main_camera: Camera3D
 @export var background_gradient: TextureRect
-
-@export var menu_list: Control
-@export var map_dropdown: OptionButton
-@export var orthographic_check: CheckBox
-@export var menu_reminder: Label
-@export var map_size_label: Label
-@export var expand_map_check: CheckBox
 
 @export var maps: Node3D
 var total_map_tiles: Dictionary[Vector2i, Array] = {} # Array[TerrainTile]
@@ -48,13 +42,13 @@ var current_cursor_map_position: Vector3
 @export var post_battle_messages: Control
 @export var start_new_battle_button: Button
 @export var active_unit: Unit
+@export var game_state_container: Container
 @export var game_state_label: Label
 
 var event_num: int = 0 # TODO handle event timeline
 
 @export var icon_counter: GridContainer
 
-@export var allow_mirror: bool = true
 var walled_maps: PackedInt32Array = [
 	3,
 	4,
@@ -97,12 +91,8 @@ func _ready() -> void:
 	
 	load_rom_button.file_selected.connect(RomReader.on_load_rom_dialog_file_selected)
 	RomReader.rom_loaded.connect(on_rom_loaded)
-	#map_dropdown.item_selected.connect(queue_load_map)
 	orthographic_check.toggled.connect(camera_controller.on_orthographic_toggled)
 	#camera_controller.zoom_changed.connect(update_phantom_camera_spring)
-	expand_map_check.toggled.connect(func(toggled_on: bool): allow_mirror = toggled_on)
-	
-	start_new_battle_button.pressed.connect(load_random_map)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -111,35 +101,18 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func toggle_debug_ui() -> void:
-	menu_list.visible = not menu_list.visible
-	get_tree().call_group("Units", "toggle_debug_menu")
-
-
-func hide_debug_ui() -> void:
-	menu_list.visible = false
-	get_tree().call_group("Units", "hide_debug_menu")
+	scenario_editor.visible = not scenario_editor.visible
+	if scenario_editor.visible:
+		battle_view.reparent(scenario_editor.battle_subviewport)
+	else:
+		battle_view.reparent(self)
 
 
 func on_rom_loaded() -> void:
 	push_warning("on rom loaded")
 	load_rom_button.visible = false
-	
-	# TODO move to scenario_editor
-	for file_record: FileRecord in RomReader.file_records.values():
-		if file_record.name.contains(".GNS"):
-			var map_name: String = ""
-			if file_record.type_index != 0 and file_record.type_index <= RomReader.fft_text.map_names.size():
-				map_name = " " + RomReader.fft_text.map_names[file_record.type_index - 1]
-			#map_dropdown.add_item(file_record.name + map_name)
-	
-	var default_map_index: int = 56 # Orbonne
-	#default_map_index = 22 # Gariland
-	#default_map_index = 83 # zirekile falls
-	#default_map_index = 85 # mandalia plains
-	default_map_index = 116 # arena
-	#map_dropdown.select(default_map_index)
-	#map_dropdown.item_selected.emit(default_map_index)
 
+	scenario_editor.visible = true
 	if use_test_teams:
 		scenario_editor.init_scenario(RomReader.scenarios["test0"])
 	else:
@@ -150,50 +123,7 @@ func queue_load_map(index: int) -> void:
 	if battle_is_running:
 		while not safe_to_load_map:
 			await get_tree().process_frame # TODO loop over safe_to_load_new_map, set false while awaiting processing
-	on_map_selected(index)
-
-
-func on_map_selected(index: int) -> void:
-	battle_is_running = false
-	battle_end_panel.visible = false
-	var message_nodes: Array[Node] = post_battle_messages.get_children()
-	for child: Node in message_nodes:
-		child.queue_free()
-	var map_file_name: String = map_dropdown.get_item_text(index)
-	
-	var start_time: int = Time.get_ticks_msec()
-
-	clear_maps()
-	clear_units()
-	teams.clear()
-	
-	# var map_data: MapData = RomReader.maps_array[index]
-	# if not map_data.is_initialized:
-	# 	map_data.init_map()
-	# map_size_label.text = "Map Size: " + str(map_data.map_width) + " x " + str(map_data.map_length) + " (" + str(map_data.map_width * map_data.map_length) + ")"
-	
-	# background_gradient.texture.gradient.colors[0] = map_data.background_gradient_bottom
-	# background_gradient.texture.gradient.colors[1] = map_data.background_gradient_top
-	
-	# maps.add_child(instantiate_map(index, not walled_maps.has(index)))
-	# #maps.add_child(instantiate_map(0x09, not walled_maps.has(index), Vector3(30, 0 * MapData.HEIGHT_SCALE, 0))) # 0x09 = Igros Citadel
-	# initialize_map_tiles()
-
-	# texture_viewer.texture = map_data.albedo_texture
-	
-	#var map_width_range: Vector2i = Vector2i(0, map_data.map_width)
-	#var map_length_range: Vector2i = Vector2i(0, map_data.map_length)
-	#if not walled_maps.has(index):
-		#map_width_range = Vector2i(-map_data.map_width + 1, map_data.map_width * 2 - 2)
-		#map_length_range = Vector2i(-map_data.map_length + 1, map_data.map_length * 2 - 2)
-	
-	push_warning("Time to create map (ms): " + str(Time.get_ticks_msec() - start_time))
-	push_warning("Map_created")
-	
-	await update_units_pathfinding()
-	units.shuffle()
-	
-	hide_debug_ui()
+	# on_map_selected(index)
 
 
 func load_scenario(new_scenario: Scenario) -> void:
@@ -324,6 +254,7 @@ func start_battle() -> void:
 	battle_view.reparent(self)
 	# get list of units again; reparenting temporarily removes the unit from the tree and Units auto remove themselves from the Array when they leave the tree
 	units.assign(units_container.get_children())
+	game_state_container.visible = true
 	
 	camera_controller.follow_node = units[0].char_body
 	controller.unit = units[0]
@@ -885,47 +816,6 @@ func get_scaled_collision_shape(mesh: Mesh, collision_scale: Vector3) -> Concave
 	return new_collision_shape
 
 
-func instantiate_map(map_idx: int, mirror_chunks: bool, offset: Vector3 = Vector3.ZERO) -> Node3D:
-	var map_holder: Node3D = Node3D.new()
-	
-	var map_data: MapData = RomReader.maps_array[map_idx]
-	if not map_data.is_initialized:
-		map_data.init_map()
-	
-	var new_map: MapChunkNodes = get_map(map_data, offset, Vector3(1, 1, 1))
-	var map_name: String = map_data.file_name.trim_suffix(".GNS")
-	new_map.name = map_name
-	new_map.mesh_instance.name = map_name
-	
-	
-	var imported_mesh: MeshInstance3D = null
-	#var imported_mesh = GltfManagerNode.import_gltf(new_map.mesh.name)
-	#if imported_mesh != null:
-		#new_map.mesh.queue_free()
-		#new_map.add_child(imported_mesh)
-		#new_map.mesh = imported_mesh
-		#new_map.mesh.name = map_name
-		#new_map.mesh.scale.y = -1
-		##imported_mesh.scale = imported_mesh.scale * 0.001 # only needed if Blender scale is set to non-default
-		#push_warning("Loaded external map: " + new_map.mesh.name + ".glb")
-	#else:
-		#GltfManagerNode.save_node(new_map.mesh)
-	
-	map_holder.add_child(new_map)
-	
-	if mirror_chunks and allow_mirror:
-		map_holder.add_child(get_map(map_data, offset, Vector3(1, 1, -1), imported_mesh))
-		map_holder.add_child(get_map(map_data, offset + (Vector3.FORWARD * map_data.map_length * -2), Vector3(1, 1, -1), imported_mesh))
-		map_holder.add_child(get_map(map_data, offset, Vector3(-1, 1, -1), imported_mesh))
-		map_holder.add_child(get_map(map_data, offset + (Vector3.RIGHT * map_data.map_width * 2), Vector3(-1, 1, -1), imported_mesh))
-		map_holder.add_child(get_map(map_data, offset, Vector3(-1, 1, 1), imported_mesh))
-		map_holder.add_child(get_map(map_data, offset + (Vector3.FORWARD * map_data.map_length * -2), Vector3(-1, 1, -1), imported_mesh))
-		map_holder.add_child(get_map(map_data, offset + (Vector3.RIGHT * map_data.map_width * 2), Vector3(-1, 1, 1), imported_mesh))
-		map_holder.add_child(get_map(map_data, offset + (Vector3.RIGHT * map_data.map_width * 2) + (Vector3.FORWARD * map_data.map_length * -2), Vector3(-1, 1, -1), imported_mesh))
-	
-	return map_holder
-
-
 func initialize_map_tiles() -> void:
 	total_map_tiles.clear()
 	var map_chunks: Array[MapChunkNodes] = []
@@ -1000,18 +890,6 @@ func clear_units() -> void:
 	units.clear()
 	#for child: Node in units_container.get_children():
 		#child.queue_free()
-
-
-func load_random_map_delay(_unit: Unit) -> void:
-	await get_tree().create_timer(3).timeout
-	
-	load_random_map()
-
-
-func load_random_map() -> void:
-	var new_map_idx: int = randi_range(1, map_dropdown.item_count - 1)
-	map_dropdown.select(new_map_idx)
-	map_dropdown.item_selected.emit(new_map_idx)
 
 
 func increment_counter(unit: Unit) -> void:

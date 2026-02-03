@@ -14,6 +14,7 @@ extends Control
 @export var background_gradient_color_pickers: Array[ColorPickerButton]
 @export var background_gradient_colors: PackedColorArray = []
 
+@export var battle_subviewport: SubViewport
 @export var battle_setup_container: TabContainer
 @export var team_setups: Array[TeamSetup]
 @export var team_setup_scene: PackedScene
@@ -80,7 +81,6 @@ func _process(delta: float) -> void:
 
 
 func _ready() -> void:
-	visible = true
 	add_map_chunk_button.pressed.connect(add_map_chunk_settings)
 	for color_picker: ColorPickerButton in background_gradient_color_pickers:
 		background_gradient_colors.append(color_picker.color)

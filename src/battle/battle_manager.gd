@@ -292,6 +292,9 @@ func update_total_map_tiles(map_chunks: Array[Scenario.MapChunk]) -> void:
 
 	for map_chunk: Scenario.MapChunk in map_chunks:
 		var map_chunk_data: MapData = RomReader.maps[map_chunk.unique_name]
+		if not map_chunk_data.is_initialized:
+			continue
+		
 		var mesh_aabb: AABB = map_chunk_data.mesh.get_aabb()
 		
 		var map_tile_offset: Vector2i = Vector2i(map_chunk.corner_position.x, map_chunk.corner_position.z)

@@ -6,9 +6,9 @@
 		1.0
 	],
 	"background_gradient_top": [
-		0.627451002597809,
-		0.909803926944733,
+		0.627451062202454,
 		0.937254905700684,
+		0.654074788093567,
 		1.0
 	],
 	"deployment_zones": [],
@@ -28,10 +28,24 @@
 				false
 			],
 			"rotation": 0,
-			"unique_name": "map_090_germinas_peak"
+			"unique_name": "map_056_orbonne_monastery"
+		},
+		{
+			"corner_position": [
+				-10,
+				-1,
+				-1
+			],
+			"mirror_xyz": [
+				true,
+				true,
+				true
+			],
+			"rotation": 0,
+			"unique_name": "map_022_magic_city_gariland"
 		}
 	],
-	"unique_name": "unique_name",
+	"unique_name": "test0",
 	"units_data": [
 		{
 			"ability_slots": [
@@ -51,32 +65,32 @@
 				},
 				{
 					"ability_slot_name": "Reaction",
-					"ability_unique_name": "catch",
+					"ability_unique_name": "reflect_02",
 					"slot_types": [
 						"REACTION"
 					]
 				},
 				{
 					"ability_slot_name": "Support",
-					"ability_unique_name": "half_of_mp",
+					"ability_unique_name": "equip_armor",
 					"slot_types": [
 						"SUPPORT"
 					]
 				},
 				{
 					"ability_slot_name": "Movement",
-					"ability_unique_name": "move+3",
+					"ability_unique_name": "cant_enter_depth",
 					"slot_types": [
 						"MOVEMENT"
 					]
 				}
 			],
 			"controller": 1,
-			"display_name": "Asjarabos",
+			"display_name": "Marls",
 			"equip_slots": [
 				{
 					"equipment_slot_name": "RH",
-					"item_unique_name": "rune_blade",
+					"item_unique_name": "",
 					"slot_types": [
 						"WEAPON",
 						"SHIELD"
@@ -84,7 +98,7 @@
 				},
 				{
 					"equipment_slot_name": "LH",
-					"item_unique_name": "venetian_shield",
+					"item_unique_name": "",
 					"slot_types": [
 						"WEAPON",
 						"SHIELD"
@@ -92,33 +106,33 @@
 				},
 				{
 					"equipment_slot_name": "Head",
-					"item_unique_name": "grand_helmet",
+					"item_unique_name": "",
 					"slot_types": [
 						"HEADGEAR"
 					]
 				},
 				{
 					"equipment_slot_name": "Body",
-					"item_unique_name": "reflect_mail",
+					"item_unique_name": "",
 					"slot_types": [
 						"ARMOR"
 					]
 				},
 				{
 					"equipment_slot_name": "Accesory",
-					"item_unique_name": "spike_shoes",
+					"item_unique_name": "",
 					"slot_types": [
 						"ACCESSORY"
 					]
 				}
 			],
-			"facing_direction": "NORTH",
+			"facing_direction": "EAST",
 			"gender": "MALE",
-			"job_unique_name": "arc_knight_02",
+			"job_unique_name": "bone_snatch",
 			"level": 40,
-			"palette_id": 0,
-			"primary_weapon_unique_name": "rune_blade",
-			"spritesheeet_file_name": "ZARU.SPR",
+			"palette_id": 1,
+			"primary_weapon_unique_name": "",
+			"spritesheeet_file_name": "SUKERU.SPR",
 			"stats": {
 				"BRAVE": {
 					"base_value": 50,
@@ -146,206 +160,19 @@
 				},
 				"HP": {
 					"base_value": 50,
-					"current_value": 498,
-					"max_value": 498,
+					"current_value": 244,
+					"max_value": 244,
 					"min_value": 0
 				},
 				"HP_MAX": {
-					"base_value": 218,
-					"current_value": 218,
+					"base_value": 244,
+					"current_value": 244,
 					"max_value": 999,
 					"min_value": 0
 				},
 				"JUMP": {
-					"base_value": 3,
-					"current_value": 3,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"LEVEL": {
-					"base_value": 50,
-					"current_value": 40,
-					"max_value": 99,
-					"min_value": 0
-				},
-				"MAGIC_ATTACK": {
-					"base_value": 9,
-					"current_value": 9,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"MOVE": {
 					"base_value": 4,
 					"current_value": 4,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"MP": {
-					"base_value": 50,
-					"current_value": 50,
-					"max_value": 50,
-					"min_value": 0
-				},
-				"MP_MAX": {
-					"base_value": 50,
-					"current_value": 50,
-					"max_value": 999,
-					"min_value": 0
-				},
-				"PHYSICAL_ATTACK": {
-					"base_value": 9,
-					"current_value": 9,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"SPEED": {
-					"base_value": 8,
-					"current_value": 8,
-					"max_value": 100,
-					"min_value": 0
-				}
-			},
-			"stats_raw": {
-				"HP_MAX": 2133844.63636363,
-				"MAGIC_ATTACK": 148793.469387755,
-				"MP_MAX": 1040088.30769231,
-				"PHYSICAL_ATTACK": 132752.41025641,
-				"SPEED": 138428.081632653
-			},
-			"team_idx": 0,
-			"tile_position": [
-				0.5,
-				0.428571432828903,
-				9.5
-			],
-			"zodiac": "zodiac"
-		},
-		{
-			"ability_slots": [
-				{
-					"ability_slot_name": "Skillset 1",
-					"ability_unique_name": "",
-					"slot_types": [
-						"SKILLSET"
-					]
-				},
-				{
-					"ability_slot_name": "Skillset 2",
-					"ability_unique_name": "",
-					"slot_types": [
-						"SKILLSET"
-					]
-				},
-				{
-					"ability_slot_name": "Reaction",
-					"ability_unique_name": "brave_up",
-					"slot_types": [
-						"REACTION"
-					]
-				},
-				{
-					"ability_slot_name": "Support",
-					"ability_unique_name": "train",
-					"slot_types": [
-						"SUPPORT"
-					]
-				},
-				{
-					"ability_slot_name": "Movement",
-					"ability_unique_name": "fly",
-					"slot_types": [
-						"MOVEMENT"
-					]
-				}
-			],
-			"controller": 1,
-			"display_name": "Ralph",
-			"equip_slots": [
-				{
-					"equipment_slot_name": "RH",
-					"item_unique_name": "",
-					"slot_types": [
-						"WEAPON",
-						"SHIELD"
-					]
-				},
-				{
-					"equipment_slot_name": "LH",
-					"item_unique_name": "",
-					"slot_types": [
-						"WEAPON",
-						"SHIELD"
-					]
-				},
-				{
-					"equipment_slot_name": "Head",
-					"item_unique_name": "",
-					"slot_types": [
-						"HEADGEAR"
-					]
-				},
-				{
-					"equipment_slot_name": "Body",
-					"item_unique_name": "",
-					"slot_types": [
-						"ARMOR"
-					]
-				},
-				{
-					"equipment_slot_name": "Accesory",
-					"item_unique_name": "",
-					"slot_types": [
-						"ACCESSORY"
-					]
-				}
-			],
-			"facing_direction": "SOUTH",
-			"gender": "MALE",
-			"job_unique_name": "_04",
-			"level": 40,
-			"palette_id": 0,
-			"primary_weapon_unique_name": "",
-			"spritesheeet_file_name": "LEDY.SPR",
-			"stats": {
-				"BRAVE": {
-					"base_value": 50,
-					"current_value": 70,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"CT": {
-					"base_value": 50,
-					"current_value": 25,
-					"max_value": 999,
-					"min_value": 0
-				},
-				"EXP": {
-					"base_value": 50,
-					"current_value": 99,
-					"max_value": 999,
-					"min_value": 0
-				},
-				"FAITH": {
-					"base_value": 50,
-					"current_value": 65,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"HP": {
-					"base_value": 50,
-					"current_value": 184,
-					"max_value": 184,
-					"min_value": 0
-				},
-				"HP_MAX": {
-					"base_value": 184,
-					"current_value": 184,
-					"max_value": 999,
-					"min_value": 0
-				},
-				"JUMP": {
-					"base_value": 8,
-					"current_value": 8,
 					"max_value": 100,
 					"min_value": 0
 				},
@@ -362,48 +189,48 @@
 					"min_value": 0
 				},
 				"MOVE": {
-					"base_value": 8,
-					"current_value": 8,
+					"base_value": 3,
+					"current_value": 3,
 					"max_value": 100,
 					"min_value": 0
 				},
 				"MP": {
 					"base_value": 50,
-					"current_value": 10,
-					"max_value": 10,
+					"current_value": 0,
+					"max_value": 0,
 					"min_value": 0
 				},
 				"MP_MAX": {
-					"base_value": 10,
-					"current_value": 10,
+					"base_value": 0,
+					"current_value": 0,
 					"max_value": 999,
 					"min_value": 0
 				},
 				"PHYSICAL_ATTACK": {
-					"base_value": 11,
-					"current_value": 11,
+					"base_value": 12,
+					"current_value": 12,
 					"max_value": 100,
 					"min_value": 0
 				},
 				"SPEED": {
-					"base_value": 8,
-					"current_value": 8,
+					"base_value": 7,
+					"current_value": 7,
 					"max_value": 100,
 					"min_value": 0
 				}
 			},
 			"stats_raw": {
-				"HP_MAX": 3016176.0,
-				"MAGIC_ATTACK": 440027.428571429,
-				"MP_MAX": 562347.483870967,
-				"PHYSICAL_ATTACK": 187623.225806452,
-				"SPEED": 137236.277227723
+				"HP_MAX": 4443385.33333333,
+				"MAGIC_ATTACK": 491520.0,
+				"MP_MAX": 331247.064516129,
+				"PHYSICAL_ATTACK": 163840.0,
+				"SPEED": 120022.325581395
 			},
 			"team_idx": 0,
 			"tile_position": [
-				8.5,
-				0.857142865657806,
-				11.5
+				2.5,
+				5.14285707473755,
+				9.5
 			],
 			"zodiac": "zodiac"
 		},
@@ -432,380 +259,6 @@
 				},
 				{
 					"ability_slot_name": "Support",
-					"ability_unique_name": "secret_hunt",
-					"slot_types": [
-						"SUPPORT"
-					]
-				},
-				{
-					"ability_slot_name": "Movement",
-					"ability_unique_name": "float_02",
-					"slot_types": [
-						"MOVEMENT"
-					]
-				}
-			],
-			"controller": 1,
-			"display_name": "Zora",
-			"equip_slots": [
-				{
-					"equipment_slot_name": "RH",
-					"item_unique_name": "ultimus_bow",
-					"slot_types": [
-						"WEAPON",
-						"SHIELD"
-					]
-				},
-				{
-					"equipment_slot_name": "LH",
-					"item_unique_name": "venetian_shield",
-					"slot_types": [
-						"WEAPON",
-						"SHIELD"
-					]
-				},
-				{
-					"equipment_slot_name": "Head",
-					"item_unique_name": "flash_hat",
-					"slot_types": [
-						"HEADGEAR"
-					]
-				},
-				{
-					"equipment_slot_name": "Body",
-					"item_unique_name": "black_costume",
-					"slot_types": [
-						"ARMOR"
-					]
-				},
-				{
-					"equipment_slot_name": "Accesory",
-					"item_unique_name": "defense_armlet",
-					"slot_types": [
-						"ACCESSORY"
-					]
-				}
-			],
-			"facing_direction": "EAST",
-			"gender": "MALE",
-			"job_unique_name": "archer_02",
-			"level": 40,
-			"palette_id": 4,
-			"primary_weapon_unique_name": "ultimus_bow",
-			"spritesheeet_file_name": "YUMI_W.SPR",
-			"stats": {
-				"BRAVE": {
-					"base_value": 50,
-					"current_value": 70,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"CT": {
-					"base_value": 50,
-					"current_value": 25,
-					"max_value": 999,
-					"min_value": 0
-				},
-				"EXP": {
-					"base_value": 50,
-					"current_value": 99,
-					"max_value": 999,
-					"min_value": 0
-				},
-				"FAITH": {
-					"base_value": 50,
-					"current_value": 65,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"HP": {
-					"base_value": 50,
-					"current_value": 310,
-					"max_value": 310,
-					"min_value": 0
-				},
-				"HP_MAX": {
-					"base_value": 122,
-					"current_value": 122,
-					"max_value": 999,
-					"min_value": 0
-				},
-				"JUMP": {
-					"base_value": 3,
-					"current_value": 3,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"LEVEL": {
-					"base_value": 50,
-					"current_value": 40,
-					"max_value": 99,
-					"min_value": 0
-				},
-				"MAGIC_ATTACK": {
-					"base_value": 7,
-					"current_value": 7,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"MOVE": {
-					"base_value": 3,
-					"current_value": 3,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"MP": {
-					"base_value": 50,
-					"current_value": 47,
-					"max_value": 47,
-					"min_value": 0
-				},
-				"MP_MAX": {
-					"base_value": 32,
-					"current_value": 32,
-					"max_value": 999,
-					"min_value": 0
-				},
-				"PHYSICAL_ATTACK": {
-					"base_value": 8,
-					"current_value": 8,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"SPEED": {
-					"base_value": 8,
-					"current_value": 8,
-					"max_value": 100,
-					"min_value": 0
-				}
-			},
-			"stats_raw": {
-				"HP_MAX": 2010090.33333333,
-				"MAGIC_ATTACK": 146170.980392157,
-				"MP_MAX": 831391.941176471,
-				"PHYSICAL_ATTACK": 122523.826086957,
-				"SPEED": 137236.277227723
-			},
-			"team_idx": 0,
-			"tile_position": [
-				7.5,
-				2.14285707473755,
-				2.5
-			],
-			"zodiac": "zodiac"
-		},
-		{
-			"ability_slots": [
-				{
-					"ability_slot_name": "Skillset 1",
-					"ability_unique_name": "",
-					"slot_types": [
-						"SKILLSET"
-					]
-				},
-				{
-					"ability_slot_name": "Skillset 2",
-					"ability_unique_name": "",
-					"slot_types": [
-						"SKILLSET"
-					]
-				},
-				{
-					"ability_slot_name": "Reaction",
-					"ability_unique_name": "sunken_state",
-					"slot_types": [
-						"REACTION"
-					]
-				},
-				{
-					"ability_slot_name": "Support",
-					"ability_unique_name": "short_charge",
-					"slot_types": [
-						"SUPPORT"
-					]
-				},
-				{
-					"ability_slot_name": "Movement",
-					"ability_unique_name": "ignore_terrain",
-					"slot_types": [
-						"MOVEMENT"
-					]
-				}
-			],
-			"controller": 1,
-			"display_name": "Tensberger",
-			"equip_slots": [
-				{
-					"equipment_slot_name": "RH",
-					"item_unique_name": "",
-					"slot_types": [
-						"WEAPON",
-						"SHIELD"
-					]
-				},
-				{
-					"equipment_slot_name": "LH",
-					"item_unique_name": "",
-					"slot_types": [
-						"WEAPON",
-						"SHIELD"
-					]
-				},
-				{
-					"equipment_slot_name": "Head",
-					"item_unique_name": "",
-					"slot_types": [
-						"HEADGEAR"
-					]
-				},
-				{
-					"equipment_slot_name": "Body",
-					"item_unique_name": "",
-					"slot_types": [
-						"ARMOR"
-					]
-				},
-				{
-					"equipment_slot_name": "Accesory",
-					"item_unique_name": "",
-					"slot_types": [
-						"ACCESSORY"
-					]
-				}
-			],
-			"facing_direction": "SOUTH",
-			"gender": "MALE",
-			"job_unique_name": "bomb",
-			"level": 40,
-			"palette_id": 0,
-			"primary_weapon_unique_name": "",
-			"spritesheeet_file_name": "BOM.SPR",
-			"stats": {
-				"BRAVE": {
-					"base_value": 50,
-					"current_value": 70,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"CT": {
-					"base_value": 50,
-					"current_value": 25,
-					"max_value": 999,
-					"min_value": 0
-				},
-				"EXP": {
-					"base_value": 50,
-					"current_value": 99,
-					"max_value": 999,
-					"min_value": 0
-				},
-				"FAITH": {
-					"base_value": 50,
-					"current_value": 65,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"HP": {
-					"base_value": 50,
-					"current_value": 182,
-					"max_value": 182,
-					"min_value": 0
-				},
-				"HP_MAX": {
-					"base_value": 182,
-					"current_value": 182,
-					"max_value": 999,
-					"min_value": 0
-				},
-				"JUMP": {
-					"base_value": 3,
-					"current_value": 3,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"LEVEL": {
-					"base_value": 50,
-					"current_value": 40,
-					"max_value": 99,
-					"min_value": 0
-				},
-				"MAGIC_ATTACK": {
-					"base_value": 27,
-					"current_value": 27,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"MOVE": {
-					"base_value": 3,
-					"current_value": 3,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"MP": {
-					"base_value": 50,
-					"current_value": 3,
-					"max_value": 3,
-					"min_value": 0
-				},
-				"MP_MAX": {
-					"base_value": 3,
-					"current_value": 3,
-					"max_value": 999,
-					"min_value": 0
-				},
-				"PHYSICAL_ATTACK": {
-					"base_value": 10,
-					"current_value": 10,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"SPEED": {
-					"base_value": 7,
-					"current_value": 7,
-					"max_value": 100,
-					"min_value": 0
-				}
-			},
-			"stats_raw": {
-				"HP_MAX": 3519264.0,
-				"MAGIC_ATTACK": 491520.0,
-				"MP_MAX": 327676.451612903,
-				"PHYSICAL_ATTACK": 163840.0,
-				"SPEED": 117928.791208791
-			},
-			"team_idx": 0,
-			"tile_position": [
-				4.5,
-				3.2142858505249,
-				1.5
-			],
-			"zodiac": "zodiac"
-		},
-		{
-			"ability_slots": [
-				{
-					"ability_slot_name": "Skillset 1",
-					"ability_unique_name": "",
-					"slot_types": [
-						"SKILLSET"
-					]
-				},
-				{
-					"ability_slot_name": "Skillset 2",
-					"ability_unique_name": "",
-					"slot_types": [
-						"SKILLSET"
-					]
-				},
-				{
-					"ability_slot_name": "Reaction",
-					"ability_unique_name": "damage_split",
-					"slot_types": [
-						"REACTION"
-					]
-				},
-				{
-					"ability_slot_name": "Support",
 					"ability_unique_name": "two_hands",
 					"slot_types": [
 						"SUPPORT"
@@ -813,392 +266,18 @@
 				},
 				{
 					"ability_slot_name": "Movement",
-					"ability_unique_name": "jump+2",
+					"ability_unique_name": "fly",
 					"slot_types": [
 						"MOVEMENT"
 					]
 				}
 			],
 			"controller": 1,
-			"display_name": "Evans",
+			"display_name": "Anios",
 			"equip_slots": [
 				{
 					"equipment_slot_name": "RH",
-					"item_unique_name": "",
-					"slot_types": [
-						"WEAPON",
-						"SHIELD"
-					]
-				},
-				{
-					"equipment_slot_name": "LH",
-					"item_unique_name": "",
-					"slot_types": [
-						"WEAPON",
-						"SHIELD"
-					]
-				},
-				{
-					"equipment_slot_name": "Head",
-					"item_unique_name": "",
-					"slot_types": [
-						"HEADGEAR"
-					]
-				},
-				{
-					"equipment_slot_name": "Body",
-					"item_unique_name": "",
-					"slot_types": [
-						"ARMOR"
-					]
-				},
-				{
-					"equipment_slot_name": "Accesory",
-					"item_unique_name": "",
-					"slot_types": [
-						"ACCESSORY"
-					]
-				}
-			],
-			"facing_direction": "EAST",
-			"gender": "MALE",
-			"job_unique_name": "chocobo",
-			"level": 40,
-			"palette_id": 0,
-			"primary_weapon_unique_name": "",
-			"spritesheeet_file_name": "CYOKO.SPR",
-			"stats": {
-				"BRAVE": {
-					"base_value": 50,
-					"current_value": 70,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"CT": {
-					"base_value": 50,
-					"current_value": 25,
-					"max_value": 999,
-					"min_value": 0
-				},
-				"EXP": {
-					"base_value": 50,
-					"current_value": 99,
-					"max_value": 999,
-					"min_value": 0
-				},
-				"FAITH": {
-					"base_value": 50,
-					"current_value": 65,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"HP": {
-					"base_value": 50,
-					"current_value": 215,
-					"max_value": 215,
-					"min_value": 0
-				},
-				"HP_MAX": {
-					"base_value": 215,
-					"current_value": 215,
-					"max_value": 999,
-					"min_value": 0
-				},
-				"JUMP": {
-					"base_value": 5,
-					"current_value": 5,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"LEVEL": {
-					"base_value": 50,
-					"current_value": 40,
-					"max_value": 99,
-					"min_value": 0
-				},
-				"MAGIC_ATTACK": {
-					"base_value": 28,
-					"current_value": 28,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"MOVE": {
-					"base_value": 6,
-					"current_value": 6,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"MP": {
-					"base_value": 50,
-					"current_value": 20,
-					"max_value": 20,
-					"min_value": 0
-				},
-				"MP_MAX": {
-					"base_value": 20,
-					"current_value": 20,
-					"max_value": 999,
-					"min_value": 0
-				},
-				"PHYSICAL_ATTACK": {
-					"base_value": 10,
-					"current_value": 10,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"SPEED": {
-					"base_value": 9,
-					"current_value": 9,
-					"max_value": 100,
-					"min_value": 0
-				}
-			},
-			"stats_raw": {
-				"HP_MAX": 3263666.77777778,
-				"MAGIC_ATTACK": 491520.0,
-				"MP_MAX": 328817.032258065,
-				"PHYSICAL_ATTACK": 172942.222222222,
-				"SPEED": 125035.789473684
-			},
-			"team_idx": 1,
-			"tile_position": [
-				3.5,
-				3.0,
-				6.5
-			],
-			"zodiac": "zodiac"
-		},
-		{
-			"ability_slots": [
-				{
-					"ability_slot_name": "Skillset 1",
-					"ability_unique_name": "",
-					"slot_types": [
-						"SKILLSET"
-					]
-				},
-				{
-					"ability_slot_name": "Skillset 2",
-					"ability_unique_name": "",
-					"slot_types": [
-						"SKILLSET"
-					]
-				},
-				{
-					"ability_slot_name": "Reaction",
-					"ability_unique_name": "hamedo",
-					"slot_types": [
-						"REACTION"
-					]
-				},
-				{
-					"ability_slot_name": "Support",
-					"ability_unique_name": "gained_jp_up",
-					"slot_types": [
-						"SUPPORT"
-					]
-				},
-				{
-					"ability_slot_name": "Movement",
-					"ability_unique_name": "move_get_exp",
-					"slot_types": [
-						"MOVEMENT"
-					]
-				}
-			],
-			"controller": 1,
-			"display_name": "Ciumei",
-			"equip_slots": [
-				{
-					"equipment_slot_name": "RH",
-					"item_unique_name": "",
-					"slot_types": [
-						"WEAPON",
-						"SHIELD"
-					]
-				},
-				{
-					"equipment_slot_name": "LH",
-					"item_unique_name": "",
-					"slot_types": [
-						"WEAPON",
-						"SHIELD"
-					]
-				},
-				{
-					"equipment_slot_name": "Head",
-					"item_unique_name": "",
-					"slot_types": [
-						"HEADGEAR"
-					]
-				},
-				{
-					"equipment_slot_name": "Body",
-					"item_unique_name": "",
-					"slot_types": [
-						"ARMOR"
-					]
-				},
-				{
-					"equipment_slot_name": "Accesory",
-					"item_unique_name": "",
-					"slot_types": [
-						"ACCESSORY"
-					]
-				}
-			],
-			"facing_direction": "SOUTH",
-			"gender": "MALE",
-			"job_unique_name": "trent",
-			"level": 40,
-			"palette_id": 1,
-			"primary_weapon_unique_name": "",
-			"spritesheeet_file_name": "KI.SPR",
-			"stats": {
-				"BRAVE": {
-					"base_value": 50,
-					"current_value": 70,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"CT": {
-					"base_value": 50,
-					"current_value": 25,
-					"max_value": 999,
-					"min_value": 0
-				},
-				"EXP": {
-					"base_value": 50,
-					"current_value": 99,
-					"max_value": 999,
-					"min_value": 0
-				},
-				"FAITH": {
-					"base_value": 50,
-					"current_value": 65,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"HP": {
-					"base_value": 50,
-					"current_value": 279,
-					"max_value": 279,
-					"min_value": 0
-				},
-				"HP_MAX": {
-					"base_value": 279,
-					"current_value": 279,
-					"max_value": 999,
-					"min_value": 0
-				},
-				"JUMP": {
-					"base_value": 3,
-					"current_value": 3,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"LEVEL": {
-					"base_value": 50,
-					"current_value": 40,
-					"max_value": 99,
-					"min_value": 0
-				},
-				"MAGIC_ATTACK": {
-					"base_value": 28,
-					"current_value": 28,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"MOVE": {
-					"base_value": 3,
-					"current_value": 3,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"MP": {
-					"base_value": 50,
-					"current_value": 36,
-					"max_value": 36,
-					"min_value": 0
-				},
-				"MP_MAX": {
-					"base_value": 36,
-					"current_value": 36,
-					"max_value": 999,
-					"min_value": 0
-				},
-				"PHYSICAL_ATTACK": {
-					"base_value": 8,
-					"current_value": 8,
-					"max_value": 100,
-					"min_value": 0
-				},
-				"SPEED": {
-					"base_value": 6,
-					"current_value": 6,
-					"max_value": 100,
-					"min_value": 0
-				}
-			},
-			"stats_raw": {
-				"HP_MAX": 3522834.0,
-				"MAGIC_ATTACK": 491520.0,
-				"MP_MAX": 328945.290322581,
-				"PHYSICAL_ATTACK": 163840.0,
-				"SPEED": 117928.791208791
-			},
-			"team_idx": 1,
-			"tile_position": [
-				7.5,
-				1.28571426868439,
-				10.5
-			],
-			"zodiac": "zodiac"
-		},
-		{
-			"ability_slots": [
-				{
-					"ability_slot_name": "Skillset 1",
-					"ability_unique_name": "",
-					"slot_types": [
-						"SKILLSET"
-					]
-				},
-				{
-					"ability_slot_name": "Skillset 2",
-					"ability_unique_name": "",
-					"slot_types": [
-						"SKILLSET"
-					]
-				},
-				{
-					"ability_slot_name": "Reaction",
-					"ability_unique_name": "finger_guard",
-					"slot_types": [
-						"REACTION"
-					]
-				},
-				{
-					"ability_slot_name": "Support",
-					"ability_unique_name": "equip_spear",
-					"slot_types": [
-						"SUPPORT"
-					]
-				},
-				{
-					"ability_slot_name": "Movement",
-					"ability_unique_name": "jump+3",
-					"slot_types": [
-						"MOVEMENT"
-					]
-				}
-			],
-			"controller": 1,
-			"display_name": "Ptnos",
-			"equip_slots": [
-				{
-					"equipment_slot_name": "RH",
-					"item_unique_name": "rune_blade",
+					"item_unique_name": "gold_staff",
 					"slot_types": [
 						"WEAPON",
 						"SHIELD"
@@ -1228,7 +307,7 @@
 				},
 				{
 					"equipment_slot_name": "Accesory",
-					"item_unique_name": "defense_armlet",
+					"item_unique_name": "rubber_shoes",
 					"slot_types": [
 						"ACCESSORY"
 					]
@@ -1236,11 +315,11 @@
 			],
 			"facing_direction": "EAST",
 			"gender": "MALE",
-			"job_unique_name": "squire_04",
+			"job_unique_name": "time_mage_02",
 			"level": 40,
-			"palette_id": 0,
-			"primary_weapon_unique_name": "rune_blade",
-			"spritesheeet_file_name": "DILY.SPR",
+			"palette_id": 4,
+			"primary_weapon_unique_name": "gold_staff",
+			"spritesheeet_file_name": "TOKI_W.SPR",
 			"stats": {
 				"BRAVE": {
 					"base_value": 50,
@@ -1268,13 +347,13 @@
 				},
 				"HP": {
 					"base_value": 50,
-					"current_value": 333,
-					"max_value": 333,
+					"current_value": 253,
+					"max_value": 253,
 					"min_value": 0
 				},
 				"HP_MAX": {
-					"base_value": 170,
-					"current_value": 170,
+					"base_value": 90,
+					"current_value": 90,
 					"max_value": 999,
 					"min_value": 0
 				},
@@ -1291,32 +370,32 @@
 					"min_value": 0
 				},
 				"MAGIC_ATTACK": {
-					"base_value": 8,
-					"current_value": 8,
+					"base_value": 11,
+					"current_value": 11,
 					"max_value": 100,
 					"min_value": 0
 				},
 				"MOVE": {
-					"base_value": 4,
-					"current_value": 4,
+					"base_value": 3,
+					"current_value": 3,
 					"max_value": 100,
 					"min_value": 0
 				},
 				"MP": {
 					"base_value": 50,
-					"current_value": 130,
-					"max_value": 130,
+					"current_value": 148,
+					"max_value": 148,
 					"min_value": 0
 				},
 				"MP_MAX": {
-					"base_value": 65,
-					"current_value": 65,
+					"base_value": 83,
+					"current_value": 83,
 					"max_value": 999,
 					"min_value": 0
 				},
 				"PHYSICAL_ATTACK": {
-					"base_value": 8,
-					"current_value": 8,
+					"base_value": 3,
+					"current_value": 3,
 					"max_value": 100,
 					"min_value": 0
 				},
@@ -1328,17 +407,17 @@
 				}
 			},
 			"stats_raw": {
-				"HP_MAX": 2145950.18181818,
+				"HP_MAX": 1983692.15384615,
 				"MAGIC_ATTACK": 146170.980392157,
-				"MP_MAX": 1078462.66666667,
-				"PHYSICAL_ATTACK": 116936.784313725,
+				"MP_MAX": 1145640.81818182,
+				"PHYSICAL_ATTACK": 105254.787878788,
 				"SPEED": 137236.277227723
 			},
-			"team_idx": 1,
+			"team_idx": 0,
 			"tile_position": [
-				3.5,
-				3.2142858505249,
-				1.5
+				5.5,
+				4.2857141494751,
+				10.5
 			],
 			"zodiac": "zodiac"
 		},
@@ -1367,21 +446,21 @@
 				},
 				{
 					"ability_slot_name": "Support",
-					"ability_unique_name": "maintenance",
+					"ability_unique_name": "concentrate",
 					"slot_types": [
 						"SUPPORT"
 					]
 				},
 				{
 					"ability_slot_name": "Movement",
-					"ability_unique_name": "walk_on_water",
+					"ability_unique_name": "move_get_mp",
 					"slot_types": [
 						"MOVEMENT"
 					]
 				}
 			],
 			"controller": 1,
-			"display_name": "Hannibal",
+			"display_name": "Corey",
 			"equip_slots": [
 				{
 					"equipment_slot_name": "RH",
@@ -1423,11 +502,11 @@
 			],
 			"facing_direction": "NORTH",
 			"gender": "MALE",
-			"job_unique_name": "porky",
+			"job_unique_name": "dark_behemoth",
 			"level": 40,
-			"palette_id": 1,
+			"palette_id": 2,
 			"primary_weapon_unique_name": "",
-			"spritesheeet_file_name": "URI.SPR",
+			"spritesheeet_file_name": "BEHI.SPR",
 			"stats": {
 				"BRAVE": {
 					"base_value": 50,
@@ -1455,13 +534,13 @@
 				},
 				"HP": {
 					"base_value": 50,
-					"current_value": 145,
-					"max_value": 145,
+					"current_value": 435,
+					"max_value": 435,
 					"min_value": 0
 				},
 				"HP_MAX": {
-					"base_value": 145,
-					"current_value": 145,
+					"base_value": 435,
+					"current_value": 435,
 					"max_value": 999,
 					"min_value": 0
 				},
@@ -1478,8 +557,1130 @@
 					"min_value": 0
 				},
 				"MAGIC_ATTACK": {
-					"base_value": 33,
-					"current_value": 33,
+					"base_value": 31,
+					"current_value": 31,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"MOVE": {
+					"base_value": 4,
+					"current_value": 4,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"MP": {
+					"base_value": 50,
+					"current_value": 30,
+					"max_value": 30,
+					"min_value": 0
+				},
+				"MP_MAX": {
+					"base_value": 30,
+					"current_value": 30,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"PHYSICAL_ATTACK": {
+					"base_value": 21,
+					"current_value": 21,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"SPEED": {
+					"base_value": 9,
+					"current_value": 9,
+					"max_value": 100,
+					"min_value": 0
+				}
+			},
+			"stats_raw": {
+				"HP_MAX": 4431962.0,
+				"MAGIC_ATTACK": 550034.285714286,
+				"MP_MAX": 312681.709677419,
+				"PHYSICAL_ATTACK": 175542.857142857,
+				"SPEED": 120022.325581395
+			},
+			"team_idx": 0,
+			"tile_position": [
+				4.5,
+				7.7142858505249,
+				5.5
+			],
+			"zodiac": "zodiac"
+		},
+		{
+			"ability_slots": [
+				{
+					"ability_slot_name": "Skillset 1",
+					"ability_unique_name": "",
+					"slot_types": [
+						"SKILLSET"
+					]
+				},
+				{
+					"ability_slot_name": "Skillset 2",
+					"ability_unique_name": "",
+					"slot_types": [
+						"SKILLSET"
+					]
+				},
+				{
+					"ability_slot_name": "Reaction",
+					"ability_unique_name": "ma_save",
+					"slot_types": [
+						"REACTION"
+					]
+				},
+				{
+					"ability_slot_name": "Support",
+					"ability_unique_name": "defense_up",
+					"slot_types": [
+						"SUPPORT"
+					]
+				},
+				{
+					"ability_slot_name": "Movement",
+					"ability_unique_name": "teleport",
+					"slot_types": [
+						"MOVEMENT"
+					]
+				}
+			],
+			"controller": 1,
+			"display_name": "Dreyfuss",
+			"equip_slots": [
+				{
+					"equipment_slot_name": "RH",
+					"item_unique_name": "",
+					"slot_types": [
+						"WEAPON",
+						"SHIELD"
+					]
+				},
+				{
+					"equipment_slot_name": "LH",
+					"item_unique_name": "",
+					"slot_types": [
+						"WEAPON",
+						"SHIELD"
+					]
+				},
+				{
+					"equipment_slot_name": "Head",
+					"item_unique_name": "",
+					"slot_types": [
+						"HEADGEAR"
+					]
+				},
+				{
+					"equipment_slot_name": "Body",
+					"item_unique_name": "",
+					"slot_types": [
+						"ARMOR"
+					]
+				},
+				{
+					"equipment_slot_name": "Accesory",
+					"item_unique_name": "",
+					"slot_types": [
+						"ACCESSORY"
+					]
+				}
+			],
+			"facing_direction": "NORTH",
+			"gender": "MALE",
+			"job_unique_name": "duke",
+			"level": 40,
+			"palette_id": 0,
+			"primary_weapon_unique_name": "",
+			"spritesheeet_file_name": "RAGU.SPR",
+			"stats": {
+				"BRAVE": {
+					"base_value": 50,
+					"current_value": 70,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"CT": {
+					"base_value": 50,
+					"current_value": 25,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"EXP": {
+					"base_value": 50,
+					"current_value": 99,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"FAITH": {
+					"base_value": 50,
+					"current_value": 65,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"HP": {
+					"base_value": 50,
+					"current_value": 132,
+					"max_value": 132,
+					"min_value": 0
+				},
+				"HP_MAX": {
+					"base_value": 132,
+					"current_value": 132,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"JUMP": {
+					"base_value": 3,
+					"current_value": 3,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"LEVEL": {
+					"base_value": 50,
+					"current_value": 40,
+					"max_value": 99,
+					"min_value": 0
+				},
+				"MAGIC_ATTACK": {
+					"base_value": 7,
+					"current_value": 7,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"MOVE": {
+					"base_value": 3,
+					"current_value": 3,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"MP": {
+					"base_value": 50,
+					"current_value": 64,
+					"max_value": 64,
+					"min_value": 0
+				},
+				"MP_MAX": {
+					"base_value": 64,
+					"current_value": 64,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"PHYSICAL_ATTACK": {
+					"base_value": 8,
+					"current_value": 8,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"SPEED": {
+					"base_value": 8,
+					"current_value": 8,
+					"max_value": 100,
+					"min_value": 0
+				}
+			},
+			"stats_raw": {
+				"HP_MAX": 2171173.33333333,
+				"MAGIC_ATTACK": 116936.784313725,
+				"MP_MAX": 1050781.33333333,
+				"PHYSICAL_ATTACK": 146170.980392157,
+				"SPEED": 137236.277227723
+			},
+			"team_idx": 0,
+			"tile_position": [
+				1.5,
+				0.428571432828903,
+				4.5
+			],
+			"zodiac": "zodiac"
+		},
+		{
+			"ability_slots": [
+				{
+					"ability_slot_name": "Skillset 1",
+					"ability_unique_name": "",
+					"slot_types": [
+						"SKILLSET"
+					]
+				},
+				{
+					"ability_slot_name": "Skillset 2",
+					"ability_unique_name": "",
+					"slot_types": [
+						"SKILLSET"
+					]
+				},
+				{
+					"ability_slot_name": "Reaction",
+					"ability_unique_name": "ma_save",
+					"slot_types": [
+						"REACTION"
+					]
+				},
+				{
+					"ability_slot_name": "Support",
+					"ability_unique_name": "equip_crossbow",
+					"slot_types": [
+						"SUPPORT"
+					]
+				},
+				{
+					"ability_slot_name": "Movement",
+					"ability_unique_name": "teleport",
+					"slot_types": [
+						"MOVEMENT"
+					]
+				}
+			],
+			"controller": 1,
+			"display_name": "Eniepeu",
+			"equip_slots": [
+				{
+					"equipment_slot_name": "RH",
+					"item_unique_name": "",
+					"slot_types": [
+						"WEAPON",
+						"SHIELD"
+					]
+				},
+				{
+					"equipment_slot_name": "LH",
+					"item_unique_name": "",
+					"slot_types": [
+						"WEAPON",
+						"SHIELD"
+					]
+				},
+				{
+					"equipment_slot_name": "Head",
+					"item_unique_name": "",
+					"slot_types": [
+						"HEADGEAR"
+					]
+				},
+				{
+					"equipment_slot_name": "Body",
+					"item_unique_name": "",
+					"slot_types": [
+						"ARMOR"
+					]
+				},
+				{
+					"equipment_slot_name": "Accesory",
+					"item_unique_name": "",
+					"slot_types": [
+						"ACCESSORY"
+					]
+				}
+			],
+			"facing_direction": "NORTH",
+			"gender": "MALE",
+			"job_unique_name": "none",
+			"level": 40,
+			"palette_id": 0,
+			"primary_weapon_unique_name": "",
+			"spritesheeet_file_name": "10M.SPR",
+			"stats": {
+				"BRAVE": {
+					"base_value": 50,
+					"current_value": 70,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"CT": {
+					"base_value": 50,
+					"current_value": 25,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"EXP": {
+					"base_value": 50,
+					"current_value": 99,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"FAITH": {
+					"base_value": 50,
+					"current_value": 65,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"HP": {
+					"base_value": 50,
+					"current_value": 157,
+					"max_value": 157,
+					"min_value": 0
+				},
+				"HP_MAX": {
+					"base_value": 157,
+					"current_value": 157,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"JUMP": {
+					"base_value": 0,
+					"current_value": 0,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"LEVEL": {
+					"base_value": 50,
+					"current_value": 40,
+					"max_value": 99,
+					"min_value": 0
+				},
+				"MAGIC_ATTACK": {
+					"base_value": 8,
+					"current_value": 8,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"MOVE": {
+					"base_value": 0,
+					"current_value": 0,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"MP": {
+					"base_value": 50,
+					"current_value": 38,
+					"max_value": 38,
+					"min_value": 0
+				},
+				"MP_MAX": {
+					"base_value": 38,
+					"current_value": 38,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"PHYSICAL_ATTACK": {
+					"base_value": 8,
+					"current_value": 8,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"SPEED": {
+					"base_value": 6,
+					"current_value": 6,
+					"max_value": 100,
+					"min_value": 0
+				}
+			},
+			"stats_raw": {
+				"HP_MAX": 2581410.0,
+				"MAGIC_ATTACK": 146170.980392157,
+				"MP_MAX": 626444.0,
+				"PHYSICAL_ATTACK": 146170.980392157,
+				"SPEED": 114363.564356436
+			},
+			"team_idx": 1,
+			"tile_position": [
+				2.5,
+				0.428571432828903,
+				1.5
+			],
+			"zodiac": "zodiac"
+		},
+		{
+			"ability_slots": [
+				{
+					"ability_slot_name": "Skillset 1",
+					"ability_unique_name": "",
+					"slot_types": [
+						"SKILLSET"
+					]
+				},
+				{
+					"ability_slot_name": "Skillset 2",
+					"ability_unique_name": "",
+					"slot_types": [
+						"SKILLSET"
+					]
+				},
+				{
+					"ability_slot_name": "Reaction",
+					"ability_unique_name": "counter_tackle",
+					"slot_types": [
+						"REACTION"
+					]
+				},
+				{
+					"ability_slot_name": "Support",
+					"ability_unique_name": "two_swords",
+					"slot_types": [
+						"SUPPORT"
+					]
+				},
+				{
+					"ability_slot_name": "Movement",
+					"ability_unique_name": "fly",
+					"slot_types": [
+						"MOVEMENT"
+					]
+				}
+			],
+			"controller": 1,
+			"display_name": "Tymothi",
+			"equip_slots": [
+				{
+					"equipment_slot_name": "RH",
+					"item_unique_name": "",
+					"slot_types": [
+						"WEAPON",
+						"SHIELD"
+					]
+				},
+				{
+					"equipment_slot_name": "LH",
+					"item_unique_name": "",
+					"slot_types": [
+						"WEAPON",
+						"SHIELD"
+					]
+				},
+				{
+					"equipment_slot_name": "Head",
+					"item_unique_name": "",
+					"slot_types": [
+						"HEADGEAR"
+					]
+				},
+				{
+					"equipment_slot_name": "Body",
+					"item_unique_name": "",
+					"slot_types": [
+						"ARMOR"
+					]
+				},
+				{
+					"equipment_slot_name": "Accesory",
+					"item_unique_name": "",
+					"slot_types": [
+						"ACCESSORY"
+					]
+				}
+			],
+			"facing_direction": "NORTH",
+			"gender": "MALE",
+			"job_unique_name": "duke",
+			"level": 40,
+			"palette_id": 0,
+			"primary_weapon_unique_name": "",
+			"spritesheeet_file_name": "RAGU.SPR",
+			"stats": {
+				"BRAVE": {
+					"base_value": 50,
+					"current_value": 70,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"CT": {
+					"base_value": 50,
+					"current_value": 25,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"EXP": {
+					"base_value": 50,
+					"current_value": 99,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"FAITH": {
+					"base_value": 50,
+					"current_value": 65,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"HP": {
+					"base_value": 50,
+					"current_value": 127,
+					"max_value": 127,
+					"min_value": 0
+				},
+				"HP_MAX": {
+					"base_value": 127,
+					"current_value": 127,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"JUMP": {
+					"base_value": 3,
+					"current_value": 3,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"LEVEL": {
+					"base_value": 50,
+					"current_value": 40,
+					"max_value": 99,
+					"min_value": 0
+				},
+				"MAGIC_ATTACK": {
+					"base_value": 8,
+					"current_value": 8,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"MOVE": {
+					"base_value": 3,
+					"current_value": 3,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"MP": {
+					"base_value": 50,
+					"current_value": 68,
+					"max_value": 68,
+					"min_value": 0
+				},
+				"MP_MAX": {
+					"base_value": 68,
+					"current_value": 68,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"PHYSICAL_ATTACK": {
+					"base_value": 7,
+					"current_value": 7,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"SPEED": {
+					"base_value": 8,
+					"current_value": 8,
+					"max_value": 100,
+					"min_value": 0
+				}
+			},
+			"stats_raw": {
+				"HP_MAX": 2089711.0,
+				"MAGIC_ATTACK": 146170.980392157,
+				"MP_MAX": 1119811.33333333,
+				"PHYSICAL_ATTACK": 116936.784313725,
+				"SPEED": 137236.277227723
+			},
+			"team_idx": 1,
+			"tile_position": [
+				1.5,
+				0.857142865657806,
+				0.5
+			],
+			"zodiac": "zodiac"
+		},
+		{
+			"ability_slots": [
+				{
+					"ability_slot_name": "Skillset 1",
+					"ability_unique_name": "",
+					"slot_types": [
+						"SKILLSET"
+					]
+				},
+				{
+					"ability_slot_name": "Skillset 2",
+					"ability_unique_name": "",
+					"slot_types": [
+						"SKILLSET"
+					]
+				},
+				{
+					"ability_slot_name": "Reaction",
+					"ability_unique_name": "auto_potion",
+					"slot_types": [
+						"REACTION"
+					]
+				},
+				{
+					"ability_slot_name": "Support",
+					"ability_unique_name": "maintenance",
+					"slot_types": [
+						"SUPPORT"
+					]
+				},
+				{
+					"ability_slot_name": "Movement",
+					"ability_unique_name": "fly",
+					"slot_types": [
+						"MOVEMENT"
+					]
+				}
+			],
+			"controller": 1,
+			"display_name": "Bonas",
+			"equip_slots": [
+				{
+					"equipment_slot_name": "RH",
+					"item_unique_name": "octagon_rod",
+					"slot_types": [
+						"WEAPON",
+						"SHIELD"
+					]
+				},
+				{
+					"equipment_slot_name": "LH",
+					"item_unique_name": "",
+					"slot_types": [
+						"WEAPON",
+						"SHIELD"
+					]
+				},
+				{
+					"equipment_slot_name": "Head",
+					"item_unique_name": "flash_hat",
+					"slot_types": [
+						"HEADGEAR"
+					]
+				},
+				{
+					"equipment_slot_name": "Body",
+					"item_unique_name": "light_robe",
+					"slot_types": [
+						"ARMOR"
+					]
+				},
+				{
+					"equipment_slot_name": "Accesory",
+					"item_unique_name": "power_wrist",
+					"slot_types": [
+						"ACCESSORY"
+					]
+				}
+			],
+			"facing_direction": "SOUTH",
+			"gender": "MALE",
+			"job_unique_name": "calculator",
+			"level": 40,
+			"palette_id": 4,
+			"primary_weapon_unique_name": "octagon_rod",
+			"spritesheeet_file_name": "SAN_W.SPR",
+			"stats": {
+				"BRAVE": {
+					"base_value": 50,
+					"current_value": 70,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"CT": {
+					"base_value": 50,
+					"current_value": 25,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"EXP": {
+					"base_value": 50,
+					"current_value": 99,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"FAITH": {
+					"base_value": 50,
+					"current_value": 65,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"HP": {
+					"base_value": 50,
+					"current_value": 230,
+					"max_value": 230,
+					"min_value": 0
+				},
+				"HP_MAX": {
+					"base_value": 67,
+					"current_value": 67,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"JUMP": {
+					"base_value": 3,
+					"current_value": 3,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"LEVEL": {
+					"base_value": 50,
+					"current_value": 40,
+					"max_value": 99,
+					"min_value": 0
+				},
+				"MAGIC_ATTACK": {
+					"base_value": 6,
+					"current_value": 6,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"MOVE": {
+					"base_value": 3,
+					"current_value": 3,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"MP": {
+					"base_value": 50,
+					"current_value": 122,
+					"max_value": 122,
+					"min_value": 0
+				},
+				"MP_MAX": {
+					"base_value": 57,
+					"current_value": 57,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"PHYSICAL_ATTACK": {
+					"base_value": 3,
+					"current_value": 3,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"SPEED": {
+					"base_value": 4,
+					"current_value": 4,
+					"max_value": 100,
+					"min_value": 0
+				}
+			},
+			"stats_raw": {
+				"HP_MAX": 1694773.66666667,
+				"MAGIC_ATTACK": 146170.980392157,
+				"MP_MAX": 1169527.36363636,
+				"PHYSICAL_ATTACK": 102457.690140845,
+				"SPEED": 137236.277227723
+			},
+			"team_idx": 1,
+			"tile_position": [
+				2.5,
+				4.7142858505249,
+				10.5
+			],
+			"zodiac": "zodiac"
+		},
+		{
+			"ability_slots": [
+				{
+					"ability_slot_name": "Skillset 1",
+					"ability_unique_name": "",
+					"slot_types": [
+						"SKILLSET"
+					]
+				},
+				{
+					"ability_slot_name": "Skillset 2",
+					"ability_unique_name": "",
+					"slot_types": [
+						"SKILLSET"
+					]
+				},
+				{
+					"ability_slot_name": "Reaction",
+					"ability_unique_name": "counter_magic",
+					"slot_types": [
+						"REACTION"
+					]
+				},
+				{
+					"ability_slot_name": "Support",
+					"ability_unique_name": "gained_jp_up",
+					"slot_types": [
+						"SUPPORT"
+					]
+				},
+				{
+					"ability_slot_name": "Movement",
+					"ability_unique_name": "float_02",
+					"slot_types": [
+						"MOVEMENT"
+					]
+				}
+			],
+			"controller": 1,
+			"display_name": "Marls",
+			"equip_slots": [
+				{
+					"equipment_slot_name": "RH",
+					"item_unique_name": "octagon_rod",
+					"slot_types": [
+						"WEAPON",
+						"SHIELD"
+					]
+				},
+				{
+					"equipment_slot_name": "LH",
+					"item_unique_name": "",
+					"slot_types": [
+						"WEAPON",
+						"SHIELD"
+					]
+				},
+				{
+					"equipment_slot_name": "Head",
+					"item_unique_name": "flash_hat",
+					"slot_types": [
+						"HEADGEAR"
+					]
+				},
+				{
+					"equipment_slot_name": "Body",
+					"item_unique_name": "light_robe",
+					"slot_types": [
+						"ARMOR"
+					]
+				},
+				{
+					"equipment_slot_name": "Accesory",
+					"item_unique_name": "magic_ring",
+					"slot_types": [
+						"ACCESSORY"
+					]
+				}
+			],
+			"facing_direction": "SOUTH",
+			"gender": "MALE",
+			"job_unique_name": "heaven_knight_02",
+			"level": 40,
+			"palette_id": 0,
+			"primary_weapon_unique_name": "octagon_rod",
+			"spritesheeet_file_name": "H79.SPR",
+			"stats": {
+				"BRAVE": {
+					"base_value": 50,
+					"current_value": 70,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"CT": {
+					"base_value": 50,
+					"current_value": 25,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"EXP": {
+					"base_value": 50,
+					"current_value": 99,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"FAITH": {
+					"base_value": 50,
+					"current_value": 65,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"HP": {
+					"base_value": 50,
+					"current_value": 288,
+					"max_value": 288,
+					"min_value": 0
+				},
+				"HP_MAX": {
+					"base_value": 125,
+					"current_value": 125,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"JUMP": {
+					"base_value": 3,
+					"current_value": 3,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"LEVEL": {
+					"base_value": 50,
+					"current_value": 40,
+					"max_value": 99,
+					"min_value": 0
+				},
+				"MAGIC_ATTACK": {
+					"base_value": 8,
+					"current_value": 8,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"MOVE": {
+					"base_value": 3,
+					"current_value": 3,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"MP": {
+					"base_value": 50,
+					"current_value": 130,
+					"max_value": 130,
+					"min_value": 0
+				},
+				"MP_MAX": {
+					"base_value": 65,
+					"current_value": 65,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"PHYSICAL_ATTACK": {
+					"base_value": 7,
+					"current_value": 7,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"SPEED": {
+					"base_value": 9,
+					"current_value": 9,
+					"max_value": 100,
+					"min_value": 0
+				}
+			},
+			"stats_raw": {
+				"HP_MAX": 2051231.0,
+				"MAGIC_ATTACK": 146170.980392157,
+				"MP_MAX": 1069952.0,
+				"PHYSICAL_ATTACK": 116936.784313725,
+				"SPEED": 137236.277227723
+			},
+			"team_idx": 1,
+			"tile_position": [
+				4.5,
+				8.14285755157471,
+				8.5
+			],
+			"zodiac": "zodiac"
+		},
+		{
+			"ability_slots": [
+				{
+					"ability_slot_name": "Skillset 1",
+					"ability_unique_name": "",
+					"slot_types": [
+						"SKILLSET"
+					]
+				},
+				{
+					"ability_slot_name": "Skillset 2",
+					"ability_unique_name": "",
+					"slot_types": [
+						"SKILLSET"
+					]
+				},
+				{
+					"ability_slot_name": "Reaction",
+					"ability_unique_name": "reflect_02",
+					"slot_types": [
+						"REACTION"
+					]
+				},
+				{
+					"ability_slot_name": "Support",
+					"ability_unique_name": "equip_armor",
+					"slot_types": [
+						"SUPPORT"
+					]
+				},
+				{
+					"ability_slot_name": "Movement",
+					"ability_unique_name": "cant_enter_depth",
+					"slot_types": [
+						"MOVEMENT"
+					]
+				}
+			],
+			"controller": 1,
+			"display_name": "Marls",
+			"equip_slots": [
+				{
+					"equipment_slot_name": "RH",
+					"item_unique_name": "",
+					"slot_types": [
+						"WEAPON",
+						"SHIELD"
+					]
+				},
+				{
+					"equipment_slot_name": "LH",
+					"item_unique_name": "",
+					"slot_types": [
+						"WEAPON",
+						"SHIELD"
+					]
+				},
+				{
+					"equipment_slot_name": "Head",
+					"item_unique_name": "",
+					"slot_types": [
+						"HEADGEAR"
+					]
+				},
+				{
+					"equipment_slot_name": "Body",
+					"item_unique_name": "",
+					"slot_types": [
+						"ARMOR"
+					]
+				},
+				{
+					"equipment_slot_name": "Accesory",
+					"item_unique_name": "",
+					"slot_types": [
+						"ACCESSORY"
+					]
+				}
+			],
+			"facing_direction": "EAST",
+			"gender": "MALE",
+			"job_unique_name": "bone_snatch",
+			"level": 40,
+			"palette_id": 1,
+			"primary_weapon_unique_name": "",
+			"spritesheeet_file_name": "SUKERU.SPR",
+			"stats": {
+				"BRAVE": {
+					"base_value": 50,
+					"current_value": 70,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"CT": {
+					"base_value": 50,
+					"current_value": 25,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"EXP": {
+					"base_value": 50,
+					"current_value": 99,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"FAITH": {
+					"base_value": 50,
+					"current_value": 65,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"HP": {
+					"base_value": 50,
+					"current_value": 244,
+					"max_value": 244,
+					"min_value": 0
+				},
+				"HP_MAX": {
+					"base_value": 244,
+					"current_value": 244,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"JUMP": {
+					"base_value": 4,
+					"current_value": 4,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"LEVEL": {
+					"base_value": 50,
+					"current_value": 40,
+					"max_value": 99,
+					"min_value": 0
+				},
+				"MAGIC_ATTACK": {
+					"base_value": 26,
+					"current_value": 26,
 					"max_value": 100,
 					"min_value": 0
 				},
@@ -1502,30 +1703,1339 @@
 					"min_value": 0
 				},
 				"PHYSICAL_ATTACK": {
+					"base_value": 12,
+					"current_value": 12,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"SPEED": {
+					"base_value": 7,
+					"current_value": 7,
+					"max_value": 100,
+					"min_value": 0
+				}
+			},
+			"stats_raw": {
+				"HP_MAX": 4443385.33333333,
+				"MAGIC_ATTACK": 491520.0,
+				"MP_MAX": 331247.064516129,
+				"PHYSICAL_ATTACK": 163840.0,
+				"SPEED": 120022.325581395
+			},
+			"team_idx": 0,
+			"tile_position": [
+				2.5,
+				2.57142853736877,
+				0.5
+			],
+			"zodiac": "zodiac"
+		},
+		{
+			"ability_slots": [
+				{
+					"ability_slot_name": "Skillset 1",
+					"ability_unique_name": "",
+					"slot_types": [
+						"SKILLSET"
+					]
+				},
+				{
+					"ability_slot_name": "Skillset 2",
+					"ability_unique_name": "",
+					"slot_types": [
+						"SKILLSET"
+					]
+				},
+				{
+					"ability_slot_name": "Reaction",
+					"ability_unique_name": "blade_grasp",
+					"slot_types": [
+						"REACTION"
+					]
+				},
+				{
+					"ability_slot_name": "Support",
+					"ability_unique_name": "two_hands",
+					"slot_types": [
+						"SUPPORT"
+					]
+				},
+				{
+					"ability_slot_name": "Movement",
+					"ability_unique_name": "fly",
+					"slot_types": [
+						"MOVEMENT"
+					]
+				}
+			],
+			"controller": 1,
+			"display_name": "Anios",
+			"equip_slots": [
+				{
+					"equipment_slot_name": "RH",
+					"item_unique_name": "gold_staff",
+					"slot_types": [
+						"WEAPON",
+						"SHIELD"
+					]
+				},
+				{
+					"equipment_slot_name": "LH",
+					"item_unique_name": "",
+					"slot_types": [
+						"WEAPON",
+						"SHIELD"
+					]
+				},
+				{
+					"equipment_slot_name": "Head",
+					"item_unique_name": "flash_hat",
+					"slot_types": [
+						"HEADGEAR"
+					]
+				},
+				{
+					"equipment_slot_name": "Body",
+					"item_unique_name": "light_robe",
+					"slot_types": [
+						"ARMOR"
+					]
+				},
+				{
+					"equipment_slot_name": "Accesory",
+					"item_unique_name": "rubber_shoes",
+					"slot_types": [
+						"ACCESSORY"
+					]
+				}
+			],
+			"facing_direction": "EAST",
+			"gender": "MALE",
+			"job_unique_name": "time_mage_02",
+			"level": 40,
+			"palette_id": 4,
+			"primary_weapon_unique_name": "gold_staff",
+			"spritesheeet_file_name": "TOKI_W.SPR",
+			"stats": {
+				"BRAVE": {
+					"base_value": 50,
+					"current_value": 70,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"CT": {
+					"base_value": 50,
+					"current_value": 25,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"EXP": {
+					"base_value": 50,
+					"current_value": 99,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"FAITH": {
+					"base_value": 50,
+					"current_value": 65,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"HP": {
+					"base_value": 50,
+					"current_value": 253,
+					"max_value": 253,
+					"min_value": 0
+				},
+				"HP_MAX": {
+					"base_value": 90,
+					"current_value": 90,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"JUMP": {
+					"base_value": 3,
+					"current_value": 3,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"LEVEL": {
+					"base_value": 50,
+					"current_value": 40,
+					"max_value": 99,
+					"min_value": 0
+				},
+				"MAGIC_ATTACK": {
+					"base_value": 11,
+					"current_value": 11,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"MOVE": {
+					"base_value": 3,
+					"current_value": 3,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"MP": {
+					"base_value": 50,
+					"current_value": 148,
+					"max_value": 148,
+					"min_value": 0
+				},
+				"MP_MAX": {
+					"base_value": 83,
+					"current_value": 83,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"PHYSICAL_ATTACK": {
+					"base_value": 3,
+					"current_value": 3,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"SPEED": {
+					"base_value": 8,
+					"current_value": 8,
+					"max_value": 100,
+					"min_value": 0
+				}
+			},
+			"stats_raw": {
+				"HP_MAX": 1983692.15384615,
+				"MAGIC_ATTACK": 146170.980392157,
+				"MP_MAX": 1145640.81818182,
+				"PHYSICAL_ATTACK": 105254.787878788,
+				"SPEED": 137236.277227723
+			},
+			"team_idx": 0,
+			"tile_position": [
+				5.5,
+				3.42857146263123,
+				9.5
+			],
+			"zodiac": "zodiac"
+		},
+		{
+			"ability_slots": [
+				{
+					"ability_slot_name": "Skillset 1",
+					"ability_unique_name": "",
+					"slot_types": [
+						"SKILLSET"
+					]
+				},
+				{
+					"ability_slot_name": "Skillset 2",
+					"ability_unique_name": "",
+					"slot_types": [
+						"SKILLSET"
+					]
+				},
+				{
+					"ability_slot_name": "Reaction",
+					"ability_unique_name": "gilgame_heart",
+					"slot_types": [
+						"REACTION"
+					]
+				},
+				{
+					"ability_slot_name": "Support",
+					"ability_unique_name": "concentrate",
+					"slot_types": [
+						"SUPPORT"
+					]
+				},
+				{
+					"ability_slot_name": "Movement",
+					"ability_unique_name": "move_get_mp",
+					"slot_types": [
+						"MOVEMENT"
+					]
+				}
+			],
+			"controller": 1,
+			"display_name": "Corey",
+			"equip_slots": [
+				{
+					"equipment_slot_name": "RH",
+					"item_unique_name": "",
+					"slot_types": [
+						"WEAPON",
+						"SHIELD"
+					]
+				},
+				{
+					"equipment_slot_name": "LH",
+					"item_unique_name": "",
+					"slot_types": [
+						"WEAPON",
+						"SHIELD"
+					]
+				},
+				{
+					"equipment_slot_name": "Head",
+					"item_unique_name": "",
+					"slot_types": [
+						"HEADGEAR"
+					]
+				},
+				{
+					"equipment_slot_name": "Body",
+					"item_unique_name": "",
+					"slot_types": [
+						"ARMOR"
+					]
+				},
+				{
+					"equipment_slot_name": "Accesory",
+					"item_unique_name": "",
+					"slot_types": [
+						"ACCESSORY"
+					]
+				}
+			],
+			"facing_direction": "NORTH",
+			"gender": "MALE",
+			"job_unique_name": "dark_behemoth",
+			"level": 40,
+			"palette_id": 2,
+			"primary_weapon_unique_name": "",
+			"spritesheeet_file_name": "BEHI.SPR",
+			"stats": {
+				"BRAVE": {
+					"base_value": 50,
+					"current_value": 70,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"CT": {
+					"base_value": 50,
+					"current_value": 25,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"EXP": {
+					"base_value": 50,
+					"current_value": 99,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"FAITH": {
+					"base_value": 50,
+					"current_value": 65,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"HP": {
+					"base_value": 50,
+					"current_value": 435,
+					"max_value": 435,
+					"min_value": 0
+				},
+				"HP_MAX": {
+					"base_value": 435,
+					"current_value": 435,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"JUMP": {
+					"base_value": 3,
+					"current_value": 3,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"LEVEL": {
+					"base_value": 50,
+					"current_value": 40,
+					"max_value": 99,
+					"min_value": 0
+				},
+				"MAGIC_ATTACK": {
+					"base_value": 31,
+					"current_value": 31,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"MOVE": {
+					"base_value": 4,
+					"current_value": 4,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"MP": {
+					"base_value": 50,
+					"current_value": 30,
+					"max_value": 30,
+					"min_value": 0
+				},
+				"MP_MAX": {
+					"base_value": 30,
+					"current_value": 30,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"PHYSICAL_ATTACK": {
+					"base_value": 21,
+					"current_value": 21,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"SPEED": {
+					"base_value": 9,
+					"current_value": 9,
+					"max_value": 100,
+					"min_value": 0
+				}
+			},
+			"stats_raw": {
+				"HP_MAX": 4431962.0,
+				"MAGIC_ATTACK": 550034.285714286,
+				"MP_MAX": 312681.709677419,
+				"PHYSICAL_ATTACK": 175542.857142857,
+				"SPEED": 120022.325581395
+			},
+			"team_idx": 0,
+			"tile_position": [
+				4.5,
+				3.42857146263123,
+				5.5
+			],
+			"zodiac": "zodiac"
+		},
+		{
+			"ability_slots": [
+				{
+					"ability_slot_name": "Skillset 1",
+					"ability_unique_name": "",
+					"slot_types": [
+						"SKILLSET"
+					]
+				},
+				{
+					"ability_slot_name": "Skillset 2",
+					"ability_unique_name": "",
+					"slot_types": [
+						"SKILLSET"
+					]
+				},
+				{
+					"ability_slot_name": "Reaction",
+					"ability_unique_name": "ma_save",
+					"slot_types": [
+						"REACTION"
+					]
+				},
+				{
+					"ability_slot_name": "Support",
+					"ability_unique_name": "defense_up",
+					"slot_types": [
+						"SUPPORT"
+					]
+				},
+				{
+					"ability_slot_name": "Movement",
+					"ability_unique_name": "teleport",
+					"slot_types": [
+						"MOVEMENT"
+					]
+				}
+			],
+			"controller": 1,
+			"display_name": "Dreyfuss",
+			"equip_slots": [
+				{
+					"equipment_slot_name": "RH",
+					"item_unique_name": "",
+					"slot_types": [
+						"WEAPON",
+						"SHIELD"
+					]
+				},
+				{
+					"equipment_slot_name": "LH",
+					"item_unique_name": "",
+					"slot_types": [
+						"WEAPON",
+						"SHIELD"
+					]
+				},
+				{
+					"equipment_slot_name": "Head",
+					"item_unique_name": "",
+					"slot_types": [
+						"HEADGEAR"
+					]
+				},
+				{
+					"equipment_slot_name": "Body",
+					"item_unique_name": "",
+					"slot_types": [
+						"ARMOR"
+					]
+				},
+				{
+					"equipment_slot_name": "Accesory",
+					"item_unique_name": "",
+					"slot_types": [
+						"ACCESSORY"
+					]
+				}
+			],
+			"facing_direction": "NORTH",
+			"gender": "MALE",
+			"job_unique_name": "duke",
+			"level": 40,
+			"palette_id": 0,
+			"primary_weapon_unique_name": "",
+			"spritesheeet_file_name": "RAGU.SPR",
+			"stats": {
+				"BRAVE": {
+					"base_value": 50,
+					"current_value": 70,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"CT": {
+					"base_value": 50,
+					"current_value": 25,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"EXP": {
+					"base_value": 50,
+					"current_value": 99,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"FAITH": {
+					"base_value": 50,
+					"current_value": 65,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"HP": {
+					"base_value": 50,
+					"current_value": 132,
+					"max_value": 132,
+					"min_value": 0
+				},
+				"HP_MAX": {
+					"base_value": 132,
+					"current_value": 132,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"JUMP": {
+					"base_value": 3,
+					"current_value": 3,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"LEVEL": {
+					"base_value": 50,
+					"current_value": 40,
+					"max_value": 99,
+					"min_value": 0
+				},
+				"MAGIC_ATTACK": {
+					"base_value": 7,
+					"current_value": 7,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"MOVE": {
+					"base_value": 3,
+					"current_value": 3,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"MP": {
+					"base_value": 50,
+					"current_value": 64,
+					"max_value": 64,
+					"min_value": 0
+				},
+				"MP_MAX": {
+					"base_value": 64,
+					"current_value": 64,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"PHYSICAL_ATTACK": {
 					"base_value": 8,
 					"current_value": 8,
 					"max_value": 100,
 					"min_value": 0
 				},
 				"SPEED": {
-					"base_value": 10,
-					"current_value": 10,
+					"base_value": 8,
+					"current_value": 8,
 					"max_value": 100,
 					"min_value": 0
 				}
 			},
 			"stats_raw": {
-				"HP_MAX": 2871055.0,
-				"MAGIC_ATTACK": 491520.0,
-				"MP_MAX": 308893.516129033,
-				"PHYSICAL_ATTACK": 163840.0,
-				"SPEED": 120022.325581395
+				"HP_MAX": 2171173.33333333,
+				"MAGIC_ATTACK": 116936.784313725,
+				"MP_MAX": 1050781.33333333,
+				"PHYSICAL_ATTACK": 146170.980392157,
+				"SPEED": 137236.277227723
+			},
+			"team_idx": 0,
+			"tile_position": [
+				-3.5,
+				3.42857146263123,
+				10.5
+			],
+			"zodiac": "zodiac"
+		},
+		{
+			"ability_slots": [
+				{
+					"ability_slot_name": "Skillset 1",
+					"ability_unique_name": "",
+					"slot_types": [
+						"SKILLSET"
+					]
+				},
+				{
+					"ability_slot_name": "Skillset 2",
+					"ability_unique_name": "",
+					"slot_types": [
+						"SKILLSET"
+					]
+				},
+				{
+					"ability_slot_name": "Reaction",
+					"ability_unique_name": "ma_save",
+					"slot_types": [
+						"REACTION"
+					]
+				},
+				{
+					"ability_slot_name": "Support",
+					"ability_unique_name": "equip_crossbow",
+					"slot_types": [
+						"SUPPORT"
+					]
+				},
+				{
+					"ability_slot_name": "Movement",
+					"ability_unique_name": "teleport",
+					"slot_types": [
+						"MOVEMENT"
+					]
+				}
+			],
+			"controller": 1,
+			"display_name": "Eniepeu",
+			"equip_slots": [
+				{
+					"equipment_slot_name": "RH",
+					"item_unique_name": "",
+					"slot_types": [
+						"WEAPON",
+						"SHIELD"
+					]
+				},
+				{
+					"equipment_slot_name": "LH",
+					"item_unique_name": "",
+					"slot_types": [
+						"WEAPON",
+						"SHIELD"
+					]
+				},
+				{
+					"equipment_slot_name": "Head",
+					"item_unique_name": "",
+					"slot_types": [
+						"HEADGEAR"
+					]
+				},
+				{
+					"equipment_slot_name": "Body",
+					"item_unique_name": "",
+					"slot_types": [
+						"ARMOR"
+					]
+				},
+				{
+					"equipment_slot_name": "Accesory",
+					"item_unique_name": "",
+					"slot_types": [
+						"ACCESSORY"
+					]
+				}
+			],
+			"facing_direction": "NORTH",
+			"gender": "MALE",
+			"job_unique_name": "none",
+			"level": 40,
+			"palette_id": 0,
+			"primary_weapon_unique_name": "",
+			"spritesheeet_file_name": "10M.SPR",
+			"stats": {
+				"BRAVE": {
+					"base_value": 50,
+					"current_value": 70,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"CT": {
+					"base_value": 50,
+					"current_value": 25,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"EXP": {
+					"base_value": 50,
+					"current_value": 99,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"FAITH": {
+					"base_value": 50,
+					"current_value": 65,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"HP": {
+					"base_value": 50,
+					"current_value": 157,
+					"max_value": 157,
+					"min_value": 0
+				},
+				"HP_MAX": {
+					"base_value": 157,
+					"current_value": 157,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"JUMP": {
+					"base_value": 0,
+					"current_value": 0,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"LEVEL": {
+					"base_value": 50,
+					"current_value": 40,
+					"max_value": 99,
+					"min_value": 0
+				},
+				"MAGIC_ATTACK": {
+					"base_value": 8,
+					"current_value": 8,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"MOVE": {
+					"base_value": 0,
+					"current_value": 0,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"MP": {
+					"base_value": 50,
+					"current_value": 38,
+					"max_value": 38,
+					"min_value": 0
+				},
+				"MP_MAX": {
+					"base_value": 38,
+					"current_value": 38,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"PHYSICAL_ATTACK": {
+					"base_value": 8,
+					"current_value": 8,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"SPEED": {
+					"base_value": 6,
+					"current_value": 6,
+					"max_value": 100,
+					"min_value": 0
+				}
+			},
+			"stats_raw": {
+				"HP_MAX": 2581410.0,
+				"MAGIC_ATTACK": 146170.980392157,
+				"MP_MAX": 626444.0,
+				"PHYSICAL_ATTACK": 146170.980392157,
+				"SPEED": 114363.564356436
 			},
 			"team_idx": 1,
 			"tile_position": [
-				6.5,
-				2.14285707473755,
-				10.5
+				2.5,
+				3.0,
+				1.5
+			],
+			"zodiac": "zodiac"
+		},
+		{
+			"ability_slots": [
+				{
+					"ability_slot_name": "Skillset 1",
+					"ability_unique_name": "",
+					"slot_types": [
+						"SKILLSET"
+					]
+				},
+				{
+					"ability_slot_name": "Skillset 2",
+					"ability_unique_name": "",
+					"slot_types": [
+						"SKILLSET"
+					]
+				},
+				{
+					"ability_slot_name": "Reaction",
+					"ability_unique_name": "counter_tackle",
+					"slot_types": [
+						"REACTION"
+					]
+				},
+				{
+					"ability_slot_name": "Support",
+					"ability_unique_name": "two_swords",
+					"slot_types": [
+						"SUPPORT"
+					]
+				},
+				{
+					"ability_slot_name": "Movement",
+					"ability_unique_name": "fly",
+					"slot_types": [
+						"MOVEMENT"
+					]
+				}
+			],
+			"controller": 1,
+			"display_name": "Tymothi",
+			"equip_slots": [
+				{
+					"equipment_slot_name": "RH",
+					"item_unique_name": "",
+					"slot_types": [
+						"WEAPON",
+						"SHIELD"
+					]
+				},
+				{
+					"equipment_slot_name": "LH",
+					"item_unique_name": "",
+					"slot_types": [
+						"WEAPON",
+						"SHIELD"
+					]
+				},
+				{
+					"equipment_slot_name": "Head",
+					"item_unique_name": "",
+					"slot_types": [
+						"HEADGEAR"
+					]
+				},
+				{
+					"equipment_slot_name": "Body",
+					"item_unique_name": "",
+					"slot_types": [
+						"ARMOR"
+					]
+				},
+				{
+					"equipment_slot_name": "Accesory",
+					"item_unique_name": "",
+					"slot_types": [
+						"ACCESSORY"
+					]
+				}
+			],
+			"facing_direction": "NORTH",
+			"gender": "MALE",
+			"job_unique_name": "duke",
+			"level": 40,
+			"palette_id": 0,
+			"primary_weapon_unique_name": "",
+			"spritesheeet_file_name": "RAGU.SPR",
+			"stats": {
+				"BRAVE": {
+					"base_value": 50,
+					"current_value": 70,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"CT": {
+					"base_value": 50,
+					"current_value": 25,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"EXP": {
+					"base_value": 50,
+					"current_value": 99,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"FAITH": {
+					"base_value": 50,
+					"current_value": 65,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"HP": {
+					"base_value": 50,
+					"current_value": 127,
+					"max_value": 127,
+					"min_value": 0
+				},
+				"HP_MAX": {
+					"base_value": 127,
+					"current_value": 127,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"JUMP": {
+					"base_value": 3,
+					"current_value": 3,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"LEVEL": {
+					"base_value": 50,
+					"current_value": 40,
+					"max_value": 99,
+					"min_value": 0
+				},
+				"MAGIC_ATTACK": {
+					"base_value": 8,
+					"current_value": 8,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"MOVE": {
+					"base_value": 3,
+					"current_value": 3,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"MP": {
+					"base_value": 50,
+					"current_value": 68,
+					"max_value": 68,
+					"min_value": 0
+				},
+				"MP_MAX": {
+					"base_value": 68,
+					"current_value": 68,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"PHYSICAL_ATTACK": {
+					"base_value": 7,
+					"current_value": 7,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"SPEED": {
+					"base_value": 8,
+					"current_value": 8,
+					"max_value": 100,
+					"min_value": 0
+				}
+			},
+			"stats_raw": {
+				"HP_MAX": 2089711.0,
+				"MAGIC_ATTACK": 146170.980392157,
+				"MP_MAX": 1119811.33333333,
+				"PHYSICAL_ATTACK": 116936.784313725,
+				"SPEED": 137236.277227723
+			},
+			"team_idx": 1,
+			"tile_position": [
+				-1.5,
+				4.2857141494751,
+				0.5
+			],
+			"zodiac": "zodiac"
+		},
+		{
+			"ability_slots": [
+				{
+					"ability_slot_name": "Skillset 1",
+					"ability_unique_name": "",
+					"slot_types": [
+						"SKILLSET"
+					]
+				},
+				{
+					"ability_slot_name": "Skillset 2",
+					"ability_unique_name": "",
+					"slot_types": [
+						"SKILLSET"
+					]
+				},
+				{
+					"ability_slot_name": "Reaction",
+					"ability_unique_name": "auto_potion",
+					"slot_types": [
+						"REACTION"
+					]
+				},
+				{
+					"ability_slot_name": "Support",
+					"ability_unique_name": "maintenance",
+					"slot_types": [
+						"SUPPORT"
+					]
+				},
+				{
+					"ability_slot_name": "Movement",
+					"ability_unique_name": "fly",
+					"slot_types": [
+						"MOVEMENT"
+					]
+				}
+			],
+			"controller": 1,
+			"display_name": "Bonas",
+			"equip_slots": [
+				{
+					"equipment_slot_name": "RH",
+					"item_unique_name": "octagon_rod",
+					"slot_types": [
+						"WEAPON",
+						"SHIELD"
+					]
+				},
+				{
+					"equipment_slot_name": "LH",
+					"item_unique_name": "",
+					"slot_types": [
+						"WEAPON",
+						"SHIELD"
+					]
+				},
+				{
+					"equipment_slot_name": "Head",
+					"item_unique_name": "flash_hat",
+					"slot_types": [
+						"HEADGEAR"
+					]
+				},
+				{
+					"equipment_slot_name": "Body",
+					"item_unique_name": "light_robe",
+					"slot_types": [
+						"ARMOR"
+					]
+				},
+				{
+					"equipment_slot_name": "Accesory",
+					"item_unique_name": "power_wrist",
+					"slot_types": [
+						"ACCESSORY"
+					]
+				}
+			],
+			"facing_direction": "SOUTH",
+			"gender": "MALE",
+			"job_unique_name": "calculator",
+			"level": 40,
+			"palette_id": 4,
+			"primary_weapon_unique_name": "octagon_rod",
+			"spritesheeet_file_name": "SAN_W.SPR",
+			"stats": {
+				"BRAVE": {
+					"base_value": 50,
+					"current_value": 70,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"CT": {
+					"base_value": 50,
+					"current_value": 25,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"EXP": {
+					"base_value": 50,
+					"current_value": 99,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"FAITH": {
+					"base_value": 50,
+					"current_value": 65,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"HP": {
+					"base_value": 50,
+					"current_value": 230,
+					"max_value": 230,
+					"min_value": 0
+				},
+				"HP_MAX": {
+					"base_value": 67,
+					"current_value": 67,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"JUMP": {
+					"base_value": 3,
+					"current_value": 3,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"LEVEL": {
+					"base_value": 50,
+					"current_value": 40,
+					"max_value": 99,
+					"min_value": 0
+				},
+				"MAGIC_ATTACK": {
+					"base_value": 6,
+					"current_value": 6,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"MOVE": {
+					"base_value": 3,
+					"current_value": 3,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"MP": {
+					"base_value": 50,
+					"current_value": 122,
+					"max_value": 122,
+					"min_value": 0
+				},
+				"MP_MAX": {
+					"base_value": 57,
+					"current_value": 57,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"PHYSICAL_ATTACK": {
+					"base_value": 3,
+					"current_value": 3,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"SPEED": {
+					"base_value": 4,
+					"current_value": 4,
+					"max_value": 100,
+					"min_value": 0
+				}
+			},
+			"stats_raw": {
+				"HP_MAX": 1694773.66666667,
+				"MAGIC_ATTACK": 146170.980392157,
+				"MP_MAX": 1169527.36363636,
+				"PHYSICAL_ATTACK": 102457.690140845,
+				"SPEED": 137236.277227723
+			},
+			"team_idx": 1,
+			"tile_position": [
+				-4.5,
+				0.857142865657806,
+				6.5
+			],
+			"zodiac": "zodiac"
+		},
+		{
+			"ability_slots": [
+				{
+					"ability_slot_name": "Skillset 1",
+					"ability_unique_name": "",
+					"slot_types": [
+						"SKILLSET"
+					]
+				},
+				{
+					"ability_slot_name": "Skillset 2",
+					"ability_unique_name": "",
+					"slot_types": [
+						"SKILLSET"
+					]
+				},
+				{
+					"ability_slot_name": "Reaction",
+					"ability_unique_name": "counter_magic",
+					"slot_types": [
+						"REACTION"
+					]
+				},
+				{
+					"ability_slot_name": "Support",
+					"ability_unique_name": "gained_jp_up",
+					"slot_types": [
+						"SUPPORT"
+					]
+				},
+				{
+					"ability_slot_name": "Movement",
+					"ability_unique_name": "float_02",
+					"slot_types": [
+						"MOVEMENT"
+					]
+				}
+			],
+			"controller": 1,
+			"display_name": "Marls",
+			"equip_slots": [
+				{
+					"equipment_slot_name": "RH",
+					"item_unique_name": "octagon_rod",
+					"slot_types": [
+						"WEAPON",
+						"SHIELD"
+					]
+				},
+				{
+					"equipment_slot_name": "LH",
+					"item_unique_name": "",
+					"slot_types": [
+						"WEAPON",
+						"SHIELD"
+					]
+				},
+				{
+					"equipment_slot_name": "Head",
+					"item_unique_name": "flash_hat",
+					"slot_types": [
+						"HEADGEAR"
+					]
+				},
+				{
+					"equipment_slot_name": "Body",
+					"item_unique_name": "light_robe",
+					"slot_types": [
+						"ARMOR"
+					]
+				},
+				{
+					"equipment_slot_name": "Accesory",
+					"item_unique_name": "magic_ring",
+					"slot_types": [
+						"ACCESSORY"
+					]
+				}
+			],
+			"facing_direction": "SOUTH",
+			"gender": "MALE",
+			"job_unique_name": "heaven_knight_02",
+			"level": 40,
+			"palette_id": 0,
+			"primary_weapon_unique_name": "octagon_rod",
+			"spritesheeet_file_name": "H79.SPR",
+			"stats": {
+				"BRAVE": {
+					"base_value": 50,
+					"current_value": 70,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"CT": {
+					"base_value": 50,
+					"current_value": 25,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"EXP": {
+					"base_value": 50,
+					"current_value": 99,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"FAITH": {
+					"base_value": 50,
+					"current_value": 65,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"HP": {
+					"base_value": 50,
+					"current_value": 288,
+					"max_value": 288,
+					"min_value": 0
+				},
+				"HP_MAX": {
+					"base_value": 125,
+					"current_value": 125,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"JUMP": {
+					"base_value": 3,
+					"current_value": 3,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"LEVEL": {
+					"base_value": 50,
+					"current_value": 40,
+					"max_value": 99,
+					"min_value": 0
+				},
+				"MAGIC_ATTACK": {
+					"base_value": 8,
+					"current_value": 8,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"MOVE": {
+					"base_value": 3,
+					"current_value": 3,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"MP": {
+					"base_value": 50,
+					"current_value": 130,
+					"max_value": 130,
+					"min_value": 0
+				},
+				"MP_MAX": {
+					"base_value": 65,
+					"current_value": 65,
+					"max_value": 999,
+					"min_value": 0
+				},
+				"PHYSICAL_ATTACK": {
+					"base_value": 7,
+					"current_value": 7,
+					"max_value": 100,
+					"min_value": 0
+				},
+				"SPEED": {
+					"base_value": 9,
+					"current_value": 9,
+					"max_value": 100,
+					"min_value": 0
+				}
+			},
+			"stats_raw": {
+				"HP_MAX": 2051231.0,
+				"MAGIC_ATTACK": 146170.980392157,
+				"MP_MAX": 1069952.0,
+				"PHYSICAL_ATTACK": 116936.784313725,
+				"SPEED": 137236.277227723
+			},
+			"team_idx": 1,
+			"tile_position": [
+				-3.5,
+				3.42857146263123,
+				6.5
 			],
 			"zodiac": "zodiac"
 		}

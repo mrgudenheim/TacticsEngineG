@@ -230,7 +230,7 @@ func update_map_chunk_nodes(new_map_chunk_settings: MapChunkSettingsUi) -> void:
 
 	new_map_chunk_settings.map_chunk_nodes.play_animations(new_map_chunk_settings.map_chunk_nodes.map_data)
 	new_map_chunk_settings.map_chunk_nodes.input_event.connect(battle_manager.on_map_input_event)
-	new_map_chunk_settings.map_chunk_nodes.position = new_map_chunk_settings.map_chunk.corner_position
+	new_map_chunk_settings.set_map_chunk_position(new_map_chunk_settings.map_chunk.corner_position)
 
 	update_map(new_map_chunk_settings)
 

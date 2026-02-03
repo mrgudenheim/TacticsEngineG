@@ -123,18 +123,18 @@ static func create_from_dictionary(property_dict: Dictionary) -> PassiveEffect:
 			var new_stat_modifiers: Dictionary[Unit.StatType, Modifier] = {}
 			var temp_dict = property_dict[property_name]
 			for key in temp_dict:
-				new_stat_modifiers[int(key)] = Modifier.create_from_dictionary(temp_dict[key])
+				new_stat_modifiers[Unit.StatType[key]] = Modifier.create_from_dictionary(temp_dict[key])
 			new_passive_effect.set(property_name, new_stat_modifiers)
 		elif property_name.contains("evade_source_modifiers"):
 			var new_evade_modifiers: Dictionary[EvadeData.EvadeSource, Modifier] = {}
 			var temp_dict = property_dict[property_name]
 			for key in temp_dict:
-				new_evade_modifiers[int(key)] = Modifier.create_from_dictionary(temp_dict[key])
+				new_evade_modifiers[EvadeData.EvadeSource[key]] = Modifier.create_from_dictionary(temp_dict[key])
 			new_passive_effect.set(property_name, new_evade_modifiers)
 		elif property_name.contains("include_evade_sources"):
 			var new_include_evade_sources: Array[EvadeData.EvadeSource] = []
-			for value: int in property_dict[property_name]:
-				new_include_evade_sources.append(value as EvadeData.EvadeSource)
+			for value: String in property_dict[property_name]:
+				new_include_evade_sources.append(EvadeData.EvadeSource[value])
 			new_passive_effect.set(property_name, new_include_evade_sources)
 		elif property_name.contains("modifier"):
 			var new_modifier: Modifier = Modifier.create_from_dictionary(property_dict[property_name])

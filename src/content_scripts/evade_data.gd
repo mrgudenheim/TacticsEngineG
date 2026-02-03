@@ -82,15 +82,15 @@ static func create_from_json(json_string: String) -> EvadeData:
 static func create_from_dictionary(property_dict: Dictionary) -> EvadeData:
 	var new_evade_data: EvadeData = EvadeData.new()
 	for property_name in property_dict.keys():
-		# if property_name == "type":
-		# 	var new_type: EvadeType = EvadeType[property_dict[property_name]]
-		# 	new_evade_data.set(property_name, new_type)
-		# elif property_name == "directions":
-		# 	var new_directions: Array[Directions] = []
-		# 	for string: String in property_dict[property_name]:
-		# 		new_directions.append(Directions[string])
-		# 	new_evade_data.set(property_name, new_directions)
-		# else:
+		if property_name == "type":
+			var new_type: EvadeType = EvadeType[property_dict[property_name]]
+			new_evade_data.set(property_name, new_type)
+		elif property_name == "directions":
+			var new_directions: Array[Directions] = []
+			for string: String in property_dict[property_name]:
+				new_directions.append(Directions[string])
+			new_evade_data.set(property_name, new_directions)
+		else:
 			new_evade_data.set(property_name, property_dict[property_name])
 
 	new_evade_data.emit_changed()

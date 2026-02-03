@@ -92,7 +92,14 @@ static func create_from_json(json_string: String) -> FormulaData:
 static func create_from_dictionary(property_dict: Dictionary) -> FormulaData:
 	var new_formula: FormulaData = FormulaData.new()
 	for property_name in property_dict.keys():
-		new_formula.set(property_name, property_dict[property_name])
+		if property_name == "formula":
+			new_formula.formula = Formulas[property_dict[property_name]]
+		elif property_name == "user_faith_modifier":
+			new_formula.user_faith_modifier = FaithModifier[property_dict[property_name]]
+		elif property_name == "target_faith_modifier":
+			new_formula.target_faith_modifier = FaithModifier[property_dict[property_name]]
+		else:
+			new_formula.set(property_name, property_dict[property_name])
 
 	new_formula.emit_changed()
 	return new_formula

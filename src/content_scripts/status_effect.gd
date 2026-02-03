@@ -201,6 +201,8 @@ static func create_from_dictionary(property_dict: Dictionary) -> StatusEffect:
 			new_color.a = color_rgb_array[3]
 
 			new_status_effect.set(property_name, new_color)
+		elif property_name == "duration_type":
+			new_status_effect.duration_type = DurationType[property_dict[property_name]]
 		else:
 			new_status_effect.set(property_name, property_dict[property_name])
 

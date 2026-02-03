@@ -142,7 +142,11 @@ static func create_from_dictionary(property_dict: Dictionary) -> ActionEffect:
 		if property_name == "base_power_formula":
 			var new_formula_data: FormulaData = FormulaData.create_from_dictionary(property_dict[property_name])
 			new_action_effect.set(property_name, new_formula_data)
-		else:	
+		elif property_name == "type":
+			new_action_effect.type = EffectType[property_dict[property_name]]
+		elif property_name == "effect_stat_type":
+			new_action_effect.effect_stat_type = Unit.StatType[property_dict[property_name]]
+		else:
 			new_action_effect.set(property_name, property_dict[property_name])
 
 	new_action_effect.emit_changed()

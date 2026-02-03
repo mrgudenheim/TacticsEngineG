@@ -437,7 +437,17 @@ static func create_from_dictionary(property_dict: Dictionary) -> ItemData:
 			var temp_dict = property_dict[property_name]
 			for key in temp_dict:
 				new_stat_modifiers[int(key)] = Modifier.create_from_dictionary(temp_dict[key])
-			new_item.set(property_name, new_stat_modifiers)
+			new_item.stat_modifiers = new_stat_modifiers
+		elif property_name == "slot_type":
+			new_item.slot_type = SlotType[property_dict[property_name]]
+		elif property_name == "item_type":
+			new_item.item_type = ItemType[property_dict[property_name]]
+		elif property_name == "evade_datas":
+			var new_evade_datas: Array[EvadeData] = []
+			var temp_array = property_dict[property_name]
+			for element in temp_array:
+				new_evade_datas.append(EvadeData.create_from_dictionary(element))
+			new_item.evade_datas = new_evade_datas
 		else:	
 			new_item.set(property_name, property_dict[property_name])
 

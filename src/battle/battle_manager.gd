@@ -49,19 +49,6 @@ var current_cursor_map_position: Vector3
 @export var start_new_battle_button: Button
 @export var active_unit: Unit
 @export var game_state_label: Label
-@export var units_per_team_spinbox: SpinBox
-@export var units_per_team: int = 5:
-	get:
-		return units_per_team_spinbox.value
-	set(value):
-		units_per_team_spinbox.value = value
-		units_per_team_spinbox.value_changed.emit(value)
-@export var units_level_spinbox: SpinBox
-@export var units_level: int = 40:
-	get:
-		return units_level_spinbox.value
-	set(value):
-		units_level_spinbox.set_value_no_signal(value)
 
 var event_num: int = 0 # TODO handle event timeline
 
@@ -600,7 +587,7 @@ func spawn_random_unit(team: Team) -> Unit:
 	return new_unit
 
 
-func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> Unit:
+func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team, level: int = 40) -> Unit:
 	var new_unit: Unit = Unit.instantiate()
 	units_container.add_child(new_unit)
 	new_unit.global_battle_manager = self
@@ -618,7 +605,7 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team) -> Unit:
 	if range(0x4a, 0x5e).has(job_id):
 		new_unit.set_sprite_palette(range(0,5).pick_random())
 	new_unit.generate_level_zero_raw_stats(new_unit.stat_basis)
-	new_unit.generate_leveled_raw_stats(units_level, new_unit.job_data)
+	new_unit.generate_leveled_raw_stats(level, new_unit.job_data)
 	new_unit.calc_battle_stats(new_unit.job_data)
 	
 	camera_controller.rotated.connect(new_unit.char_body.set_rotation_degrees) # have sprite update as camera rotates

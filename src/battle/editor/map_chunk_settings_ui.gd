@@ -40,7 +40,6 @@ func _ready() -> void:
 		map_chunk.set_mirror_xyz([true, true, false])
 	else:
 		map_index = RomReader.maps.keys().find(map_chunk.unique_name)
-
 	
 	for idx: int in mirror_checkboxes.size():
 		mirror_checkboxes[idx].button_pressed = map_chunk.mirror_xyz[idx]
@@ -54,6 +53,8 @@ func _ready() -> void:
 	
 	chunk_name_dropdown.select(map_index)
 	chunk_name_dropdown.item_selected.emit(map_index)
+
+	position_edit.vector = map_chunk.corner_position
 
 
 func _exit_tree() -> void:

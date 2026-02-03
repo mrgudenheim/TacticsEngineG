@@ -277,7 +277,7 @@ layout_mode = 2
 text = "Game State"
 horizontal_alignment = 1
 
-[node name="ScenarioEditor" type="Control" parent="." node_paths=PackedStringArray("battle_manager", "start_button", "load_scenario_button", "export_scenario_button", "import_scenario_button", "import_file_dialog", "background_gradient_color_pickers", "battle_setup_container", "job_select_control", "item_select_control", "ability_select_control", "unit_editor", "add_map_chunk_button", "map_chunk_settings_container", "show_map_tiles_check")]
+[node name="ScenarioEditor" type="Control" parent="." node_paths=PackedStringArray("battle_manager", "start_button", "load_scenario_button", "export_scenario_button", "import_scenario_button", "import_file_dialog", "new_scenario_button", "background_gradient_color_pickers", "battle_setup_container", "job_select_control", "item_select_control", "ability_select_control", "unit_editor", "add_map_chunk_button", "map_chunk_settings_container", "show_map_tiles_check")]
 layout_mode = 3
 anchor_top = 0.124000005
 anchor_right = 1.0
@@ -292,6 +292,7 @@ load_scenario_button = NodePath("HBoxContainer/LoadScenario")
 export_scenario_button = NodePath("HBoxContainer/ExportScenario")
 import_scenario_button = NodePath("HBoxContainer/ImportScenario")
 import_file_dialog = NodePath("HBoxContainer/ImportScenario/ImportFileDialog")
+new_scenario_button = NodePath("HBoxContainer/NewScenario")
 background_gradient_color_pickers = [NodePath("BattleSetupTabContainer/Map/FloatingUi/Gradient/BottomColorPickerButton"), NodePath("BattleSetupTabContainer/Map/FloatingUi/Gradient/TopColorPickerButton")]
 battle_setup_container = NodePath("BattleSetupTabContainer")
 team_setup_scene = ExtResource("14_kb1q2")
@@ -478,7 +479,7 @@ text = "Import Scenario"
 
 [node name="ImportFileDialog" type="FileDialog" parent="ScenarioEditor/HBoxContainer/ImportScenario"]
 oversampling_override = 1.0
-title = "Import Scenario"
+title = "Open a File"
 initial_position = 2
 ok_button_text = "Import"
 dialog_hide_on_ok = true
@@ -491,6 +492,10 @@ use_native_dialog = true
 [node name="LoadScenario" type="Button" parent="ScenarioEditor/HBoxContainer"]
 layout_mode = 2
 text = "Load Scenario"
+
+[node name="NewScenario" type="Button" parent="ScenarioEditor/HBoxContainer"]
+layout_mode = 2
+text = "New Scenario"
 
 [node name="StartBattle" type="Button" parent="ScenarioEditor/HBoxContainer"]
 layout_mode = 2

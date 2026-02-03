@@ -9,6 +9,7 @@ extends Control
 @export var export_scenario_button: Button
 @export var import_scenario_button: Button
 @export var import_file_dialog: FileDialog
+@export var new_scenario_button: Button
 
 @export var background_gradient_color_pickers: Array[ColorPickerButton]
 @export var background_gradient_colors: PackedColorArray = []
@@ -85,21 +86,12 @@ func _ready() -> void:
 		background_gradient_colors.append(color_picker.color)
 		color_picker.color_changed.connect(update_background_gradient)
 	
-	if not start_button.pressed.is_connected(battle_manager.start_battle):
-		start_button.pressed.connect(battle_manager.start_battle)
-	
-	if not show_map_tiles_check.toggled.is_connected(show_all_tiles):
-		show_map_tiles_check.toggled.connect(show_all_tiles)
-	#battle_setup_container.tab_clicked.connect(adjust_height)
-
-	if not export_scenario_button.pressed.is_connected(export_scenario):
-		export_scenario_button.pressed.connect(export_scenario)
-	
-	if not import_scenario_button.pressed.is_connected(open_import_dialong):
-		import_scenario_button.pressed.connect(open_import_dialong)
-
-	if not import_file_dialog.file_selected.is_connected(import_scenario):
-		import_file_dialog.file_selected.connect(import_scenario)
+	start_button.pressed.connect(battle_manager.start_battle)
+	show_map_tiles_check.toggled.connect(show_all_tiles)
+	export_scenario_button.pressed.connect(export_scenario)
+	import_scenario_button.pressed.connect(open_import_dialong)
+	import_file_dialog.file_selected.connect(import_scenario)
+	new_scenario_button.pressed.connect(init_scenario)
 	
 	populate_option_lists()
 
@@ -134,6 +126,11 @@ func init_scenario(new_scenario: Scenario = null) -> void:
 		for team: Team in battle_manager.teams:
 			add_team(team)
 	else:
+		var number: int = 1
+		scenario.unique_name = "new_scenario_01"
+		while RomReader.scenarios.keys().has(scenario.unique_name):
+			number += 1
+			scenario.unique_name = "new_scenario_%02d" % number
 		init_random_scenario()
 
 	# TODO hook up loaded scenario? or generate random
@@ -150,8 +147,11 @@ func init_scenario(new_scenario: Scenario = null) -> void:
 
 
 func init_random_scenario() -> void:
-	update_background_gradient()
 	add_map_chunk_settings()
+	var map_chunk_data: MapData = RomReader.maps[scenario.map_chunks[0].unique_name]
+	background_gradient_color_pickers[0].color = map_chunk_data.background_gradient_bottom
+	background_gradient_color_pickers[1].color = map_chunk_data.background_gradient_top
+	update_background_gradient()
 
 	for team_num: int in 2:
 		var new_team: Team = Team.new()
@@ -373,6 +373,7 @@ func export_scenario() -> void:
 		new_unit_data.init_from_unit(unit)
 		scenario.units_data.append(new_unit_data)
 	Utilities.save_json(scenario)
+	RomReader.scenarios[scenario.unique_name] = scenario
 
 
 func open_import_dialong() -> void:

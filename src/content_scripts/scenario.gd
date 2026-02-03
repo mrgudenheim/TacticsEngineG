@@ -50,6 +50,15 @@ static func create_from_dictionary(property_dict: Dictionary) -> Scenario:
 				var new_unit_data: UnitData = UnitData.create_from_dictionary(unit_data_dictionary)
 				new_units_data.append(new_unit_data)
 			new_scenario.set(property_name, new_units_data)
+		elif property_name.contains("background_gradient"):
+			var new_color: Color = Color.BLACK
+			var color_rgb_array: Array = property_dict[property_name]
+			new_color.r = color_rgb_array[0]
+			new_color.g = color_rgb_array[1]
+			new_color.b = color_rgb_array[2]
+			new_color.a = color_rgb_array[3]
+
+			new_scenario.set(property_name, new_color)
 		else:
 			new_scenario.set(property_name, property_dict[property_name])
 

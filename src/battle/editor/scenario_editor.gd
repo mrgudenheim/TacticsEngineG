@@ -137,8 +137,6 @@ func init_scenario(new_scenario: Scenario = null) -> void:
 			scenario.unique_name = "new_scenario_%02d" % number
 		init_random_scenario()
 
-	# TODO hook up loaded scenario? or generate random
-
 	if tile_highlight != null:
 		tile_highlight.queue_free()
 	unit_editor.setup(battle_manager.units[0]) # default to first unit

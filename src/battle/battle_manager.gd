@@ -247,7 +247,9 @@ func update_total_map_tiles(map_chunks: Array[Scenario.MapChunk]) -> void:
 
 func start_battle() -> void:
 	scenario_editor.visible = false
-	scenario_editor.tile_highlight.queue_free()
+	if scenario_editor.tile_highlight != null:
+		scenario_editor.tile_highlight.queue_free()
+	
 	for unit: Unit in units:
 		unit.unit_input_event.disconnect(scenario_editor.update_unit_dragging)
 	

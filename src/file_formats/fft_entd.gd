@@ -12,3 +12,12 @@ func _init(bytes: PackedByteArray) -> void:
 		if unit_bytes[0] != 0: # sprite_id = 0 are empty entries
 			var new_entd_unit: FftEntdUnit = FftEntdUnit.new(unit_bytes)
 			entd_units.append(new_entd_unit)
+
+
+func get_units_data() -> Array[UnitData]:
+	var units_data: Array[UnitData] = []
+
+	for entd_unit: FftEntdUnit in entd_units:
+		units_data.append(entd_unit.get_unit_data())
+
+	return units_data

@@ -17,15 +17,15 @@ extends Resource
 # abilities learned
 
 # Stats
-@export var stats: Dictionary[Unit.StatType, ClampedValue]
-@export var stats_raw: Dictionary[Unit.StatType, float]
+@export var stats: Dictionary[Unit.StatType, ClampedValue] = {}
+@export var stats_raw: Dictionary[Unit.StatType, float] = {}
 
 # equipment
 @export var primary_weapon_unique_name: String
-@export var equip_slots: Array[EquipmentSlot]
+@export var equip_slots: Array[EquipmentSlot] = []
 
 # abilities
-@export var ability_slots: Array[AbilitySlot]
+@export var ability_slots: Array[AbilitySlot] = []
 
 # position
 @export var tile_position: Vector3 # tile_position.get_world_position

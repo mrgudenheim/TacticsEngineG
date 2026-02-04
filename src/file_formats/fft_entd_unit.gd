@@ -37,7 +37,7 @@ extends Resource
 @export var flags2: int = 0 # 0x80 = always present, 0x40 = randomly present
 @export var always_present: bool = true # always or randomly
 @export var randomly_present: bool = false
-@export var team_color: int = 0 # 0x30 => 0x00 = blue, 0x01 = red, 0x02 = green, 0x03 = light blue
+@export var team_color_idx: int = 0 # 0x30 => 0x00 = blue, 0x01 = red, 0x02 = green, 0x03 = light blue
 @export var is_player_controlled: bool = false # 0x08
 @export var is_immortal: bool = false # 0x04
 
@@ -106,7 +106,7 @@ func _init(bytes: PackedByteArray) -> void:
 	flags2 = bytes.decode_u8(0x18)
 	always_present = (flags2 & 0x80) == 0x80 # always or randomly
 	randomly_present = (flags2 & 0x40) == 0x40
-	team_color = (flags2 & 0x30) >> 4 # 0x30 => 0x00 = blue, 0x01 = red, 0x02 = green, 0x03 = light blue
+	team_color_idx = (flags2 & 0x30) >> 4 # 0x30 => 0x00 = blue, 0x01 = red, 0x02 = green, 0x03 = light blue
 	is_player_controlled = (flags2 & 0x08) == 0x08 # 0x08
 	is_immortal = (flags2 & 0x04) == 0x04 # 0x04
 	
@@ -115,7 +115,7 @@ func _init(bytes: PackedByteArray) -> void:
 	
 	flags3 = bytes.decode_u8(0x1b)
 	upper_level = (flags3 & 0x80) >> 7 #0x80
-	initial_direction = flags3 & 0x03 #0x00 = South, 0x02 = East, 0x02 = North, 0x03 = West
+	initial_direction = flags3 & 0x03 #0x00 = South, 0x01 = East, 0x02 = North, 0x03 = West
 	
 	experience = bytes.decode_u8(0x1c)
 	primary_skillset = bytes.decode_u8(0x1d)
@@ -136,3 +136,142 @@ func _init(bytes: PackedByteArray) -> void:
 	flags5 = bytes.decode_u8(0x26)
 	conserve_ct = (flags5 & 0x04) == 0x04
 	x27 = bytes.decode_u8(0x27)
+
+
+func get_unit_data() -> UnitData:
+	var unit_data: UnitData = UnitData.new()
+
+	# TODO get name based on special, male, female, or monster
+	if name_idx != 0xFF:
+		unit_data.display_name = RomReader.fft_text.unit_names_list[name_idx] 
+	else:
+		var new_name_idx: int = randi_range(0, RomReader.fft_text.unit_names_list_filtered.size() - 1)
+		unit_data.display_name = RomReader.fft_text.unit_names_list_filtered[new_name_idx]
+
+	if level <= 99:
+		unit_data.level = level
+	else: # TODO generate level based on party level
+		unit_data.level = randi_range(0, 50)
+
+	if gender == 4:
+		unit_data.gender = Unit.Gender.MALE
+	elif gender == 2:
+		unit_data.gender = Unit.Gender.FEMALE
+	elif gender == 1:
+		unit_data.gender = Unit.Gender.MONSTER
+	
+	unit_data.zodiac = "zodiac" # TODO should zodiac be derived from birthday?
+	unit_data.job_unique_name = RomReader.jobs_data.keys()[main_job]
+	unit_data.team_idx = team_color_idx
+	unit_data.controller = 1 if is_player_controlled else 0 # 0 = AI, 1 = Player 1, etc.
+	unit_data.spritesheeet_file_name = "spritesheeet_file_name.spr" # TODO get sprite file name?
+	unit_data.palette_id = palette
+	
+	if initial_direction == 0:
+		unit_data.facing_direction = Unit.Facings.SOUTH
+	elif initial_direction == 1:
+		unit_data.facing_direction = Unit.Facings.EAST
+	elif initial_direction == 2:
+		unit_data.facing_direction = Unit.Facings.NORTH
+	elif initial_direction == 3:
+		unit_data.facing_direction = Unit.Facings.WEST
+
+	# job levels
+	# jp per job
+	# abilities learned
+
+	# Stats
+	unit_data.stats = {
+		Unit.StatType.HP_MAX : ClampedValue.new(0, 999, 150),
+		Unit.StatType.HP : ClampedValue.new(0, 150, 100),
+		Unit.StatType.MP_MAX : ClampedValue.new(0, 999, 100),
+		Unit.StatType.MP : ClampedValue.new(0, 100, 70),
+		Unit.StatType.CT : ClampedValue.new(0, 999, 25),
+		Unit.StatType.MOVE : ClampedValue.new(0, 100, 3),
+		Unit.StatType.JUMP : ClampedValue.new(0, 100, 3),
+		Unit.StatType.SPEED : ClampedValue.new(0, 100, 10),
+		Unit.StatType.PHYSICAL_ATTACK : ClampedValue.new(0, 100, 11),
+		Unit.StatType.MAGIC_ATTACK : ClampedValue.new(0, 100, 12),
+		Unit.StatType.BRAVE : ClampedValue.new(0, 100, 70),
+		Unit.StatType.FAITH : ClampedValue.new(0, 100, 65),
+		Unit.StatType.EXP : ClampedValue.new(0, 999, 99),
+		Unit.StatType.LEVEL : ClampedValue.new(0, 99, 20),
+	}
+	unit_data.stats_raw = {
+		Unit.StatType.HP_MAX : 0.0, 
+		Unit.StatType.MP_MAX : 0.0, 
+		Unit.StatType.SPEED : 0.0, 
+		Unit.StatType.PHYSICAL_ATTACK : 0.0, 
+		Unit.StatType.MAGIC_ATTACK : 0.0, 
+	}
+
+	# equipment
+	if equipment_right_hand < 0xFE:
+		unit_data.primary_weapon_unique_name = RomReader.items_array[equipment_right_hand].unique_name
+	else: # TODO get random leveled equipment
+		unit_data.primary_weapon_unique_name = RomReader.items_array[2].unique_name
+
+	unit_data.equip_slots = [
+		EquipmentSlot.new("RH", [ItemData.SlotType.WEAPON, ItemData.SlotType.SHIELD]),
+		EquipmentSlot.new("LH", [ItemData.SlotType.WEAPON, ItemData.SlotType.SHIELD]),
+		EquipmentSlot.new("Head", [ItemData.SlotType.HEADGEAR]),
+		EquipmentSlot.new("Body", [ItemData.SlotType.ARMOR]),
+		EquipmentSlot.new("Accesory", [ItemData.SlotType.ACCESSORY]),
+	]
+
+	# TODO if equipment value == 0xFE, get random leveled equipment
+	unit_data.equip_slots[0].item_unique_name = get_item_name(unit_data, 0, equipment_right_hand)
+	unit_data.equip_slots[1].item_unique_name = get_item_name(unit_data, 1, equipment_left_hand)
+	unit_data.equip_slots[2].item_unique_name = get_item_name(unit_data, 2, equipment_head)
+	unit_data.equip_slots[3].item_unique_name = get_item_name(unit_data, 3, equipment_body)
+	unit_data.equip_slots[4].item_unique_name = get_item_name(unit_data, 4, equipment_accessory)
+
+	# abilities
+	unit_data.ability_slots = [
+		AbilitySlot.new("Skillset 1", [Ability.SlotType.SKILLSET]),
+		AbilitySlot.new("Skillset 2", [Ability.SlotType.SKILLSET]),
+		AbilitySlot.new("Reaction", [Ability.SlotType.REACTION]),
+		AbilitySlot.new("Support", [Ability.SlotType.SUPPORT]),
+		AbilitySlot.new("Movement", [Ability.SlotType.MOVEMENT]),
+	]
+
+	# TODO if ability value == 0x01FE, get random leveled equipment
+	# TODO create skillset abilities, set random if secondary_skillset == 0xFE
+	# if primary_skillset == 0xFF, ability_slots[0] set by main job
+	# unit_data.ability_slots[1] 
+	unit_data.ability_slots[2].ability_unique_name = get_ability_name(unit_data, 2, reaction)
+	unit_data.ability_slots[3].ability_unique_name = get_ability_name(unit_data, 3, support)
+	unit_data.ability_slots[4].ability_unique_name = get_ability_name(unit_data, 4, movement)
+
+	# position
+	# TODO account for map being shifted or mirrored?
+	# TODO how to get height or handle the second level flag?
+	unit_data.tile_position = Vector3(position_x + 0.5, 0, position_y + 0.5)
+
+	return unit_data
+
+
+func get_item_name(unit_data: UnitData, slot_idx: int, new_item_idx: int) -> String:
+	if new_item_idx < 0xFE:
+		return RomReader.items_array[new_item_idx].unique_name
+	elif new_item_idx == 0xFF:
+		return RomReader.items_array[0].unique_name
+	
+	# TODO if equipment value == 0xFE, get random leveled equipment
+	var filtered_items: Array[ItemData] = []
+	filtered_items.assign(RomReader.items_array.filter(func(item: ItemData): return unit_data.equip_slots[slot_idx].slot_types.has(item.slot_type)))
+	var rand_item_idx: int = randi_range(0, filtered_items.size() - 1)
+	return filtered_items[rand_item_idx].unique_name
+
+
+func get_ability_name(unit_data: UnitData, slot_idx: int, new_ability_idx: int) -> String:
+	if new_ability_idx < 0x01FE:
+		return RomReader.abilities.values()[new_ability_idx].unique_name
+	elif new_ability_idx == 0xFF:
+		return RomReader.abilities.values()[0].unique_name
+	
+	# TODO if ability value == 0x01FE, get random learned ability?
+	var filtered_abilities: Array[Ability] = []
+	filtered_abilities.assign(RomReader.abilities.values().filter(func(ability: Ability): return unit_data.ability_slots[slot_idx].slot_types.has(ability.slot_type)))
+	var rand_ability_idx: int = randi_range(0, filtered_abilities.size() - 1)
+	return filtered_abilities[rand_ability_idx].unique_name

@@ -112,18 +112,12 @@ func on_rom_loaded() -> void:
 	push_warning("on rom loaded")
 	load_rom_button.visible = false
 
+	scenario_editor.populate_option_lists()
 	scenario_editor.visible = true
 	if use_test_teams:
 		scenario_editor.init_scenario(RomReader.scenarios["test0"])
 	else:
 		scenario_editor.init_scenario()
-
-
-func queue_load_map(index: int) -> void:
-	if battle_is_running:
-		while not safe_to_load_map:
-			await get_tree().process_frame # TODO loop over safe_to_load_new_map, set false while awaiting processing
-	# on_map_selected(index)
 
 
 func load_scenario(new_scenario: Scenario) -> void:

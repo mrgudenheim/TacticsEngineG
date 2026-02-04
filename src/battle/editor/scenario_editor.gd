@@ -92,8 +92,6 @@ func _ready() -> void:
 	import_scenario_button.pressed.connect(open_import_dialong)
 	import_file_dialog.file_selected.connect(import_scenario)
 	new_scenario_button.pressed.connect(queue_new_scenario)
-	
-	populate_option_lists()
 
 
 func queue_new_scenario(new_scenario: Scenario = null):

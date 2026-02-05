@@ -158,12 +158,12 @@ func get_map_paths(user: Unit, map_tiles: Dictionary[Vector2i, Array], units: Ar
 	return came_from
 
 
-func get_map_path(start_tile: TerrainTile, target_tile: TerrainTile, came_from: Dictionary[TerrainTile, TerrainTile]) -> Array[TerrainTile]:
-	if not came_from.has(target_tile):
-		#push_warning("No path from " + str(start_tile.location) + " to target: " + str(target_tile.location))
+func get_map_path(start_tile: TerrainTile, target_tile_instance: TerrainTile, came_from: Dictionary[TerrainTile, TerrainTile]) -> Array[TerrainTile]:
+	if not came_from.has(target_tile_instance):
+		#push_warning("No path from " + str(start_tile.location) + " to target: " + str(target_tile_instance.location))
 		return []
 	
-	var current: TerrainTile = target_tile
+	var current: TerrainTile = target_tile_instance
 	var path: Array[TerrainTile] = []
 	while current != start_tile: 
 		path.append(current)

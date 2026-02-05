@@ -6,7 +6,7 @@ const FILE_SUFFIX: String = "job"
 @export var unique_name: String = "unique_name" # "ATTACK" and "COPY" are special cases
 
 # Job Data # 800610b8 in RAM
-@export var job_id = 0
+@export var job_id: int = 0
 @export var display_name: String = "Job Name"
 @export var description: String = "[job description]"
 @export var skillset_id: int = 0
@@ -162,7 +162,7 @@ static func create_from_json(json_string: String) -> JobData:
 
 static func create_from_dictonary(property_dict: Dictionary) -> JobData:
 	var new_job_data: JobData = JobData.new()
-	for property_name in property_dict.keys():
+	for property_name: String in property_dict.keys():
 		new_job_data.set(property_name, property_dict[property_name])
 
 	new_job_data.emit_changed()

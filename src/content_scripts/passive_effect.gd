@@ -118,17 +118,17 @@ static func create_from_json(json_string: String) -> PassiveEffect:
 
 static func create_from_dictionary(property_dict: Dictionary) -> PassiveEffect:
 	var new_passive_effect: PassiveEffect = PassiveEffect.new()
-	for property_name in property_dict.keys():
+	for property_name: String in property_dict.keys():
 		if property_name == "stat_modifiers":
 			var new_stat_modifiers: Dictionary[Unit.StatType, Modifier] = {}
-			var temp_dict = property_dict[property_name]
-			for key in temp_dict:
+			var temp_dict: Dictionary = property_dict[property_name]
+			for key: String in temp_dict:
 				new_stat_modifiers[Unit.StatType[key]] = Modifier.create_from_dictionary(temp_dict[key])
 			new_passive_effect.set(property_name, new_stat_modifiers)
 		elif property_name.contains("evade_source_modifiers"):
 			var new_evade_modifiers: Dictionary[EvadeData.EvadeSource, Modifier] = {}
-			var temp_dict = property_dict[property_name]
-			for key in temp_dict:
+			var temp_dict: Dictionary = property_dict[property_name]
+			for key: String in temp_dict:
 				new_evade_modifiers[EvadeData.EvadeSource[key]] = Modifier.create_from_dictionary(temp_dict[key])
 			new_passive_effect.set(property_name, new_evade_modifiers)
 		elif property_name.contains("include_evade_sources"):

@@ -146,7 +146,7 @@ func set_data_from_seq_bytes(bytes: PackedByteArray) -> void:
 	
 	# get pointers
 	sequence_pointers.clear()
-	for seq_index in (section2_length / 4):
+	for seq_index: int in (section2_length / 4):
 		var seq_pointer: int = bytes.decode_u32(section1_length + (seq_index * 4))
 		if seq_index > 0 and seq_pointer == 0xFFFFFFFF:
 			break # skip to section 3 if no more pointers in section 2
@@ -179,7 +179,7 @@ func set_data_from_seq_bytes(bytes: PackedByteArray) -> void:
 				sequences.append(get_sequence_data(sequence_bytes))
 				sequence_start_index = byte_index
 	
-	for index in sequence_pointers.size():
+	for index: int in sequence_pointers.size():
 		sequence_pointers[index] = get_pointer_from_address(sequence_pointers[index])
 	set_sequence_names()
 	
@@ -210,7 +210,7 @@ func set_sequence_names() -> void:
 	if seq_names.has(name_alias):
 		#push_warning(sequence_pointers)
 		#push_warning(seq_names[name_alias])
-		for pointer_index in sequence_pointers.size():
+		for pointer_index: int in sequence_pointers.size():
 			var pointer: int = sequence_pointers[pointer_index]
 			if sequences[pointer].seq_name.is_empty() and seq_names[name_alias].size() > pointer_index: # if this is the first pointer to point to the sequence
 				sequences[pointer].seq_name = seq_names[name_alias][pointer_index] # set name of the sequence
@@ -306,7 +306,7 @@ func get_seq_bytes() -> PackedByteArray:
 	bytes.encode_u16(2, BB)
 	
 	# section 2
-	for seq_pointer_index in sequence_pointers.size():
+	for seq_pointer_index: int in sequence_pointers.size():
 		bytes.encode_u32(section1_length + (4 * seq_pointer_index), get_pointer_address(sequence_pointers[seq_pointer_index]))
 	
 	var sequence_pointers_length: int = sequence_pointers.size() * 4
@@ -339,13 +339,13 @@ func write_seq(path: String) -> void:
 	
 	# save file
 	DirAccess.make_dir_recursive_absolute(path.get_base_dir())
-	var save_file := FileAccess.open(path.get_basename(), FileAccess.WRITE)
+	var save_file: FileAccess = FileAccess.open(path.get_basename(), FileAccess.WRITE)
 	save_file.store_buffer(bytes)
 
 
 func set_data_from_cfg(filepath:String) -> void:
-	var cfg := ConfigFile.new()
-	var err := cfg.load(filepath)
+	var cfg: ConfigFile = ConfigFile.new()
+	var err: Error = cfg.load(filepath)
 	#var err = cfg.load("user://FFTorama/"+file_name+"_shp.cfg")
 
 	if err != OK:
@@ -410,12 +410,12 @@ func write_wiki_table() -> void:
 	final_output += "\n|}"
 	
 	DirAccess.make_dir_recursive_absolute("user://wiki_tables")
-	var save_file := FileAccess.open("user://wiki_tables/wiki_table_" + file_name + ".txt", FileAccess.WRITE)
+	var save_file: FileAccess = FileAccess.open("user://wiki_tables/wiki_table_" + file_name + ".txt", FileAccess.WRITE)
 	save_file.store_string(final_output)
 
 
 func write_cfg() -> void:
-	var cfg := ConfigFile.new()
+	var cfg: ConfigFile = ConfigFile.new()
 	cfg.set_value(file_name, "file_name", file_name)
 	cfg.set_value(file_name, "name_alias", name_alias)
 	cfg.set_value(file_name, "AA", AA)
@@ -428,7 +428,7 @@ func write_cfg() -> void:
 		cfg.set_value(seq_label, "size", seq_data.seq_parts.size())
 		cfg.set_value(seq_label, "seq_name", seq_data.seq_name)
 		
-		for seq_part_index in seq_data.seq_parts.size():
+		for seq_part_index: int in seq_data.seq_parts.size():
 			var seq_part_label: String = seq_label + "-" + str(seq_part_index)
 			var seq_part_data: SeqPart = seq_data.seq_parts[seq_part_index]
 			cfg.set_value(seq_part_label, "opcode", seq_part_data.opcode)
@@ -441,7 +441,7 @@ func write_cfg() -> void:
 func set_sequences_from_csv(filepath:String) -> void:
 	sequences.clear()
 	
-	var file := FileAccess.open(filepath, FileAccess.READ)
+	var file: FileAccess = FileAccess.open(filepath, FileAccess.READ)
 	if file == null:
 		push_warning(FileAccess.get_open_error())
 		return
@@ -530,7 +530,7 @@ func write_csv() -> void:
 		seq_id += 1
 
 	DirAccess.make_dir_recursive_absolute("user://FFTorama")
-	var save_file := FileAccess.open("user://FFTorama/animation_data_" + file_name + ".txt", FileAccess.WRITE)
+	var save_file: FileAccess = FileAccess.open("user://FFTorama/animation_data_" + file_name + ".txt", FileAccess.WRITE)
 	save_file.store_string(output)
 
 
@@ -549,7 +549,7 @@ static func load_opcode_data(use_rewrite_opcodes: bool = false) -> void:
 
 
 static func load_opcode_file(file_path: String) -> void:
-	var file := FileAccess.open(file_path, FileAccess.READ)
+	var file: FileAccess = FileAccess.open(file_path, FileAccess.READ)
 	var input: String = file.get_as_text()
 	
 	var lines: PackedStringArray = input.split("\n");
@@ -576,7 +576,7 @@ static func load_opcode_file(file_path: String) -> void:
 static func load_seq_name_data() -> void:
 	var filepath: String = "res://src/fftae/SeqData/animation_names.txt"
 	
-	var file := FileAccess.open(filepath, FileAccess.READ)
+	var file: FileAccess = FileAccess.open(filepath, FileAccess.READ)
 	var input: String = file.get_as_text()
 	
 	var lines: PackedStringArray = input.split("\n");

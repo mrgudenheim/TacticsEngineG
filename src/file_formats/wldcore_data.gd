@@ -17,7 +17,7 @@ class RandomBattle:
 	var battle_sets: Array[PackedByteArray] = []
 	var entds: PackedInt32Array = []
 	var map_id: int = 0
-	var variable_id = 0
+	var variable_id: int = 0
 	
 	func _init(bytes: PackedByteArray) -> void:
 		path_id = bytes.decode_u8(0)

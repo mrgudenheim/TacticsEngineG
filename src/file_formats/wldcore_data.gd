@@ -56,6 +56,7 @@ static func get_scenarios_from_random_battle(fft_random_battle: RandomBattle) ->
 	var map_unique_name: String = RomReader.maps.keys()[map_name_idx]
 	
 	var new_map_chunk: Scenario.MapChunk = Scenario.MapChunk.new()
+	new_map_chunk.set_mirror_xyz([true, true, false])
 	new_map_chunk.unique_name = map_unique_name
 	new_scenario_base.map_chunks.append(new_map_chunk)
 	
@@ -90,6 +91,7 @@ static func get_scenarios_from_dungeon_battle(fft_dungeon_battle: DungeonBattle)
 	
 	var new_map_chunk: Scenario.MapChunk = Scenario.MapChunk.new()
 	new_map_chunk.unique_name = map_unique_name
+	new_map_chunk.set_mirror_xyz([true, true, false])
 	new_scenario_base.map_chunks.append(new_map_chunk)
 	
 	var unique_entds: PackedInt64Array = []

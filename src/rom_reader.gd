@@ -1074,7 +1074,7 @@ func write_spritesheet_region_data(seq_index: int, shp_index: int) -> void:
 	
 	var file_name: String = shp.file_name.to_snake_case().replace(".","_") + "_regions"
 	DirAccess.make_dir_recursive_absolute("user://wiki_tables")
-	var save_file := FileAccess.open("user://wiki_tables/wiki_table_" + file_name + ".txt", FileAccess.WRITE)
+	var save_file: FileAccess = FileAccess.open("user://wiki_tables/wiki_table_" + file_name + ".txt", FileAccess.WRITE)
 	save_file.store_string(final_output)
 
 
@@ -1096,6 +1096,7 @@ func get_scenario_from_attack_out_scenario(fft_scenario: AttackOutData.ScenarioD
 	var map_unique_name: String = RomReader.maps.keys()[map_name_idx]
 	
 	var new_map_chunk: Scenario.MapChunk = Scenario.MapChunk.new()
+	new_map_chunk.set_mirror_xyz([true, true, false])
 	new_map_chunk.unique_name = map_unique_name
 	new_scenario.map_chunks.append(new_map_chunk)
 

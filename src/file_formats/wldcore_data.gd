@@ -47,6 +47,72 @@ class DungeonBattle:
 			entds.append(bytes.decode_u8(idx + 0x02))
 
 
+static func get_scenarios_from_random_battle(fft_random_battle: RandomBattle) -> Array[Scenario]:
+	var new_scenarios: Array[Scenario] = []
+	var new_scenario_base: Scenario = Scenario.new()
+
+	var map_unique_name_num: String = "map_%03d" % fft_random_battle.map_id
+	var map_name_idx: int = RomReader.maps.keys().find_custom(func(map_name: String) -> bool: return map_name.begins_with(map_unique_name_num))
+	var map_unique_name: String = RomReader.maps.keys()[map_name_idx]
+	
+	var new_map_chunk: Scenario.MapChunk = Scenario.MapChunk.new()
+	new_map_chunk.unique_name = map_unique_name
+	new_scenario_base.map_chunks.append(new_map_chunk)
+	
+	var unique_entds: PackedInt64Array = []
+	for entd_idx: int in fft_random_battle.entds:
+		if unique_entds.has(entd_idx):
+			continue
+		unique_entds.append(entd_idx)
+
+		var new_scenario: Scenario = new_scenario_base.duplicate()
+		var scenario_entd: FftEntd = RomReader.fft_entds[entd_idx]
+		new_scenario.units_data = scenario_entd.get_units_data()
+
+		var number: int = 1
+		new_scenario.unique_name = map_unique_name + ("_%02d" % number)
+		while RomReader.scenarios.keys().has(new_scenario.unique_name):
+			number += 1
+			new_scenario.unique_name = map_unique_name + ("_%02d" % number)
+		
+		new_scenarios.append(new_scenario)
+
+	return new_scenarios
+
+
+static func get_scenarios_from_dungeon_battle(fft_dungeon_battle: DungeonBattle) -> Array[Scenario]:
+	var new_scenarios: Array[Scenario] = []
+	var new_scenario_base: Scenario = Scenario.new()
+
+	var map_unique_name_num: String = "map_%03d" % fft_dungeon_battle.map_id
+	var map_name_idx: int = RomReader.maps.keys().find_custom(func(map_name: String) -> bool: return map_name.begins_with(map_unique_name_num))
+	var map_unique_name: String = RomReader.maps.keys()[map_name_idx]
+	
+	var new_map_chunk: Scenario.MapChunk = Scenario.MapChunk.new()
+	new_map_chunk.unique_name = map_unique_name
+	new_scenario_base.map_chunks.append(new_map_chunk)
+	
+	var unique_entds: PackedInt64Array = []
+	for entd_idx: int in fft_dungeon_battle.entds:
+		if unique_entds.has(entd_idx):
+			continue
+		unique_entds.append(entd_idx)
+
+		var new_scenario: Scenario = new_scenario_base.duplicate()
+		var scenario_entd: FftEntd = RomReader.fft_entds[entd_idx]
+		new_scenario.units_data = scenario_entd.get_units_data()
+
+		var number: int = 1
+		new_scenario.unique_name = map_unique_name + ("_%02d" % number)
+		while RomReader.scenarios.keys().has(new_scenario.unique_name):
+			number += 1
+			new_scenario.unique_name = map_unique_name + ("_%02d" % number)
+		
+		new_scenarios.append(new_scenario)
+
+	return new_scenarios
+
+
 func init_from_wldcore() -> void:
 	var wldcore_bytes: PackedByteArray = RomReader.get_file_data("WLDCORE.BIN")
 	
@@ -65,3 +131,17 @@ func init_from_wldcore() -> void:
 		var dungeon_random_battle_bytes: PackedByteArray = dungeon_random_battle_table_bytes.slice(dungeon_random_battle_bytes_start, dungeon_random_battle_bytes_start + dungeon_random_battle_data_entry_length)
 
 		dungeon_random_battle_data.append(DungeonBattle.new(dungeon_random_battle_bytes))
+
+
+func get_all_scenarios() -> Array[Scenario]:
+	var new_scenarios: Array[Scenario] = []
+
+	for random_battle: RandomBattle in world_random_battle_data:
+		var random_battle_scenarios: Array[Scenario] = WldcoreData.get_scenarios_from_random_battle(random_battle)
+		new_scenarios.append_array(random_battle_scenarios)
+	
+	for dungeon_battle: DungeonBattle in dungeon_random_battle_data:
+		var random_battle_scenarios: Array[Scenario] = WldcoreData.get_scenarios_from_dungeon_battle(dungeon_battle)
+		new_scenarios.append_array(random_battle_scenarios)
+
+	return new_scenarios

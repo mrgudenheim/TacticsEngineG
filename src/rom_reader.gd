@@ -18,16 +18,16 @@ const BYTES_PER_SECTOR_HEADER: int = 24
 const BYTES_PER_SECTOR_FOOTER: int = 280
 const DATA_BYTES_PER_SECTOR: int = 2048
 
-const NUM_ABILITIES = 512
-const NUM_ACTIVE_ABILITIES = 0x1C6
-const NUM_SPRITESHEETS = 0x9f
-const NUM_SKILLSETS = 0xe0
-const NUM_UNIT_SKILLSETS = 0xb0
-const NUM_MONSTER_SKILLSETS = 0xe0 - 0xb0
-const NUM_JOBS = 0xa0
-const NUM_VFX = 511
-const NUM_ITEMS = 254 # 256?
-const NUM_WEAPONS = 122
+const NUM_ABILITIES: int = 512
+const NUM_ACTIVE_ABILITIES: int = 0x1C6
+const NUM_SPRITESHEETS: int = 0x9f
+const NUM_SKILLSETS: int = 0xe0
+const NUM_UNIT_SKILLSETS: int = 0xb0
+const NUM_MONSTER_SKILLSETS: int = 0xe0 - 0xb0
+const NUM_JOBS: int = 0xa0
+const NUM_VFX: int = 511
+const NUM_ITEMS: int = 254 # 256?
+const NUM_WEAPONS: int = 122
 
 var sprs: Array[Spr] = []
 var spr_file_name_to_id: Dictionary[String, int] = {}
@@ -164,6 +164,10 @@ func process_rom() -> void:
 	add_entds("ENTD2.ENT")
 	add_entds("ENTD3.ENT")
 	add_entds("ENTD4.ENT")
+
+	var wldcore_scenarios: Array[Scenario] = wldcore_data.get_all_scenarios()
+	for new_scenario: Scenario in wldcore_scenarios:
+		RomReader.scenarios[new_scenario.unique_name] = new_scenario
 
 	for fft_scenario: AttackOutData.ScenarioData in attack_out_data.scenario_data:
 		var new_scenario: Scenario = get_scenario_from_attack_out_scenario(fft_scenario)
@@ -677,7 +681,7 @@ func get_file_data(file_name: String) -> PackedByteArray:
 
 
 func get_spr_file_idx(sprite_id: int) -> int:
-	return sprs.find_custom(func(spr: Spr): return spr.sprite_id == sprite_id)
+	return sprs.find_custom(func(spr: Spr) -> bool: return spr.sprite_id == sprite_id)
 
 
 func init_abilities() -> void:
@@ -786,7 +790,7 @@ func import_custom_data() -> void:
 
 	for content_folder: String in folder_names:
 		var dir_path: String = "res://src/_content/" + content_folder + "/"
-		var dir := DirAccess.open(dir_path)
+		var dir: DirAccess = DirAccess.open(dir_path)
 
 		if dir:
 			dir.list_dir_begin()
@@ -796,8 +800,8 @@ func import_custom_data() -> void:
 					#push_warning("Found file: " + file_name)
 					if file_name.ends_with(".json"):
 						var file_path: String = dir_path + file_name
-						var file := FileAccess.open(file_path, FileAccess.READ)
-						var file_text = file.get_as_text()
+						var file: FileAccess = FileAccess.open(file_path, FileAccess.READ)
+						var file_text: String = file.get_as_text()
 
 						var data_type: String = file_name.split(".")[-2]
 
@@ -1078,7 +1082,7 @@ func add_entds(file_name: String) -> void:
 	var entd_data_length: int = 40 * 16
 	var entds_per_file: int = 0x80
 	var file_bytes: PackedByteArray = file_records[file_name].get_file_data(rom)
-	for idx in entds_per_file:
+	for idx: int in entds_per_file:
 		var entd_bytes: PackedByteArray = file_bytes.slice(idx * entd_data_length, (idx + 1) * entd_data_length)
 		var new_entd: FftEntd = FftEntd.new(entd_bytes)
 		fft_entds.append(new_entd)
@@ -1088,7 +1092,7 @@ func get_scenario_from_attack_out_scenario(fft_scenario: AttackOutData.ScenarioD
 	var new_scenario: Scenario = Scenario.new()
 
 	var map_unique_name_num: String = "map_%03d" % fft_scenario.map_id
-	var map_name_idx: int = RomReader.maps.keys().find_custom(func(map_name: String): return map_name.begins_with(map_unique_name_num))
+	var map_name_idx: int = RomReader.maps.keys().find_custom(func(map_name: String) -> bool: return map_name.begins_with(map_unique_name_num))
 	var map_unique_name: String = RomReader.maps.keys()[map_name_idx]
 	
 	var new_map_chunk: Scenario.MapChunk = Scenario.MapChunk.new()
@@ -1103,6 +1107,5 @@ func get_scenario_from_attack_out_scenario(fft_scenario: AttackOutData.ScenarioD
 	while RomReader.scenarios.keys().has(new_scenario.unique_name):
 		number += 1
 		new_scenario.unique_name = map_unique_name + ("_%02d" % number)
-
 
 	return new_scenario

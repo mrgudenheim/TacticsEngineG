@@ -5,7 +5,7 @@ extends Control
 
 @export var battle_manager: BattleManager
 @export var start_button: Button
-@export var load_scenario_button: Button
+@export var load_scenario_button: OptionButton
 @export var export_scenario_button: Button
 @export var import_scenario_button: Button
 @export var import_file_dialog: FileDialog
@@ -33,7 +33,7 @@ extends Control
 @export var show_map_tiles_check: CheckBox
 @export var map_tile_highlights: Array[Node3D] = []
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if unit_dragged != null:
 		unit_dragged.char_body.position = battle_manager.current_cursor_map_position + Vector3(0, 0.25, 0)
 		
@@ -42,7 +42,7 @@ func _process(delta: float) -> void:
 			if cursor_tile == null:
 				return
 			
-			var tile_highlight_pos = tile_highlight.global_position - Vector3(0, 0.025, 0)
+			var tile_highlight_pos: Vector3 = tile_highlight.global_position - Vector3(0, 0.025, 0)
 			if tile_highlight_pos == cursor_tile.get_world_position(true): # do nothing if tile has not changed
 				return
 			tile_highlight.queue_free()
@@ -92,9 +92,10 @@ func _ready() -> void:
 	import_scenario_button.pressed.connect(open_import_dialong)
 	import_file_dialog.file_selected.connect(import_scenario)
 	new_scenario_button.pressed.connect(queue_new_scenario)
+	load_scenario_button.item_selected.connect(func(idx: int) -> void: queue_new_scenario(RomReader.scenarios[load_scenario_button.get_item_text(idx)]))
 
 
-func queue_new_scenario(new_scenario: Scenario = null):
+func queue_new_scenario(new_scenario: Scenario = null) -> void:
 	if battle_manager.battle_is_running:
 		while not battle_manager.safe_to_load_map:
 			await get_tree().process_frame # TODO loop over safe_to_load_new_map, set false while awaiting processing
@@ -113,7 +114,12 @@ func init_scenario(new_scenario: Scenario = null) -> void:
 	# remove current map chunks
 	for map_chunk_settings_instance: MapChunkSettingsUi in map_chunk_settings_list:
 		map_chunk_settings_instance.queue_free()
-
+	
+	load_scenario_button.clear()
+	load_scenario_button.add_separator("Load Scenario")
+	for scenario_unique_name: String in RomReader.scenarios.keys():
+		load_scenario_button.add_item(scenario_unique_name)
+	
 	if new_scenario != null:
 		scenario = new_scenario
 		
@@ -177,7 +183,7 @@ func populate_option_lists() -> void:
 func setup_job_select(unit: Unit) -> void:
 	job_select_control.visible = true
 	for job_select_button: JobSelectButton in job_select_control.job_select_buttons:
-		job_select_button.selected.connect(func(new_job: JobData): update_unit_job(unit, new_job))
+		job_select_button.selected.connect(func(new_job: JobData) -> void: update_unit_job(unit, new_job))
 
 
 func desetup_job_select() -> void:
@@ -191,7 +197,7 @@ func setup_item_select(unit: Unit, slot: EquipmentSlot) -> void:
 	for item_select_button: ItemSelectButton in item_select_control.item_select_buttons:
 		if slot.slot_types.has(item_select_button.item_data.slot_type) and unit.equipable_item_types.has(item_select_button.item_data.item_type):
 			item_select_button.visible = true
-			item_select_button.selected.connect(func(new_item: ItemData): update_unit_equipment(unit, slot, new_item))
+			item_select_button.selected.connect(func(new_item: ItemData) -> void: update_unit_equipment(unit, slot, new_item))
 		else:
 			item_select_button.visible = false
 
@@ -207,7 +213,7 @@ func setup_ability_select(unit: Unit, slot: AbilitySlot) -> void:
 	for ability_select_button: AbilitySelectButton in ability_select_control.ability_select_buttons:
 		if slot.slot_types.has(ability_select_button.ability_data.slot_type):
 			ability_select_button.visible = true
-			ability_select_button.selected.connect(func(new_ability: Ability): update_unit_ability(unit, slot, new_ability))
+			ability_select_button.selected.connect(func(new_ability: Ability) -> void: update_unit_ability(unit, slot, new_ability))
 		else:
 			ability_select_button.visible = false
 
@@ -248,8 +254,8 @@ func add_map_chunk_settings(new_map_chunk: Scenario.MapChunk = null) -> void:
 	new_map_chunk_settings.add_row_to_table(map_chunk_settings_container)
 	map_chunk_settings_list.append(new_map_chunk_settings)
 	new_map_chunk_settings.deleted.connect(
-		func(deleted_map_chunk_settings: MapChunkSettingsUi): 
-			var idx: int = map_chunk_settings_list.find(new_map_chunk_settings)
+		func(deleted_map_chunk_settings: MapChunkSettingsUi) -> void: 
+			var idx: int = map_chunk_settings_list.find(deleted_map_chunk_settings)
 			if idx >= 0:
 				map_chunk_settings_list.remove_at(idx)
 	)
@@ -393,8 +399,8 @@ func open_import_dialong() -> void:
 
 
 func import_scenario(file_path: String) -> void:
-	var file := FileAccess.open(file_path, FileAccess.READ)
-	var file_text = file.get_as_text()
+	var file: FileAccess = FileAccess.open(file_path, FileAccess.READ)
+	var file_text: String = file.get_as_text()
 	var new_scenario: Scenario = Scenario.create_from_json(file_text)
 	RomReader.scenarios[new_scenario.unique_name] = new_scenario # do not use "add_to_global_list" as it may set a new unique name
 	

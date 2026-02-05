@@ -114,7 +114,7 @@ func self_trigger(user: Unit) -> void:
 
 
 func process_triggered_action(triggered_action_data: TriggeredActionInstance) -> void:
-	var user = triggered_action_data.user
+	var user: Unit = triggered_action_data.user
 	if not Utilities.has_any_elements(user.current_status_ids, required_status_id):
 		return
 	
@@ -166,7 +166,7 @@ func process_triggered_action(triggered_action_data: TriggeredActionInstance) ->
 		# 	if excess_hp < excessive_hp_recovery_threshold:
 		# 		return
 	
-	var is_triggered = check_if_triggered(triggered_action_data.user, initiator)
+	var is_triggered: bool = check_if_triggered(triggered_action_data.user, initiator)
 	if not is_triggered:
 		return
 	
@@ -182,7 +182,7 @@ func process_triggered_action(triggered_action_data: TriggeredActionInstance) ->
 	
 	match targeting:
 		TargetingTypes.ACTION:
-			await new_action_instance.start_targeting() # TODO await targeting selection of triggered action
+			new_action_instance.start_targeting() # TODO await targeting selection of triggered action
 		TargetingTypes.SELF:
 			var target_tile: TerrainTile = triggered_action_data.user.tile_position
 			new_action_instance.submitted_targets = new_action_instance.action.targeting_strategy.get_aoe_targets(new_action_instance, target_tile)
@@ -204,8 +204,8 @@ func check_if_triggered(user: Unit, target: Unit, element: Action.ElementTypes =
 
 
 func get_action_instance(triggered_action_data: TriggeredActionInstance) -> ActionInstance:
-	var action: Action = get_action(triggered_action_data)
-	var new_action_instance: ActionInstance = ActionInstance.new(action, triggered_action_data.user, triggered_action_data.user.global_battle_manager)
+	var new_action: Action = get_action(triggered_action_data)
+	var new_action_instance: ActionInstance = ActionInstance.new(new_action, triggered_action_data.user, triggered_action_data.user.global_battle_manager)
 	new_action_instance.allow_triggering_actions = allow_triggering_actions
 	new_action_instance.deduct_action_points = deduct_action_points
 	
@@ -213,17 +213,17 @@ func get_action_instance(triggered_action_data: TriggeredActionInstance) -> Acti
 
 
 func get_action(triggered_action_data: TriggeredActionInstance) -> Action:
-	var action: Action = triggered_action_data.user.attack_action
+	var new_action: Action = triggered_action_data.user.attack_action
 	if RomReader.actions.keys().has(action_unique_name):
-		action = RomReader.actions[action_unique_name]
+		new_action = RomReader.actions[action_unique_name]
 	elif action_unique_name == "ATTACK": # special case to use weapon attack
-		action = triggered_action_data.user.attack_action
+		new_action = triggered_action_data.user.attack_action
 	elif action_unique_name == "COPY": # special case to use initiator action
-		action = triggered_action_data.initiating_action_instance.action
+		new_action = triggered_action_data.initiating_action_instance.action
 	else:
 		push_error("Action unique_name: " + action_unique_name + " not in Action dictionary. Using weapon attack.")
 	
-	return action
+	return new_action
 
 
 func add_to_global_list(will_overwrite: bool = false) -> void:
@@ -298,7 +298,7 @@ static func create_from_json(json_string: String) -> TriggeredAction:
 
 static func create_from_dictonary(property_dict: Dictionary) -> TriggeredAction:
 	var new_triggered_action: TriggeredAction = TriggeredAction.new()
-	for property_name in property_dict.keys():
+	for property_name: String in property_dict.keys():
 		if property_name == "trigger_chance_formula":
 			var new_formula_data: FormulaData = FormulaData.create_from_dictionary(property_dict[property_name])
 			new_triggered_action.set(property_name, new_formula_data)

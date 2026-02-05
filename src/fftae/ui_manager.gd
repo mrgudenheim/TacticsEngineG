@@ -121,7 +121,7 @@ func update_animation_description_options(seq: Seq) -> void:
 		animation_name_options.select(-1)
 		animation_name_options.disabled = true
 	else:
-		for index in seq.sequences.size():
+		for index: int in seq.sequences.size():
 			var sequence: Sequence = seq.sequences[index]
 			animation_name_options.add_item(str(index) + " " + sequence.seq_name)
 		animation_name_options.select(animation_id_spinbox.value)

@@ -1,13 +1,13 @@
 class_name FftAnimation
 
-var id = 0
+var id: int = 0
 
 var draw_target: Sprite3D
 var target_name: String = ""
 
 var seq: Seq
 var shp: Shp
-var sequence := Sequence.new()
+var sequence: Sequence = Sequence.new()
 
 var flipped_v: bool = false # mirrors the animation
 var submerged_depth: int = 0

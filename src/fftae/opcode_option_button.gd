@@ -17,7 +17,7 @@ func on_item_selected(item_index: int) -> void:
 	var opcode_name: String = get_item_text(item_index)
 	
 	# remove existing ui elements
-	for node in params_ui:
+	for node: Node in params_ui:
 		node.queue_free()
 	params_ui.clear()
 	param_spinboxes.clear()

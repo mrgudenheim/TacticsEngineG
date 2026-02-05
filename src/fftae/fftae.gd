@@ -173,7 +173,7 @@ func _on_save_xml_dialog_file_selected(path: String) -> void:
 	if path.get_slice(".", -2).to_lower() == path.get_slice(".", -1).to_lower():
 		path = path.trim_suffix(path.get_slice(".", -1))
 	DirAccess.make_dir_recursive_absolute(path.get_base_dir())
-	var save_file := FileAccess.open(path, FileAccess.WRITE)
+	var save_file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
 	save_file.store_string(xml_complete)
 
 
@@ -269,9 +269,9 @@ func populate_animation_list(animations_list_parent: VBoxContainer, seq_local: S
 	ui_manager.current_animation_slots = seq_local.sequence_pointers.size()
 	
 	var time_left_in_frame: bool = true
-	get_tree().create_timer(0.017).timeout.connect(func(): time_left_in_frame = false)
+	get_tree().create_timer(0.017).timeout.connect(func() -> void: time_left_in_frame = false)
 	
-	for index in seq_local.sequence_pointers.size():
+	for index: int in seq_local.sequence_pointers.size():
 		var pointer: int = seq_local.sequence_pointers[index]
 		var sequence: Sequence = seq_local.sequences[pointer]
 		var description: String = sequence.seq_name
@@ -305,7 +305,7 @@ func populate_animation_list(animations_list_parent: VBoxContainer, seq_local: S
 		if not time_left_in_frame:
 			await get_tree().process_frame
 			time_left_in_frame = true
-			get_tree().create_timer(0.017).timeout.connect(func(): time_left_in_frame = false)
+			get_tree().create_timer(0.017).timeout.connect(func() -> void: time_left_in_frame = false)
 
 
 func populate_opcode_list(opcode_grid_parent: GridContainer, seq_id: int) -> void:
@@ -346,7 +346,7 @@ func populate_frame_list(frame_list_parent: VBoxContainer, shp_local: Shp) -> vo
 	
 	var counter: int = 0
 	
-	for frame_index in shp_local.frame_pointers.size():
+	for frame_index: int in shp_local.frame_pointers.size():
 		var pointer: int = shp_local.frame_pointers[frame_index]
 		var frame: FrameData = shp_local.frames[frame_index]
 		

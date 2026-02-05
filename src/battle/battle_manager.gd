@@ -607,7 +607,7 @@ func spawn_unit_from_unit_data(unit_data: UnitData) -> Unit:
 	new_unit.icon2.texture = RomReader.frame_bin_texture
 	
 	new_unit.ability_slots = unit_data.ability_slots
-	new_unit.primary_weapon_assigned.connect(func(weapon_unique_name: String): new_unit.update_actions(self))
+	new_unit.primary_weapon_assigned.connect(func(_weapon_unique_name: String) -> void: new_unit.update_actions(self))
 	new_unit.equip_slots = unit_data.equip_slots
 	new_unit.set_primary_weapon(unit_data.primary_weapon_unique_name)
 	#var unit_actions: Array[Action] = new_unit.get_skillset_actions()

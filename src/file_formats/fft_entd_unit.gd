@@ -164,7 +164,10 @@ func get_unit_data() -> UnitData:
 	unit_data.job_unique_name = RomReader.jobs_data.keys()[main_job]
 	unit_data.team_idx = team_color_idx
 	unit_data.controller = 1 if is_player_controlled else 0 # 0 = AI, 1 = Player 1, etc.
-	unit_data.spritesheeet_file_name = "spritesheeet_file_name.spr" # TODO get sprite file name?
+	
+	var new_sprite_id: int = RomReader.jobs_data[unit_data.job_unique_name].sprite_id
+	var new_sprite_file_name_idx: int = RomReader.spr_file_name_to_id.values().find(new_sprite_id)
+	unit_data.spritesheeet_file_name = RomReader.spr_file_name_to_id.keys()[new_sprite_file_name_idx] # TODO better way to get sprite file name?
 	unit_data.palette_id = palette
 	
 	if initial_direction == 0:
@@ -247,6 +250,7 @@ func get_unit_data() -> UnitData:
 	# TODO account for map being shifted or mirrored?
 	# TODO how to get height or handle the second level flag?
 	unit_data.tile_position = Vector3(position_x + 0.5, 0, position_y + 0.5)
+	unit_data.tile_position.y = upper_level
 
 	return unit_data
 

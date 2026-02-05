@@ -30,7 +30,7 @@ func _ready() -> void:
 	item_options.item_selected.connect(animation_manager.set_item)
 	
 	ability_id_spin.value_changed.connect(_on_ability_id_value_changed)
-	unit.ability_assigned.connect(func(id): ability_id_spin.value = id)
+	unit.ability_assigned.connect(func(id: int): ability_id_spin.value = id)
 	
 	unit.primary_weapon_assigned.connect(func(weapon_unique_name: String): weapon_options.select(RomReader.items.keys().find(weapon_unique_name)))
 	# unit.primary_weapon_assigned.connect(weapon_options.select)

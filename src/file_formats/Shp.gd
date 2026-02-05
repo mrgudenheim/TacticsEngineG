@@ -40,7 +40,7 @@ var frame_size: Vector2i:
 		else:
 			return Vector2i(120, 120)
 
-const PIXELS_PER_TILE = 8
+const PIXELS_PER_TILE: int = 8
 
 static var shp_aliases: Dictionary[String, String] = {
 	"arute":"Altima/arute",
@@ -120,7 +120,7 @@ var frames: Array[FrameData] = []
 var section3_length: int = 0:
 	get:
 		var sum: int = 0
-		for frame in frames:
+		for frame: FrameData in frames:
 			sum += frame.length
 		return sum + 2 # bytes
 
@@ -133,7 +133,7 @@ var frames_submerged: Array[FrameData] = []
 var frames_submerged_length: int = 0:
 	get:
 		var sum: int = 0
-		for frame in frames_submerged:
+		for frame: FrameData in frames_submerged:
 			sum += frame.length
 		return sum + 2 # bytes
 
@@ -205,7 +205,7 @@ func set_data_from_shp_bytes(bytes: PackedByteArray) -> void:
 		attack_start_index = 9999; # these types do not have a second (lower) half
 		
 		var initial_offset: int = 4 # skip first bytes
-		for index in ((section1_length - initial_offset) / 2):
+		for index: int in ((section1_length - initial_offset) / 2):
 			var zero_frame: int = bytes.decode_u16(initial_offset + (index*2))
 			zero_frames.append(zero_frame)
 		
@@ -233,7 +233,7 @@ func set_data_from_shp_bytes(bytes: PackedByteArray) -> void:
 	if has_submerged_data:
 		var frame_submerged_data_start: int = swim_pointer + section2_length + 2
 		frames_submerged.clear()
-		for frame_pointer_submerged in frame_pointers_submerged:
+		for frame_pointer_submerged: int in frame_pointers_submerged:
 			var frame_offset: int = frame_submerged_data_start + frame_pointer_submerged
 			var num_subframes: int = 1 + (bytes.decode_u8(frame_offset) & 0b00000111)
 			var frame_length: int = 2 + (num_subframes * 4)
@@ -243,7 +243,7 @@ func set_data_from_shp_bytes(bytes: PackedByteArray) -> void:
 
 
 func _get_frame_data(bytes: PackedByteArray) -> FrameData:
-	var frame_data := FrameData.new()
+	var frame_data: FrameData = FrameData.new()
 	
 	frame_data.num_subframes = 1 + (bytes.decode_u8(0) & 0x07)
 	var y_rotation_pointer: int = (bytes.decode_u8(0) & 0xF8) >> 3
@@ -311,7 +311,7 @@ func write_shp() -> void:
 		bytes = _write_sections23_bytes(bytes, swim_pointer, frame_pointers_submerged, frames_submerged, frames_submerged_length)
 	
 	DirAccess.make_dir_recursive_absolute("user://FFTorama")
-	var save_file := FileAccess.open("user://FFTorama/" + file_name + ".shp", FileAccess.WRITE)
+	var save_file: FileAccess = FileAccess.open("user://FFTorama/" + file_name + ".shp", FileAccess.WRITE)
 	save_file.store_buffer(bytes)
 
 
@@ -342,7 +342,7 @@ func _write_sections23_bytes(bytes: PackedByteArray,  data_start_pointer: int, p
 		bytes.encode_u8(frame_offset, b1)
 		bytes.encode_u8(frame_offset + 1, b2)
 		
-		for subframe_index in frame_data.subframes.size():
+		for subframe_index: int in frame_data.subframes.size():
 			var subframe: SubFrameData = frame_data.subframes[subframe_index]
 			var b56: int = (subframe.load_location_x / PIXELS_PER_TILE)
 			var b56_2: int = (subframe.load_location_y / PIXELS_PER_TILE) << 5
@@ -364,7 +364,7 @@ func _write_sections23_bytes(bytes: PackedByteArray,  data_start_pointer: int, p
 
 func set_data_from_cfg(filepath: String) -> void:
 	var cfg: ConfigFile = ConfigFile.new()
-	var err := cfg.load(filepath)
+	var err: Error = cfg.load(filepath)
 	#var err = cfg.load("user://FFTorama/"+file_name+"_shp.cfg")
 	
 	if err != OK:
@@ -390,7 +390,7 @@ func set_data_from_cfg(filepath: String) -> void:
 func _get_frames_from_cfg(cfg: ConfigFile, pointers: Array[int], cfg_file_name: String) -> Array[FrameData]:
 	var temp_frames: Array[FrameData] = []
 	
-	for frame_index in pointers.size():
+	for frame_index: int in pointers.size():
 		var frame_label: String = cfg_file_name + "-" + str(frame_index)
 		temp_frames.append(FrameData.new())
 		temp_frames[frame_index].num_subframes = cfg.get_value(frame_label, "num_subframes")
@@ -400,7 +400,7 @@ func _get_frames_from_cfg(cfg: ConfigFile, pointers: Array[int], cfg_file_name: 
 		temp_frames[frame_index].byte2_3 = cfg.get_value(frame_label, "byte2_3")
 		temp_frames[frame_index].byte2_4 = cfg.get_value(frame_label, "byte2_4")
 		
-		for subframe_index in temp_frames[frame_index].num_subframes:
+		for subframe_index: int in temp_frames[frame_index].num_subframes:
 			var subframe_label: String = frame_label + "-" + str(subframe_index)
 			temp_frames[frame_index].subframes.append(SubFrameData.new())
 			temp_frames[frame_index].subframes[subframe_index].shift_x = cfg.get_value(subframe_label, "shift_x")
@@ -449,7 +449,7 @@ func _write_cfg_frames(cfg: ConfigFile, temp_frames: Array[FrameData], cfg_file_
 
 
 func _write_cfg_subframes(cfg: ConfigFile, temp_frame_data: FrameData, frame_label: String) -> ConfigFile:
-	for subframe_index in temp_frame_data.num_subframes:
+	for subframe_index: int in temp_frame_data.num_subframes:
 		var subframe_label: String = frame_label + "-" + str(subframe_index)
 		var subframe_data: SubFrameData = temp_frame_data.subframes[subframe_index]
 		cfg.set_value(subframe_label, "shift_x", subframe_data.shift_x)
@@ -467,7 +467,7 @@ func _write_cfg_subframes(cfg: ConfigFile, temp_frame_data: FrameData, frame_lab
 func set_frames_from_csv(filepath:String) -> void:
 	frames.clear()
 	
-	var file := FileAccess.open(filepath, FileAccess.READ)
+	var file: FileAccess = FileAccess.open(filepath, FileAccess.READ)
 	if file == null:
 		push_warning(FileAccess.get_open_error())
 		return
@@ -503,7 +503,7 @@ func set_frames_from_csv(filepath:String) -> void:
 		new_frame.transparency_flag = frame_text_split[5].to_lower() == "true" as bool
 		#var frame_data = [num_subframe, rotation_degrees]
 		
-		for i in new_frame.num_subframes:
+		for i: int in new_frame.num_subframes:
 			var new_subframe: SubFrameData = SubFrameData.new()
 			
 			new_subframe.shift_x = frame_text_split[subframe_offset + (subframe_length*i)] as int
@@ -525,7 +525,7 @@ func set_frames_from_csv(filepath:String) -> void:
 func set_zero_frames_from_csv(filepath: String) -> void:
 	zero_frames.clear()
 	
-	var file := FileAccess.open(filepath, FileAccess.READ)
+	var file: FileAccess = FileAccess.open(filepath, FileAccess.READ)
 	if file == null:
 		push_warning(FileAccess.get_open_error())
 		return
@@ -632,7 +632,7 @@ func write_csvs() -> void:
 		frame_id_submerged += 1
 	
 	DirAccess.make_dir_recursive_absolute("user://FFTae")
-	var save_file := FileAccess.open("user://FFTae/frame_data_"+file_name+".txt", FileAccess.WRITE)
+	var save_file: FileAccess = FileAccess.open("user://FFTae/frame_data_"+file_name+".txt", FileAccess.WRITE)
 	save_file.store_string(output)
 	
 	if (file_name.begins_with("wep") || file_name.begins_with("eff")):
@@ -681,7 +681,7 @@ func get_assembled_frame(frame_index: int, source_image: Image, animation_ptr_in
 	var frame: FrameData = get_frame(frame_index, submerged_depth)
 	var assembled_image: Image = create_blank_frame(Color.TRANSPARENT, new_frame_size)
 	
-	for subframe_index in range(frame.num_subframes-1, -1, -1): # reverse order to layer them correctly
+	for subframe_index: int in range(frame.num_subframes-1, -1, -1): # reverse order to layer them correctly
 		var v_offset: int = get_v_offset(frame_index, subframe_index, animation_ptr_index, other_type_index, weapon_v_offset, submerged_depth)
 		assembled_image = add_subframe(frame.subframes[subframe_index], source_image, assembled_image, v_offset, new_frame_size, y_offset)
 	

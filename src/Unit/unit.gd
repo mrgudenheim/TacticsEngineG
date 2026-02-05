@@ -113,9 +113,9 @@ var player_control: bool = true
 var immortal: bool = false
 var immune_knockback: bool = false
 var game_over_trigger: bool = false
-var type_id = 0 # male, female, monster
+var type_id: int = 0 # male, female, monster
 var death_counter: int = 3
-var zodiac = "Ares"
+var zodiac: String = "Ares"
 
 var innate_ability_ids: PackedInt32Array = []
 var skillsets: Array[ScusData.SkillsetData] = []
@@ -398,7 +398,7 @@ func _physics_process(delta: float) -> void:
 	if not char_body.is_on_floor():
 		char_body.velocity += char_body.get_gravity() * delta
 	
-	var velocity_horizontal = char_body.velocity
+	var velocity_horizontal: Vector3 = char_body.velocity
 	velocity_horizontal.y = 0
 	if velocity_horizontal.length_squared() > 0.01:
 		update_unit_facing(velocity_horizontal.normalized())
@@ -573,7 +573,7 @@ func get_item_unique_name_for_slot(slot_type: ItemData.SlotType, item_level: int
 	return item_unique_name
 
 
-func equip_ability(slot: AbilitySlot, ability: Ability):
+func equip_ability(slot: AbilitySlot, ability: Ability) -> void:
 	slot.ability_unique_name = ability.unique_name
 
 	update_passive_effects()
@@ -694,7 +694,7 @@ func get_skillset_actions() -> Array[Action]:
 
 
 func clear_action_buttons(battle_manager: BattleManager) -> void:
-	for child in battle_manager.action_button_list.get_children():
+	for child: Node in battle_manager.action_button_list.get_children():
 		child.queue_free()
 
 
@@ -732,7 +732,7 @@ func select_first_action() -> void:
 			await ai_controller.choose_action(self)
 
 
-func end_turn():
+func end_turn() -> void:
 	#if UnitControllerRT.unit != self: # prevent accidentally ending a different units turn TODO what if the next turn is also this unit?
 		#return
 	
@@ -1026,7 +1026,7 @@ func use_ability(pos: Vector3) -> void:
 		current_animation_id_fwd = (RomReader.battle_bin_data.weapon_animation_ids[primary_weapon.item_type].y * 2) # TODO lookup based on target relative height
 		set_base_animation_ptr_id(current_animation_id_fwd)
 	else:
-		var ability_animation_executing_id = ability_data.animation_executing_id
+		var ability_animation_executing_id: int = ability_data.animation_executing_id
 		if ["RUKA.SEQ", "ARUTE.SEQ", "KANZEN.SEQ"].has(RomReader.sprs[sprite_file_idx].seq_name):
 			ability_animation_executing_id = 0x2c * 2 # https://ffhacktics.com/wiki/Set_attack_animation_flags_and_facing_3
 		#debug_menu.anim_id_spin.value = ability_animation_executing_id + int(is_back_facing)
@@ -1105,7 +1105,7 @@ func animate_execute_action(animation_executing_id: int, vfx: VisualEffectData =
 	if animation_executing_id < 0: # no animatione
 		return
 	
-	var ability_animation_executing_id = animation_executing_id
+	var ability_animation_executing_id: int = animation_executing_id
 	if ["RUKA.SEQ", "ARUTE.SEQ", "KANZEN.SEQ"].has(RomReader.sprs[sprite_file_idx].seq_name):
 		ability_animation_executing_id = 0x2c * 2 # https://ffhacktics.com/wiki/Set_attack_animation_flags_and_facing_3
 	#debug_menu.anim_id_spin.value = ability_animation_executing_id + int(is_back_facing)
@@ -1208,7 +1208,7 @@ func update_unit_facing(dir: Vector3) -> void:
 		new_facing = Facings.SOUTH
 	
 	if new_facing != facing:
-		var temp_facing = facing
+		var temp_facing: Unit.Facings = facing
 		facing = new_facing
 		if global_battle_manager != null:
 			update_animation_facing(global_battle_manager.camera_controller.CameraFacingVectors[global_battle_manager.camera_controller.camera_facing])
@@ -1219,9 +1219,9 @@ func update_animation_facing(camera_facing_vector: Vector3) -> void:
 	#var camera_facing_vector: Vector3 = UnitControllerRT.CameraFacingVectors[controller.camera_facing]
 	#var facing_difference: Vector3 = camera_facing_vector - unt_facing_vectorwad
 	
-	var unit_facing_angle = fposmod(rad_to_deg(atan2(unit_facing_vector.z, unit_facing_vector.x)), 359.99)
-	var camera_facing_angle = fposmod(rad_to_deg(atan2(-camera_facing_vector.z, -camera_facing_vector.x)), 359.99)
-	var facing_difference_angle = fposmod(camera_facing_angle - unit_facing_angle, 359.99)
+	var unit_facing_angle: float = fposmod(rad_to_deg(atan2(unit_facing_vector.z, unit_facing_vector.x)), 359.99)
+	var camera_facing_angle: float = fposmod(rad_to_deg(atan2(-camera_facing_vector.z, -camera_facing_vector.x)), 359.99)
+	var facing_difference_angle: float = fposmod(camera_facing_angle - unit_facing_angle, 359.99)
 		
 	#push_warning("Difference: " + str(facing_difference) + ", UnitFacing: " + str(unit_facing_vector) + ", CameraFacing: " + str(camera_facing_vector))
 	#push_warning("Difference: " + str(facing_difference_angle) + ", UnitFacing: " + str(unit_facing_angle) + ", CameraFacing: " + str(camera_facing_angle))
@@ -1520,13 +1520,13 @@ func set_sprite_by_file_name(new_sprite_file_name: String) -> void:
 
 
 func set_sprite_by_id(new_sprite_id: int) -> void:
-	var new_sprite_file_idx = RomReader.spr_id_file_idxs[new_sprite_id]
+	var new_sprite_file_idx: int = RomReader.spr_id_file_idxs[new_sprite_id]
 	set_sprite_by_file_idx(new_sprite_file_idx)
 
 
 func set_sprite_by_job_id(new_job_id: int) -> void:
-	var job_id_data = RomReader.scus_data.jobs_data[job_id]
-	var new_sprite_id = job_id_data.sprite_id
+	var job_id_data: JobData = RomReader.scus_data.jobs_data[job_id]
+	var new_sprite_id: int = job_id_data.sprite_id
 	if new_job_id >= 0x4a and new_job_id <= 0x5d and stat_basis == StatBasis.FEMALE:
 		new_sprite_id += 1
 	set_sprite_by_id(new_sprite_id)
@@ -1565,7 +1565,7 @@ func set_submerged_depth(new_depth: int) -> void:
 
 func update_spritesheet_grid_texture() -> void:
 	var new_spr: Spr = RomReader.sprs[sprite_file_idx]
-	var palette_idx_final = sprite_palette_id_override
+	var palette_idx_final: int = sprite_palette_id_override
 	if sprite_palette_id_override < 0:
 		palette_idx_final = sprite_palette_id
 	animation_manager.unit_sprites_manager.sprite_primary.texture = new_spr.create_frame_grid_texture(palette_idx_final, 0, animation_manager.other_type_index, 0, submerged_depth)

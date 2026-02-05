@@ -88,7 +88,7 @@ func start_animation(fft_animation: FftAnimation, draw_target: Sprite3D, is_play
 	var num_parts: int = fft_animation.sequence.seq_parts.size()
 	
 	var only_opcodes: bool = true
-	for animation_part in fft_animation.sequence.seq_parts:
+	for animation_part: SeqPart in fft_animation.sequence.seq_parts:
 		if not animation_part.isOpcode:
 			only_opcodes = false
 			break
@@ -202,7 +202,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 		if seq_part.opcode_name == "QueueSpriteAnim":
 			#push_warning("Performing " + anim_part_start) 
 			if seq_part.parameters[0] == 1: # play weapon animation
-				var new_animation := FftAnimation.new()
+				var new_animation: FftAnimation = FftAnimation.new()
 				new_animation.seq = wep_seq
 				new_animation.shp = wep_shp
 				new_animation.sequence = new_animation.seq.sequences[new_animation.seq.sequence_pointers[seq_part.parameters[1]]]
@@ -213,7 +213,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				
 				start_animation(new_animation, unit_sprites_manager.sprite_weapon, true, false, true)
 			elif seq_part.parameters[0] == 2: # play effect animation
-				var new_animation := FftAnimation.new()
+				var new_animation: FftAnimation = FftAnimation.new()
 				new_animation.seq = eff_seq
 				new_animation.shp = eff_shp
 				new_animation.sequence = new_animation.seq.sequences[new_animation.seq.sequence_pointers[seq_part.parameters[1]]]
@@ -338,7 +338,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 				temp_fft_animation.time = fft_animation.time
 				temp_fft_animation.frame_count = fft_animation.frame_count
 				
-				for iteration in num_loops:
+				for iteration: int in num_loops:
 					if temp_fft_animation.primary_anim != global_fft_animation:
 						break
 					await start_animation(temp_fft_animation, draw_target, true, false, true)

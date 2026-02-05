@@ -322,7 +322,7 @@ func get_total_hit_chance(user: Unit, target: Unit, evade_direction: EvadeData.D
 	var evade_factors: Dictionary[EvadeData.EvadeSource, float] = {}
 	if applicable_evasion_type != EvadeData.EvadeType.NONE:
 		for evade_source: EvadeData.EvadeSource in evade_values.keys():
-			if target_passive_effects.any(func(passive_effect): return passive_effect.include_evade_sources.has(evade_source)):
+			if target_passive_effects.any(func(passive_effect: PassiveEffect): return passive_effect.include_evade_sources.has(evade_source)):
 				var evade_value: float = evade_values[evade_source]
 				for passive_effect: PassiveEffect in user_passive_effects:
 					if passive_effect.evade_source_modifiers_user.has(evade_source):
@@ -377,8 +377,8 @@ func get_evade_values(target: Unit, evade_direction: EvadeData.Directions) -> Di
 	return evade_values
 
 
-func animate_evade(target_unit: Unit, evade_direction: EvadeData.Directions, user_pos: Vector2i):
-	var target_original_facing = target_unit.facing_vector
+func animate_evade(target_unit: Unit, evade_direction: EvadeData.Directions, user_pos: Vector2i) -> void:
+	var target_original_facing: Vector3 = target_unit.facing_vector
 	
 	var dir_to_target: Vector2i = user_pos - target_unit.tile_position.location
 	var temp_facing: Vector3 = Vector3(dir_to_target.x, 0, dir_to_target.y).normalized()
@@ -409,7 +409,7 @@ func apply_standard(action_instance: ActionInstance) -> void:
 	
 	if action_instance.allow_triggering_actions:
 		for target: Unit in target_units:
-			for connection in target.targeted_pre_action.get_connections():
+			for connection: Dictionary in target.targeted_pre_action.get_connections():
 				await connection["callable"].call(target, action_instance)
 	
 
@@ -500,7 +500,7 @@ func apply_standard(action_instance: ActionInstance) -> void:
 	# wait for applying effect animation
 	action_instance.user.global_battle_manager.game_state_label.text = "Waiting for " + display_name + " vfx" 
 	if vfx_data != null and target_units.size() > 0:
-		while vfx_locations.any(func(vfx_location): return vfx_location != null): # wait until vfx is completed
+		while vfx_locations.any(func(vfx_location: Node3D): return vfx_location != null): # wait until vfx is completed
 			await action_instance.user.get_tree().process_frame
 	else:
 		await action_instance.user.get_tree().create_timer(0.5).timeout # TODO show based on vfx timing data? (attacks use vfx 0xFFFF?)
@@ -514,7 +514,7 @@ func apply_standard(action_instance: ActionInstance) -> void:
 	# wait for triggered actions
 	if action_instance.allow_triggering_actions:
 		for target: Unit in target_units:
-			for connection in target.targeted_post_action.get_connections():
+			for connection: Dictionary in target.targeted_post_action.get_connections():
 				await connection["callable"].call(target, action_instance)
 
 	action_instance.clear() # clear all highlighting and target data
@@ -531,7 +531,7 @@ func apply_status(unit: Unit, status_list: Array[String], status_list_type: Stat
 		var status_success: bool = randi_range(0, 99) < target_status_chance
 		if status_success:
 			for status_id: String in status_list:
-				if will_remove_status and unit.current_statuses.any(func(status: StatusEffect): status.unique_name == status_id):
+				if will_remove_status and unit.current_statuses.any(func(status: StatusEffect): return status.unique_name == status_id):
 					unit.remove_status_id(status_id)
 					unit.show_popup_text(RomReader.status_effects[status_id].status_effect_name) # TODO different text for removing status
 				elif not will_remove_status:
@@ -541,7 +541,7 @@ func apply_status(unit: Unit, status_list: Array[String], status_list_type: Stat
 		for status_id: String in status_list:
 			var status_success: bool = randi_range(0, 99) < target_status_chance
 			if status_success:
-				if will_remove_status and unit.current_statuses.any(func(status: StatusEffect): status.unique_name == status_id):
+				if will_remove_status and unit.current_statuses.any(func(status: StatusEffect): return status.unique_name == status_id):
 					unit.remove_status_id(status_id)
 					unit.show_popup_text(RomReader.status_effects[status_id].status_effect_name) # TODO different text for removing status
 				elif not will_remove_status:
@@ -1827,7 +1827,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 static func get_modified_action(action_to_modify: Action, user: Unit) -> Action:
 	var modified_action: Action = action_to_modify.duplicate()
 	modified_action.vfx_data = action_to_modify.vfx_data
-	var all_passive_effects = user.get_all_passive_effects(action_to_modify.ignore_passives)
+	var all_passive_effects: Array[PassiveEffect] = user.get_all_passive_effects(action_to_modify.ignore_passives)
 
 	for passive_effect: PassiveEffect in all_passive_effects:
 		modified_action.ticks_charge_time = passive_effect.action_charge_time_modifier.apply(modified_action.ticks_charge_time)
@@ -1859,10 +1859,10 @@ static func create_from_json(json_string: String) -> Action:
 
 static func create_from_dictonary(property_dict: Dictionary) -> Action:
 	var new_action: Action = Action.new()
-	for property_name in property_dict.keys():
+	for property_name: String in property_dict.keys():
 		if ["target_effects", "user_effects"].has(property_name):
 			var new_effects: Array[ActionEffect] = []
-			for effect in property_dict[property_name]:
+			for effect: Dictionary in property_dict[property_name]:
 				var new_action_effect: ActionEffect = ActionEffect.create_from_dictionary(effect)
 				new_effects.append(new_action_effect)
 			new_action.set(property_name, new_effects)

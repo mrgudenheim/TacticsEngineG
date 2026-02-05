@@ -31,7 +31,7 @@ func _init(new_action: Action, new_user: Unit, new_battle_manager: BattleManager
 
 
 func duplicate() -> ActionInstance:
-	var new_action_instance = ActionInstance.new(action, user, battle_manager)
+	var new_action_instance: ActionInstance = ActionInstance.new(action, user, battle_manager)
 	new_action_instance.potential_targets = potential_targets.duplicate()
 	new_action_instance.preview_targets = preview_targets.duplicate()
 	new_action_instance.submitted_targets = submitted_targets.duplicate()
@@ -306,7 +306,7 @@ func on_map_input_event(camera: Camera3D, event: InputEvent, event_position: Vec
 	tile_hovered.emit(tile, self, event)
 
 
-func on_unit_hovered(unit: Unit, event: InputEvent):
+func on_unit_hovered(unit: Unit, event: InputEvent) -> void:
 	var tile: TerrainTile = unit.tile_position
 	if tile == null:
 		return

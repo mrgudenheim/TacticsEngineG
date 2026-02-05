@@ -259,7 +259,7 @@ func get_item_name(unit_data: UnitData, slot_idx: int, new_item_idx: int) -> Str
 	
 	# TODO if equipment value == 0xFE, get random leveled equipment
 	var filtered_items: Array[ItemData] = []
-	filtered_items.assign(RomReader.items_array.filter(func(item: ItemData): return unit_data.equip_slots[slot_idx].slot_types.has(item.slot_type)))
+	filtered_items.assign(RomReader.items_array.filter(func(item: ItemData) -> bool: return unit_data.equip_slots[slot_idx].slot_types.has(item.slot_type)))
 	var rand_item_idx: int = randi_range(0, filtered_items.size() - 1)
 	return filtered_items[rand_item_idx].unique_name
 
@@ -272,6 +272,6 @@ func get_ability_name(unit_data: UnitData, slot_idx: int, new_ability_idx: int) 
 	
 	# TODO if ability value == 0x01FE, get random learned ability?
 	var filtered_abilities: Array[Ability] = []
-	filtered_abilities.assign(RomReader.abilities.values().filter(func(ability: Ability): return unit_data.ability_slots[slot_idx].slot_types.has(ability.slot_type)))
+	filtered_abilities.assign(RomReader.abilities.values().filter(func(ability: Ability) -> bool: return unit_data.ability_slots[slot_idx].slot_types.has(ability.slot_type)))
 	var rand_ability_idx: int = randi_range(0, filtered_abilities.size() - 1)
 	return filtered_abilities[rand_ability_idx].unique_name

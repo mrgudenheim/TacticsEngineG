@@ -111,7 +111,7 @@ func init_from_unit(unit: Unit) -> void:
 	ability_slots = unit.ability_slots
 	
 	var tile_xz_index: int = unit.global_battle_manager.total_map_tiles.keys().find(unit.tile_position.location)
-	var terrain_level: int = unit.global_battle_manager.total_map_tiles.keys()[tile_xz_index].find(unit.tile_position)
+	var terrain_level: int = unit.global_battle_manager.total_map_tiles[unit.tile_position.location].find(unit.tile_position)
 	tile_position = Vector3i(unit.tile_position.location.x, terrain_level, unit.tile_position.location.y)
 	if tile_xz_index == -1 or terrain_level == -1:
 		push_warning(unit.unit_nickname + " tile_position: " + str(tile_position))

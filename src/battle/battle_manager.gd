@@ -574,17 +574,22 @@ func spawn_unit_from_unit_data(unit_data: UnitData) -> Unit:
 	units.append(new_unit)
 	new_unit.initialize_unit()
 
-	for tile_array: Array in total_map_tiles.values():
-		var xz_tiles: Array[TerrainTile] = []
-		xz_tiles.assign(tile_array)
-		for tile: TerrainTile in xz_tiles:
-			if tile.get_world_position() == unit_data.tile_position:
-				new_unit.tile_position = tile
-				break
-		if new_unit.tile_position != null:
-			break
-	if new_unit.tile_position == null: # default to first tile
+	var xz_index: int = total_map_tiles.keys().find(Vector2i(unit_data.tile_position.x, unit_data.tile_position.z))
+	if xz_index >= 0:
+		new_unit.tile_position = total_map_tiles.values()[xz_index][unit_data.tile_position.y]
+	else:
 		new_unit.tile_position = total_map_tiles.values()[0][0]
+	# for tile_array: Array in total_map_tiles.values():
+	# 	var xz_tiles: Array[TerrainTile] = []
+	# 	xz_tiles.assign(tile_array)
+	# 	for tile: TerrainTile in xz_tiles:
+	# 		if tile.get_world_position() == unit_data.tile_position:
+	# 			new_unit.tile_position = tile
+	# 			break
+	# 	if new_unit.tile_position != null:
+	# 		break
+	# if new_unit.tile_position == null: # default to first tile
+	# 	new_unit.tile_position = total_map_tiles.values()[0][0]
 
 	new_unit.set_position_to_tile()
 	# new_unit.update_unit_facing(Unit.FacingVectors[Unit.Facings[unit_data.facing_direction]])

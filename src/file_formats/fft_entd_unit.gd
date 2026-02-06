@@ -248,9 +248,7 @@ func get_unit_data() -> UnitData:
 
 	# position
 	# TODO account for map being shifted or mirrored?
-	# TODO how to get height or handle the second level flag?
-	unit_data.tile_position = Vector3(position_x + 0.5, 0, position_y + 0.5)
-	unit_data.tile_position.y = upper_level
+	unit_data.tile_position = Vector3i(position_x, upper_level, position_y)
 
 	return unit_data
 

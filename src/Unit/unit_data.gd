@@ -28,7 +28,7 @@ extends Resource
 @export var ability_slots: Array[AbilitySlot] = []
 
 # position
-@export var tile_position: Vector3 # tile_position.get_world_position
+@export var tile_position: Vector3i # tile_position.get_world_position
 
 # current statuses - to be used for saving/loading mid battle
 
@@ -38,7 +38,7 @@ static func create_from_dictionary(property_dict: Dictionary) -> UnitData:
 	for property_name in property_dict.keys():
 		if property_name == "tile_position":
 			var vector_as_array = property_dict[property_name]
-			var new_tile_position: Vector3 = Vector3(vector_as_array[0], vector_as_array[1], vector_as_array[2])
+			var new_tile_position: Vector3i = Vector3i(roundi(vector_as_array[0]), roundi(vector_as_array[1]), roundi(vector_as_array[2]))
 			new_unit_data.set(property_name, new_tile_position)
 		elif property_name == "ability_slots":
 			var array = property_dict[property_name]
@@ -109,4 +109,10 @@ func init_from_unit(unit: Unit) -> void:
 	primary_weapon_unique_name = unit.primary_weapon.unique_name
 	equip_slots = unit.equip_slots
 	ability_slots = unit.ability_slots
-	tile_position = unit.tile_position.get_world_position()
+	
+	var tile_xz_index: int = unit.global_battle_manager.total_map_tiles.keys().find(unit.tile_position.location)
+	var terrain_level: int = unit.global_battle_manager.total_map_tiles.keys()[tile_xz_index].find(unit.tile_position)
+	tile_position = Vector3i(unit.tile_position.location.x, terrain_level, unit.tile_position.location.y)
+	if tile_xz_index == -1 or terrain_level == -1:
+		push_warning(unit.unit_nickname + " tile_position: " + str(tile_position))
+	# tile_position = unit.tile_position.get_world_position()

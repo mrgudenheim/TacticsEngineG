@@ -77,42 +77,7 @@ static func get_scenarios_from_random_battle(fft_random_battle: Variant) -> Arra
 
 		var number: int = 1
 		new_scenario.unique_name = map_unique_name + ("_%02d" % number)
-		while RomReader.scenarios.keys().has(new_scenario.unique_name):
-			number += 1
-			new_scenario.unique_name = map_unique_name + ("_%02d" % number)
-		
-		new_scenarios.append(new_scenario)
-
-	return new_scenarios
-
-
-static func get_scenarios_from_dungeon_battle(fft_dungeon_battle: DungeonBattle) -> Array[Scenario]:
-	var new_scenarios: Array[Scenario] = []
-	var new_scenario_base: Scenario = Scenario.new()
-	new_scenario_base.is_fft_scenario = true
-
-	var map_unique_name_num: String = "map_%03d" % fft_dungeon_battle.map_id
-	var map_name_idx: int = RomReader.maps.keys().find_custom(func(map_name: String) -> bool: return map_name.begins_with(map_unique_name_num))
-	var map_unique_name: String = RomReader.maps.keys()[map_name_idx]
-	
-	var new_map_chunk: Scenario.MapChunk = Scenario.MapChunk.new()
-	new_map_chunk.unique_name = map_unique_name
-	new_map_chunk.set_mirror_xyz([true, true, false])
-	new_scenario_base.map_chunks.append(new_map_chunk)
-	
-	var unique_entds: PackedInt64Array = []
-	for entd_idx: int in fft_dungeon_battle.entds:
-		if unique_entds.has(entd_idx):
-			continue
-		unique_entds.append(entd_idx)
-
-		var new_scenario: Scenario = new_scenario_base.duplicate()
-		var scenario_entd: FftEntd = RomReader.fft_entds[entd_idx]
-		new_scenario.units_data = scenario_entd.get_units_data()
-
-		var number: int = 1
-		new_scenario.unique_name = map_unique_name + ("_%02d" % number)
-		while RomReader.scenarios.keys().has(new_scenario.unique_name):
+		while RomReader.scenarios.keys().has(new_scenario.unique_name) or new_scenarios.any(func(existing_scenario: Scenario) -> bool: return existing_scenario.unique_name == new_scenario.unique_name):
 			number += 1
 			new_scenario.unique_name = map_unique_name + ("_%02d" % number)
 		

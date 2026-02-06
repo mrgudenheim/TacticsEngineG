@@ -545,7 +545,7 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team, level: int 
 	new_unit.icon2.texture = RomReader.frame_bin_texture
 	
 	new_unit.generate_random_abilities()
-	new_unit.primary_weapon_assigned.connect(func(weapon_unique_name: String): new_unit.update_actions(self))
+	new_unit.primary_weapon_assigned.connect(func(_weapon_unique_name: String) -> void: new_unit.update_actions(self))
 	new_unit.generate_equipment()
 	#var unit_actions: Array[Action] = new_unit.get_skillset_actions()
 	#if unit_actions.any(func(action: Action): return not action.required_equipment_type.is_empty()):

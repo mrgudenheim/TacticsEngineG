@@ -166,9 +166,16 @@ func get_unit_data() -> UnitData:
 	unit_data.controller = 1 if is_player_controlled else 0 # 0 = AI, 1 = Player 1, etc.
 	
 	var new_sprite_id: int = RomReader.jobs_data[unit_data.job_unique_name].sprite_id
+	if sprite_set_id == 0x81:
+		new_sprite_id += 1
 	var new_sprite_file_name_idx: int = RomReader.spr_file_name_to_id.values().find(new_sprite_id)
 	unit_data.spritesheeet_file_name = RomReader.spr_file_name_to_id.keys()[new_sprite_file_name_idx] # TODO better way to get sprite file name?
 	unit_data.palette_id = palette
+	if sprite_set_id < 0x80:
+		unit_data.palette_id = 0
+	if sprite_set_id == 0x82:
+		unit_data.palette_id = RomReader.jobs_data.values()[main_job].monster_palette_id
+	
 	
 	if initial_direction == 0:
 		unit_data.facing_direction = Unit.Facings.SOUTH

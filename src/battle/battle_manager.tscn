@@ -249,20 +249,19 @@ horizontal_alignment = 1
 [node name="ScenarioEditor" type="Control" parent="." node_paths=PackedStringArray("battle_manager", "start_button", "load_scenario_button", "export_scenario_button", "import_scenario_button", "import_file_dialog", "new_scenario_button", "background_gradient_color_pickers", "battle_subviewport", "battle_setup_container", "job_select_control", "item_select_control", "ability_select_control", "unit_editor", "add_map_chunk_button", "map_chunk_settings_container", "show_map_tiles_check")]
 visible = false
 layout_mode = 3
-anchor_top = 0.124000005
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -0.13600159
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("14_l2dig")
 battle_manager = NodePath("..")
-start_button = NodePath("HBoxContainer/StartBattle")
-load_scenario_button = NodePath("HBoxContainer/LoadScenario")
-export_scenario_button = NodePath("HBoxContainer/ExportScenario")
-import_scenario_button = NodePath("HBoxContainer/ImportScenario")
-import_file_dialog = NodePath("HBoxContainer/ImportScenario/ImportFileDialog")
-new_scenario_button = NodePath("HBoxContainer/NewScenario")
+start_button = NodePath("MarginContainer/HBoxContainer/StartBattle")
+load_scenario_button = NodePath("MarginContainer/HBoxContainer/LoadScenario")
+export_scenario_button = NodePath("MarginContainer/HBoxContainer/ExportScenario")
+import_scenario_button = NodePath("MarginContainer/HBoxContainer/ImportScenario")
+import_file_dialog = NodePath("MarginContainer/HBoxContainer/ImportScenario/ImportFileDialog")
+new_scenario_button = NodePath("MarginContainer/HBoxContainer/NewScenario")
 background_gradient_color_pickers = [NodePath("BattleSetupTabContainer/Map/FloatingUi/Gradient/BottomColorPickerButton"), NodePath("BattleSetupTabContainer/Map/FloatingUi/Gradient/TopColorPickerButton")]
 battle_subviewport = NodePath("BattleSetupTabContainer/Map/VBoxContainer/SubViewportContainer/SubViewport")
 battle_setup_container = NodePath("BattleSetupTabContainer")
@@ -280,6 +279,7 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = 71.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
@@ -301,7 +301,7 @@ stretch = true
 transparent_bg = true
 handle_input_locally = false
 physics_object_picking = true
-size = Vector2i(2, 2)
+size = Vector2i(1516, 710)
 render_target_update_mode = 0
 
 [node name="BattleView" type="Node3D" parent="ScenarioEditor/BattleSetupTabContainer/Map/VBoxContainer/SubViewportContainer/SubViewport"]
@@ -426,24 +426,27 @@ ability_select_button_scene = ExtResource("20_ok2a6")
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="ScenarioEditor"]
+[node name="MarginContainer" type="MarginContainer" parent="ScenarioEditor"]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -89.0
-offset_bottom = 40.0
+offset_left = -589.0
+offset_bottom = 48.0
 grow_horizontal = 0
 
-[node name="ExportScenario" type="Button" parent="ScenarioEditor/HBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="ScenarioEditor/MarginContainer"]
+layout_mode = 2
+
+[node name="ExportScenario" type="Button" parent="ScenarioEditor/MarginContainer/HBoxContainer"]
 layout_mode = 2
 text = "Export Scenario"
 
-[node name="ImportScenario" type="Button" parent="ScenarioEditor/HBoxContainer"]
+[node name="ImportScenario" type="Button" parent="ScenarioEditor/MarginContainer/HBoxContainer"]
 layout_mode = 2
 text = "Import Scenario"
 
-[node name="ImportFileDialog" type="FileDialog" parent="ScenarioEditor/HBoxContainer/ImportScenario"]
+[node name="ImportFileDialog" type="FileDialog" parent="ScenarioEditor/MarginContainer/HBoxContainer/ImportScenario"]
 oversampling_override = 1.0
 title = "Open a File"
 initial_position = 2
@@ -455,7 +458,7 @@ access = 2
 filters = PackedStringArray("*.scenario.json")
 use_native_dialog = true
 
-[node name="LoadScenario" type="OptionButton" parent="ScenarioEditor/HBoxContainer"]
+[node name="LoadScenario" type="OptionButton" parent="ScenarioEditor/MarginContainer/HBoxContainer"]
 layout_mode = 2
 selected = 0
 item_count = 1
@@ -463,11 +466,11 @@ popup/item_0/text = "Load Scenario"
 popup/item_0/id = 0
 popup/item_0/separator = true
 
-[node name="NewScenario" type="Button" parent="ScenarioEditor/HBoxContainer"]
+[node name="NewScenario" type="Button" parent="ScenarioEditor/MarginContainer/HBoxContainer"]
 layout_mode = 2
 text = "New Scenario"
 
-[node name="StartBattle" type="Button" parent="ScenarioEditor/HBoxContainer"]
+[node name="StartBattle" type="Button" parent="ScenarioEditor/MarginContainer/HBoxContainer"]
 layout_mode = 2
 text = "Start Battle!"
 

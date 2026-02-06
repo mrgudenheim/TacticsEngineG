@@ -47,17 +47,22 @@ class DungeonBattle:
 			entds.append(bytes.decode_u8(idx + 0x02))
 
 
-static func get_scenarios_from_random_battle(fft_random_battle: RandomBattle) -> Array[Scenario]:
+static func get_scenarios_from_random_battle(fft_random_battle: Variant) -> Array[Scenario]:
+	## fft_random_battle should be of type WldcoreData.RandomBattle or WldcoreData.DungeonBattle
+	if not (fft_random_battle is WldcoreData.RandomBattle or fft_random_battle is WldcoreData.DungeonBattle):
+		push_error("random battle data is not expected type")
+
 	var new_scenarios: Array[Scenario] = []
 	var new_scenario_base: Scenario = Scenario.new()
+	new_scenario_base.is_fft_scenario = true
 
 	var map_unique_name_num: String = "map_%03d" % fft_random_battle.map_id
 	var map_name_idx: int = RomReader.maps.keys().find_custom(func(map_name: String) -> bool: return map_name.begins_with(map_unique_name_num))
 	var map_unique_name: String = RomReader.maps.keys()[map_name_idx]
 	
 	var new_map_chunk: Scenario.MapChunk = Scenario.MapChunk.new()
-	new_map_chunk.set_mirror_xyz([true, true, false])
 	new_map_chunk.unique_name = map_unique_name
+	new_map_chunk.set_mirror_xyz([true, true, false])
 	new_scenario_base.map_chunks.append(new_map_chunk)
 	
 	var unique_entds: PackedInt64Array = []
@@ -84,6 +89,7 @@ static func get_scenarios_from_random_battle(fft_random_battle: RandomBattle) ->
 static func get_scenarios_from_dungeon_battle(fft_dungeon_battle: DungeonBattle) -> Array[Scenario]:
 	var new_scenarios: Array[Scenario] = []
 	var new_scenario_base: Scenario = Scenario.new()
+	new_scenario_base.is_fft_scenario = true
 
 	var map_unique_name_num: String = "map_%03d" % fft_dungeon_battle.map_id
 	var map_name_idx: int = RomReader.maps.keys().find_custom(func(map_name: String) -> bool: return map_name.begins_with(map_unique_name_num))
@@ -143,7 +149,7 @@ func get_all_scenarios() -> Array[Scenario]:
 		new_scenarios.append_array(random_battle_scenarios)
 	
 	for dungeon_battle: DungeonBattle in dungeon_random_battle_data:
-		var random_battle_scenarios: Array[Scenario] = WldcoreData.get_scenarios_from_dungeon_battle(dungeon_battle)
+		var random_battle_scenarios: Array[Scenario] = WldcoreData.get_scenarios_from_random_battle(dungeon_battle)
 		new_scenarios.append_array(random_battle_scenarios)
 
 	return new_scenarios

@@ -1090,6 +1090,7 @@ func add_entds(file_name: String) -> void:
 
 func get_scenario_from_attack_out_scenario(fft_scenario: AttackOutData.ScenarioData) -> Scenario:
 	var new_scenario: Scenario = Scenario.new()
+	new_scenario.is_fft_scenario = true
 
 	var map_unique_name_num: String = "map_%03d" % fft_scenario.map_id
 	var map_name_idx: int = RomReader.maps.keys().find_custom(func(map_name: String) -> bool: return map_name.begins_with(map_unique_name_num))

@@ -17,6 +17,8 @@ const FILE_SUFFIX: String = "scenario"
 # TODO scenario victory conditions
 
 
+@export var is_fft_scenario: bool = false
+
 static func create_from_json(json_string: String) -> Scenario:
 	var property_dict: Dictionary = JSON.parse_string(json_string)
 	var new_scenario: Scenario = create_from_dictionary(property_dict)

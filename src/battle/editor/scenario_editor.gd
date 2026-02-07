@@ -92,7 +92,17 @@ func _ready() -> void:
 	import_scenario_button.pressed.connect(open_import_dialong)
 	import_file_dialog.file_selected.connect(import_scenario)
 	new_scenario_button.pressed.connect(queue_new_scenario)
-	load_scenario_button.item_selected.connect(func(idx: int) -> void: queue_new_scenario(RomReader.scenarios[load_scenario_button.get_item_text(idx)]))
+	load_scenario_button.item_selected.connect(load_scenario) 
+
+
+func load_scenario(dropdown_idx: int) -> void:
+	var scenario_to_load: Scenario = RomReader.scenarios[load_scenario_button.get_item_text(dropdown_idx)].duplicate_deep(Resource.DEEP_DUPLICATE_ALL)
+	scenario_to_load.unique_name = scenario_to_load.unique_name + "_new"
+	# update mirror_scale for duplicated map chunks
+	for map_chunk: Scenario.MapChunk in scenario_to_load.map_chunks:
+		map_chunk.set_mirror_xyz(map_chunk.mirror_xyz)
+	
+	queue_new_scenario(scenario_to_load)
 
 
 func queue_new_scenario(new_scenario: Scenario = null) -> void:

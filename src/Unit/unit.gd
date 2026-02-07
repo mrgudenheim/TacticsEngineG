@@ -429,72 +429,82 @@ func _process(_delta: float) -> void:
 	set_base_animation_ptr_id(current_animation_id_fwd)
 
 
-func generate_leveled_raw_stats(final_level: int, job: JobData) -> void:
-	generate_level_zero_raw_stats(stat_basis)
-	stats[StatType.LEVEL].set_value(final_level)
+static func generate_leveled_raw_stats(stat_basis_to_use: StatBasis, final_level: int, job: JobData, new_stats_raw: Dictionary[Unit.StatType, float]) -> void:
+	generate_level_zero_raw_stats(stat_basis_to_use, new_stats_raw)
 	
 	for curent_level: int in range(1, final_level + 1):
-		grow_raw_stats(curent_level, job)
+		grow_raw_stats(curent_level, job, new_stats_raw)
 
 
-func generate_level_zero_raw_stats(stat_basis_to_use: StatBasis) -> void:
-	stats_raw[StatType.HP_MAX] = generate_level_zero_raw_stat(0, stat_basis_to_use)
-	stats_raw[StatType.MP_MAX] = generate_level_zero_raw_stat(1, stat_basis_to_use)
-	stats_raw[StatType.SPEED] = generate_level_zero_raw_stat(2, stat_basis_to_use)
-	stats_raw[StatType.PHYSICAL_ATTACK] = generate_level_zero_raw_stat(3, stat_basis_to_use)
-	stats_raw[StatType.MAGIC_ATTACK] = generate_level_zero_raw_stat(4, stat_basis_to_use)
+static func generate_level_zero_raw_stats(stat_basis_to_use: StatBasis, new_stats_raw: Dictionary[Unit.StatType, float]) -> void:
+	new_stats_raw[StatType.HP_MAX] = generate_level_zero_raw_stat(0, stat_basis_to_use)
+	new_stats_raw[StatType.MP_MAX] = generate_level_zero_raw_stat(1, stat_basis_to_use)
+	new_stats_raw[StatType.SPEED] = generate_level_zero_raw_stat(2, stat_basis_to_use)
+	new_stats_raw[StatType.PHYSICAL_ATTACK] = generate_level_zero_raw_stat(3, stat_basis_to_use)
+	new_stats_raw[StatType.MAGIC_ATTACK] = generate_level_zero_raw_stat(4, stat_basis_to_use)
 
 
-# TODO is this correct for MONSTERs?
-func generate_level_zero_raw_stat(stat_idx: int, stat_basis_to_use: StatBasis) -> int:
+# TODO is this correct for MONSTERs and LUCAVI?
+static func generate_level_zero_raw_stat(stat_idx: int, stat_basis_to_use: StatBasis) -> int:
 	var raw_stat: int = RomReader.scus_data.unit_base_datas[stat_basis_to_use][stat_idx] * 16384
 	raw_stat += randi_range(0, RomReader.scus_data.unit_base_stats_mods[stat_basis_to_use][stat_idx] * 16384)
 	return raw_stat
 
 
-func grow_raw_stats(current_level: int, current_job: JobData) -> void:
-	stats_raw[StatType.HP_MAX] += stats_raw[StatType.HP_MAX] / (current_job.hp_growth + current_level)
-	stats_raw[StatType.MP_MAX] += stats_raw[StatType.MP_MAX] / (current_job.mp_growth + current_level)
-	stats_raw[StatType.SPEED] += stats_raw[StatType.SPEED] / (current_job.speed_growth + current_level)
-	stats_raw[StatType.PHYSICAL_ATTACK] += stats_raw[StatType.PHYSICAL_ATTACK] / (current_job.pa_growth + current_level)
-	stats_raw[StatType.MAGIC_ATTACK] += stats_raw[StatType.MAGIC_ATTACK] / (current_job.ma_growth + current_level)
+static func grow_raw_stats(current_level: int, current_job: JobData, new_stats_raw: Dictionary[Unit.StatType, float]) -> void:
+	new_stats_raw[StatType.HP_MAX] += new_stats_raw[StatType.HP_MAX] / (current_job.hp_growth + current_level)
+	new_stats_raw[StatType.MP_MAX] += new_stats_raw[StatType.MP_MAX] / (current_job.mp_growth + current_level)
+	new_stats_raw[StatType.SPEED] += new_stats_raw[StatType.SPEED] / (current_job.speed_growth + current_level)
+	new_stats_raw[StatType.PHYSICAL_ATTACK] += new_stats_raw[StatType.PHYSICAL_ATTACK] / (current_job.pa_growth + current_level)
+	new_stats_raw[StatType.MAGIC_ATTACK] += new_stats_raw[StatType.MAGIC_ATTACK] / (current_job.ma_growth + current_level)
 
 
 # TODO is this correct for MONSTERs?
-func calc_battle_stats(current_job: JobData) -> void:
-	var base_hp: int = stats_raw[StatType.HP_MAX] * current_job.hp_multiplier / 0x190000
-	if ["RUKA.SEQ", "KANZEN.SEQ", "ARUTE.SEQ"].has(animation_manager.global_seq.file_name): # lucavi
-		stats[StatType.HP_MAX].max_value = 99999
+static func calc_battle_stats(
+		current_job: JobData, 
+		new_stats_raw: Dictionary[Unit.StatType, float], 
+		new_stats: Dictionary[Unit.StatType, ClampedValue],
+		set_to_max: bool = true,
+		use_larger_values: bool = false) -> void:
+	var base_hp: int = new_stats_raw[StatType.HP_MAX] * current_job.hp_multiplier / 0x190000
+	# if ["RUKA.SEQ", "KANZEN.SEQ", "ARUTE.SEQ"].has(animation_manager.global_seq.file_name): # lucavi
+	if use_larger_values:
+		new_stats[StatType.HP_MAX].max_value = 99999
 		base_hp = base_hp * 100
-	stats[StatType.HP_MAX].base_value = base_hp
-	stats[StatType.HP_MAX].set_value(stats[StatType.HP_MAX].base_value)
+	new_stats[StatType.HP_MAX].base_value = base_hp
+	new_stats[StatType.HP_MAX].set_value(new_stats[StatType.HP_MAX].base_value)
 	
-	var base_mp: int = stats_raw[StatType.MP_MAX] * current_job.mp_multiplier / 0x190000
-	if ["RUKA.SEQ", "KANZEN.SEQ", "ARUTE.SEQ"].has(animation_manager.global_seq.file_name): # lucavi
-		stats[StatType.MP_MAX].max_value = 99999
+	var base_mp: int = new_stats_raw[StatType.MP_MAX] * current_job.mp_multiplier / 0x190000
+	# if ["RUKA.SEQ", "KANZEN.SEQ", "ARUTE.SEQ"].has(animation_manager.global_seq.file_name): # lucavi
+	if use_larger_values:
+		new_stats[StatType.MP_MAX].max_value = 99999
 		base_mp = base_mp * 100
-	stats[StatType.MP_MAX].base_value = base_mp
-	stats[StatType.MP_MAX].set_value(stats[StatType.MP_MAX].base_value)
+	new_stats[StatType.MP_MAX].base_value = base_mp
+	new_stats[StatType.MP_MAX].set_value(new_stats[StatType.MP_MAX].base_value)
 	
-	stats[StatType.SPEED].base_value = stats_raw[StatType.SPEED] * current_job.speed_multiplier / 0x190000
-	stats[StatType.SPEED].set_value(stats[StatType.SPEED].base_value)
+	new_stats[StatType.SPEED].base_value = new_stats_raw[StatType.SPEED] * current_job.speed_multiplier / 0x190000
+	new_stats[StatType.SPEED].set_value(new_stats[StatType.SPEED].base_value)
 	
-	stats[StatType.PHYSICAL_ATTACK].base_value = stats_raw[StatType.PHYSICAL_ATTACK] * current_job.pa_multiplier / 0x190000
-	stats[StatType.PHYSICAL_ATTACK].set_value(stats[StatType.PHYSICAL_ATTACK].base_value)
+	new_stats[StatType.PHYSICAL_ATTACK].base_value = new_stats_raw[StatType.PHYSICAL_ATTACK] * current_job.pa_multiplier / 0x190000
+	new_stats[StatType.PHYSICAL_ATTACK].set_value(new_stats[StatType.PHYSICAL_ATTACK].base_value)
 	
-	stats[StatType.MAGIC_ATTACK].base_value = stats_raw[StatType.MAGIC_ATTACK] * current_job.ma_multiplier / 0x190000
-	stats[StatType.MAGIC_ATTACK].set_value(stats[StatType.MAGIC_ATTACK].base_value)
+	new_stats[StatType.MAGIC_ATTACK].base_value = new_stats_raw[StatType.MAGIC_ATTACK] * current_job.ma_multiplier / 0x190000
+	new_stats[StatType.MAGIC_ATTACK].set_value(new_stats[StatType.MAGIC_ATTACK].base_value)
 	
-	stats[StatType.MOVE].base_value = current_job.move
-	stats[StatType.MOVE].set_value(stats[StatType.MOVE].base_value)
+	new_stats[StatType.MOVE].base_value = current_job.move
+	new_stats[StatType.MOVE].set_value(new_stats[StatType.MOVE].base_value)
 	
-	stats[StatType.JUMP].base_value = current_job.jump
-	stats[StatType.JUMP].set_value(stats[StatType.JUMP].base_value)
+	new_stats[StatType.JUMP].base_value = current_job.jump
+	new_stats[StatType.JUMP].set_value(new_stats[StatType.JUMP].base_value)
 
-	if global_battle_manager != null:
-		if not global_battle_manager.battle_is_running:
-			stats[StatType.HP].set_value(stats[StatType.HP].max_value)
-			stats[StatType.MP].set_value(stats[StatType.MP].max_value)
+	# if global_battle_manager != null:
+	# 	if not global_battle_manager.battle_is_running:
+	# 		new_stats[StatType.HP].set_value(new_stats[StatType.HP].max_value)
+	# 		new_stats[StatType.MP].set_value(new_stats[StatType.MP].max_value)
+	
+	if set_to_max:
+		new_stats[StatType.HP].set_value(new_stats[StatType.HP].max_value)
+		new_stats[StatType.MP].set_value(new_stats[StatType.MP].max_value)
 
 
 func generate_random_abilities() -> void:

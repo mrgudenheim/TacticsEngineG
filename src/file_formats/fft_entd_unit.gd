@@ -215,6 +215,21 @@ func get_unit_data() -> UnitData:
 		Unit.StatType.MAGIC_ATTACK : 0.0, 
 	}
 
+	unit_data.stats[Unit.StatType.HP_MAX].value_changed.connect(unit_data.stats[Unit.StatType.HP].update_max_from_clamped_value)
+	unit_data.stats[Unit.StatType.MP_MAX].value_changed.connect(unit_data.stats[Unit.StatType.MP].update_max_from_clamped_value)
+	# TODO unit_data.stats[Unit.StatType.HP].value_changed.connect(hp_changed)
+	# TODO connect stat bars?
+
+	unit_data.stats[Unit.StatType.LEVEL].set_value(unit_data.level)
+	Unit.generate_leveled_raw_stats(unit_data.gender as Unit.StatBasis, unit_data.level, RomReader.jobs_data[unit_data.job_unique_name], unit_data.stats_raw)
+	var use_higher_stat_values: bool = false
+	if ["RUKA.SEQ", "KANZEN.SEQ", "ARUTE.SEQ"].has(unit_data.spritesheeet_file_name): # lucavi
+		use_higher_stat_values = true
+	Unit.calc_battle_stats(RomReader.jobs_data.values()[main_job], unit_data.stats_raw, unit_data.stats, true, use_higher_stat_values)
+
+	unit_data.stats[Unit.StatType.BRAVE].set_value(brave)
+	unit_data.stats[Unit.StatType.FAITH].set_value(faith)
+
 	# equipment
 	if equipment_right_hand < 0xFE:
 		unit_data.primary_weapon_unique_name = RomReader.items_array[equipment_right_hand].unique_name

@@ -324,5 +324,10 @@ func set_controller(new_controller_idx: int) -> void:
 
 
 func update_level(unit: Unit, new_level: int) -> void:
-	unit.generate_leveled_raw_stats(new_level, unit.job_data)
-	unit.calc_battle_stats(unit.job_data)
+	unit.stats[Unit.StatType.LEVEL].set_value(new_level)
+	Unit.generate_leveled_raw_stats(unit.stat_basis, new_level, unit.job_data, unit.stats_raw)
+	
+	var use_higher_stat_values: bool = false
+	if ["RUKA.SEQ", "KANZEN.SEQ", "ARUTE.SEQ"].has(unit.animation_manager.global_seq.file_name): # lucavi
+		use_higher_stat_values = true
+	Unit.calc_battle_stats(unit.job_data, unit.stats_raw, unit.stats, true, use_higher_stat_values)

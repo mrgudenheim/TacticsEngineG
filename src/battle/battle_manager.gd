@@ -631,6 +631,13 @@ func spawn_unit_from_unit_data(unit_data: UnitData) -> Unit:
 	new_unit.level = unit_data.level
 	new_unit.stats_raw = unit_data.stats_raw
 	new_unit.stats = unit_data.stats
+
+	new_unit.stats[Unit.StatType.HP].value_changed.connect(new_unit.hp_changed)
+	var stat_bars: Array[StatBar] = []
+	stat_bars.assign(new_unit.stat_bars_container.get_children())
+	stat_bars[0].set_stat(str(Unit.StatType.keys()[Unit.StatType.HP]), new_unit.stats[Unit.StatType.HP])
+	stat_bars[1].set_stat(str(Unit.StatType.keys()[Unit.StatType.MP]), new_unit.stats[Unit.StatType.MP])
+	stat_bars[2].set_stat(str(Unit.StatType.keys()[Unit.StatType.CT]), new_unit.stats[Unit.StatType.CT])
 	
 	camera_controller.rotated.connect(new_unit.char_body.set_rotation_degrees) # have sprite update as camera rotates
 	

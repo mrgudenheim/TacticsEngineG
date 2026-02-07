@@ -61,6 +61,11 @@ func setup(unit: Unit) -> void:
 		palette_option_button.add_item(str(palette_idx))
 	palette_option_button.select(unit.sprite_palette_id)
 
+	if unit.is_ai_controlled:
+		controller_option_button.select(0)
+	else:
+		controller_option_button.select(1)
+
 	hp_bar.set_stat(str(Unit.StatType.keys()[Unit.StatType.HP]), unit.stats[Unit.StatType.HP])
 	hp_bar.name_label.position.x = 5
 	hp_bar.name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT

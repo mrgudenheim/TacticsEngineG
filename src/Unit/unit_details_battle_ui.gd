@@ -213,7 +213,7 @@ func update_element_list(affinity_list_label: Label, label_start: String, affini
 
 func update_stat_label(stat_label: Label, unit: Unit, stat_type: Unit.StatType) -> void:
 	var stat_name: String = Unit.StatType.find_key(stat_type).to_pascal_case()
-	var stat: ClampedValue = unit.stats[stat_type]
+	var stat: StatValue = unit.stats[stat_type]
 	var stat_value: int = stat.get_modified_value()
 	# stat_label.text = stat_name + ": " + str(roundi(stat_value)) + "/" + str(roundi(stat.max_value))
 	stat_label.text = stat_name + ": " + str(roundi(stat_value)) # + "/" + str(roundi(stat.max_value))

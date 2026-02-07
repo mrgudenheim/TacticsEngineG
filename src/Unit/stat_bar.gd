@@ -30,7 +30,7 @@ static func instantiate() -> StatBar:
 	return stat_bar_tscn.instantiate()
 
 
-func set_stat(stat_name: String, stat: ClampedValue) -> void:
+func set_stat(stat_name: String, stat: StatValue) -> void:
 	name_label.text = stat_name
 	update_stat(stat)
 	
@@ -38,7 +38,7 @@ func set_stat(stat_name: String, stat: ClampedValue) -> void:
 		stat.value_changed.connect(update_stat)
 
 
-func update_stat(stat: ClampedValue) -> void:
+func update_stat(stat: StatValue) -> void:
 	min_value = stat.min_value
 	
 	if visual_max == 0.0:

@@ -275,7 +275,7 @@ func update_passive_effect_list_label(starting_text: String, text_list: PackedSt
 
 func update_stat_label(stat_label: Label, unit: Unit, stat_type: Unit.StatType) -> void:
 	var stat_name: String = Unit.StatType.find_key(stat_type).to_pascal_case()
-	var stat: ClampedValue = unit.stats[stat_type]
+	var stat: StatValue = unit.stats[stat_type]
 	var stat_value: int = stat.get_modified_value()
 	# stat_label.text = stat_name + ": " + str(roundi(stat_value)) + "/" + str(roundi(stat.max_value))
 	stat_label.text = stat_name + ": " + str(roundi(stat_value)) # + "/" + str(roundi(stat.max_value))

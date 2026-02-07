@@ -17,7 +17,7 @@ extends Resource
 # abilities learned
 
 # Stats
-@export var stats: Dictionary[Unit.StatType, ClampedValue] = {}
+@export var stats: Dictionary[Unit.StatType, StatValue] = {}
 @export var stats_raw: Dictionary[Unit.StatType, float] = {}
 
 # equipment
@@ -62,9 +62,9 @@ static func create_from_dictionary(property_dict: Dictionary) -> UnitData:
 			new_unit_data.set(property_name, new_stats_raw)
 		elif property_name == "stats":
 			var dict: Dictionary = property_dict[property_name]
-			var new_stats: Dictionary[Unit.StatType, ClampedValue] = {}
+			var new_stats: Dictionary[Unit.StatType, StatValue] = {}
 			for stat_type in dict.keys():
-				var new_clamped_value: ClampedValue = ClampedValue.create_from_dictionary(dict[stat_type])
+				var new_clamped_value: StatValue = StatValue.create_from_dictionary(dict[stat_type])
 				new_stats[Unit.StatType[stat_type]] = new_clamped_value
 			new_unit_data.set(property_name, new_stats)
 		else:

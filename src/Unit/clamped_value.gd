@@ -1,7 +1,7 @@
-class_name ClampedValue
+class_name StatValue
 extends Resource
 
-signal value_changed(clamped_value: ClampedValue)
+signal value_changed(clamped_value: StatValue)
 
 @export var min_value: int = 0 # should not change
 @export var max_value: int = 100 # should not change (except when linked to another stat, ex hp_max)
@@ -13,8 +13,8 @@ var modified_value: int: # typically used for stats that are modified from other
 var modifiers: Array[Modifier] = [] # should only come from passive_effects
 
 
-static func create_from_dictionary(property_dict: Dictionary) -> ClampedValue:
-	var new_clamped_value: ClampedValue = ClampedValue.new()
+static func create_from_dictionary(property_dict: Dictionary) -> StatValue:
+	var new_clamped_value: StatValue = StatValue.new()
 	for property_name in property_dict.keys():
 		new_clamped_value.set(property_name, property_dict[property_name])
 
@@ -124,5 +124,5 @@ func remove_modifier(modifier: Modifier) -> void:
 	value_changed.emit(self)
 
 
-func update_max_from_clamped_value(max_clamped: ClampedValue):
+func update_max_from_clamped_value(max_clamped: StatValue):
 	set_max_value(max_clamped.get_modified_value())

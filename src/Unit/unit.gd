@@ -138,21 +138,21 @@ var ability_slots: Array[AbilitySlot] = [
 	AbilitySlot.new("Movement", [Ability.SlotType.MOVEMENT]),
 ]
 
-var stats: Dictionary[StatType, ClampedValue] = {
-	StatType.HP_MAX : ClampedValue.new(0, 999, 150),
-	StatType.HP : ClampedValue.new(0, 150, 100),
-	StatType.MP_MAX : ClampedValue.new(0, 999, 100),
-	StatType.MP : ClampedValue.new(0, 100, 70),
-	StatType.CT : ClampedValue.new(0, 999, 25),
-	StatType.MOVE : ClampedValue.new(0, 100, 3),
-	StatType.JUMP : ClampedValue.new(0, 100, 3),
-	StatType.SPEED : ClampedValue.new(0, 100, 10),
-	StatType.PHYSICAL_ATTACK : ClampedValue.new(0, 100, 11),
-	StatType.MAGIC_ATTACK : ClampedValue.new(0, 100, 12),
-	StatType.BRAVE : ClampedValue.new(0, 100, 70),
-	StatType.FAITH : ClampedValue.new(0, 100, 65),
-	StatType.EXP : ClampedValue.new(0, 999, 99),
-	StatType.LEVEL : ClampedValue.new(0, 99, 20),
+var stats: Dictionary[StatType, StatValue] = {
+	StatType.HP_MAX : StatValue.new(0, 999, 150),
+	StatType.HP : StatValue.new(0, 150, 100),
+	StatType.MP_MAX : StatValue.new(0, 999, 100),
+	StatType.MP : StatValue.new(0, 100, 70),
+	StatType.CT : StatValue.new(0, 999, 25),
+	StatType.MOVE : StatValue.new(0, 100, 3),
+	StatType.JUMP : StatValue.new(0, 100, 3),
+	StatType.SPEED : StatValue.new(0, 100, 10),
+	StatType.PHYSICAL_ATTACK : StatValue.new(0, 100, 11),
+	StatType.MAGIC_ATTACK : StatValue.new(0, 100, 12),
+	StatType.BRAVE : StatValue.new(0, 100, 70),
+	StatType.FAITH : StatValue.new(0, 100, 65),
+	StatType.EXP : StatValue.new(0, 999, 99),
+	StatType.LEVEL : StatValue.new(0, 99, 20),
 }
 
 var stats_raw: Dictionary[StatType, float] = {
@@ -463,7 +463,7 @@ static func grow_raw_stats(current_level: int, current_job: JobData, new_stats_r
 static func calc_battle_stats(
 		current_job: JobData, 
 		new_stats_raw: Dictionary[Unit.StatType, float], 
-		new_stats: Dictionary[Unit.StatType, ClampedValue],
+		new_stats: Dictionary[Unit.StatType, StatValue],
 		set_to_max: bool = true,
 		use_larger_values: bool = false) -> void:
 	var base_hp: int = new_stats_raw[StatType.HP_MAX] * current_job.hp_multiplier / 0x190000
@@ -782,7 +782,7 @@ func end_turn() -> void:
 
 
 # TODO should these be triggered actions on the statuses?
-func hp_changed(clamped_value: ClampedValue) -> void:
+func hp_changed(clamped_value: StatValue) -> void:
 	if global_battle_manager == null: # TODO should statuses be applied outside battle?
 		return
 	

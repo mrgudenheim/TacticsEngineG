@@ -28,26 +28,26 @@ static func create_from_json(json_string: String) -> Scenario:
 
 static func create_from_dictionary(property_dict: Dictionary) -> Scenario:
 	var new_scenario: Scenario = Scenario.new()
-	for property_name in property_dict.keys():
+	for property_name: String in property_dict.keys():
 		if property_name == "map_chunks":
 			var new_map_chunks: Array[MapChunk] = []
-			var map_chunks_array = property_dict[property_name]
+			var map_chunks_array: Array = property_dict[property_name]
 			for map_chunk_dict: Dictionary in map_chunks_array:
 				var new_map_chunk: MapChunk = MapChunk.create_from_dictionary(map_chunk_dict)
 				new_map_chunks.append(new_map_chunk)
 			new_scenario.set(property_name, new_map_chunks)
 		elif property_name == "deployment_zones":
 			var new_deployment_zones: Array[PackedVector2Array] = []
-			var array_of_arrays = property_dict[property_name]
-			for zone in array_of_arrays:
+			var array_of_arrays: Array = property_dict[property_name]
+			for zone: Array in array_of_arrays:
 				var new_zone: PackedVector2Array = []
-				for location in zone:
+				for location: Array in zone:
 					new_zone.append(Vector2(location[0], location[1]))
 				new_deployment_zones.append(new_zone)
 			new_scenario.set(property_name, new_deployment_zones)
 		elif property_name == "units_data":
 			var new_units_data: Array[UnitData] = []
-			var new_units_data_array = property_dict[property_name]
+			var new_units_data_array: Array = property_dict[property_name]
 			for unit_data_dictionary: Dictionary in new_units_data_array:
 				var new_unit_data: UnitData = UnitData.create_from_dictionary(unit_data_dictionary)
 				new_units_data.append(new_unit_data)
@@ -112,13 +112,13 @@ class MapChunk extends Resource:
 
 	static func create_from_dictionary(property_dict: Dictionary) -> MapChunk:
 		var new_map_chunk: MapChunk = MapChunk.new()
-		for property_name in property_dict.keys():
+		for property_name: String in property_dict.keys():
 			if property_name == "corner_position":
-				var vector_as_array = property_dict[property_name]
+				var vector_as_array: Array = property_dict[property_name]
 				var new_corner_position: Vector3i = Vector3i(roundi(vector_as_array[0]), roundi(vector_as_array[1]), roundi(vector_as_array[2]))
 				new_map_chunk.set(property_name, new_corner_position)
 			elif property_name == "mirror_xyz":
-				var array = property_dict[property_name]
+				var array: Array = property_dict[property_name]
 				var new_mirror_xyz: Array[bool] = []
 				new_mirror_xyz.assign(array)
 				new_map_chunk.set(property_name, new_mirror_xyz)

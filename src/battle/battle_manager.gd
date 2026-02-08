@@ -108,6 +108,8 @@ func toggle_debug_ui() -> void:
 		for unit: Unit in units:
 			if not unit.unit_input_event.is_connected(scenario_editor.update_unit_dragging):
 				unit.unit_input_event.connect(scenario_editor.update_unit_dragging)
+		
+		camera_controller.follow_node = null
 	else:
 		if scenario_editor.tile_highlight != null:
 			scenario_editor.tile_highlight.queue_free()
@@ -116,6 +118,8 @@ func toggle_debug_ui() -> void:
 			unit.unit_input_event.disconnect(scenario_editor.update_unit_dragging)
 
 		battle_view.reparent(self)
+
+		camera_controller.follow_node = active_unit.char_body
 
 
 func on_rom_loaded() -> void:

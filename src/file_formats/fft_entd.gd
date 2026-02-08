@@ -7,7 +7,7 @@ extends Resource
 var unit_data_length: int = 40
 
 func _init(bytes: PackedByteArray) -> void:
-	for idx in 16:
+	for idx: int in 16:
 		var unit_bytes: PackedByteArray = bytes.slice(idx * unit_data_length, (idx + 1) * unit_data_length)
 		if unit_bytes[0] != 0: # sprite_id = 0 are empty entries
 			var new_entd_unit: FftEntdUnit = FftEntdUnit.new(unit_bytes)

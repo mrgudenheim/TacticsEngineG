@@ -58,6 +58,8 @@ const CameraFacingVectors: Dictionary[Direction, Vector3] = {
 
 var is_rotating: bool = false
 var camera_facing: Direction = Direction.NORTHWEST
+var camera_facing_vector: Vector3:
+	get: return CameraFacingVectors[camera_facing]
 
 
 func _ready() -> void:
@@ -75,7 +77,7 @@ func _process(delta: float) -> void:
 	elif follow_node != null:
 		global_position = follow_node.global_position
 	elif follow_node == null:
-		var transform_basis = transform.basis
+		var transform_basis: Basis = transform.basis
 		transform_basis.y = Vector3.DOWN # camera should not move in/out of the direction it is facing
 		position += (transform_basis * Vector3(pan_direction.x, pan_direction.y, 0)) * zoom * (pan_speed_max / 5.0) * delta
 
@@ -105,10 +107,10 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func zoom_camera(dir: int) -> void:
-	var zoom_margin := zoom * (-dir) / 5
-	var new_zoom := zoom + zoom_margin
+	var zoom_margin: float = zoom * (-dir) / 5
+	var new_zoom: float = zoom + zoom_margin
 	if new_zoom < zoom_out_max and new_zoom > zoom_in_max:
-		var tween := create_tween().set_parallel() # TODO use curve for camera zoom smoothing, similar to node following
+		var tween: Tween = create_tween().set_parallel() # TODO use curve for camera zoom smoothing, similar to node following
 		tween.set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_IN)
 		tween.tween_property(camera, "size", new_zoom, 0.05)
 		await tween.finished
@@ -140,7 +142,7 @@ func start_rotating_camera(dir: int) -> void:
 	var offset: float = dir * rotate_increment # * delta
 	new_rotation.y = new_rotation.y + offset
 	
-	var tween := create_tween().set_parallel()
+	var tween: Tween = create_tween().set_parallel()
 	tween.set_trans(Tween.TRANS_LINEAR).set_ease(Tween.EASE_IN)
 	tween.tween_method(rotate_camera, rotation_degrees, new_rotation, time_to_rotate)
 	await tween.finished
@@ -148,13 +150,13 @@ func start_rotating_camera(dir: int) -> void:
 	#push_warning(str(camera_facing))
 	is_rotating = false
 
-func rotate_camera(new_rotation_degress: Vector3) -> void:
-	rotation_degrees = new_rotation_degress
-	rotated.emit(Vector3(0, new_rotation_degress.y, 0))
+func rotate_camera(new_rotation_degrees: Vector3) -> void:
+	rotation_degrees = new_rotation_degrees
+	rotated.emit(Vector3(0, new_rotation_degrees.y, 0))
 	
 	var camera_angle: float = rotation_degrees.y
 	#var target_angle = fposmod(new_rotation_degress.y, 360)
-	var camera_angle_pos = fposmod(camera_angle, 360)
+	var camera_angle_pos: float = fposmod(camera_angle, 360)
 		
 	var new_camera_facing: Direction = Direction.NORTHEAST
 	if camera_angle_pos < 90:

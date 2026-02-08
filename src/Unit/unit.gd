@@ -1221,7 +1221,7 @@ func update_unit_facing(dir: Vector3) -> void:
 		var temp_facing: Unit.Facings = facing
 		facing = new_facing
 		if global_battle_manager != null:
-			update_animation_facing(global_battle_manager.camera_controller.CameraFacingVectors[global_battle_manager.camera_controller.camera_facing])
+			update_animation_facing(global_battle_manager.camera_controller.camera_facing_vector)
 
 
 func update_animation_facing(camera_facing_vector: Vector3) -> void:

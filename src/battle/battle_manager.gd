@@ -565,7 +565,6 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team, level: int 
 	new_unit.tile_position = tile_position
 	#new_unit.char_body.global_position = Vector3(tile_position.location.x + 0.5, randi_range(15, 20), tile_position.location.y + 0.5)
 	new_unit.char_body.global_position = Vector3(tile_position.location.x + 0.5, tile_position.get_world_position().y + 0.25, tile_position.location.y + 0.5)
-	new_unit.update_unit_facing([Vector3.FORWARD, Vector3.BACK, Vector3.LEFT, Vector3.RIGHT].pick_random())
 	if job_id < 0x5e: # non-monster
 		new_unit.stat_basis = [Unit.StatBasis.MALE, Unit.StatBasis.FEMALE].pick_random()
 	else:
@@ -573,6 +572,7 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team, level: int 
 	new_unit.set_job_id(job_id)
 	if range(0x4a, 0x5e).has(job_id):
 		new_unit.set_sprite_palette(range(0,5).pick_random())
+	new_unit.update_unit_facing([Vector3.FORWARD, Vector3.BACK, Vector3.LEFT, Vector3.RIGHT].pick_random())
 	new_unit.stats[Unit.StatType.LEVEL].set_value(level)
 	Unit.generate_leveled_raw_stats(new_unit.stat_basis, level, new_unit.job_data, new_unit.stats_raw)
 	
@@ -582,6 +582,7 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team, level: int 
 	Unit.calc_battle_stats(new_unit.job_data, new_unit.stats_raw, new_unit.stats, true, use_higher_stat_values)
 	
 	camera_controller.rotated.connect(new_unit.char_body.set_rotation_degrees) # have sprite update as camera rotates
+	new_unit.char_body.set_rotation_degrees(Vector3(0, camera_controller.rotation_degrees.y, 0))
 	
 	new_unit.update_stat_bars_scale(camera_controller.zoom)
 	camera_controller.zoom_changed.connect(new_unit.update_stat_bars_scale)
@@ -638,10 +639,10 @@ func spawn_unit_from_unit_data(unit_data: UnitData) -> Unit:
 
 	new_unit.set_position_to_tile()
 	# new_unit.update_unit_facing(Unit.FacingVectors[Unit.Facings[unit_data.facing_direction]])
-	new_unit.update_unit_facing(Unit.FacingVectors[unit_data.facing_direction])
 	new_unit.set_job_id(RomReader.jobs_data[unit_data.job_unique_name].job_id)
 	new_unit.set_sprite_by_file_name(unit_data.spritesheeet_file_name)
 	new_unit.set_sprite_palette(unit_data.palette_id)
+	new_unit.update_unit_facing(Unit.FacingVectors[unit_data.facing_direction])
 	# new_unit.gender = Unit.Gender[unit_data.gender]
 	new_unit.gender = unit_data.gender
 	new_unit.level = unit_data.level
@@ -656,6 +657,7 @@ func spawn_unit_from_unit_data(unit_data: UnitData) -> Unit:
 	stat_bars[2].set_stat(str(Unit.StatType.keys()[Unit.StatType.CT]), new_unit.stats[Unit.StatType.CT])
 	
 	camera_controller.rotated.connect(new_unit.char_body.set_rotation_degrees) # have sprite update as camera rotates
+	new_unit.char_body.set_rotation_degrees(Vector3(0, camera_controller.rotation_degrees.y, 0))
 	
 	new_unit.update_stat_bars_scale(camera_controller.zoom)
 	camera_controller.zoom_changed.connect(new_unit.update_stat_bars_scale)

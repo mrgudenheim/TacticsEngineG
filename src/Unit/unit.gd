@@ -333,7 +333,7 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
-	if global_battle_manager != null:
+	if global_battle_manager != null and is_queued_for_deletion():
 		var unit_index: int = global_battle_manager.units.find(self)
 		if unit_index != -1: # if the unit is in the battle_manager array
 			global_battle_manager.units.remove_at(unit_index)

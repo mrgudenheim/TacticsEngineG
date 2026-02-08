@@ -104,7 +104,17 @@ func toggle_debug_ui() -> void:
 	scenario_editor.visible = not scenario_editor.visible
 	if scenario_editor.visible:
 		battle_view.reparent(scenario_editor.battle_subviewport)
+		
+		for unit: Unit in units:
+			if not unit.unit_input_event.is_connected(scenario_editor.update_unit_dragging):
+				unit.unit_input_event.connect(scenario_editor.update_unit_dragging)
 	else:
+		if scenario_editor.tile_highlight != null:
+			scenario_editor.tile_highlight.queue_free()
+		
+		for unit: Unit in units:
+			unit.unit_input_event.disconnect(scenario_editor.update_unit_dragging)
+
 		battle_view.reparent(self)
 
 

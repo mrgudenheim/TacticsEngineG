@@ -545,7 +545,7 @@ func generate_equipment() -> void:
 	update_passive_effects()
 
 
-func set_equipment_slot(slot: EquipmentSlot, item: ItemData):
+func set_equipment_slot(slot: EquipmentSlot, item: ItemData) -> void:
 	slot.item_unique_name = item.unique_name
 	
 	update_passive_effects()
@@ -567,7 +567,7 @@ func update_stat_modifiers(all_passive_effects: Array[PassiveEffect]) -> void:
 
 func get_item_unique_name_for_slot(slot_type: ItemData.SlotType, item_level: int, random: bool = false) -> String:
 	var valid_items: Array[ItemData] = []
-	valid_items.assign(RomReader.items.values().filter(func(item: ItemData): 
+	valid_items.assign(RomReader.items.values().filter(func(item: ItemData) -> bool: 
 		var slot_type_is_valid: bool = item.slot_type == slot_type
 		var level_is_valid: bool = item.min_level <= item_level
 		var type_is_valid: bool = equipable_item_types.has(item.item_type) # TODO allow forcing specifc type based on ability requirements
@@ -577,7 +577,7 @@ func get_item_unique_name_for_slot(slot_type: ItemData.SlotType, item_level: int
 		if random:
 			item_unique_name = valid_items.pick_random().unique_name
 		else:
-			valid_items.sort_custom(func(item_a: ItemData, item_b: ItemData): return item_a.min_level > item_b.min_level)
+			valid_items.sort_custom(func(item_a: ItemData, item_b: ItemData) -> bool: return item_a.min_level > item_b.min_level)
 			item_unique_name = valid_items[0].unique_name # pick highest level item
 			#item = valid_items.pick_random()
 	return item_unique_name
@@ -803,9 +803,9 @@ func add_status(new_status: StatusEffect, ignore_immunity: bool = false) -> void
 		if current_statuses.any(func(status: StatusEffect): return status.unique_name == status_prevents_id):
 			return
 	
-	var existing_statuses: Array[StatusEffect] = current_statuses.filter(func(status: StatusEffect): return status.status_id == new_status.status_id) # TODO use filter to allow for multiple of the same status, ex. double charging
+	var existing_statuses: Array[StatusEffect] = current_statuses.filter(func(status: StatusEffect) -> bool: return status.status_id == new_status.status_id) # TODO use filter to allow for multiple of the same status, ex. double charging
 	if existing_statuses.size() >= new_status.num_allowed:
-		var temp_statuses: Array[StatusEffect] = existing_statuses.filter(func(status: StatusEffect): return status.duration_type != StatusEffect.DurationType.PERMANENT)
+		var temp_statuses: Array[StatusEffect] = existing_statuses.filter(func(status: StatusEffect) -> bool: return status.duration_type != StatusEffect.DurationType.PERMANENT)
 		if not temp_statuses.is_empty():
 			remove_status(temp_statuses[0]) # remove oldest temp status
 		else:
@@ -828,7 +828,7 @@ func add_status(new_status: StatusEffect, ignore_immunity: bool = false) -> void
 
 func remove_status_id(status_removed_unique_name: String) -> void:
 	var statuses_to_remove: Array[StatusEffect] = []
-	statuses_to_remove.append_array(current_statuses.filter(func(status: StatusEffect): return status.unique_name == status_removed_unique_name and status.duration_type != StatusEffect.DurationType.PERMANENT))
+	statuses_to_remove.append_array(current_statuses.filter(func(status: StatusEffect) -> bool: return status.unique_name == status_removed_unique_name and status.duration_type != StatusEffect.DurationType.PERMANENT))
 	for status: StatusEffect in statuses_to_remove:
 		remove_status(status)
 
@@ -846,7 +846,7 @@ func remove_status(status_removed: StatusEffect, remove_permanent: bool = false)
 
 
 func get_nullify_statuses() -> Array[StatusEffect]:
-	return current_statuses.filter(func(status: StatusEffect): return status.passive_effect.nullify_targeted)
+	return current_statuses.filter(func(status: StatusEffect) -> bool: return status.passive_effect.nullify_targeted)
 
 
 func update_permanent_statuses(all_passive_effects: Array[PassiveEffect]) -> void:
@@ -864,7 +864,7 @@ func update_permanent_statuses(all_passive_effects: Array[PassiveEffect]) -> voi
 		for passive_effect: PassiveEffect in all_passive_effects:
 			num_should_have += passive_effect.status_always.count(status_unique_name)
 		
-		var current_permanent: Array[StatusEffect] = current_statuses.filter(func(status: StatusEffect): return status.unique_name == status_unique_name and status.duration_type == StatusEffect.DurationType.PERMANENT)
+		var current_permanent: Array[StatusEffect] = current_statuses.filter(func(status: StatusEffect) -> bool: return status.unique_name == status_unique_name and status.duration_type == StatusEffect.DurationType.PERMANENT)
 		var num_has: int = current_permanent.size()
 		var change: int = num_should_have - num_has
 		
@@ -1458,8 +1458,8 @@ func get_native_passive_effects(exclude_passives: PackedStringArray = []) -> Arr
 	if global_battle_manager != null:
 		native_passive_effects.append_array(global_battle_manager.global_passive_effects)
 
-	native_passive_effects = native_passive_effects.filter(func(passive_effect: PassiveEffect): return passive_effect.effect_range == 0)
-	native_passive_effects = native_passive_effects.filter(func(passive_effect: PassiveEffect): return not exclude_passives.has(passive_effect.unique_name))
+	native_passive_effects = native_passive_effects.filter(func(passive_effect: PassiveEffect) -> bool: return passive_effect.effect_range == 0)
+	native_passive_effects = native_passive_effects.filter(func(passive_effect: PassiveEffect) -> bool: return not exclude_passives.has(passive_effect.unique_name))
 	
 	return native_passive_effects
 
@@ -1495,7 +1495,7 @@ func get_passive_effects_from_others(exclude_passives: PackedStringArray = []) -
 				
 				shared_passive_effects.append(passive_effect)
 	
-	shared_passive_effects = shared_passive_effects.filter(func(passive_effect: PassiveEffect): return not exclude_passives.has(passive_effect.unique_name))
+	shared_passive_effects = shared_passive_effects.filter(func(passive_effect: PassiveEffect) -> bool: return not exclude_passives.has(passive_effect.unique_name))
 	
 	return shared_passive_effects
 
@@ -1668,7 +1668,7 @@ func update_map_paths(map_tiles: Dictionary[Vector2i, Array], units: Array[Unit]
 	var all_passive_effects: Array[PassiveEffect] = get_all_passive_effects()
 	update_prohibited_terrain(all_passive_effects)
 	update_terrain_costs(all_passive_effects)
-	ignore_height = all_passive_effects.any(func(passive_effect: PassiveEffect): return passive_effect.ignore_height)
+	ignore_height = all_passive_effects.any(func(passive_effect: PassiveEffect) -> bool: return passive_effect.ignore_height)
 	
 	if move_action.targeting_strategy.has_method("get_map_paths"):
 		map_paths = await move_action.targeting_strategy.get_map_paths(self, map_tiles, units, max_cost)

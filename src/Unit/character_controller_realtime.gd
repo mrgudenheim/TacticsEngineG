@@ -39,8 +39,8 @@ func _physics_process(delta: float) -> void:
 	
 	# Get the input direction and handle the movement/deceleration.
 	# As good practice, you should replace UI actions with custom gameplay actions.
-	var input_dir := Input.get_vector("camera_left", "camera_right", "camera_up", "camera_down")
-	var direction := (unit.char_body.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+	var input_dir: Vector2 = Input.get_vector("camera_left", "camera_right", "camera_up", "camera_down")
+	var direction: Vector3 = (unit.char_body.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	if direction:
 		unit.char_body.velocity.x = direction.x * SPEED
 		unit.char_body.velocity.z = direction.z * SPEED
@@ -52,13 +52,13 @@ func _physics_process(delta: float) -> void:
 		# https://docs.godotengine.org/en/stable/tutorials/physics/ray-casting.html
 		# get 3d click location based on raycast
 		# TODO instead of manual raycast use CollisionObject3D.input_event signal on the map (similar to map_tile_hover): map_instance.input_event.connect(on_map_mesh_event)
-		var space_state := get_world_3d().direct_space_state
+		var space_state: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
 		var cam: Camera3D = get_viewport().get_camera_3d()
 		var mousepos: Vector2 = get_viewport().get_mouse_position()
 
 		var origin: Vector3 = cam.project_ray_origin(mousepos)
 		var end: Vector3 = origin + cam.project_ray_normal(mousepos) * 1000
-		var query := PhysicsRayQueryParameters3D.create(origin, end)
+		var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(origin, end)
 		#query.collide_with_areas = true
 
 		var result: Dictionary = space_state.intersect_ray(query)

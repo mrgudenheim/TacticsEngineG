@@ -167,6 +167,13 @@ func process_rom() -> void:
 
 	var wldcore_scenarios: Array[Scenario] = wldcore_data.get_all_scenarios()
 	for new_scenario: Scenario in wldcore_scenarios:
+		var number: int = 1
+		var new_unique_name: String = new_scenario.unique_name + ("_%02d" % number)
+		while scenarios.keys().has(new_unique_name):
+			number += 1
+			new_unique_name = new_scenario.unique_name + ("_%02d" % number)
+		new_scenario.unique_name = new_unique_name
+
 		RomReader.scenarios[new_scenario.unique_name] = new_scenario
 
 	for fft_scenario: AttackOutData.ScenarioData in attack_out_data.scenario_data:

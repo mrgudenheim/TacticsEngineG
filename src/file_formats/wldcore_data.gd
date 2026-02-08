@@ -74,12 +74,7 @@ static func get_scenarios_from_random_battle(fft_random_battle: Variant) -> Arra
 		var new_scenario: Scenario = new_scenario_base.duplicate()
 		var scenario_entd: FftEntd = RomReader.fft_entds[entd_idx]
 		new_scenario.units_data = scenario_entd.get_units_data()
-
-		var number: int = 1
-		new_scenario.unique_name = map_unique_name + ("_%02d" % number)
-		while RomReader.scenarios.keys().has(new_scenario.unique_name) or new_scenarios.any(func(existing_scenario: Scenario) -> bool: return existing_scenario.unique_name == new_scenario.unique_name):
-			number += 1
-			new_scenario.unique_name = map_unique_name + ("_%02d" % number)
+		new_scenario.unique_name = map_unique_name
 		
 		new_scenarios.append(new_scenario)
 
@@ -110,11 +105,11 @@ func get_all_scenarios() -> Array[Scenario]:
 	var new_scenarios: Array[Scenario] = []
 
 	for random_battle: RandomBattle in world_random_battle_data:
-		var random_battle_scenarios: Array[Scenario] = WldcoreData.get_scenarios_from_random_battle(random_battle)
+		var random_battle_scenarios: Array[Scenario] = get_scenarios_from_random_battle(random_battle)
 		new_scenarios.append_array(random_battle_scenarios)
 	
 	for dungeon_battle: DungeonBattle in dungeon_random_battle_data:
-		var random_battle_scenarios: Array[Scenario] = WldcoreData.get_scenarios_from_random_battle(dungeon_battle)
+		var random_battle_scenarios: Array[Scenario] = get_scenarios_from_random_battle(dungeon_battle)
 		new_scenarios.append_array(random_battle_scenarios)
 
 	return new_scenarios

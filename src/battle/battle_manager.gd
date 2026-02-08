@@ -120,7 +120,10 @@ func toggle_debug_ui() -> void:
 
 		battle_view.reparent(self)
 
-		camera_controller.follow_node = active_unit.char_body
+		if active_unit != null:
+			camera_controller.follow_node = active_unit.char_body
+		else:
+			camera_controller.follow_node = null
 		controller.unit = active_unit
 
 

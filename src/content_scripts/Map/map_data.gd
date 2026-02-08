@@ -362,7 +362,7 @@ func get_normals(normals_bytes: PackedByteArray, num_vertices: int) -> PackedVec
 	return normals
 
 
-func get_uvs(uvs_bytes: PackedByteArray, num_polys: int, is_quad = false) -> PackedVector2Array:
+func get_uvs(uvs_bytes: PackedByteArray, num_polys: int, is_quad: bool = false) -> PackedVector2Array:
 	var uvs: PackedVector2Array = []
 	
 	var data_length: int = 10
@@ -404,7 +404,7 @@ func get_uvs(uvs_bytes: PackedByteArray, num_polys: int, is_quad = false) -> Pac
 	return uvs
 
 
-func get_uvs_all_palettes(uvs_bytes: PackedByteArray, num_polys: int, is_quad = false) -> PackedVector2Array:
+func get_uvs_all_palettes(uvs_bytes: PackedByteArray, num_polys: int, is_quad: bool = false) -> PackedVector2Array:
 	var uvs: PackedVector2Array = []
 	var num_palettes: int = 16
 	
@@ -519,8 +519,8 @@ func get_texture_rgba8_image(palette_id: int = 0, pixel_colors: PackedColorArray
 	if pixel_colors.is_empty():
 		pixel_colors = get_texture_pixel_colors(palette_id)
 	
-	for x in TEXTURE_SIZE.x:
-		for y in TEXTURE_SIZE.y:
+	for x: int in TEXTURE_SIZE.x:
+		for y: int in TEXTURE_SIZE.y:
 			var color: Color = pixel_colors[x + (y * TEXTURE_SIZE.x)]
 			var color8: Color = Color8(color.r8, color.g8, color.b8, color.a8) # use Color8 function to prevent issues with format conversion changing color by 1/255
 			image.set_pixel(x,y, color8) # spr stores pixel data left to right, top to bottm
@@ -528,7 +528,7 @@ func get_texture_rgba8_image(palette_id: int = 0, pixel_colors: PackedColorArray
 	return image
 
 
-func get_texture(texture_bytes: PackedByteArray, palette_id = 0) -> Texture2D:
+func get_texture(texture_bytes: PackedByteArray, palette_id: int = 0) -> Texture2D:
 	texture_color_indices = get_texture_color_indices(texture_bytes)
 	
 	#var unique_palettes: Dictionary = {}
@@ -565,7 +565,7 @@ func get_texture_color_indices_all(color_indices: PackedInt32Array) -> PackedInt
 	var num_palettes: int = 16
 	var colors_per_palette: int = 16
 	
-	for row_index in (color_indices.size() / TEXTURE_SIZE.x):
+	for row_index: int in (color_indices.size() / TEXTURE_SIZE.x):
 		var row_start_index: int = row_index * TEXTURE_SIZE.x
 		var row_end_index: int = row_start_index + TEXTURE_SIZE.x
 		var row_indices: PackedInt32Array = color_indices.slice(row_start_index, row_end_index)
@@ -604,8 +604,8 @@ func get_texture_rgba8_image_all() -> Image:
 	var image: Image = Image.create_empty(image_width, TEXTURE_SIZE.y, false, Image.FORMAT_RGBA8)
 	var pixel_colors: PackedColorArray = get_texture_pixel_colors_all()
 	
-	for x in image_width:
-		for y in TEXTURE_SIZE.y:
+	for x: int in image_width:
+		for y: int in TEXTURE_SIZE.y:
 			var color: Color = pixel_colors[x + (y * image_width)]
 			var color8: Color = Color8(color.r8, color.g8, color.b8, color.a8) # use Color8 function to prevent issues with format conversion changing color by 1/255
 			image.set_pixel(x,y, color8) # spr stores pixel data left to right, top to bottm
@@ -659,7 +659,7 @@ func animate_palette(texture_anim: TextureAnimationData, map: MapChunkNodes, ani
 		var new_anim_palette_id: int = frame_id + texture_anim.animation_starting_index
 		var new_palette: PackedColorArray = texture_animations_palette_frames[new_anim_palette_id]
 		var new_texture_palette: PackedColorArray = map_shader_material.get_shader_parameter("palettes_colors")
-		for color_id in colors_per_palette:
+		for color_id: int in colors_per_palette:
 			new_texture_palette[color_id + (texture_anim.palette_id_to_animate * colors_per_palette)] = new_palette[color_id]
 		map_shader_material.set_shader_parameter("palettes_colors", new_texture_palette)
 		

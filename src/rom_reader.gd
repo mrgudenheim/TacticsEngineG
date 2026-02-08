@@ -781,8 +781,8 @@ func process_frame_bin() -> void:
 	# get_rgba8_image() -> Image:
 	frame_bin.height = frame_bin.color_indices.size() / frame_bin.width
 	var image:Image = Image.create_empty(frame_bin.width, frame_bin.height, false, Image.FORMAT_RGBA8)
-	for x in frame_bin.width:
-		for y in frame_bin.height:
+	for x: int in frame_bin.width:
+		for y: int in frame_bin.height:
 			var color: Color = frame_bin.pixel_colors[x + (y * frame_bin.width)]
 			var color8: Color = Color8(color.r8, color.g8, color.b8, color.a8) # use Color8 function to prevent issues with format conversion changing color by 1/255
 			image.set_pixel(x,y, color8) # spr stores pixel data left to right, top to bottm
@@ -969,10 +969,10 @@ func write_spritesheet_region_data(seq_index: int, shp_index: int) -> void:
 				
 				for subframe_idx: int in frame.subframes.size():
 					var subframe: SubFrameData = frame.subframes[subframe_idx]
-					var subframe_region_size = subframe.rect_size
-					var subframe_region_location = Vector2i(subframe.load_location_x, subframe.load_location_y)
+					var subframe_region_size: Vector2i = subframe.rect_size
+					var subframe_region_location: Vector2i = Vector2i(subframe.load_location_x, subframe.load_location_y)
 
-					var region_id: int = regions.find_custom(func(region_data: SpritesheetRegionData): 
+					var region_id: int = regions.find_custom(func(region_data: SpritesheetRegionData) -> bool: 
 						return region_data.region_size == subframe_region_size and region_data.region_location == subframe_region_location)
 					
 					var modified_description: String = seq_description.replace("\n", ", ").replace("-, ", "-<br>").replace(", -", "<br>-")
@@ -1013,10 +1013,10 @@ func write_spritesheet_region_data(seq_index: int, shp_index: int) -> void:
 					
 					for subframe_idx: int in frame_submerged.subframes.size():
 						var subframe: SubFrameData = frame_submerged.subframes[subframe_idx]
-						var subframe_region_size = subframe.rect_size
-						var subframe_region_location = Vector2i(subframe.load_location_x, subframe.load_location_y)
+						var subframe_region_size: Vector2i = subframe.rect_size
+						var subframe_region_location: Vector2i = Vector2i(subframe.load_location_x, subframe.load_location_y)
 
-						var region_id: int = regions.find_custom(func(region_data: SpritesheetRegionData): 
+						var region_id: int = regions.find_custom(func(region_data: SpritesheetRegionData) -> bool: 
 							return region_data.region_size == subframe_region_size and region_data.region_location == subframe_region_location)
 						
 						var modified_description: String = seq_description.replace("\n", ", ").replace("-, ", "-<br>").replace(", -", "<br>-")

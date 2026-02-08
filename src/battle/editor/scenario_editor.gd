@@ -62,24 +62,6 @@ func _process(_delta: float) -> void:
 		new_tile_highlight.position = cursor_tile.get_world_position(true) + Vector3(0, 0.025, 0)
 
 
-# Input from the subviewport never reaches here...
-# func _unhandled_input(event: InputEvent) -> void:
-# 	if event.is_action_released("primary_action"): # snap unit to tile when released
-# 			# check if unit can end movement on tile
-# 			var cursor_tile: TerrainTile = battle_manager.current_tile_hover
-# 			var can_end_on_tile: bool = (cursor_tile.no_walk == 0 
-# 				and cursor_tile.no_stand_select == 0 
-# 				and cursor_tile.no_cursor == 0
-# 				and not unit_dragged.prohibited_terrain.has(cursor_tile.surface_type_id)) # lava, etc.
-			
-# 			if can_end_on_tile:
-# 				unit_dragged.tile_position = cursor_tile
-			
-# 			unit_dragged.char_body.global_position = unit_dragged.tile_position.get_world_position()
-# 			unit_dragged = null
-# 			tile_highlight.queue_free()
-
-
 func _ready() -> void:
 	add_map_chunk_button.pressed.connect(add_map_chunk_settings)
 	for color_picker: ColorPickerButton in background_gradient_color_pickers:
@@ -166,7 +148,14 @@ func init_scenario(new_scenario: Scenario = null) -> void:
 	if tile_highlight != null:
 		tile_highlight.queue_free()
 	unit_editor.setup(battle_manager.units[0]) # default to first unit
-	var unit_tile: TerrainTile = battle_manager.units[0].tile_position
+
+	var first_active_unit: Unit = battle_manager.units[0]
+	for unit_idx: int in battle_manager.units.size():
+		if not battle_manager.units[unit_idx].is_queued_for_deletion():
+			first_active_unit = battle_manager.units[unit_idx]
+			break
+
+	var unit_tile: TerrainTile = first_active_unit.tile_position
 	var new_tile_highlight: MeshInstance3D = unit_tile.get_tile_mesh()
 	new_tile_highlight.material_override = battle_manager.tile_highlights[Color.BLUE] # use pre-existing materials
 	add_child(new_tile_highlight)

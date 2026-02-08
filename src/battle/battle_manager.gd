@@ -684,6 +684,8 @@ func spawn_unit_from_unit_data(unit_data: UnitData) -> Unit:
 	
 	if teams.size() < unit_data.team_idx + 1:
 		teams.resize(unit_data.team_idx + 1)
+	
+	if teams[unit_data.team_idx] == null:
 		var new_team: Team = Team.new()
 		new_team.team_name = "Team" + str(unit_data.team_idx + 1)
 		teams[unit_data.team_idx] = new_team

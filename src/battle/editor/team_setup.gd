@@ -17,7 +17,7 @@ func _ready() -> void:
 	num_units_spinbox.value_changed.connect(on_num_units_changed)
 
 
-func setup(new_team: Team):
+func setup(new_team: Team) -> void:
 	team = new_team
 	name = team.team_name
 
@@ -27,7 +27,7 @@ func setup(new_team: Team):
 
 		num_units_spinbox.value = team.units.size()
 	else:
-		on_num_units_changed(num_units_spinbox.value)
+		on_num_units_changed(roundi(num_units_spinbox.value))
 
 
 func on_num_units_changed(new_value: int) -> void:

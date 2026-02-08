@@ -114,12 +114,7 @@ func queue_new_scenario(new_scenario: Scenario = null) -> void:
 
 
 func init_scenario(new_scenario: Scenario = null) -> void:
-	for team_setup: TeamSetup in team_setups:
-		team_setup.name += "remove"
-		team_setup.num_units_spinbox.value = 0 # remoe all units
-		team_setup.num_units_spinbox.value_changed.emit(0)
-		team_setup.queue_free()
-	team_setups.clear()
+	remove_all_teams()
 
 	# remove current map chunks
 	for map_chunk_settings_instance: MapChunkSettingsUi in map_chunk_settings_list:
@@ -149,8 +144,13 @@ func init_scenario(new_scenario: Scenario = null) -> void:
 		for unit_data: UnitData in scenario.units_data:
 			battle_manager.spawn_unit_from_unit_data(unit_data)
 		
-		for team: Team in battle_manager.teams:
-			add_team(team)
+		for team_idx: int in battle_manager.teams.size():
+			if battle_manager.teams[team_idx] == null:
+				var new_team: Team = Team.new()
+				new_team.team_name = "Team" + str(team_idx + 1)
+				battle_manager.teams[team_idx] = new_team
+
+			add_team(battle_manager.teams[team_idx])
 	else:
 		var number: int = 1
 		var new_scenario_num: String = scenario.unique_name.get_slice("new_scenario_", 1)
@@ -175,6 +175,8 @@ func init_scenario(new_scenario: Scenario = null) -> void:
 
 
 func init_random_scenario() -> void:
+	remove_all_teams()
+	
 	add_map_chunk_settings()
 	var map_chunk_data: MapData = RomReader.maps[scenario.map_chunks[0].unique_name]
 	background_gradient_color_pickers[0].color = map_chunk_data.background_gradient_bottom
@@ -186,7 +188,7 @@ func init_random_scenario() -> void:
 		battle_manager.teams.append(new_team)
 		new_team.team_name = "Team" + str(team_num + 1)
 		
-		add_team(new_team)
+		add_team(new_team, true)
 
 
 func populate_option_lists() -> void:
@@ -325,7 +327,7 @@ func update_background_gradient(_new_color: Color = Color.BLACK) -> void:
 	scenario.background_gradient_top = background_gradient_colors[1]
 
 
-func add_team(new_team: Team) -> Team:	
+func add_team(new_team: Team, is_random: bool = false) -> Team:	
 	var new_team_setup: TeamSetup = team_setup_scene.instantiate()
 	battle_setup_container.add_child(new_team_setup)
 	team_setups.append(new_team_setup)
@@ -336,9 +338,19 @@ func add_team(new_team: Team) -> Team:
 	new_team_setup.need_new_unit.connect(battle_manager.spawn_random_unit)
 	battle_manager.unit_created.connect(new_team_setup.add_unit_setup)
 	
-	new_team_setup.setup(new_team)
+	new_team_setup.setup(new_team, is_random)
 	
 	return new_team
+
+
+func remove_all_teams() -> void:
+	for team_setup: TeamSetup in team_setups:
+		team_setup.name += "remove"
+		team_setup.num_units_spinbox.value = 0 # remoe all units
+		team_setup.num_units_spinbox.value_changed.emit(0)
+		team_setup.queue_free()
+	battle_manager.teams.clear()
+	team_setups.clear()
 
 
 func show_all_tiles(show_tiles: bool = true, highlight_color: Color = Color.WHITE) -> void:

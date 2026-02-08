@@ -17,16 +17,17 @@ func _ready() -> void:
 	num_units_spinbox.value_changed.connect(on_num_units_changed)
 
 
-func setup(new_team: Team) -> void:
+func setup(new_team: Team, is_random: bool = false) -> void:
 	team = new_team
 	name = team.team_name
 
-	if team.units.size() > 0:
+	if not is_random:
 		for unit: Unit in team.units:
 			add_unit_setup(unit)
 
 		num_units_spinbox.value = team.units.size()
 	else:
+		num_units_spinbox.value = 4 # default to 4 units per team
 		on_num_units_changed(roundi(num_units_spinbox.value))
 
 

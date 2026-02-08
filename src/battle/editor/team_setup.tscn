@@ -1,8 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://h7281h60pnbl"]
+[gd_scene load_steps=3 format=3 uid="uid://h7281h60pnbl"]
 
 [ext_resource type="Script" uid="uid://dam17uf3w1qj4" path="res://src/battle/editor/team_setup.gd" id="1_v60ut"]
 [ext_resource type="PackedScene" uid="uid://b2bfuf828p6i6" path="res://src/battle/editor/unit_setup_panel.tscn" id="1_vj6nb"]
-[ext_resource type="PackedScene" uid="uid://dkudrb304m7t1" path="res://src/Unit/unit.tscn" id="3_vqtvk"]
 
 [node name="TeamSetup" type="MarginContainer" node_paths=PackedStringArray("unit_list", "num_units_spinbox")]
 anchors_preset = 15
@@ -14,7 +13,6 @@ script = ExtResource("1_v60ut")
 unit_list = NodePath("VBoxContainer/UnitListScrollArea/UnitList")
 num_units_spinbox = NodePath("VBoxContainer/HBoxContainer/NumUnitsSpinBox")
 unit_setup_scene = ExtResource("1_vj6nb")
-unit_scene = ExtResource("3_vqtvk")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
@@ -32,8 +30,6 @@ text = "Units:"
 
 [node name="NumUnitsSpinBox" type="SpinBox" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2
-min_value = 1.0
-value = 4.0
 rounded = true
 select_all_on_focus = true
 

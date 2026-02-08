@@ -583,6 +583,7 @@ func spawn_unit(tile_position: TerrainTile, job_id: int, team: Team, level: int 
 	
 	camera_controller.rotated.connect(new_unit.char_body.set_rotation_degrees) # have sprite update as camera rotates
 	new_unit.char_body.set_rotation_degrees(Vector3(0, camera_controller.rotation_degrees.y, 0))
+	new_unit.update_animation_facing(camera_controller.camera_facing_vector)
 	
 	new_unit.update_stat_bars_scale(camera_controller.zoom)
 	camera_controller.zoom_changed.connect(new_unit.update_stat_bars_scale)
@@ -658,6 +659,7 @@ func spawn_unit_from_unit_data(unit_data: UnitData) -> Unit:
 	
 	camera_controller.rotated.connect(new_unit.char_body.set_rotation_degrees) # have sprite update as camera rotates
 	new_unit.char_body.set_rotation_degrees(Vector3(0, camera_controller.rotation_degrees.y, 0))
+	new_unit.update_animation_facing(camera_controller.camera_facing_vector)
 	
 	new_unit.update_stat_bars_scale(camera_controller.zoom)
 	camera_controller.zoom_changed.connect(new_unit.update_stat_bars_scale)

@@ -176,8 +176,15 @@ func process_rom() -> void:
 
 		RomReader.scenarios[new_scenario.unique_name] = new_scenario
 
-	for fft_scenario: AttackOutData.ScenarioData in attack_out_data.scenario_data:
-		var new_scenario: Scenario = get_scenario_from_attack_out_scenario(fft_scenario)
+	var attack_out_scenarios: Array[Scenario] = attack_out_data.get_unique_scenarios()
+	for new_scenario: Scenario in attack_out_scenarios:
+		var number: int = 1
+		var new_unique_name: String = new_scenario.unique_name + ("_%02d" % number)
+		while scenarios.keys().has(new_unique_name):
+			number += 1
+			new_unique_name = new_scenario.unique_name + ("_%02d" % number)
+		new_scenario.unique_name = new_unique_name
+
 		RomReader.scenarios[new_scenario.unique_name] = new_scenario
 
 
@@ -1093,28 +1100,3 @@ func add_entds(file_name: String) -> void:
 		var entd_bytes: PackedByteArray = file_bytes.slice(idx * entd_data_length, (idx + 1) * entd_data_length)
 		var new_entd: FftEntd = FftEntd.new(entd_bytes)
 		fft_entds.append(new_entd)
-
-
-func get_scenario_from_attack_out_scenario(fft_scenario: AttackOutData.ScenarioData) -> Scenario:
-	var new_scenario: Scenario = Scenario.new()
-	new_scenario.is_fft_scenario = true
-
-	var map_unique_name_num: String = "map_%03d" % fft_scenario.map_id
-	var map_name_idx: int = RomReader.maps.keys().find_custom(func(map_name: String) -> bool: return map_name.begins_with(map_unique_name_num))
-	var map_unique_name: String = RomReader.maps.keys()[map_name_idx]
-	
-	var new_map_chunk: Scenario.MapChunk = Scenario.MapChunk.new()
-	new_map_chunk.set_mirror_xyz([true, true, false])
-	new_map_chunk.unique_name = map_unique_name
-	new_scenario.map_chunks.append(new_map_chunk)
-
-	var scenario_entd: FftEntd = RomReader.fft_entds[fft_scenario.entd_idx]
-	new_scenario.units_data = scenario_entd.get_units_data()
-
-	var number: int = 1
-	new_scenario.unique_name = map_unique_name + ("_%02d" % number)
-	while RomReader.scenarios.keys().has(new_scenario.unique_name):
-		number += 1
-		new_scenario.unique_name = map_unique_name + ("_%02d" % number)
-
-	return new_scenario

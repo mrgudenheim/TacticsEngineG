@@ -4,14 +4,14 @@ class_name AttackOutData
 var scenario_data_start: int = 0x10938
 var scenario_data_num_entries: int = 0x1ea
 var scenario_data_entry_length: int = 24
-var scenario_data: Array[ScenarioData] = []
+var scenario_data: Array[FftScenarioData] = []
 
 var deployment_data_start: int = 0xbbd4
 var deployment_data_num_entries: int = 0x2ff + 1
 var deployment_data_entry_length: int = 12
 var deployment_data: Array[DeploymentZoneData] = []
 
-class ScenarioData:
+class FftScenarioData:
 	var scenario_id: int = 0
 	var map_id: int = 0
 	var weather: int = 0
@@ -83,7 +83,7 @@ func init_from_attack_out() -> void:
 		var scenario_bytes_start: int = idx * scenario_data_entry_length
 		var scenario_entry_bytes: PackedByteArray = scenario_bytes.slice(scenario_bytes_start, scenario_bytes_start + scenario_data_entry_length)
 
-		scenario_data.append(ScenarioData.new(scenario_entry_bytes))
+		scenario_data.append(FftScenarioData.new(scenario_entry_bytes))
 	
 	var deployment_bytes_length: int = deployment_data_num_entries * deployment_data_entry_length
 	var deployment_table_bytes: PackedByteArray = attack_out_bytes.slice(deployment_data_start, deployment_data_start + deployment_bytes_length)
@@ -92,3 +92,42 @@ func init_from_attack_out() -> void:
 		var deployment_entry_bytes: PackedByteArray = deployment_table_bytes.slice(deployment_bytes_start, deployment_bytes_start + deployment_data_entry_length)
 
 		deployment_data.append(DeploymentZoneData.new(deployment_entry_bytes))
+
+
+func get_unique_scenarios() -> Array[Scenario]:
+	var all_unique_scenarios: Array[Scenario] = []
+	var checked_scenarios: Array[FftScenarioData] = []
+	for fft_scenario: FftScenarioData in scenario_data:
+		var is_new_scenario: bool = not checked_scenarios.any(
+				func(existing_scenario: FftScenarioData) -> bool: 
+					return (
+						existing_scenario.entd_idx == fft_scenario.entd_idx 
+						and existing_scenario.map_id == fft_scenario.map_id
+						and existing_scenario.first_squad_deployment_idx == fft_scenario.first_squad_deployment_idx
+						and existing_scenario.second_squad_deployment_idx == fft_scenario.second_squad_deployment_idx
+					)
+		)
+		if not is_new_scenario:
+			continue
+		
+		checked_scenarios.append(fft_scenario)
+
+		var new_scenario: Scenario = Scenario.new()
+		new_scenario.is_fft_scenario = true
+
+		var map_unique_name_num: String = "map_%03d" % fft_scenario.map_id
+		var map_name_idx: int = RomReader.maps.keys().find_custom(func(map_name: String) -> bool: return map_name.begins_with(map_unique_name_num))
+		var map_unique_name: String = RomReader.maps.keys()[map_name_idx]
+
+		var new_map_chunk: Scenario.MapChunk = Scenario.MapChunk.new()
+		new_map_chunk.set_mirror_xyz([true, true, false])
+		new_map_chunk.unique_name = map_unique_name
+		new_scenario.map_chunks.append(new_map_chunk)
+
+		var scenario_entd: FftEntd = RomReader.fft_entds[fft_scenario.entd_idx]
+		new_scenario.units_data = scenario_entd.get_units_data()
+
+		new_scenario.unique_name = map_unique_name
+		all_unique_scenarios.append(new_scenario)
+
+	return all_unique_scenarios

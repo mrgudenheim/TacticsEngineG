@@ -34,7 +34,7 @@ func _ready() -> void:
 	for map_data: MapData in RomReader.maps.values():
 		chunk_name_dropdown.add_item(map_data.unique_name)
 
-	var map_index: int = range(chunk_name_dropdown.item_count).pick_random()
+	var map_index: int = range(1, chunk_name_dropdown.item_count).pick_random() # don't include map 0 that causes error
 	if map_chunk.unique_name == "map_unique_name":
 		# vanilla maps need to be mirrored along y
 		# mirror along x to get the un-mirrored look after mirroring along y	

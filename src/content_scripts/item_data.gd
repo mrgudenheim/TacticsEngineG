@@ -186,6 +186,7 @@ func _init(idx: int = 0) -> void:
 		
 		weapon_attack_action.display_name = "Attack (" + display_name + ")"
 		weapon_attack_action.add_to_global_list()
+		weapon_attack_action_name = weapon_attack_action.unique_name
 		weapon_attack_action.name_will_display = false
 		weapon_attack_action.min_targeting_range = 0
 		weapon_attack_action.max_targeting_range = max_range

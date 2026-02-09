@@ -317,6 +317,15 @@ func set_palette(new_palette_idx: int) -> void:
 
 func set_team(new_team_idx: int) -> void:
 	unit_data.team_id = new_team_idx
+	
+	if new_team_idx >= unit_data.global_battle_manager.teams.size():
+		unit_data.global_battle_manager.teams.resize(new_team_idx + 1)
+	
+	if unit_data.global_battle_manager.teams[new_team_idx] == null:
+		var new_team: Team = Team.new()
+		new_team.team_name = "Team" + str(new_team_idx + 1)
+		unit_data.global_battle_manager.teams[new_team_idx] = new_team
+	
 	unit_data.team = unit_data.global_battle_manager.teams[new_team_idx]
 
 

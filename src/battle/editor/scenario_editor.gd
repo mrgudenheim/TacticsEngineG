@@ -97,6 +97,8 @@ func queue_new_scenario(new_scenario: Scenario = null) -> void:
 
 func init_scenario(new_scenario: Scenario = null) -> void:
 	remove_all_teams()
+	if tile_highlight != null:
+		tile_highlight.queue_free()
 
 	# remove current map chunks
 	for map_chunk_settings_instance: MapChunkSettingsUi in map_chunk_settings_list:
@@ -145,17 +147,15 @@ func init_scenario(new_scenario: Scenario = null) -> void:
 			scenario.unique_name = "new_scenario_%02d" % number
 		init_random_scenario()
 
-	if tile_highlight != null:
-		tile_highlight.queue_free()
-	unit_editor.setup(battle_manager.units[0]) # default to first unit
-
-	var first_active_unit: Unit = battle_manager.units[0]
+	await get_tree().process_frame
+	var first_unit: Unit = battle_manager.units[0]
 	for unit_idx: int in battle_manager.units.size():
 		if not battle_manager.units[unit_idx].is_queued_for_deletion():
-			first_active_unit = battle_manager.units[unit_idx]
+			first_unit = battle_manager.units[unit_idx]
 			break
 
-	var unit_tile: TerrainTile = first_active_unit.tile_position
+	unit_editor.setup(first_unit) # default to first unit
+	var unit_tile: TerrainTile = first_unit.tile_position
 	var new_tile_highlight: MeshInstance3D = unit_tile.get_tile_mesh()
 	new_tile_highlight.material_override = battle_manager.tile_highlights[Color.BLUE] # use pre-existing materials
 	add_child(new_tile_highlight)
@@ -361,7 +361,6 @@ func show_all_tiles(show_tiles: bool = true, highlight_color: Color = Color.WHIT
 			var new_tile_highlight: MeshInstance3D = tile.get_tile_mesh()
 			new_tile_highlight.material_override = battle_manager.tile_highlights[highlight_color] # use pre-existing materials
 			add_child.call_deferred(new_tile_highlight) # defer the call for when this function is called from _on_exit_tree
-			tile_highlight = new_tile_highlight
 			new_tile_highlight.position = tile.get_world_position(true) + Vector3(0, 0.025, 0)
 
 			map_tile_highlights.append(new_tile_highlight)

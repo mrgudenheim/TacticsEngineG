@@ -625,7 +625,18 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 	# evade also affected by transparent, concentrate, dark or confuse, on user
 	
 	match formula_id:
-		0, 1, 5:
+		0:
+			use_weapon_damage = true
+			target_status_chance = 19
+			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken
+			ignore_passives.erase("protect_status")
+			ignore_passives.erase("attack_up")
+			ignore_passives.erase("defense_up")
+			ignore_passives.erase("martial_arts")
+		1, 5:
+			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, Unit.StatType.HP))
+			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PA_BRAVE_X_PA
+			
 			use_weapon_damage = true
 			target_status_chance = 19
 			# ignores_statuses.erase(26) # affected by protect, sleeping, charging, frog, chicken

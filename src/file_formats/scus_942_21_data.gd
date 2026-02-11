@@ -431,7 +431,7 @@ func init_from_scus() -> void:
 		var unit_stat_mods_data: PackedInt32Array = []
 		unit_stat_mods_data.resize(unit_base_stats_mod_length)
 		for byte_idx: int in unit_base_stats_mod_length:
-			unit_stat_mods_data[byte_idx] = unit_base_stats_mod_bytes.decode_u8(byte_idx)
+			unit_stat_mods_data[byte_idx] = unit_base_stats_mod_bytes.decode_u8((idx * unit_base_stats_mod_length) + byte_idx)
 		unit_base_stats_mods[idx] = unit_stat_mods_data
 	
 	var terrain_geomancy_bytes: PackedByteArray = scus_bytes.slice(terrain_geomancy_start, terrain_geomancy_start + (terrain_geomancy_entries * terrain_geomancy_length))

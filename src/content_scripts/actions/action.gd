@@ -634,6 +634,7 @@ func set_data_from_formula_id(new_formula_id: int, x: int = 0, y: int = 0) -> vo
 			ignore_passives.erase("defense_up")
 			ignore_passives.erase("martial_arts")
 		1, 5:
+			# TODO get reference to weapon effects
 			target_effects.append(ActionEffect.new(ActionEffect.EffectType.UNIT_STAT, Unit.StatType.HP))
 			target_effects[0].base_power_formula.formula = FormulaData.Formulas.PA_BRAVE_X_PA
 			

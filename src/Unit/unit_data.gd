@@ -21,7 +21,6 @@ extends Resource
 @export var stats_raw: Dictionary[Unit.StatType, float] = {}
 
 # equipment
-@export var primary_weapon_unique_name: String
 @export var equip_slots: Array[EquipmentSlot] = []
 
 # abilities
@@ -106,7 +105,6 @@ func init_from_unit(unit: Unit) -> void:
 
 	stats = unit.stats
 	stats_raw = unit.stats_raw
-	primary_weapon_unique_name = unit.primary_weapon.unique_name
 	equip_slots = unit.equip_slots
 	ability_slots = unit.ability_slots
 	

@@ -231,11 +231,6 @@ func get_unit_data() -> UnitData:
 	unit_data.stats[Unit.StatType.FAITH].set_value(faith)
 
 	# equipment
-	if equipment_right_hand < 0xFE:
-		unit_data.primary_weapon_unique_name = RomReader.items_array[equipment_right_hand].unique_name
-	else: # TODO get random leveled equipment
-		unit_data.primary_weapon_unique_name = RomReader.items_array[2].unique_name
-
 	unit_data.equip_slots = [
 		EquipmentSlot.new("RH", [ItemData.SlotType.WEAPON, ItemData.SlotType.SHIELD]),
 		EquipmentSlot.new("LH", [ItemData.SlotType.WEAPON, ItemData.SlotType.SHIELD]),

@@ -1423,6 +1423,7 @@ func update_passive_effects(exclude_passives: PackedStringArray = []) -> void:
 
 	update_prohibited_terrain(all_passive_effects)
 	update_terrain_costs(all_passive_effects)
+	set_available_actions(all_passive_effects)
 
 	if global_battle_manager != null:
 		if not global_battle_manager.battle_is_running:

@@ -1298,6 +1298,11 @@ func set_job_id(new_job_id: int) -> void:
 		walk_to_animation_id = 0x1e
 		current_idle_animation_id = idle_walk_animation_id
 		set_base_animation_ptr_id(idle_walk_animation_id)
+	else:
+		idle_walk_animation_id = 0x06
+		walk_to_animation_id = 0x18
+		current_idle_animation_id = idle_walk_animation_id
+		set_base_animation_ptr_id(idle_walk_animation_id)
 	
 	update_passive_effects()
 

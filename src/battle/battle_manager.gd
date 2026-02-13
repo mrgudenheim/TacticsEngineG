@@ -256,7 +256,12 @@ func update_total_map_tiles(map_chunks: Array[Scenario.MapChunk]) -> void:
 			total_tile.tile_scale.z = map_chunk.mirror_scale.z
 			total_tile.height_bottom += map_chunk.corner_position.y + roundi(mesh_aabb.end.y / MapData.HEIGHT_SCALE)
 			total_tile.height_mid = total_tile.height_bottom + (total_tile.slope_height / 2.0)
-			total_map_tiles[total_location].append(total_tile)
+			
+			# sort tiles by ascending height
+			var tile_level: int = total_map_tiles[total_location].bsearch_custom(total_tile, 
+				func(tile_a: TerrainTile, tile_b: TerrainTile) -> bool: return tile_a.height_mid > tile_b.height_mid
+				)
+			total_map_tiles[total_location].insert(tile_level, total_tile)
 
 
 func update_units_data_tile_location(units_data: Array[UnitData], map_chunk: Scenario.MapChunk) -> Array[UnitData]:

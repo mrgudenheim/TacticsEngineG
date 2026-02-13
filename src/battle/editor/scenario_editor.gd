@@ -96,6 +96,8 @@ func queue_new_scenario(new_scenario: Scenario = null) -> void:
 
 
 func init_scenario(new_scenario: Scenario = null) -> void:
+	battle_manager.battle_is_running = false
+
 	remove_all_teams()
 	if tile_highlight != null:
 		tile_highlight.queue_free()

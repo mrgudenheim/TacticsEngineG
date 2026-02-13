@@ -335,6 +335,8 @@ func _ready() -> void:
 func _exit_tree() -> void:
 	if global_battle_manager != null and is_queued_for_deletion():
 		var unit_index: int = global_battle_manager.units.find(self)
+		for action_instance: ActionInstance in actions_data.values():
+			action_instance.stop_targeting()
 		if unit_index != -1: # if the unit is in the battle_manager array
 			global_battle_manager.units.remove_at(unit_index)
 

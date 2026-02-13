@@ -122,9 +122,9 @@ func toggle_debug_ui() -> void:
 
 		if active_unit != null:
 			camera_controller.follow_node = active_unit.char_body
+			controller.unit = active_unit
 		else:
 			camera_controller.follow_node = null
-		controller.unit = active_unit
 
 
 func on_rom_loaded() -> void:
@@ -301,8 +301,9 @@ func start_battle() -> void:
 	controller.unit = units[0]
 	#controller.rotate_camera(1) # HACK workaround for bug where controls are off until camera is rotated
 	
-	battle_is_running = true
-	process_battle()
+	if not battle_is_running:
+		battle_is_running = true
+		process_battle()
 
 
 #func add_units_to_map() -> void:

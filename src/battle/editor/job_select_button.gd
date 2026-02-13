@@ -50,7 +50,7 @@ var job_data: JobData:
 
 @export var action_list: Container
 
-func _ready():
+func _ready() -> void:
 	button.pressed.connect(on_selected)
 
 

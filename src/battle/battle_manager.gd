@@ -691,6 +691,7 @@ func spawn_unit_from_unit_data(unit_data: UnitData) -> Unit:
 		teams[unit_data.team_idx] = new_team
 
 	new_unit.team = teams[unit_data.team_idx]
+	new_unit.team_id = unit_data.team_idx
 	new_unit.team.units.append(new_unit)
 	
 	new_unit.is_ai_controlled = true if unit_data.controller == 0 else false

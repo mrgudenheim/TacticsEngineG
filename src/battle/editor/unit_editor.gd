@@ -6,6 +6,7 @@ signal item_select_pressed(unit: Unit, slot: EquipmentSlot)
 signal ability_select_pressed(unit: Unit, slot: AbilitySlot)
 
 @export var sprite_rect: TextureRect
+@export var sprite_button: TextureButton
 @export var unit_name_line_edit: LineEdit
 @export var gender_option_button: OptionButton
 @export var job_button: Button
@@ -123,6 +124,10 @@ func setup(new_unit: Unit) -> void:
 
 func update_ui(new_unit: Unit) -> void:
 	# update_stat_label(level_label, unit, Unit.StatType.LEVEL)
+	var atlas_texture: AtlasTexture = sprite_button.texture_normal
+	var unit_sprite: Sprite3D = new_unit.animation_manager.unit_sprites_manager.sprite_primary
+	atlas_texture.atlas = unit_sprite.texture
+
 	job_button.text = new_unit.job_data.display_name
 	level_spinbox.value = new_unit.stats[Unit.StatType.LEVEL].get_modified_value()
 

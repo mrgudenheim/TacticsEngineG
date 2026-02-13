@@ -1,28 +1,24 @@
-[gd_scene load_steps=7 format=3 uid="uid://b2bfuf828p6i6"]
+[gd_scene load_steps=6 format=3 uid="uid://b2bfuf828p6i6"]
 
 [ext_resource type="Script" uid="uid://6pc8u8p185nd" path="res://src/battle/editor/unit_editor.gd" id="1_fwwrv"]
 [ext_resource type="PackedScene" uid="uid://d2jb1kiyb35fa" path="res://src/Unit/stat_bar.tscn" id="2_3o4pl"]
 [ext_resource type="PackedScene" uid="uid://dkudrb304m7t1" path="res://src/Unit/unit.tscn" id="2_k0plo"]
 
-[sub_resource type="Gradient" id="Gradient_oxa5o"]
-offsets = PackedFloat32Array(0)
-colors = PackedColorArray(0.6784314, 0.49019608, 0.28627452, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_gngdm"]
-gradient = SubResource("Gradient_oxa5o")
-width = 32
-height = 48
+[sub_resource type="AtlasTexture" id="AtlasTexture_ryng8"]
+resource_local_to_scene = true
+region = Rect2(280, 32, 40, 56)
 
 [sub_resource type="LabelSettings" id="LabelSettings_v0g1v"]
 font_size = 18
 outline_size = 6
 outline_color = Color(0, 0, 0, 1)
 
-[node name="UnitSetupPanel" type="PanelContainer" node_paths=PackedStringArray("sprite_rect", "unit_name_line_edit", "gender_option_button", "job_button", "level_spinbox", "team_option_button", "controller_option_button", "palette_option_button", "zodiac_option_button", "hp_bar", "mp_bar", "ct_bar", "pa_label", "ma_label", "brave_label", "faith_label", "move_label", "jump_label", "speed_label", "evade_grid", "equipment_grid", "ability_grid", "passive_effect_container", "innate_ability_container", "status_affinity_container", "weak_elements_label", "resist_elements_label", "immune_elements_label", "absorb_elements_label", "strengthen_elements_label")]
+[node name="UnitSetupPanel" type="PanelContainer" node_paths=PackedStringArray("sprite_rect", "sprite_button", "unit_name_line_edit", "gender_option_button", "job_button", "level_spinbox", "team_option_button", "controller_option_button", "palette_option_button", "zodiac_option_button", "hp_bar", "mp_bar", "ct_bar", "pa_label", "ma_label", "brave_label", "faith_label", "move_label", "jump_label", "speed_label", "evade_grid", "equipment_grid", "ability_grid", "passive_effect_container", "innate_ability_container", "status_affinity_container", "weak_elements_label", "resist_elements_label", "immune_elements_label", "absorb_elements_label", "strengthen_elements_label")]
 offset_right = 1184.0
 offset_bottom = 232.0
 script = ExtResource("1_fwwrv")
 sprite_rect = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/Sprite")
+sprite_button = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/SpriteTextureButton")
 unit_name_line_edit = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/UnitName")
 gender_option_button = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer/Gender")
 job_button = NodePath("MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer/HBoxContainer2/JobSelect")
@@ -69,13 +65,19 @@ layout_mode = 2
 [node name="VBoxContainer2" type="VBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2"]
 layout_mode = 2
 
+[node name="SpriteTextureButton" type="TextureButton" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer2"]
+texture_filter = 1
+layout_mode = 2
+size_flags_vertical = 3
+texture_normal = SubResource("AtlasTexture_ryng8")
+stretch_mode = 5
+
 [node name="Sprite" type="TextureRect" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer2"]
+visible = false
 custom_minimum_size = Vector2(40, 60)
 layout_mode = 2
 size_flags_vertical = 3
-texture = SubResource("GradientTexture2D_gngdm")
 expand_mode = 3
-stretch_mode = 5
 
 [node name="Team" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer2/VBoxContainer2/Sprite"]
 layout_mode = 1

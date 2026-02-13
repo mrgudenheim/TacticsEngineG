@@ -278,16 +278,16 @@ func update_passive_effect_list_label(starting_text: String, text_list: PackedSt
 		passive_effect_container.add_child(new_label)
 
 
-func update_stat_label(stat_label: Label, unit: Unit, stat_type: Unit.StatType) -> void:
+func update_stat_label(stat_label: Label, new_unit: Unit, stat_type: Unit.StatType) -> void:
 	var stat_name: String = Unit.StatType.find_key(stat_type).to_pascal_case()
-	var stat: StatValue = unit.stats[stat_type]
+	var stat: StatValue = new_unit.stats[stat_type]
 	var stat_value: int = stat.get_modified_value()
 	# stat_label.text = stat_name + ": " + str(roundi(stat_value)) + "/" + str(roundi(stat.max_value))
 	stat_label.text = stat_name + ": " + str(roundi(stat_value)) # + "/" + str(roundi(stat.max_value))
 
 
-func get_total_evade_factor(unit: Unit, unit_passive_effects: Array[PassiveEffect], evade_type: EvadeData.EvadeType, evade_direction: EvadeData.Directions) -> int:
-	var evade_values: Dictionary[EvadeData.EvadeSource, int] = unit.get_evade_values(evade_type, evade_direction)
+func get_total_evade_factor(new_unit: Unit, unit_passive_effects: Array[PassiveEffect], evade_type: EvadeData.EvadeType, evade_direction: EvadeData.Directions) -> int:
+	var evade_values: Dictionary[EvadeData.EvadeSource, int] = new_unit.get_evade_values(evade_type, evade_direction)
 
 	var total_evade_factor: float = 1.0
 	var evade_factors: Dictionary[EvadeData.EvadeSource, float] = {}

@@ -49,6 +49,10 @@ var unit: Unit
 
 
 func setup(new_unit: Unit) -> void:
+	if unit != null:
+		if unit.data_updated.is_connected(update_ui):
+			unit.data_updated.disconnect(update_ui)
+
 	unit = new_unit
 	if new_unit.job_data == null:
 		new_unit.set_job_id(0x01) # TODO set initial job correctly
@@ -111,9 +115,7 @@ func setup(new_unit: Unit) -> void:
 	controller_option_button.item_selected.connect(set_controller)
 	
 	# on unit data changed:
-	# remove invalid equipment
-	# generate battle stats (aka apply stat multipliers)
-	Utilities.disconnect_all_connections(new_unit.data_updated) # TODO is the unit.data_updated signal used for anything else?
+	# TODO remove invalid equipment?
 	new_unit.data_updated.connect(update_ui)
 
 	update_ui(new_unit)

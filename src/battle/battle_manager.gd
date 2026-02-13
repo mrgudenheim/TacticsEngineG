@@ -103,6 +103,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func toggle_debug_ui() -> void:
 	scenario_editor.visible = not scenario_editor.visible
 	if scenario_editor.visible:
+		game_state_container.visible = false
 		battle_view.reparent(scenario_editor.battle_subviewport)
 		
 		for unit: Unit in units:
@@ -112,6 +113,7 @@ func toggle_debug_ui() -> void:
 		camera_controller.follow_node = null
 		controller.unit = null
 	else:
+		game_state_container.visible = true
 		if scenario_editor.tile_highlight != null:
 			scenario_editor.tile_highlight.queue_free()
 		

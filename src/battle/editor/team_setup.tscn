@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://h7281h60pnbl"]
 
 [ext_resource type="Script" uid="uid://dam17uf3w1qj4" path="res://src/battle/editor/team_setup.gd" id="1_v60ut"]
-[ext_resource type="PackedScene" uid="uid://b2bfuf828p6i6" path="res://src/battle/editor/unit_setup_panel.tscn" id="1_vj6nb"]
+[ext_resource type="PackedScene" uid="uid://b2bfuf828p6i6" path="res://src/battle/editor/unit_editor.tscn" id="1_vj6nb"]
 
 [node name="TeamSetup" type="MarginContainer" node_paths=PackedStringArray("unit_list", "num_units_spinbox")]
 anchors_preset = 15

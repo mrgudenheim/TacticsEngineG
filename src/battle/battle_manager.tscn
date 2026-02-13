@@ -12,7 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://djqalqt20isme" path="res://src/battle/editor/job_select_button.tscn" id="14_f2r6p"]
 [ext_resource type="PackedScene" uid="uid://h7281h60pnbl" path="res://src/battle/editor/team_setup.tscn" id="14_kb1q2"]
 [ext_resource type="Script" uid="uid://b7qofr54bmos3" path="res://src/battle/editor/scenario_editor.gd" id="14_l2dig"]
-[ext_resource type="PackedScene" uid="uid://b2bfuf828p6i6" path="res://src/battle/editor/unit_setup_panel.tscn" id="15_qgxlc"]
+[ext_resource type="PackedScene" uid="uid://b2bfuf828p6i6" path="res://src/battle/editor/unit_editor.tscn" id="15_qgxlc"]
 [ext_resource type="Script" uid="uid://df08xhig8ojgj" path="res://src/battle/editor/job_select_control.gd" id="16_bp08t"]
 [ext_resource type="Script" uid="uid://cectjl7guvpqa" path="res://src/content_scripts/actions/action_button.gd" id="16_l2dig"]
 [ext_resource type="Script" uid="uid://cu0evj643fugd" path="res://src/battle/editor/item_select_control.gd" id="17_bp08t"]

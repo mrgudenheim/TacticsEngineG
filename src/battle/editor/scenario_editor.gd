@@ -25,7 +25,7 @@ extends Control
 
 @export var unit_dragged: Unit
 @export var tile_highlight: Node3D
-@export var unit_editor: UnitSetupPanel
+@export var unit_editor: UnitEditor
 
 @export var add_map_chunk_button: Button
 @export var map_chunk_settings_container: GridContainer

@@ -1,4 +1,4 @@
-class_name UnitSetupPanel
+class_name UnitEditor
 extends Container
 
 signal job_select_pressed(unit: Unit)

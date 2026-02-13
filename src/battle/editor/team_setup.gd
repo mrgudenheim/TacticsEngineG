@@ -37,7 +37,7 @@ func on_num_units_changed(new_value: int) -> void:
 		for delta: int in delta_units:
 			need_new_unit.emit(team)
 	elif delta_units < 0:
-		var unit_panels: Array[UnitSetupPanel] = []
+		var unit_panels: Array[UnitEditor] = []
 		unit_panels.assign(unit_list.get_children())
 		
 		for delta: int in -delta_units:
@@ -51,7 +51,7 @@ func add_unit_setup(new_unit: Unit) -> void:
 	if new_unit.team != team:
 		return
 	
-	var unit_setup: UnitSetupPanel = unit_setup_scene.instantiate()
+	var unit_setup: UnitEditor = unit_setup_scene.instantiate()
 	unit_list.add_child(unit_setup)
 	unit_setup.setup(new_unit)
 	

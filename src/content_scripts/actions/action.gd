@@ -500,7 +500,7 @@ func apply_standard(action_instance: ActionInstance) -> void:
 	# wait for applying effect animation
 	action_instance.user.global_battle_manager.game_state_label.text = "Waiting for " + display_name + " vfx" 
 	if vfx_data != null and target_units.size() > 0:
-		while vfx_locations.any(func(vfx_location: Node3D): return vfx_location != null): # wait until vfx is completed
+		while vfx_locations.any(func(vfx_location: Node3D) -> bool: return vfx_location != null): # wait until vfx is completed
 			await action_instance.user.get_tree().process_frame
 	else:
 		await action_instance.user.get_tree().create_timer(0.5).timeout # TODO show based on vfx timing data? (attacks use vfx 0xFFFF?)

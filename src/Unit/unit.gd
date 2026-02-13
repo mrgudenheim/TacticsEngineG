@@ -952,10 +952,12 @@ func update_status_visuals() -> void:
 		else:
 			animation_manager.other_type_index = other_type_status.other_type_index
 		
-		set_base_animation_ptr_id(0) # prevent out of bounds error in case SEQ is also changing
-		if spritesheet_priority == 0:
+		# if spritesheet is changing
+		if spritesheet_priority == 0 and sprite_file_name != RomReader.sprs[RomReader.spr_id_file_idxs[job_data.sprite_id]].file_name:
+			set_base_animation_ptr_id(0) # prevent out of bounds error in case SEQ is also changing
 			set_sprite_by_job_id(job_id)
-		else:
+		elif spritesheet_priority != 0:
+			set_base_animation_ptr_id(0) # prevent out of bounds error in case SEQ is also changing
 			set_sprite_by_file_name(spritesheet_status.spritesheet_file_name)
 		
 		if anim_priority == 0: # if no statuses set the idle animation (may happen when status is removed)

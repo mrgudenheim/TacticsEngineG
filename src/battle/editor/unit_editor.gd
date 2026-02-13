@@ -92,14 +92,14 @@ func setup(new_unit: Unit) -> void:
 	# clear connections for when panel is reused
 	# hook up buttons to update Unit data
 	Utilities.disconnect_all_connections(unit_name_line_edit.text_submitted)
-	unit_name_line_edit.text_submitted.connect(func(new_name: String): new_unit.unit_nickname = new_name)
+	unit_name_line_edit.text_submitted.connect(func(new_name: String) -> void: new_unit.unit_nickname = new_name)
 	
 	Utilities.disconnect_all_connections(level_spinbox.value_changed)
-	level_spinbox.value_changed.connect(func(new_value): update_level(new_unit, new_value))
+	level_spinbox.value_changed.connect(func(new_value: int) -> void: update_level(new_unit, new_value))
 	# TODO update gender - sprite and stats
 
 	Utilities.disconnect_all_connections(job_button.pressed)
-	job_button.pressed.connect(func(): job_select_pressed.emit(new_unit))
+	job_button.pressed.connect(func() -> void: job_select_pressed.emit(new_unit))
 	
 	Utilities.disconnect_all_connections(palette_option_button.item_selected)
 	palette_option_button.item_selected.connect(set_palette)
@@ -172,7 +172,7 @@ func update_ui(new_unit: Unit) -> void:
 
 		var new_item_button: Button = Button.new()
 		new_item_button.text = equip_slot.item.display_name
-		new_item_button.pressed.connect(func(): item_select_pressed.emit(new_unit, equip_slot))
+		new_item_button.pressed.connect(func() -> void: item_select_pressed.emit(new_unit, equip_slot))
 		new_item_button.custom_minimum_size = Vector2(60, 0)
 		equipment_grid.add_child(new_item_button)
 
@@ -188,7 +188,7 @@ func update_ui(new_unit: Unit) -> void:
 
 		var new_ability_button: Button = Button.new()
 		new_ability_button.text = ability_slot.ability.display_name
-		new_ability_button.pressed.connect(func(): ability_select_pressed.emit(new_unit, ability_slot))
+		new_ability_button.pressed.connect(func() -> void: ability_select_pressed.emit(new_unit, ability_slot))
 		# TODO implement ability select buttons
 		ability_grid.add_child(new_ability_button)
 	

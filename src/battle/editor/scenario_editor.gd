@@ -327,7 +327,7 @@ func add_team(new_team: Team, is_random: bool = false) -> Team:
 	new_team_setup.unit_item_select_pressed.connect(setup_item_select)
 	new_team_setup.unit_ability_select_pressed.connect(setup_ability_select)
 	new_team_setup.need_new_unit.connect(battle_manager.spawn_random_unit)
-	battle_manager.unit_created.connect(new_team_setup.add_unit_setup)
+	battle_manager.unit_created.connect(new_team_setup.add_unit_editor)
 	
 	new_team_setup.setup(new_team, is_random)
 	

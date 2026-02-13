@@ -12,7 +12,7 @@ grow_vertical = 2
 script = ExtResource("1_v60ut")
 unit_list = NodePath("VBoxContainer/UnitListScrollArea/UnitList")
 num_units_spinbox = NodePath("VBoxContainer/HBoxContainer/NumUnitsSpinBox")
-unit_setup_scene = ExtResource("1_vj6nb")
+unit_editor_scene = ExtResource("1_vj6nb")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 2

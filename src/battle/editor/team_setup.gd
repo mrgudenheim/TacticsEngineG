@@ -10,7 +10,7 @@ signal unit_ability_select_pressed(unit: Unit, slot: AbilitySlot)
 @export var team: Team
 @export var unit_list: Container
 @export var num_units_spinbox: SpinBox
-@export var unit_setup_scene: PackedScene
+@export var unit_editor_scene: PackedScene
 
 
 func _ready() -> void:
@@ -23,7 +23,7 @@ func setup(new_team: Team, is_random: bool = false) -> void:
 
 	if not is_random:
 		for unit: Unit in team.units:
-			add_unit_setup(unit)
+			add_unit_editor(unit)
 
 		num_units_spinbox.value = team.units.size()
 	else:
@@ -47,14 +47,14 @@ func on_num_units_changed(new_value: int) -> void:
 			unit_panels.remove_at(-1)
 
 
-func add_unit_setup(new_unit: Unit) -> void:
+func add_unit_editor(new_unit: Unit) -> void:
 	if new_unit.team != team:
 		return
 	
-	var unit_setup: UnitEditor = unit_setup_scene.instantiate()
-	unit_list.add_child(unit_setup)
-	unit_setup.setup(new_unit)
+	var unit_editor: UnitEditor = unit_editor_scene.instantiate()
+	unit_list.add_child(unit_editor)
+	unit_editor.setup(new_unit)
 	
-	unit_setup.job_select_pressed.connect(unit_job_select_pressed.emit)
-	unit_setup.item_select_pressed.connect(unit_item_select_pressed.emit)
-	unit_setup.ability_select_pressed.connect(unit_ability_select_pressed.emit)
+	unit_editor.job_select_pressed.connect(unit_job_select_pressed.emit)
+	unit_editor.item_select_pressed.connect(unit_item_select_pressed.emit)
+	unit_editor.ability_select_pressed.connect(unit_ability_select_pressed.emit)

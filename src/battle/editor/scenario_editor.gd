@@ -158,11 +158,7 @@ func init_scenario(new_scenario: Scenario = null) -> void:
 
 	unit_editor.setup(first_unit) # default to first unit
 	var unit_tile: TerrainTile = first_unit.tile_position
-	var new_tile_highlight: MeshInstance3D = unit_tile.get_tile_mesh()
-	new_tile_highlight.material_override = battle_manager.tile_highlights[Color.BLUE] # use pre-existing materials
-	add_child(new_tile_highlight)
-	tile_highlight = new_tile_highlight
-	new_tile_highlight.position = unit_tile.get_world_position(true) + Vector3(0, 0.025, 0)	
+	tile_highlight = get_new_tile_highlight(unit_tile, Color.BLUE)
 
 
 func init_random_scenario() -> void:
@@ -288,6 +284,10 @@ func update_map(new_map_chunk_settings: MapChunkSettingsUi) -> void:
 	show_all_tiles(false)
 	battle_manager.update_total_map_tiles(scenario.map_chunks)
 	update_unit_positions(battle_manager.units)
+	if tile_highlight != null:
+		tile_highlight.queue_free()
+	if unit_editor.unit != null:
+		tile_highlight = get_new_tile_highlight(unit_editor.unit.tile_position, Color.BLUE)
 	show_all_tiles(show_map_tiles_check.button_pressed)
 
 
@@ -359,13 +359,18 @@ func show_all_tiles(show_tiles: bool = true, highlight_color: Color = Color.WHIT
 					and tile.no_cursor == 0)
 			if can_end_on_tile:
 				highlight_color = Color.BLUE
-				
-			var new_tile_highlight: MeshInstance3D = tile.get_tile_mesh()
-			new_tile_highlight.material_override = battle_manager.tile_highlights[highlight_color] # use pre-existing materials
-			add_child.call_deferred(new_tile_highlight) # defer the call for when this function is called from _on_exit_tree
-			new_tile_highlight.position = tile.get_world_position(true) + Vector3(0, 0.025, 0)
-
+			
+			var new_tile_highlight: MeshInstance3D = get_new_tile_highlight(tile, highlight_color)
 			map_tile_highlights.append(new_tile_highlight)
+
+
+func get_new_tile_highlight(new_tile: TerrainTile, highlight_color: Color) -> MeshInstance3D:
+	var new_tile_highlight: MeshInstance3D = new_tile.get_tile_mesh()
+	new_tile_highlight.material_override = battle_manager.tile_highlights[highlight_color] # use pre-existing materials
+	add_child(new_tile_highlight) # defer the call for when this function is called from _on_exit_tree
+	new_tile_highlight.position = new_tile.get_world_position(true) + Vector3(0, 0.025, 0)
+
+	return new_tile_highlight
 
 
 func adjust_height(tab_idx: int) -> void:

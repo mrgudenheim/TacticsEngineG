@@ -91,7 +91,7 @@ static func create_from_json(json_string: String) -> FormulaData:
 
 static func create_from_dictionary(property_dict: Dictionary) -> FormulaData:
 	var new_formula: FormulaData = FormulaData.new()
-	for property_name in property_dict.keys():
+	for property_name: String in property_dict.keys():
 		if property_name == "formula":
 			new_formula.formula = Formulas[property_dict[property_name]]
 		elif property_name == "user_faith_modifier":
@@ -108,7 +108,7 @@ static func create_from_dictionary(property_dict: Dictionary) -> FormulaData:
 func _init(new_formula: Formulas = Formulas.V1, new_values: PackedFloat64Array = [100.0, 1.0], 
 		new_user_faith_modifier: FaithModifier = FaithModifier.NONE, new_target_faith_modifier: FaithModifier = FaithModifier.NONE, 
 		new_modified_by_element: bool = true, new_modified_by_zodiac: bool = true, 
-		new_reverse_sign = true) -> void:
+		new_reverse_sign: bool = true) -> void:
 	formula = new_formula
 	values = new_values
 	user_faith_modifier = new_user_faith_modifier

@@ -247,9 +247,9 @@ background_gradient_color_pickers = [NodePath("BattleSetupTabContainer/Map/Float
 battle_subviewport = NodePath("BattleSetupTabContainer/Map/VBoxContainer/SubViewportContainer/SubViewport")
 battle_setup_container = NodePath("BattleSetupTabContainer")
 team_setup_scene = ExtResource("14_kb1q2")
-job_select_control = NodePath("JobSelectScrollArea")
-item_select_control = NodePath("ItemSelectScrollArea")
-ability_select_control = NodePath("AbilitySelectScrollArea")
+job_select_control = NodePath("JobSelectContainer")
+item_select_control = NodePath("ItemSelectContainer")
+ability_select_control = NodePath("AbilitySelectContainer")
 unit_editor = NodePath("BattleSetupTabContainer/Map/VBoxContainer/FoldableContainer/UnitSetupPanel")
 add_map_chunk_button = NodePath("BattleSetupTabContainer/Map/FloatingUi/HBoxContainer/AddMapChunkButton")
 map_chunk_settings_container = NodePath("BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings")
@@ -282,7 +282,7 @@ stretch = true
 transparent_bg = true
 handle_input_locally = false
 physics_object_picking = true
-size = Vector2i(2, 2)
+size = Vector2i(1516, 710)
 render_target_update_mode = 0
 
 [node name="BattleView" type="Node3D" parent="ScenarioEditor/BattleSetupTabContainer/Map/VBoxContainer/SubViewportContainer/SubViewport"]
@@ -362,50 +362,80 @@ horizontal_alignment = 1
 [node name="Spacer2" type="Control" parent="ScenarioEditor/BattleSetupTabContainer/Map/FloatingUi/MapChunkSettings"]
 layout_mode = 2
 
-[node name="JobSelectScrollArea" type="ScrollContainer" parent="ScenarioEditor" node_paths=PackedStringArray("job_select_button_container")]
+[node name="JobSelectContainer" type="HBoxContainer" parent="ScenarioEditor" node_paths=PackedStringArray("job_select_button_container")]
 visible = false
 layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.5
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("16_bp08t")
-job_select_button_container = NodePath("JobSelectList")
+job_select_button_container = NodePath("JobSelectScrollArea/JobSelectList")
 job_select_button_scene = ExtResource("14_f2r6p")
 
-[node name="JobSelectList" type="VBoxContainer" parent="ScenarioEditor/JobSelectScrollArea"]
+[node name="Spacer" type="Control" parent="ScenarioEditor/JobSelectContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ItemSelectScrollArea" type="ScrollContainer" parent="ScenarioEditor" node_paths=PackedStringArray("item_select_button_container")]
+[node name="JobSelectScrollArea" type="ScrollContainer" parent="ScenarioEditor/JobSelectContainer"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="JobSelectList" type="GridContainer" parent="ScenarioEditor/JobSelectContainer/JobSelectScrollArea"]
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 2
+
+[node name="ItemSelectContainer" type="HBoxContainer" parent="ScenarioEditor" node_paths=PackedStringArray("item_select_button_container")]
 visible = false
 layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.5
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("17_bp08t")
-item_select_button_container = NodePath("ItemSelectList")
+item_select_button_container = NodePath("ItemSelectScrollArea/ItemSelectList")
 item_select_button_scene = ExtResource("18_d5yoq")
 
-[node name="ItemSelectList" type="VBoxContainer" parent="ScenarioEditor/ItemSelectScrollArea"]
+[node name="Spacer" type="Control" parent="ScenarioEditor/ItemSelectContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="AbilitySelectScrollArea" type="ScrollContainer" parent="ScenarioEditor" node_paths=PackedStringArray("ability_select_button_container")]
+[node name="ItemSelectScrollArea" type="ScrollContainer" parent="ScenarioEditor/ItemSelectContainer"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="ItemSelectList" type="GridContainer" parent="ScenarioEditor/ItemSelectContainer/ItemSelectScrollArea"]
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 3
+
+[node name="AbilitySelectContainer" type="HBoxContainer" parent="ScenarioEditor" node_paths=PackedStringArray("ability_select_button_container")]
 visible = false
 layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.5
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("18_pbg35")
-ability_select_button_container = NodePath("AbilitySelectList")
+ability_select_button_container = NodePath("AbilitySelectScrollArea/AbilitySelectList")
 ability_select_button_scene = ExtResource("20_ok2a6")
 
-[node name="AbilitySelectList" type="VBoxContainer" parent="ScenarioEditor/AbilitySelectScrollArea"]
+[node name="Spacer" type="Control" parent="ScenarioEditor/AbilitySelectContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="AbilitySelectScrollArea" type="ScrollContainer" parent="ScenarioEditor/AbilitySelectContainer"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="AbilitySelectList" type="GridContainer" parent="ScenarioEditor/AbilitySelectContainer/AbilitySelectScrollArea"]
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 3
 
 [node name="MarginContainer" type="MarginContainer" parent="ScenarioEditor"]
 layout_mode = 1

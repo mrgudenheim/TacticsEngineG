@@ -432,11 +432,11 @@ static func create_from_json(json_string: String) -> ItemData:
 
 static func create_from_dictionary(property_dict: Dictionary) -> ItemData:
 	var new_item: ItemData = ItemData.new()
-	for property_name in property_dict.keys():
+	for property_name: String in property_dict.keys():
 		if property_name == "stat_modifiers":
 			var new_stat_modifiers: Dictionary[Unit.StatType, Modifier] = {}
-			var temp_dict = property_dict[property_name]
-			for key in temp_dict:
+			var temp_dict: Dictionary = property_dict[property_name]
+			for key: String in temp_dict:
 				new_stat_modifiers[int(key)] = Modifier.create_from_dictionary(temp_dict[key])
 			new_item.stat_modifiers = new_stat_modifiers
 		elif property_name == "slot_type":
@@ -445,8 +445,8 @@ static func create_from_dictionary(property_dict: Dictionary) -> ItemData:
 			new_item.item_type = ItemType[property_dict[property_name]]
 		elif property_name == "evade_datas":
 			var new_evade_datas: Array[EvadeData] = []
-			var temp_array = property_dict[property_name]
-			for element in temp_array:
+			var temp_array: Array = property_dict[property_name]
+			for element: Dictionary in temp_array:
 				new_evade_datas.append(EvadeData.create_from_dictionary(element))
 			new_item.evade_datas = new_evade_datas
 		else:	

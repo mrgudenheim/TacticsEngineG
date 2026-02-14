@@ -192,10 +192,10 @@ func get_base_value(user: Unit, target: Unit) -> float:
 		Formulas.PA_X_PA_PLUS_V1_DIV_2:
 			base_value = (user.physical_attack_current + values[0]) * user.physical_attack_current / 2.0 # 0x31 monk skills
 		Formulas.RANDOM_V1_X_PA_X_3_PLUS_V2_DIV_2:
-			base_value = randi_range(1, values[0]) * ((user.physical_attack_current * 3) + values[1]) / 2.0 # 0x32 repeating fist # TODO 2 variables rndm to X, PA + Y
-			#base_value = user.physical_attack_current * values[0] / 2.0 # 0x34 chakra\
+			base_value = randi_range(1, roundi(values[0])) * ((user.physical_attack_current * 3) + values[1]) / 2.0 # 0x32 repeating fist # TODO 2 variables rndm to X, PA + Y
+			#base_value = user.physical_attack_current * values[0] / 2.0 # 0x34 chakra
 		Formulas.RANDOM_V1_X_PA:
-			base_value = user.physical_attack_current * randi_range(1, values[0]) # 0x37
+			base_value = user.physical_attack_current * randi_range(1, roundi(values[0])) # 0x37
 		Formulas.USER_MAX_HP_X_V1:
 			base_value = user.hp_max * values[0] # 0x3c wish, energy USER_MAX_HP
 		Formulas.USER_MAX_MP_X_V1:
@@ -218,7 +218,7 @@ func get_base_value(user: Unit, target: Unit) -> float:
 		Formulas.TARGET_CURRENT_HP_X_V1:
 			base_value = target.hp_current * values[0] # TARGET_CURRENT_HP, ai status score
 		Formulas.RANDOM_V1_V2:
-			base_value = randi_range(values[0], values[1]) # 0x4b RANDOM_RANGE
+			base_value = randi_range(roundi(values[0]), roundi(values[1])) # 0x4b RANDOM_RANGE
 		Formulas.BRAVE_X_V1:
 			base_value = user.brave_current * values[0] # reactions
 			

@@ -56,7 +56,7 @@ script = ExtResource("1_hnd0w")
 texture_viewer = NodePath("SpriteViewer")
 reference_quad = NodePath("ReferenceQuad")
 load_rom_button = NodePath("LoadRom")
-orthographic_check = NodePath("PanelContainer/MarginContainer/VBoxContainer/OrthographicCheckBox")
+orthographic_check = NodePath("OptionsPanelContainer/MarginContainer/VBoxContainer/OrthographicCheckBox")
 camera_controller = NodePath("ScenarioEditor/BattleSetupTabContainer/Map/VBoxContainer/SubViewportContainer/SubViewport/BattleView/CameraController")
 background_gradient = NodePath("BackgroundCanvasLayer/TextureRect")
 maps = NodePath("ScenarioEditor/BattleSetupTabContainer/Map/VBoxContainer/SubViewportContainer/SubViewport/BattleView/Maps")
@@ -106,25 +106,6 @@ offset_right = 57.0
 offset_bottom = 14.0
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="PanelContainer" type="PanelContainer" parent="."]
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
-layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
-layout_mode = 2
-
-[node name="MenuReminder" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-text = "Press ESCAPE to toggle editor"
-
-[node name="OrthographicCheckBox" type="CheckBox" parent="PanelContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-button_pressed = true
-text = "Orthographic"
 
 [node name="CharacterController" type="Node3D" parent="."]
 script = ExtResource("10_d5yoq")
@@ -473,6 +454,25 @@ text = "New Scenario"
 [node name="StartBattle" type="Button" parent="ScenarioEditor/MarginContainer/HBoxContainer"]
 layout_mode = 2
 text = "Start Battle!"
+
+[node name="OptionsPanelContainer" type="PanelContainer" parent="."]
+offset_right = 218.0
+offset_bottom = 68.0
+
+[node name="MarginContainer" type="MarginContainer" parent="OptionsPanelContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="OptionsPanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="MenuReminder" type="Label" parent="OptionsPanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Press ESCAPE to toggle editor"
+
+[node name="OrthographicCheckBox" type="CheckBox" parent="OptionsPanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+button_pressed = true
+text = "Orthographic"
 
 [connection signal="ability_select_pressed" from="ScenarioEditor/BattleSetupTabContainer/Map/VBoxContainer/FoldableContainer/UnitSetupPanel" to="ScenarioEditor" method="setup_ability_select"]
 [connection signal="item_select_pressed" from="ScenarioEditor/BattleSetupTabContainer/Map/VBoxContainer/FoldableContainer/UnitSetupPanel" to="ScenarioEditor" method="setup_item_select"]

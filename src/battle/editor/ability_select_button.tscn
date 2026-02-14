@@ -9,26 +9,55 @@ bg_color = Color(0.6, 0.6, 0.6, 0)
 script = ExtResource("1_awuk6")
 button = NodePath("Button")
 display_name = NodePath("MarginContainer/VBoxContainer/Name")
-sprite_rect = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/PanelContainer/Sprite")
+sprite_rect = NodePath("MarginContainer/Control/PanelContainer/Sprite")
 descrption = NodePath("MarginContainer/VBoxContainer/Description")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
 
+[node name="Control" type="Control" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/Control"]
+layout_mode = 1
+offset_right = 40.0
+offset_bottom = 20.0
+
+[node name="ColorRect" type="ColorRect" parent="MarginContainer/Control/PanelContainer"]
+layout_mode = 2
+color = Color(0.7724798, 0.5703566, 0.2862759, 1)
+
+[node name="Sprite" type="TextureRect" parent="MarginContainer/Control/PanelContainer"]
+visible = false
+layout_mode = 2
+expand_mode = 2
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="MarginContainer/Control/PanelContainer"]
+layout_mode = 2
+text = "Sprite"
+
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 
 [node name="Name" type="Label" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
 text = "AbilityName"
 horizontal_alignment = 1
 
 [node name="Description" type="Label" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 text = "AbilityDescription"
 horizontal_alignment = 1
+autowrap_mode = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+visible = false
 layout_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
@@ -36,22 +65,6 @@ layout_mode = 2
 
 [node name="SpriteAndStats" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
-
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats"]
-layout_mode = 2
-
-[node name="ColorRect" type="ColorRect" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/PanelContainer"]
-layout_mode = 2
-color = Color(0.7724798, 0.5703566, 0.2862759, 1)
-
-[node name="Sprite" type="TextureRect" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/PanelContainer"]
-layout_mode = 2
-expand_mode = 2
-stretch_mode = 5
-
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/PanelContainer"]
-layout_mode = 2
-text = "Sprite"
 
 [node name="PassiveEffectsPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats"]
 layout_mode = 2

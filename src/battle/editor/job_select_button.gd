@@ -66,7 +66,7 @@ func update_ui(new_job_data: JobData) -> void:
 
 	# update stats
 	move.text = "Move: " + str(new_job_data.move)
-	jump.text = "Move: " + str(new_job_data.jump)
+	jump.text = "Jump: " + str(new_job_data.jump)
 
 	hp_multiplier.text = str(new_job_data.hp_multiplier)
 	mp_multiplier.text = str(new_job_data.mp_multiplier)

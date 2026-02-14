@@ -21,6 +21,8 @@ Escape: Open/Close debug menus
 Right click on unit to toggle showing more details about them
 
 
+Scenarios are exported as a json file to the app data folder. On Windows the app data folder will be similar to C:\Users\[user_name]\AppData\Roaming\TacticsTemplateG\overrides\scenarios
+
 # Features
 - Displays maps
 - Displays unit animations

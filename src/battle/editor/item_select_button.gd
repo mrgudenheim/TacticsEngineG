@@ -15,7 +15,7 @@ var item_data: ItemData:
 
 @export var list: Container
 
-func _ready():
+func _ready() -> void:
 	button.pressed.connect(on_selected)
 
 

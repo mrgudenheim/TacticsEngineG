@@ -63,6 +63,7 @@ var attack_out_data: AttackOutData = AttackOutData.new() # ATTACK.OUT tables
 # https://github.com/Glain/FFTPatcher/blob/master/ShishiSpriteEditor/PSXImages.xml#L148
 var frame_bin: Bmp = Bmp.new()
 var frame_bin_texture: Texture2D
+var item_bin_texture: Texture2D
 
 # Text
 var fft_text: FftText = FftText.new()
@@ -669,6 +670,9 @@ func cache_associated_files() -> void:
 	item_spr.set_pixel_colors()
 	item_spr.spritesheet = item_spr.get_rgba8_image()
 	sprs.append(item_spr)
+	spritesheets["ITEM.BIN"] = item_spr
+
+	item_bin_texture = ImageTexture.create_from_image(item_spr.spritesheet)
 
 
 func get_file_data(file_name: String) -> PackedByteArray:

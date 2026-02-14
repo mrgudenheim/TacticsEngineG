@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://duuei2g36ebnx" path="res://src/battle/editor/item_select_button.gd" id="1_pduxf"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_o3x16"]
+resource_local_to_scene = true
 region = Rect2(0, 0, 16, 16)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d26o3"]
@@ -28,6 +29,7 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="ColorRect" type="ColorRect" parent="MarginContainer/VBoxContainer/HBoxContainer2/PanelContainer"]
+visible = false
 layout_mode = 2
 color = Color(0.7724798, 0.5703566, 0.2862759, 1)
 

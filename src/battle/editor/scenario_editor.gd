@@ -199,6 +199,14 @@ func desetup_job_select() -> void:
 func setup_item_select(unit: Unit, slot: EquipmentSlot) -> void:
 	item_select_control.visible = true
 	for item_select_button: ItemSelectButton in item_select_control.item_select_buttons:
+		if item_select_button.sprite_rect.texture.atlas == null:
+			item_select_button.sprite_rect.texture.atlas = RomReader.item_bin_texture
+			var item_graphic_id: int = item_select_button.item_data.item_graphic_id
+			var row: int = item_graphic_id / 15
+			var col: int = item_graphic_id % 15
+			item_select_button.sprite_rect.texture.region = Rect2(col * 16, 32 + (row * 16), 16, 16)
+			# TODO get correct texture for item icons
+
 		if slot.slot_types.has(item_select_button.item_data.slot_type) and unit.equipable_item_types.has(item_select_button.item_data.item_type):
 			item_select_button.visible = true
 			item_select_button.selected.connect(func(new_item: ItemData) -> void: update_unit_equipment(unit, slot, new_item))

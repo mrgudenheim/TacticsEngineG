@@ -62,7 +62,8 @@ func setup(new_unit: Unit) -> void:
 	job_button.text = new_unit.job_data.display_name
 	
 	palette_option_button.clear()
-	for palette_idx: int in RomReader.sprs[new_unit.sprite_file_idx].color_palette.size()/16:
+	@warning_ignore("integer_division")
+	for palette_idx: int in RomReader.sprs[new_unit.sprite_file_idx].color_palette.size() / 16:
 		palette_option_button.add_item(str(palette_idx))
 	palette_option_button.select(new_unit.sprite_palette_id)
 
@@ -301,7 +302,7 @@ func get_total_evade_factor(new_unit: Unit, unit_passive_effects: Array[PassiveE
 
 	for evade_source: EvadeData.EvadeSource in evade_values.keys():
 		if unit_passive_effects.any(func(passive_effect: PassiveEffect) -> bool: return passive_effect.include_evade_sources.has(evade_source)):
-			var evade_value: float = evade_values[evade_source]
+			var evade_value: int = evade_values[evade_source]
 			for passive_effect: PassiveEffect in unit_passive_effects:
 				if passive_effect.evade_source_modifiers_targeted.has(evade_source):
 					evade_value = passive_effect.evade_source_modifiers_targeted[evade_source].apply(evade_value)

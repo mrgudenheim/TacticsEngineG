@@ -320,6 +320,7 @@ func get_total_evade_factor(new_unit: Unit, unit_passive_effects: Array[PassiveE
 func set_palette(new_palette_idx: int) -> void:
 	if unit != null:
 		unit.set_sprite_palette(new_palette_idx)
+		unit.data_updated.emit(unit)
 
 
 func set_team(new_team_idx: int) -> void:

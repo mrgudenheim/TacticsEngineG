@@ -1,15 +1,20 @@
-[gd_scene load_steps=3 format=3 uid="uid://djqalqt20isme"]
+[gd_scene load_steps=4 format=3 uid="uid://djqalqt20isme"]
 
 [ext_resource type="Script" uid="uid://cpvculriomav7" path="res://src/battle/editor/job_select_button.gd" id="1_dxfb3"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_06nsw"]
+resource_local_to_scene = true
+region = Rect2(280, 32, 40, 56)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d26o3"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
 
-[node name="JobSelectButton" type="PanelContainer" node_paths=PackedStringArray("button", "display_name", "sprite_rect", "move", "jump", "hp_multiplier", "mp_multiplier", "speed_multiplier", "pa_multiplier", "ma_multiplier", "hp_growth", "mp_growth", "speed_growth", "pa_growth", "ma_growth", "equipment_hand", "equipment_head", "equipment_body", "equipment_accessory", "evade_grid", "innate_abilities_list", "statuses_always_list", "statuses_start_list", "statuses_immune_list", "element_weak", "element_resist", "element_immune", "element_absorb", "element_strengthen", "action_list")]
+[node name="JobSelectButton" type="PanelContainer" node_paths=PackedStringArray("button", "display_name", "sprite_rect", "sprite_rect_on_screen_notifier", "move", "jump", "hp_multiplier", "mp_multiplier", "speed_multiplier", "pa_multiplier", "ma_multiplier", "hp_growth", "mp_growth", "speed_growth", "pa_growth", "ma_growth", "equipment_hand", "equipment_head", "equipment_body", "equipment_accessory", "evade_grid", "innate_abilities_list", "statuses_always_list", "statuses_start_list", "statuses_immune_list", "element_weak", "element_resist", "element_immune", "element_absorb", "element_strengthen", "action_list")]
 script = ExtResource("1_dxfb3")
 button = NodePath("Button")
 display_name = NodePath("MarginContainer/VBoxContainer/Name")
 sprite_rect = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/PanelContainer/Sprite")
+sprite_rect_on_screen_notifier = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/PanelContainer/Sprite/VisibleOnScreenNotifier2D")
 move = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/HBoxContainer2/Move")
 jump = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/HBoxContainer2/Jump")
 hp_multiplier = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/StatsPanel/MarginContainer/VBoxContainer/Stats/multiplier1")
@@ -62,15 +67,21 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="ColorRect" type="ColorRect" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/PanelContainer"]
+visible = false
 layout_mode = 2
 color = Color(0.7724798, 0.5703566, 0.2862759, 1)
 
 [node name="Sprite" type="TextureRect" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/PanelContainer"]
+texture_filter = 1
 layout_mode = 2
-expand_mode = 2
+texture = SubResource("AtlasTexture_06nsw")
+expand_mode = 3
 stretch_mode = 5
 
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/PanelContainer/Sprite"]
+
 [node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/PanelContainer"]
+visible = false
 layout_mode = 2
 text = "Sprite"
 

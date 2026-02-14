@@ -12,6 +12,7 @@ var job_data: JobData:
 @export var button: Button
 @export var display_name: Label
 @export var sprite_rect: TextureRect
+@export var sprite_rect_on_screen_notifier: VisibleOnScreenNotifier2D
 @export var move: Label
 @export var jump: Label
 
@@ -52,6 +53,7 @@ var job_data: JobData:
 
 func _ready() -> void:
 	button.pressed.connect(on_selected)
+	sprite_rect_on_screen_notifier.screen_entered.connect(set_sprite)
 
 
 func on_selected() -> void:
@@ -176,6 +178,19 @@ func update_ui(new_job_data: JobData) -> void:
 			var new_action_name: Label = Label.new()
 			new_action_name.text = new_action.display_name
 			action_list.add_child(new_action_name)
+
+
+func set_sprite() -> void:
+	if job_data == null or sprite_rect.texture.atlas != null:
+		return
+	
+	var job_spr: Spr = RomReader.sprs[RomReader.spr_id_file_idxs[job_data.sprite_id]]
+	if not job_spr.is_initialized:
+		job_spr.set_data()
+		job_spr.set_spritesheet_data(RomReader.spr_file_name_to_id[job_spr.file_name])
+	
+	var atlas_texture: AtlasTexture = sprite_rect.texture
+	atlas_texture.atlas = job_spr.create_frame_grid_texture(0)
 
 
 func get_evade_values(evade_datas: Array[EvadeData], evade_type: EvadeData.EvadeType, direction: EvadeData.Directions) -> Dictionary[EvadeData.EvadeSource, int]:

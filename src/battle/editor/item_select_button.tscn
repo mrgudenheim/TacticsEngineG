@@ -1,6 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://b24ja5gvetaqq"]
+[gd_scene load_steps=4 format=3 uid="uid://b24ja5gvetaqq"]
 
 [ext_resource type="Script" uid="uid://duuei2g36ebnx" path="res://src/battle/editor/item_select_button.gd" id="1_pduxf"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o3x16"]
+region = Rect2(0, 0, 16, 16)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d26o3"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
@@ -8,8 +11,8 @@ bg_color = Color(0.6, 0.6, 0.6, 0)
 [node name="ItemSelectButton" type="PanelContainer" node_paths=PackedStringArray("button", "display_name", "sprite_rect", "list")]
 script = ExtResource("1_pduxf")
 button = NodePath("Button")
-display_name = NodePath("MarginContainer/VBoxContainer/Name")
-sprite_rect = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/PanelContainer/Sprite")
+display_name = NodePath("MarginContainer/VBoxContainer/HBoxContainer2/Name")
+sprite_rect = NodePath("MarginContainer/VBoxContainer/HBoxContainer2/PanelContainer/Sprite")
 list = NodePath("MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/PassiveEffectsPanel/MarginContainer/VBoxContainer")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
@@ -18,8 +21,30 @@ layout_mode = 2
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 
-[node name="Name" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="MarginContainer/VBoxContainer/HBoxContainer2/PanelContainer"]
+layout_mode = 2
+color = Color(0.7724798, 0.5703566, 0.2862759, 1)
+
+[node name="Sprite" type="TextureRect" parent="MarginContainer/VBoxContainer/HBoxContainer2/PanelContainer"]
+layout_mode = 2
+texture = SubResource("AtlasTexture_o3x16")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2/PanelContainer"]
+visible = false
+layout_mode = 2
+text = "Sprite"
+
+[node name="Name" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
 text = "ItemName"
 horizontal_alignment = 1
 
@@ -31,22 +56,6 @@ layout_mode = 2
 
 [node name="SpriteAndStats" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
-
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats"]
-layout_mode = 2
-
-[node name="ColorRect" type="ColorRect" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/PanelContainer"]
-layout_mode = 2
-color = Color(0.7724798, 0.5703566, 0.2862759, 1)
-
-[node name="Sprite" type="TextureRect" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/PanelContainer"]
-layout_mode = 2
-expand_mode = 2
-stretch_mode = 5
-
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats/PanelContainer"]
-layout_mode = 2
-text = "Sprite"
 
 [node name="PassiveEffectsPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer/SpriteAndStats"]
 layout_mode = 2

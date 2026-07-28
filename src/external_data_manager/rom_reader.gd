@@ -1041,17 +1041,19 @@ func export_maps(save_path: String) -> void:
 		export_map(maps_path, fft_map_data)
 
 
-func export_map(save_path: String, fft_map_data: FftMapData) -> void:
+func export_map(save_path: String, fft_map_data: FftMapData, export_full_color_texture: bool = false) -> void:
 	# var new_map_node: MapChunkNodes = fft_map_data.get_map_scene(Vector3(-1.0, -1.0, 1.0), Vector3(0, -FftMapData.HEIGHT_SCALE, 0))
 	# mirror map so positive y is up, mirror x so it ends up looking un-mirrored
 	var new_map_node: MapChunkNodes = fft_map_data.get_map_scene(Vector3(-1.0, -1.0, 1.0))
-	GltfManager.save_node(new_map_node, save_path, fft_map_data.unique_name + ".map.glb")
+	var new_map_mesh: MeshInstance3D = new_map_node.mesh_instance
+	GltfManager.save_node(new_map_mesh, save_path, fft_map_data.unique_name + ".map.glb")
 	
 	var map_texture_webp_file_path: String = save_path.path_join(fft_map_data.unique_name + ".texture.webp")
 	fft_map_data.albedo_texture_indexed.get_image().save_webp(map_texture_webp_file_path)
 
-	#var map_texture_webp_file_path2: String = maps_path.path_join(fft_map_data.unique_name + "_full_color.texture.webp")
-	#fft_map_data.albedo_texture.get_image().save_webp(map_texture_webp_file_path2)
+	if export_full_color_texture:
+		var map_texture_webp_file_path2: String = save_path.path_join(fft_map_data.unique_name + "_full_color.texture.webp")
+		fft_map_data.albedo_texture.get_image().save_webp(map_texture_webp_file_path2)
 	
 	var new_map_data: MapData = MapData.init_from_fft_map_data(fft_map_data)
 	new_map_data.terrain_tiles = new_map_data.get_transformed_tiles(Vector2.ZERO, Vector2(-1, 1), 0)

@@ -266,13 +266,22 @@ func get_map_gltf(unique_name: String) -> Node:
 	return maps_gltf[unique_name]
 
 
+func get_map_gltf_mesh(unique_name: String) -> MeshInstance3D:
+	#if maps_gltf.has(unique_name):
+		#return maps_gltf[unique_name]
+	
+	var file_path: String = map_gltf_paths[unique_name]
+	var mesh_instance: MeshInstance3D = GltfManager.import_gltf_mesh(file_path)
+	return mesh_instance
+
+
 func get_map_data(unique_name: String) -> MapData:
 	if maps_data.has(unique_name):
 		return maps_data[unique_name]
 	
 	var file_path: String = map_data_paths[unique_name]
 	var new_map_data: MapData = ResourceLoader.load(file_path, "MapData")
-	var mesh_instance: MeshInstance3D = get_map_gltf(new_map_data.unique_name).get_child(1)
+	var mesh_instance: MeshInstance3D = get_map_gltf_mesh(new_map_data.unique_name)
 	new_map_data.mesh = mesh_instance.mesh
 	#new_map_data.flag_polygons_to_hide()
 	maps_data[unique_name] = new_map_data

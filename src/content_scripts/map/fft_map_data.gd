@@ -55,9 +55,11 @@ var quads_uvs: PackedVector2Array = []
 var tris_palettes: PackedInt32Array = []
 var quads_palettes: PackedInt32Array = []
 
+var texture_palette_bytes: PackedByteArray = []
 var texture_palettes: PackedColorArray = []
 var texture_color_indices: PackedInt32Array = []
 
+var lighting_and_gradient_bytes: PackedByteArray = []
 var background_gradient_top: Color = Color.DIM_GRAY
 var background_gradient_bottom: Color = Color.BLACK
 
@@ -70,6 +72,7 @@ var terrain_tiles: Array[TerrainTile] = []
 var has_texture_animations: bool = false
 var texture_anim_instructions_bytes: Array[PackedByteArray] = []
 var texture_animations_palette_frames: Array[PackedColorArray] = []
+var palette_animation_bytes: PackedByteArray = []
 var texture_animations: Array[TextureAnimationData] = []
 
 # polygon render flags
@@ -224,8 +227,8 @@ func create_map(mesh_bytes: PackedByteArray, texture_bytes: PackedByteArray = []
 		push_warning("No palette data found")
 	else:
 		var texture_palettes_data_end: int = texture_palettes_data_start + 512
-		var texture_palettes_data: PackedByteArray = other_bytes.slice(texture_palettes_data_start, texture_palettes_data_end)
-		texture_palettes = get_texture_palettes(texture_palettes_data)
+		texture_palette_bytes = other_bytes.slice(texture_palettes_data_start, texture_palettes_data_end)
+		texture_palettes = get_texture_palettes(texture_palette_bytes)
 
 	if lighting_data_start == 0:
 		push_warning("No lighting data found")
@@ -233,8 +236,8 @@ func create_map(mesh_bytes: PackedByteArray, texture_bytes: PackedByteArray = []
 		# 6 bytes for each directional light color, position, 3 bytes for ambient light color, 6 bytes for gradient colors
 		var lighting_data_length: int = 18 + 18 + 3 + 6
 		var lighting_data_end: int = lighting_data_start + lighting_data_length
-		var lighting_data: PackedByteArray = other_bytes.slice(lighting_data_length, lighting_data_end)
-		set_gradient_colors(lighting_data.slice(-6))
+		lighting_and_gradient_bytes = other_bytes.slice(lighting_data_length, lighting_data_end)
+		set_gradient_colors(lighting_and_gradient_bytes.slice(-6))
 
 	if terrain_data_start == 0:
 		push_warning("No terrain data found")
@@ -312,6 +315,7 @@ func create_map(mesh_bytes: PackedByteArray, texture_bytes: PackedByteArray = []
 		for palette_frame_id: int in 16:
 			var palette_frame_bytes_start: int = palette_animation_frames_data_start + (palette_frame_id * 32)
 			var palette_frame_bytes: PackedByteArray = other_bytes.slice(palette_frame_bytes_start, palette_frame_bytes_start + 32)
+			palette_animation_bytes.append_array(palette_frame_bytes)
 			var palette_frame: PackedColorArray
 			palette_frame.resize(16)
 			for color_id: int in 16:
@@ -1059,11 +1063,6 @@ static func save_fft_mesh_file(fft_map_data: FftMapData) -> void:
 	var cropped_rect: Rect2i = Rect2i(Vector2i(-10, 11), Vector2i(20, 12))
 	
 	var adjusted_map_data: FftMapData = get_adjusted_map_data(fft_map_data, mirror_quadrants, cropped_rect)
-	var mesh_file_bytes: PackedByteArray = []
-
-	var header_bytes: PackedByteArray = []
-	header_bytes.resize(0xc4)
-	header_bytes.fill(0)
 
 	var primary_mesh_data_start: int = 0xc4
 	var primary_mesh_bytes: PackedByteArray = []
@@ -1094,6 +1093,33 @@ static func save_fft_mesh_file(fft_map_data: FftMapData) -> void:
 	primary_mesh_bytes.append_array(adjusted_map_data.quads_texture_bytes)
 	primary_mesh_bytes.append_array(adjusted_map_data.untextured_polygon_bytes)
 	primary_mesh_bytes.append_array(adjusted_map_data.textured_polygon_tile_bytes)
+
+	# texture palettes - handled in create_map()
+	# lighting and gradient - handled in create_map()
+	# terrain tiles - handled in get_adjusted_map_data()
+
+	# texture animation instructions
+	var full_texture_anim_instruction_bytes: PackedByteArray = []
+	for texture_anim_instructions: PackedByteArray in adjusted_map_data.texture_anim_instructions_bytes:
+		full_texture_anim_instruction_bytes.append_array(texture_anim_instructions)
+
+	# palette animation instructions - handled in create_map()
+	# texture palettes grayscale
+	# mesh animation instructions
+	# animated meshes 1 - 8
+
+	# polygon render flags
+	var polygon_render_flags_bytes: PackedByteArray = []
+	polygon_render_flags_bytes.append_array(adjusted_map_data.unknown_render_bytes)
+	polygon_render_flags_bytes.append_array(adjusted_map_data.textured_tris_flags)
+	polygon_render_flags_bytes.append_array(adjusted_map_data.textured_quads_flags)
+	polygon_render_flags_bytes.append_array(adjusted_map_data.black_tris_flags)
+	polygon_render_flags_bytes.append_array(adjusted_map_data.black_quads_flags)
+
+	# header
+	var header_bytes: PackedByteArray = []
+	header_bytes.resize(0xc4)
+	header_bytes.fill(0)
 
 	header_bytes.encode_u32(0x40, primary_mesh_data_start)
 	var texture_palettes_data_start: int = primary_mesh_data_start + primary_mesh_bytes.size()
@@ -1131,7 +1157,20 @@ static func save_fft_mesh_file(fft_map_data: FftMapData) -> void:
 	var polygon_render_flags_start: int = 0
 	header_bytes.encode_u32(0xb0, polygon_render_flags_start)
 
+	# full file
+	var mesh_file_bytes: PackedByteArray = []
+	mesh_file_bytes.append_array(header_bytes)
+	mesh_file_bytes.append_array(primary_mesh_bytes)
+	mesh_file_bytes.append_array(adjusted_map_data.texture_palette_bytes)
+	mesh_file_bytes.append_array(adjusted_map_data.lighting_and_gradient_bytes)
+	mesh_file_bytes.append_array(adjusted_map_data.terrain_data_bytes)
 	
+	
+
+	mesh_file_bytes.append_array(full_texture_anim_instruction_bytes)
+	mesh_file_bytes.append_array(adjusted_map_data.palette_animation_bytes)
+
+	mesh_file_bytes.append_array(polygon_render_flags_bytes)
 	
 	
 	

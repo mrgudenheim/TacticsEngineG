@@ -1059,6 +1059,83 @@ static func save_fft_mesh_file(fft_map_data: FftMapData) -> void:
 	var cropped_rect: Rect2i = Rect2i(Vector2i(-10, 11), Vector2i(20, 12))
 	
 	var adjusted_map_data: FftMapData = get_adjusted_map_data(fft_map_data, mirror_quadrants, cropped_rect)
+	var mesh_file_bytes: PackedByteArray = []
+
+	var header_bytes: PackedByteArray = []
+	header_bytes.resize(0xc4)
+	header_bytes.fill(0)
+
+	var primary_mesh_data_start: int = 0xc4
+	var primary_mesh_bytes: PackedByteArray = []
+	var primary_mesh_header: PackedByteArray = []
+	primary_mesh_header.resize(8)
+	primary_mesh_header.fill(0)
+	primary_mesh_header.encode_u16(0, adjusted_map_data.num_text_tris)
+	primary_mesh_header.encode_u16(2, adjusted_map_data.num_text_quads)
+	primary_mesh_header.encode_u16(4, adjusted_map_data.num_black_tris)
+	primary_mesh_header.encode_u16(6, adjusted_map_data.num_black_quads)
+
+	var primary_mesh_textured_tri_verticies: PackedByteArray = []
+	var primary_mesh_textured_quad_verticies: PackedByteArray = []
+	var primary_mesh_black_tri_verticies: PackedByteArray = []
+	var primary_mesh_black_quad_verticies: PackedByteArray = []
+
+	var primary_mesh_textured_tri_normals: PackedByteArray = []
+	var primary_mesh_textured_quad_normals: PackedByteArray = []
+
+	primary_mesh_bytes.append_array(primary_mesh_header)
+	primary_mesh_bytes.append_array(primary_mesh_textured_tri_verticies)
+	primary_mesh_bytes.append_array(primary_mesh_textured_quad_verticies)
+	primary_mesh_bytes.append_array(primary_mesh_black_tri_verticies)
+	primary_mesh_bytes.append_array(primary_mesh_black_quad_verticies)
+	primary_mesh_bytes.append_array(primary_mesh_textured_tri_normals)
+	primary_mesh_bytes.append_array(primary_mesh_textured_quad_normals)
+	primary_mesh_bytes.append_array(adjusted_map_data.tris_texture_bytes)
+	primary_mesh_bytes.append_array(adjusted_map_data.quads_texture_bytes)
+	primary_mesh_bytes.append_array(adjusted_map_data.untextured_polygon_bytes)
+	primary_mesh_bytes.append_array(adjusted_map_data.textured_polygon_tile_bytes)
+
+	header_bytes.encode_u32(0x40, primary_mesh_data_start)
+	var texture_palettes_data_start: int = primary_mesh_data_start + primary_mesh_bytes.size()
+	header_bytes.encode_u32(0x44, texture_palettes_data_start)
+	var lighting_data_start: int = texture_palettes_data_start + 0
+	header_bytes.encode_u32(0x64, lighting_data_start)
+	var terrain_data_start: int = 0
+	header_bytes.encode_u32(0x68, terrain_data_start)
+	var texture_animation_instructions_data_start: int = 0
+	header_bytes.encode_u32(0x6c, texture_animation_instructions_data_start)
+	var palette_animation_frames_data_start: int = 0
+	header_bytes.encode_u32(0x70, palette_animation_frames_data_start)
+	var palettes_grayscale_start: int = 0
+	header_bytes.encode_u32(0x7c, palettes_grayscale_start)
+	var mesh_animation_instructions_start: int = 0
+	header_bytes.encode_u32(0x8c, mesh_animation_instructions_start)
+
+	var animated_mesh_1_start: int = 0
+	header_bytes.encode_u32(0x90, animated_mesh_1_start)
+	var animated_mesh_2_start: int = 0
+	header_bytes.encode_u32(0x94, animated_mesh_2_start)
+	var animated_mesh_3_start: int = 0
+	header_bytes.encode_u32(0x98, animated_mesh_3_start)
+	var animated_mesh_4_start: int = 0
+	header_bytes.encode_u32(0x9c, animated_mesh_4_start)
+	var animated_mesh_5_start: int = 0
+	header_bytes.encode_u32(0xa0, animated_mesh_5_start)
+	var animated_mesh_6_start: int = 0
+	header_bytes.encode_u32(0xa4, animated_mesh_6_start)
+	var animated_mesh_7_start: int = 0
+	header_bytes.encode_u32(0xa8, animated_mesh_7_start)
+	var animated_mesh_8_start: int = 0
+	header_bytes.encode_u32(0xac, animated_mesh_8_start)
+
+	var polygon_render_flags_start: int = 0
+	header_bytes.encode_u32(0xb0, polygon_render_flags_start)
+
+	
+	
+	
+	
+
 
 
 static func get_adjusted_map_data(original_fft_map_data: FftMapData, quadrants: PackedVector2Array, cropped_rect: Rect2i) -> FftMapData:

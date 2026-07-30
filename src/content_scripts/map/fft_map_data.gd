@@ -14,76 +14,76 @@ const BYTES_PER_TERRAIN_TILE: int = 8
 const TEXTURE_BYTES_PER_TRI: int = 10
 const TEXTURE_BYTES_PER_QUAD: int = 12
 
-var unique_name: String = "unique_name"
-var display_name: String = "display_name"
-var description: String = "description"
+@export var unique_name: String = "unique_name"
+@export var display_name: String = "display_name"
+@export var description: String = "description"
 
 var is_initialized: bool = false
 
-var file_name: String = "default map file name"
-var primary_mesh_data_record: MapFileRecord
-var primary_texture_record: MapFileRecord
-var other_data_record: MapFileRecord
-var map_file_records: Array[MapFileRecord] = []
+@export var file_name: String = "default map file name"
+@export var primary_mesh_data_record: MapFileRecord
+@export var primary_texture_record: MapFileRecord
+@export var other_data_record: MapFileRecord
+@export var map_file_records: Array[MapFileRecord] = []
 
-var mesh: ArrayMesh
-var mesh_material: StandardMaterial3D
-var albedo_texture: Texture2D
-var albedo_texture_indexed: Texture2D
+@export var mesh: ArrayMesh
+@export var mesh_material: StandardMaterial3D
+@export var albedo_texture: Texture2D
+@export var albedo_texture_indexed: Texture2D
 var st: SurfaceTool = SurfaceTool.new()
 
-var num_text_tris: int = 0
-var num_text_quads: int = 0
-var num_black_tris: int = 0
-var num_black_quads: int = 0
+@export var num_text_tris: int = 0
+@export var num_text_quads: int = 0
+@export var num_black_tris: int = 0
+@export var num_black_quads: int = 0
 
-var text_tri_vertices: PackedVector3Array = []
-var text_quad_vertices: PackedVector3Array = []
-var black_tri_vertices: PackedVector3Array = []
-var black_quad_vertices: PackedVector3Array = []
+@export var text_tri_vertices: PackedVector3Array = []
+@export var text_quad_vertices: PackedVector3Array = []
+@export var black_tri_vertices: PackedVector3Array = []
+@export var black_quad_vertices: PackedVector3Array = []
 
-var text_tri_normals: PackedVector3Array = []
-var text_quad_normals: PackedVector3Array = []
+@export var text_tri_normals: PackedVector3Array = []
+@export var text_quad_normals: PackedVector3Array = []
 
-var tris_texture_bytes: PackedByteArray = []
-var quads_texture_bytes: PackedByteArray = []
-var untextured_polygon_bytes: PackedByteArray = []
-var textured_polygon_tile_bytes: PackedByteArray = []
+@export var tris_texture_bytes: PackedByteArray = []
+@export var quads_texture_bytes: PackedByteArray = []
+@export var untextured_polygon_bytes: PackedByteArray = []
+@export var textured_polygon_tile_bytes: PackedByteArray = []
 
-var tris_uvs: PackedVector2Array = []
-var quads_uvs: PackedVector2Array = []
-var tris_palettes: PackedInt32Array = []
-var quads_palettes: PackedInt32Array = []
+@export var tris_uvs: PackedVector2Array = []
+@export var quads_uvs: PackedVector2Array = []
+@export var tris_palettes: PackedInt32Array = []
+@export var quads_palettes: PackedInt32Array = []
 
-var texture_palette_bytes: PackedByteArray = []
-var texture_palettes: PackedColorArray = []
-var texture_color_indices: PackedInt32Array = []
+@export var texture_palette_bytes: PackedByteArray = []
+@export var texture_palettes: PackedColorArray = []
+@export var texture_color_indices: PackedInt32Array = []
 
-var lighting_and_gradient_bytes: PackedByteArray = []
-var background_gradient_top: Color = Color.DIM_GRAY
-var background_gradient_bottom: Color = Color.BLACK
+@export var lighting_and_gradient_bytes: PackedByteArray = []
+@export var background_gradient_top: Color = Color.DIM_GRAY
+@export var background_gradient_bottom: Color = Color.BLACK
 
-var terrain_data_bytes: PackedByteArray = []
-var map_width: int = 0 # width (x) in tiles
-var map_length: int = 0 # length (y) in tiles
-var terrain_tiles: Array[TerrainTile] = []
+@export var terrain_data_bytes: PackedByteArray = []
+@export var map_width: int = 0 # width (x) in tiles
+@export var map_length: int = 0 # length (y) in tiles
+@export var terrain_tiles: Array[TerrainTile] = []
 
 # texture animations
-var has_texture_animations: bool = false
-var texture_anim_instructions_bytes: Array[PackedByteArray] = []
-var texture_animations_palette_frames: Array[PackedColorArray] = []
-var palette_animation_bytes: PackedByteArray = []
-var texture_animations: Array[TextureAnimationData] = []
+@export var has_texture_animations: bool = false
+@export var texture_anim_instructions_bytes: Array[PackedByteArray] = []
+@export var texture_animations_palette_frames: Array[PackedColorArray] = []
+@export var palette_animation_bytes: PackedByteArray = []
+@export var texture_animations: Array[TextureAnimationData] = []
 
-var texture_palette_grayscale_bytes: PackedByteArray = []
-var mesh_animation_instruction_bytes: PackedByteArray = []
+@export var texture_palette_grayscale_bytes: PackedByteArray = []
+@export var mesh_animation_instruction_bytes: PackedByteArray = []
 
 # polygon render flags
-var unknown_render_bytes: PackedByteArray # 896 bytes long
-var textured_tris_flags: PackedByteArray # 1024 bytes long for 512 textured triangles
-var textured_quads_flags: PackedByteArray # 1536 bytes for 768 textured quads
-var black_tris_flags: PackedByteArray # 128 bytes for 64 untextured triangles
-var black_quads_flags: PackedByteArray # 512 bytes for 256 untextured quads
+@export var unknown_render_bytes: PackedByteArray # 896 bytes long
+@export var textured_tris_flags: PackedByteArray # 1024 bytes long for 512 textured triangles
+@export var textured_quads_flags: PackedByteArray # 1536 bytes for 768 textured quads
+@export var black_tris_flags: PackedByteArray # 128 bytes for 64 untextured triangles
+@export var black_quads_flags: PackedByteArray # 512 bytes for 256 untextured quads
 
 
 static func get_transformed_mesh(
@@ -188,8 +188,9 @@ static func transform_custom0(surface_arrays: Array, transform: Transform3D) -> 
 	return (Mesh.ARRAY_CUSTOM_RGBA_FLOAT << Mesh.ARRAY_FORMAT_CUSTOM0_SHIFT)
 
 
-func _init(map_file_name: String) -> void:
-	file_name = map_file_name
+func _init(map_file_name: String = "") -> void:
+	if map_file_name != "":
+		file_name = map_file_name
 
 
 func init_map() -> void:
@@ -1473,7 +1474,7 @@ static func get_mirrored_expanded_map_data(original_fft_map_data: FftMapData, qu
 
 
 static func get_mirror_fft_map_data(original_fft_map_data: FftMapData, mirror_scale: Vector3, set_depth_zero: bool = false) -> FftMapData:
-	var mirrored_fft_map: FftMapData = original_fft_map_data.duplicate()
+	var mirrored_fft_map: FftMapData = original_fft_map_data.duplicate_deep()
 	
 	# add textured tris
 	for tri_index: int in mirrored_fft_map.num_text_tris:
@@ -1580,7 +1581,7 @@ static func get_mirror_fft_map_data(original_fft_map_data: FftMapData, mirror_sc
 	return mirrored_fft_map
 
 
-class TextureAnimationData:
+class TextureAnimationData extends Resource:
 	var texture_anim_instruction_bytes: PackedByteArray = []
 	var animation_type: int = -1 # error
 	var canvas_y: int

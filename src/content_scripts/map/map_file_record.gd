@@ -1,13 +1,17 @@
 class_name MapFileRecord
+extends Resource
 	
-var record_data: PackedByteArray = []
+@export var record_data: PackedByteArray = []
 var arrangement: int = 0
 var time_weather: int = 0
 var file_type_indicator: int = 0
 var file_sector: int = 0
-var file_name: String
+@export var file_name: String
 
-func _init(record_bytes: PackedByteArray) -> void:
+func _init(record_bytes: PackedByteArray = []) -> void:
+	if record_bytes.is_empty():
+		return
+	
 	record_data = record_bytes
 	arrangement = record_bytes.decode_u8(2)
 	time_weather = record_bytes.decode_u8(3)

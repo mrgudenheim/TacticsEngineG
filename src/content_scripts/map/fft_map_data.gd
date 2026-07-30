@@ -1187,13 +1187,13 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 					var relative_position: Vector2i = Vector2i(x, z) + quadrant_start_position
 					if cropped_terrain_rect.has_point(relative_position):
 						var tile_index: int = x + (z * mirrored_map.map_width)
-						var tile_data_start: int = 2 + (tile_index * tile_data_length) + (layer * 256 * 8) # each layer has space for 256 tiles, each tile data is 8 bytes
-						var tile_data: PackedByteArray = mirrored_map.terrain_data_bytes.slice(tile_data_start, tile_data_start + tile_data_length)
+						var tile_data_start: int = 2 + (tile_index * BYTES_PER_TERRAIN_TILE) + (layer * 256 * 8) # each layer has space for 256 tiles, each tile data is 8 bytes
+						var tile_data: PackedByteArray = mirrored_map.terrain_data_bytes.slice(tile_data_start, tile_data_start + BYTES_PER_TERRAIN_TILE)
 
 						var final_tile_position: Vector2i = relative_position - cropped_rect.position
 						var final_tile_index: int = final_tile_position.x + (final_tile_position.y * cropped_rect.size.x)
 
-						for byte_index: int in tile_data_length:
+						for byte_index: int in BYTES_PER_TERRAIN_TILE:
 							new_fft_map_data.terrain_data_bytes.set(final_tile_index + byte_index, tile_data.get(byte_index))
 
 	return new_fft_map_data
@@ -1251,7 +1251,7 @@ static func get_mirror_fft_map_data(original_fft_map_data: FftMapData, mirror_sc
 		for z: int in original_fft_map_data.map_length:
 			for x: int in original_fft_map_data.map_width:
 				var tile_index: int = x + (z * original_fft_map_data.map_width)
-				var tile_data_start: int = 2 + (tile_index * tile_data_length) + (layer * 256 * 8) # each layer has space for 256 tiles, each tile data is 8 bytes
+				var tile_data_start: int = 2 + (tile_index * BYTES_PER_TERRAIN_TILE) + (layer * 256 * 8) # each layer has space for 256 tiles, each tile data is 8 bytes
 				var tile_data: PackedByteArray = original_fft_map_data.terrain_data_bytes.slice(tile_data_start, tile_data_start + BYTES_PER_TERRAIN_TILE)
 
 				var mirrored_tile_index: int = tile_index

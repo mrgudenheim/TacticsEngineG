@@ -75,6 +75,9 @@ var texture_animations_palette_frames: Array[PackedColorArray] = []
 var palette_animation_bytes: PackedByteArray = []
 var texture_animations: Array[TextureAnimationData] = []
 
+var texture_palette_grayscale_bytes: PackedByteArray = []
+var mesh_animation_instruction_bytes: PackedByteArray = []
+
 # polygon render flags
 var unknown_render_bytes: PackedByteArray # 896 bytes long
 var textured_tris_flags: PackedByteArray # 1024 bytes long for 512 textured triangles
@@ -216,6 +219,7 @@ func create_map(mesh_bytes: PackedByteArray, texture_bytes: PackedByteArray = []
 	var terrain_data_start: int = other_bytes.decode_u32(0x68)
 	var texture_animation_instructions_data_start: int = other_bytes.decode_u32(0x6c)
 	var palette_animation_frames_data_start: int = other_bytes.decode_u32(0x70)
+	var texture_palette_grayscale_data_start: int = other_bytes.decode_u32(0x7c)
 	var polygon_render_flags_start: int = other_bytes.decode_u32(0xb0)
 	#var primary_mesh_data_end: int = texture_palettes_data_start if texture_palettes_data_start > 0 else 2147483647
 
@@ -242,10 +246,15 @@ func create_map(mesh_bytes: PackedByteArray, texture_bytes: PackedByteArray = []
 	if terrain_data_start == 0:
 		push_warning("No terrain data found")
 	else:
-		var terrain_data_length: int = 2 + (256 * 8 * 2)
+		var terrain_data_length: int = 2 + (256 * BYTES_PER_TERRAIN_TILE * 2)
 		var terrain_data_end: int = terrain_data_start + terrain_data_length
 		terrain_data_bytes = other_bytes.slice(terrain_data_start, terrain_data_end)
 		terrain_tiles = get_terrain(terrain_data_bytes)
+	
+	if texture_palette_grayscale_data_start == 0:
+		push_warning("No grayscale texture palettes found")
+	else:
+		texture_palette_grayscale_bytes = other_bytes.slice(texture_palette_grayscale_data_start, texture_palette_grayscale_data_start + 512)
 
 	if polygon_render_flags_start == 0:
 		push_warning("No polygon render flags found")
@@ -1053,7 +1062,7 @@ func get_scaled_collision_shape(collision_scale: Vector3) -> ConcavePolygonShape
 	return new_collision_shape
 
 
-static func save_fft_mesh_file(fft_map_data: FftMapData) -> void:
+static func get_adjusted_mesh_file(fft_map_data: FftMapData) -> PackedByteArray:
 	var mirror_quadrants: PackedVector2Array = [
 		Vector2(0, 0), # vanilla location
 		Vector2(-1, 0),
@@ -1063,24 +1072,86 @@ static func save_fft_mesh_file(fft_map_data: FftMapData) -> void:
 	var cropped_rect: Rect2i = Rect2i(Vector2i(-10, 11), Vector2i(20, 12))
 	
 	var adjusted_map_data: FftMapData = get_adjusted_map_data(fft_map_data, mirror_quadrants, cropped_rect)
+	var adjusted_map_mesh_file: PackedByteArray = get_fft_mesh_file(adjusted_map_data)
+	return adjusted_map_mesh_file
 
+
+static func get_fft_mesh_file(fft_map_data: FftMapData) -> PackedByteArray:
 	var primary_mesh_data_start: int = 0xc4
 	var primary_mesh_bytes: PackedByteArray = []
 	var primary_mesh_header: PackedByteArray = []
 	primary_mesh_header.resize(8)
 	primary_mesh_header.fill(0)
-	primary_mesh_header.encode_u16(0, adjusted_map_data.num_text_tris)
-	primary_mesh_header.encode_u16(2, adjusted_map_data.num_text_quads)
-	primary_mesh_header.encode_u16(4, adjusted_map_data.num_black_tris)
-	primary_mesh_header.encode_u16(6, adjusted_map_data.num_black_quads)
+	primary_mesh_header.encode_u16(0, fft_map_data.num_text_tris)
+	primary_mesh_header.encode_u16(2, fft_map_data.num_text_quads)
+	primary_mesh_header.encode_u16(4, fft_map_data.num_black_tris)
+	primary_mesh_header.encode_u16(6, fft_map_data.num_black_quads)
 
 	var primary_mesh_textured_tri_verticies: PackedByteArray = []
+	primary_mesh_textured_tri_verticies.resize(fft_map_data.num_text_tris * NUM_VERTICIES_PER_TRI * 3 * 2) # 3 coordinates (x, y, x) per vertex, 2 bytes per coordinate
+	for tri_index: int in fft_map_data.num_text_tris:
+		for vertex_index: int in NUM_VERTICIES_PER_TRI:
+			var total_index: int = (tri_index * NUM_VERTICIES_PER_TRI) + vertex_index
+			var vertex_coordinates: Vector3 = fft_map_data.text_tri_vertices[total_index]
+			var coordinate_index: int = total_index * 3
+			primary_mesh_textured_tri_verticies.encode_s16(coordinate_index * 2, roundi(vertex_coordinates.x))
+			primary_mesh_textured_tri_verticies.encode_s16((coordinate_index + 1) * 2, roundi(vertex_coordinates.y))
+			primary_mesh_textured_tri_verticies.encode_s16((coordinate_index + 2) * 2, roundi(vertex_coordinates.z))
+	
 	var primary_mesh_textured_quad_verticies: PackedByteArray = []
+	primary_mesh_textured_quad_verticies.resize(fft_map_data.num_text_quads * NUM_VERTICIES_PER_QUAD * 3 * 2) # 3 coordinates (x, y, x) per vertex, 2 bytes per coordinate
+	for quad_index: int in fft_map_data.num_text_quads:
+		for vertex_index: int in NUM_VERTICIES_PER_QUAD:
+			var total_index: int = (quad_index * NUM_VERTICIES_PER_QUAD) + vertex_index
+			var vertex_coordinates: Vector3 = fft_map_data.text_quad_vertices[total_index]
+			var coordinate_index: int = total_index * 3
+			primary_mesh_textured_quad_verticies.encode_s16(coordinate_index * 2, roundi(vertex_coordinates.x))
+			primary_mesh_textured_quad_verticies.encode_s16((coordinate_index + 1) * 2, roundi(vertex_coordinates.y))
+			primary_mesh_textured_quad_verticies.encode_s16((coordinate_index + 2) * 2, roundi(vertex_coordinates.z))
+	
 	var primary_mesh_black_tri_verticies: PackedByteArray = []
+	primary_mesh_black_tri_verticies.resize(fft_map_data.num_black_tris * NUM_VERTICIES_PER_TRI * 3 * 2) # 3 coordinates (x, y, x) per vertex, 2 bytes per coordinate
+	for tri_index: int in fft_map_data.num_black_tris:
+		for vertex_index: int in NUM_VERTICIES_PER_TRI:
+			var total_index: int = (tri_index * NUM_VERTICIES_PER_TRI) + vertex_index
+			var vertex_coordinates: Vector3 = fft_map_data.black_tri_vertices[total_index]
+			var coordinate_index: int = total_index * 3
+			primary_mesh_black_tri_verticies.encode_s16(coordinate_index * 2, roundi(vertex_coordinates.x))
+			primary_mesh_black_tri_verticies.encode_s16((coordinate_index + 1) * 2, roundi(vertex_coordinates.y))
+			primary_mesh_black_tri_verticies.encode_s16((coordinate_index + 2) * 2, roundi(vertex_coordinates.z))
+	
 	var primary_mesh_black_quad_verticies: PackedByteArray = []
+	primary_mesh_black_quad_verticies.resize(fft_map_data.num_black_quads * NUM_VERTICIES_PER_QUAD * 3 * 2) # 3 coordinates (x, y, x) per vertex, 2 bytes per coordinate
+	for quad_index: int in fft_map_data.num_black_quads:
+		for vertex_index: int in NUM_VERTICIES_PER_QUAD:
+			var total_index: int = (quad_index * NUM_VERTICIES_PER_QUAD) + vertex_index
+			var vertex_coordinates: Vector3 = fft_map_data.black_quad_vertices[total_index]
+			var coordinate_index: int = total_index * 3
+			primary_mesh_black_quad_verticies.encode_s16(coordinate_index * 2, roundi(vertex_coordinates.x))
+			primary_mesh_black_quad_verticies.encode_s16((coordinate_index + 1) * 2, roundi(vertex_coordinates.y))
+			primary_mesh_black_quad_verticies.encode_s16((coordinate_index + 2) * 2, roundi(vertex_coordinates.z))
 
 	var primary_mesh_textured_tri_normals: PackedByteArray = []
+	primary_mesh_textured_tri_normals.resize(fft_map_data.num_text_tris * NUM_VERTICIES_PER_TRI * 3 * 2) # 3 coordinates (x, y, x) per vertex, 2 bytes per coordinate
+	for tri_index: int in fft_map_data.num_text_tris:
+		for vertex_index: int in NUM_VERTICIES_PER_TRI:
+			var total_index: int = (tri_index * NUM_VERTICIES_PER_TRI) + vertex_index
+			var vertex_normals: Vector3 = fft_map_data.text_tri_normals[total_index]
+			var coordinate_index: int = total_index * 3
+			primary_mesh_textured_tri_normals.encode_s16(coordinate_index * 2, roundi(vertex_normals.x * 4096.0))
+			primary_mesh_textured_tri_normals.encode_s16((coordinate_index + 1) * 2, roundi(vertex_normals.y * 4096.0))
+			primary_mesh_textured_tri_normals.encode_s16((coordinate_index + 2) * 2, roundi(vertex_normals.z * 4096.0))
+
 	var primary_mesh_textured_quad_normals: PackedByteArray = []
+	primary_mesh_textured_tri_normals.resize(fft_map_data.num_text_tris * NUM_VERTICIES_PER_QUAD * 3 * 2) # 3 coordinates (x, y, x) per vertex, 2 bytes per coordinate
+	for quad_index: int in fft_map_data.num_text_quads:
+		for vertex_index: int in NUM_VERTICIES_PER_QUAD:
+			var total_index: int = (quad_index * NUM_VERTICIES_PER_QUAD) + vertex_index
+			var vertex_normals: Vector3 = fft_map_data.text_quad_normals[total_index]
+			var coordinate_index: int = total_index * 3
+			primary_mesh_textured_quad_normals.encode_s16(coordinate_index * 2, roundi(vertex_normals.x * 4096.0))
+			primary_mesh_textured_quad_normals.encode_s16((coordinate_index + 1) * 2, roundi(vertex_normals.y * 4096.0))
+			primary_mesh_textured_quad_normals.encode_s16((coordinate_index + 2) * 2, roundi(vertex_normals.z * 4096.0))
 
 	primary_mesh_bytes.append_array(primary_mesh_header)
 	primary_mesh_bytes.append_array(primary_mesh_textured_tri_verticies)
@@ -1089,10 +1160,10 @@ static func save_fft_mesh_file(fft_map_data: FftMapData) -> void:
 	primary_mesh_bytes.append_array(primary_mesh_black_quad_verticies)
 	primary_mesh_bytes.append_array(primary_mesh_textured_tri_normals)
 	primary_mesh_bytes.append_array(primary_mesh_textured_quad_normals)
-	primary_mesh_bytes.append_array(adjusted_map_data.tris_texture_bytes)
-	primary_mesh_bytes.append_array(adjusted_map_data.quads_texture_bytes)
-	primary_mesh_bytes.append_array(adjusted_map_data.untextured_polygon_bytes)
-	primary_mesh_bytes.append_array(adjusted_map_data.textured_polygon_tile_bytes)
+	primary_mesh_bytes.append_array(fft_map_data.tris_texture_bytes)
+	primary_mesh_bytes.append_array(fft_map_data.quads_texture_bytes)
+	primary_mesh_bytes.append_array(fft_map_data.untextured_polygon_bytes)
+	primary_mesh_bytes.append_array(fft_map_data.textured_polygon_tile_bytes)
 
 	# texture palettes - handled in create_map()
 	# lighting and gradient - handled in create_map()
@@ -1100,40 +1171,58 @@ static func save_fft_mesh_file(fft_map_data: FftMapData) -> void:
 
 	# texture animation instructions
 	var full_texture_anim_instruction_bytes: PackedByteArray = []
-	for texture_anim_instructions: PackedByteArray in adjusted_map_data.texture_anim_instructions_bytes:
+	for texture_anim_instructions: PackedByteArray in fft_map_data.texture_anim_instructions_bytes:
 		full_texture_anim_instruction_bytes.append_array(texture_anim_instructions)
 
 	# palette animation instructions - handled in create_map()
-	# texture palettes grayscale
-	# mesh animation instructions
-	# animated meshes 1 - 8
+	# texture palettes grayscale - handled in create_map()
+	# TODO mesh animation instructions
+	# TODO animated meshes 1 - 8
 
 	# polygon render flags
 	var polygon_render_flags_bytes: PackedByteArray = []
-	polygon_render_flags_bytes.append_array(adjusted_map_data.unknown_render_bytes)
-	polygon_render_flags_bytes.append_array(adjusted_map_data.textured_tris_flags)
-	polygon_render_flags_bytes.append_array(adjusted_map_data.textured_quads_flags)
-	polygon_render_flags_bytes.append_array(adjusted_map_data.black_tris_flags)
-	polygon_render_flags_bytes.append_array(adjusted_map_data.black_quads_flags)
+	polygon_render_flags_bytes.append_array(fft_map_data.unknown_render_bytes)
+	polygon_render_flags_bytes.append_array(fft_map_data.textured_tris_flags)
+	polygon_render_flags_bytes.append_array(fft_map_data.textured_quads_flags)
+	polygon_render_flags_bytes.append_array(fft_map_data.black_tris_flags)
+	polygon_render_flags_bytes.append_array(fft_map_data.black_quads_flags)
 
 	# header
+	var next_section_start: int = 0
 	var header_bytes: PackedByteArray = []
 	header_bytes.resize(0xc4)
 	header_bytes.fill(0)
-
 	header_bytes.encode_u32(0x40, primary_mesh_data_start)
-	var texture_palettes_data_start: int = primary_mesh_data_start + primary_mesh_bytes.size()
+	next_section_start += primary_mesh_data_start
+	
+	next_section_start += primary_mesh_bytes.size()
+	var texture_palettes_data_start: int = next_section_start
 	header_bytes.encode_u32(0x44, texture_palettes_data_start)
-	var lighting_data_start: int = texture_palettes_data_start + 0
+	
+	next_section_start += fft_map_data.texture_palette_bytes.size()
+	var lighting_data_start: int = next_section_start
 	header_bytes.encode_u32(0x64, lighting_data_start)
-	var terrain_data_start: int = 0
+	
+	next_section_start += fft_map_data.lighting_and_gradient_bytes.size()
+	var terrain_data_start: int = next_section_start
 	header_bytes.encode_u32(0x68, terrain_data_start)
-	var texture_animation_instructions_data_start: int = 0
+	
+	next_section_start += fft_map_data.terrain_data_bytes.size()
+	var texture_animation_instructions_data_start: int = next_section_start
+	if full_texture_anim_instruction_bytes.size() == 0:
+		texture_animation_instructions_data_start = 0
 	header_bytes.encode_u32(0x6c, texture_animation_instructions_data_start)
-	var palette_animation_frames_data_start: int = 0
+	
+	next_section_start += full_texture_anim_instruction_bytes.size()
+	var palette_animation_frames_data_start: int = next_section_start
+	if fft_map_data.palette_animation_bytes.size() == 0:
+		palette_animation_frames_data_start = 0
 	header_bytes.encode_u32(0x70, palette_animation_frames_data_start)
-	var palettes_grayscale_start: int = 0
+	
+	next_section_start += fft_map_data.palette_animation_bytes.size()
+	var palettes_grayscale_start: int = next_section_start
 	header_bytes.encode_u32(0x7c, palettes_grayscale_start)
+	
 	var mesh_animation_instructions_start: int = 0
 	header_bytes.encode_u32(0x8c, mesh_animation_instructions_start)
 
@@ -1154,27 +1243,25 @@ static func save_fft_mesh_file(fft_map_data: FftMapData) -> void:
 	var animated_mesh_8_start: int = 0
 	header_bytes.encode_u32(0xac, animated_mesh_8_start)
 
-	var polygon_render_flags_start: int = 0
+	next_section_start += fft_map_data.texture_palette_grayscale_bytes.size()
+	var polygon_render_flags_start: int = next_section_start
 	header_bytes.encode_u32(0xb0, polygon_render_flags_start)
 
 	# full file
 	var mesh_file_bytes: PackedByteArray = []
 	mesh_file_bytes.append_array(header_bytes)
 	mesh_file_bytes.append_array(primary_mesh_bytes)
-	mesh_file_bytes.append_array(adjusted_map_data.texture_palette_bytes)
-	mesh_file_bytes.append_array(adjusted_map_data.lighting_and_gradient_bytes)
-	mesh_file_bytes.append_array(adjusted_map_data.terrain_data_bytes)
-	
-	
-
+	mesh_file_bytes.append_array(fft_map_data.texture_palette_bytes)
+	mesh_file_bytes.append_array(fft_map_data.lighting_and_gradient_bytes)
+	mesh_file_bytes.append_array(fft_map_data.terrain_data_bytes)
 	mesh_file_bytes.append_array(full_texture_anim_instruction_bytes)
-	mesh_file_bytes.append_array(adjusted_map_data.palette_animation_bytes)
-
+	mesh_file_bytes.append_array(fft_map_data.palette_animation_bytes)
+	mesh_file_bytes.append_array(fft_map_data.texture_palette_grayscale_bytes)
+	# TODO mesh animation instructions
+	# TODO animated meshes 1 - 8
 	mesh_file_bytes.append_array(polygon_render_flags_bytes)
-	
-	
-	
 
+	return mesh_file_bytes
 
 
 static func get_adjusted_map_data(original_fft_map_data: FftMapData, quadrants: PackedVector2Array, cropped_rect: Rect2i) -> FftMapData:
@@ -1336,6 +1423,12 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 
 						for byte_index: int in BYTES_PER_TERRAIN_TILE:
 							new_fft_map_data.terrain_data_bytes.set(final_tile_index + byte_index, tile_data.get(byte_index))
+	new_fft_map_data.terrain_data_bytes.set(0, new_fft_map_data.map_width)
+	new_fft_map_data.terrain_data_bytes.set(1, new_fft_map_data.map_length)
+
+	var total_tiles: int = new_fft_map_data.map_width * new_fft_map_data.map_length
+	if total_tiles > 256:
+		push_warning("Total tiles > 256: " + str(total_tiles))
 
 	new_fft_map_data.num_text_tris = new_map_textured_tri_index
 	new_fft_map_data.num_black_tris = new_map_black_tri_index

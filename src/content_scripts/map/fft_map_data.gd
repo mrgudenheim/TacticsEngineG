@@ -47,6 +47,9 @@ var text_quad_normals: PackedVector3Array = []
 
 var tris_texture_bytes: PackedByteArray = []
 var quads_texture_bytes: PackedByteArray = []
+var untextured_polygon_bytes: PackedByteArray = []
+var textured_polygon_tile_bytes: PackedByteArray = []
+
 var tris_uvs: PackedVector2Array = []
 var quads_uvs: PackedVector2Array = []
 var tris_palettes: PackedInt32Array = []
@@ -452,12 +455,14 @@ func set_mesh_data(primary_mesh_data: PackedByteArray) -> void:
 	num_black_tris = primary_mesh_data.decode_u16(4)
 	num_black_quads = primary_mesh_data.decode_u16(6)
 
-	var text_tris_vertices_data_length: int = num_text_tris * 2 * 3 * 3
-	var text_quad_vertices_data_length: int = num_text_quads * 2 * 3 * 4
-	var black_tris_vertices_data_length: int = num_black_tris * 2 * 3 * 3
-	var black_quads_vertices_data_length: int = num_black_quads * 2 * 3 * 4
-	var tris_uvs_data_length: int = num_text_tris * 10
-	var quad_uvs_data_length: int = num_text_quads * 12
+	var text_tris_vertices_data_length: int = num_text_tris * 2 * 3 * NUM_VERTICIES_PER_TRI
+	var text_quad_vertices_data_length: int = num_text_quads * 2 * 3 * NUM_VERTICIES_PER_QUAD
+	var black_tris_vertices_data_length: int = num_black_tris * 2 * 3 * NUM_VERTICIES_PER_TRI
+	var black_quads_vertices_data_length: int = num_black_quads * 2 * 3 * NUM_VERTICIES_PER_QUAD
+	var tris_uvs_data_length: int = num_text_tris * TEXTURE_BYTES_PER_TRI
+	var quad_uvs_data_length: int = num_text_quads * TEXTURE_BYTES_PER_QUAD
+	var untextured_polygon_bytes_length: int = (4 * num_black_tris) + (4 * num_black_quads)
+	var textured_polygon_tile_bytes_length: int = (2 * num_text_tris) + (2 * num_text_quads)
 
 	var text_quad_vertices_start: int = 8 + text_tris_vertices_data_length
 	var black_tris_vertices_start: int = text_quad_vertices_start + text_quad_vertices_data_length
@@ -466,14 +471,16 @@ func set_mesh_data(primary_mesh_data: PackedByteArray) -> void:
 	var text_quad_normals_start: int = text_tri_normals_start + text_tris_vertices_data_length
 	var tris_uvs_start: int = text_quad_normals_start + text_quad_vertices_data_length
 	var quads_uvs_start: int = tris_uvs_start + tris_uvs_data_length
+	var untextured_polygon_bytes_start: int = quads_uvs_start + quad_uvs_data_length
+	var textured_polygon_tile_bytes_start: int = untextured_polygon_bytes_start + untextured_polygon_bytes_length
 
-	text_tri_vertices = get_vertices(primary_mesh_data.slice(8, text_quad_vertices_start), num_text_tris * 3)
-	text_quad_vertices = get_vertices(primary_mesh_data.slice(text_quad_vertices_start, black_tris_vertices_start), num_text_quads * 4)
-	black_tri_vertices = get_vertices(primary_mesh_data.slice(black_tris_vertices_start, black_quads_vertices_start), num_black_tris * 3)
-	black_quad_vertices = get_vertices(primary_mesh_data.slice(black_quads_vertices_start, text_tri_normals_start), num_black_quads * 4)
+	text_tri_vertices = get_vertices(primary_mesh_data.slice(8, text_quad_vertices_start), num_text_tris * NUM_VERTICIES_PER_TRI)
+	text_quad_vertices = get_vertices(primary_mesh_data.slice(text_quad_vertices_start, black_tris_vertices_start), num_text_quads * NUM_VERTICIES_PER_QUAD)
+	black_tri_vertices = get_vertices(primary_mesh_data.slice(black_tris_vertices_start, black_quads_vertices_start), num_black_tris * NUM_VERTICIES_PER_TRI)
+	black_quad_vertices = get_vertices(primary_mesh_data.slice(black_quads_vertices_start, text_tri_normals_start), num_black_quads * NUM_VERTICIES_PER_QUAD)
 
-	text_tri_normals = get_normals(primary_mesh_data.slice(text_tri_normals_start, text_quad_normals_start), num_text_tris * 3)
-	text_quad_normals = get_normals(primary_mesh_data.slice(text_quad_normals_start, tris_uvs_start), num_text_quads * 4)
+	text_tri_normals = get_normals(primary_mesh_data.slice(text_tri_normals_start, text_quad_normals_start), num_text_tris * NUM_VERTICIES_PER_TRI)
+	text_quad_normals = get_normals(primary_mesh_data.slice(text_quad_normals_start, tris_uvs_start), num_text_quads * NUM_VERTICIES_PER_QUAD)
 
 	#tris_uvs = get_uvs(primary_mesh_data.slice(tris_uvs_start, quads_uvs_start), num_text_tris, false)
 	#quads_uvs = get_uvs(primary_mesh_data.slice(quads_uvs_start, quads_uvs_start + quad_uvs_data_length), num_text_quads, true)
@@ -481,6 +488,9 @@ func set_mesh_data(primary_mesh_data: PackedByteArray) -> void:
 	quads_texture_bytes = primary_mesh_data.slice(quads_uvs_start, quads_uvs_start + quad_uvs_data_length)
 	tris_uvs = get_uvs_all_palettes(tris_texture_bytes, num_text_tris, false)
 	quads_uvs = get_uvs_all_palettes(quads_texture_bytes, num_text_quads, true)
+
+	untextured_polygon_bytes = primary_mesh_data.slice(untextured_polygon_bytes_start, untextured_polygon_bytes_start + untextured_polygon_bytes_length)
+	textured_polygon_tile_bytes = primary_mesh_data.slice(textured_polygon_tile_bytes_start, textured_polygon_tile_bytes_start + textured_polygon_tile_bytes_length)
 
 
 func get_vertices(vertex_bytes: PackedByteArray, num_vertices: int) -> PackedVector3Array:
@@ -1070,6 +1080,9 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 	var new_map_black_tri_index: int = 0
 	var new_map_textured_quad_index: int = 0
 	var new_map_black_quad_index: int = 0
+
+	var textured_tri_tile_bytes: PackedByteArray = []
+	var textured_quad_tile_bytes: PackedByteArray = []
 	
 	for mirrored_map_quadrant: Vector2i in mirrored_map_data.keys():
 		var mirrored_map: FftMapData = mirrored_map_data[mirrored_map_quadrant]
@@ -1109,6 +1122,12 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 			new_map_textured_tri_index += 1
 			var polygon_texture_bytes: PackedByteArray = mirrored_map.tris_texture_bytes.slice(tri_index * TEXTURE_BYTES_PER_TRI, TEXTURE_BYTES_PER_TRI)
 			new_fft_map_data.tris_texture_bytes.append_array(polygon_texture_bytes)
+
+			var polygon_tile_bytes: PackedByteArray = [
+				mirrored_map.textured_polygon_tile_bytes[tri_index * 2],
+				mirrored_map.textured_polygon_tile_bytes[(tri_index * 2) + 1],
+			]
+			textured_tri_tile_bytes.append_array(polygon_tile_bytes)
 			
 		# add black tris
 		for tri_index: int in mirrored_map.num_black_tris:
@@ -1156,6 +1175,12 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 			var polygon_texture_bytes: PackedByteArray = mirrored_map.quads_texture_bytes.slice(quad_index * TEXTURE_BYTES_PER_QUAD, TEXTURE_BYTES_PER_QUAD)
 			new_fft_map_data.quads_texture_bytes.append_array(polygon_texture_bytes)
 
+			var polygon_tile_bytes: PackedByteArray = [
+				mirrored_map.textured_polygon_tile_bytes[quad_index * 2],
+				mirrored_map.textured_polygon_tile_bytes[(quad_index * 2) + 1],
+			]
+			textured_quad_tile_bytes.append_array(polygon_tile_bytes)
+
 		# add black quads
 		for quad_index: int in mirrored_map.num_black_quads:
 			var quad_verticies: Array[Vector3i] = []
@@ -1187,7 +1212,7 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 					var relative_position: Vector2i = Vector2i(x, z) + quadrant_start_position
 					if cropped_terrain_rect.has_point(relative_position):
 						var tile_index: int = x + (z * mirrored_map.map_width)
-						var tile_data_start: int = 2 + (tile_index * BYTES_PER_TERRAIN_TILE) + (layer * 256 * 8) # each layer has space for 256 tiles, each tile data is 8 bytes
+						var tile_data_start: int = 2 + (tile_index * BYTES_PER_TERRAIN_TILE) + (layer * 256 * BYTES_PER_TERRAIN_TILE) # each layer has space for 256 tiles, each tile data is 8 bytes
 						var tile_data: PackedByteArray = mirrored_map.terrain_data_bytes.slice(tile_data_start, tile_data_start + BYTES_PER_TERRAIN_TILE)
 
 						var final_tile_position: Vector2i = relative_position - cropped_rect.position
@@ -1195,6 +1220,27 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 
 						for byte_index: int in BYTES_PER_TERRAIN_TILE:
 							new_fft_map_data.terrain_data_bytes.set(final_tile_index + byte_index, tile_data.get(byte_index))
+
+	new_fft_map_data.num_text_tris = new_map_textured_tri_index
+	new_fft_map_data.num_black_tris = new_map_black_tri_index
+	new_fft_map_data.num_text_quads = new_map_textured_quad_index
+	new_fft_map_data.num_black_quads = new_map_black_quad_index
+
+	if new_fft_map_data.num_text_tris > 360:
+		push_warning("Total textured tris > 360: " + str(new_fft_map_data.num_text_tris))
+	if new_fft_map_data.num_black_tris > 64:
+		push_warning("Total black tris > 64: " + str(new_fft_map_data.num_black_tris))
+	if new_fft_map_data.num_text_quads > 710:
+		push_warning("Total textured quads > 710: " + str(new_fft_map_data.num_text_quads))
+	if new_fft_map_data.num_black_quads > 256:
+		push_warning("Total black quads > 256: " + str(new_fft_map_data.num_black_quads))
+
+	new_fft_map_data.untextured_polygon_bytes.resize((4 * new_fft_map_data.num_black_tris) + (4 * new_fft_map_data.num_black_quads))
+	new_fft_map_data.untextured_polygon_bytes.fill(0)
+
+	new_fft_map_data.textured_polygon_tile_bytes = []
+	new_fft_map_data.textured_polygon_tile_bytes.append_array(textured_tri_tile_bytes)
+	new_fft_map_data.textured_polygon_tile_bytes.append_array(textured_quad_tile_bytes)
 
 	return new_fft_map_data
 
@@ -1251,7 +1297,7 @@ static func get_mirror_fft_map_data(original_fft_map_data: FftMapData, mirror_sc
 		for z: int in original_fft_map_data.map_length:
 			for x: int in original_fft_map_data.map_width:
 				var tile_index: int = x + (z * original_fft_map_data.map_width)
-				var tile_data_start: int = 2 + (tile_index * BYTES_PER_TERRAIN_TILE) + (layer * 256 * 8) # each layer has space for 256 tiles, each tile data is 8 bytes
+				var tile_data_start: int = 2 + (tile_index * BYTES_PER_TERRAIN_TILE) + (layer * 256 * BYTES_PER_TERRAIN_TILE) # each layer has space for 256 tiles, each tile data is 8 bytes
 				var tile_data: PackedByteArray = original_fft_map_data.terrain_data_bytes.slice(tile_data_start, tile_data_start + BYTES_PER_TERRAIN_TILE)
 
 				var mirrored_tile_index: int = tile_index

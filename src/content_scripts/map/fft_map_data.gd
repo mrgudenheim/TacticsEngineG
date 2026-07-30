@@ -8,6 +8,12 @@ const SCALE: float = 1.0 / TILE_SIDE_LENGTH
 const HEIGHT_SCALE: float = UNITS_PER_HEIGHT / (TILE_SIDE_LENGTH * 1.0)
 const TEXTURE_SIZE: Vector2i = Vector2i(256, 1024)
 
+const NUM_VERTICIES_PER_TRI: int = 3
+const NUM_VERTICIES_PER_QUAD: int = 4
+const BYTES_PER_TERRAIN_TILE: int = 8
+const TEXTURE_BYTES_PER_TRI: int = 10
+const TEXTURE_BYTES_PER_QUAD: int = 12
+
 var unique_name: String = "unique_name"
 var display_name: String = "display_name"
 var description: String = "description"
@@ -39,6 +45,8 @@ var black_quad_vertices: PackedVector3Array = []
 var text_tri_normals: PackedVector3Array = []
 var text_quad_normals: PackedVector3Array = []
 
+var tris_texture_bytes: PackedByteArray = []
+var quads_texture_bytes: PackedByteArray = []
 var tris_uvs: PackedVector2Array = []
 var quads_uvs: PackedVector2Array = []
 var tris_palettes: PackedInt32Array = []
@@ -469,8 +477,10 @@ func set_mesh_data(primary_mesh_data: PackedByteArray) -> void:
 
 	#tris_uvs = get_uvs(primary_mesh_data.slice(tris_uvs_start, quads_uvs_start), num_text_tris, false)
 	#quads_uvs = get_uvs(primary_mesh_data.slice(quads_uvs_start, quads_uvs_start + quad_uvs_data_length), num_text_quads, true)
-	tris_uvs = get_uvs_all_palettes(primary_mesh_data.slice(tris_uvs_start, quads_uvs_start), num_text_tris, false)
-	quads_uvs = get_uvs_all_palettes(primary_mesh_data.slice(quads_uvs_start, quads_uvs_start + quad_uvs_data_length), num_text_quads, true)
+	tris_texture_bytes = primary_mesh_data.slice(tris_uvs_start, quads_uvs_start)
+	quads_texture_bytes = primary_mesh_data.slice(quads_uvs_start, quads_uvs_start + quad_uvs_data_length)
+	tris_uvs = get_uvs_all_palettes(tris_texture_bytes, num_text_tris, false)
+	quads_uvs = get_uvs_all_palettes(quads_texture_bytes, num_text_quads, true)
 
 
 func get_vertices(vertex_bytes: PackedByteArray, num_vertices: int) -> PackedVector3Array:
@@ -1050,6 +1060,8 @@ static func get_adjusted_map_data(original_fft_map_data: FftMapData, quadrants: 
 
 static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictionary[Vector2i, FftMapData]) -> FftMapData:
 	var new_fft_map_data: FftMapData = mirrored_map_data[Vector2i.ZERO].duplicate()
+	new_fft_map_data.tris_texture_bytes = []
+	new_fft_map_data.quads_texture_bytes = []
 	var original_map_size: Vector2i = Vector2i(new_fft_map_data.map_width, new_fft_map_data.map_length)
 	new_fft_map_data.map_width = cropped_rect.size.x
 	new_fft_map_data.map_length = cropped_rect.size.y
@@ -1069,8 +1081,6 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 		var cropped_intersection: Rect2i = cropped_rect.intersection(mirrored_map_rect)
 		
 		# get polygon data
-		var num_verticies_per_tri: int = 3
-		var num_verticies_per_quad: int = 4
 		var cropped_polygon_rect: Rect2i = cropped_intersection.grow_individual(0, 0, 1, 1) # include polygons along bottom and right borders
 		cropped_polygon_rect.position = cropped_polygon_rect.position * TILE_SIDE_LENGTH
 		cropped_polygon_rect.size = cropped_polygon_rect.size * TILE_SIDE_LENGTH
@@ -1080,8 +1090,8 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 			var tri_verticies: Array[Vector3i] = []
 			var tri_normals: PackedVector3Array = []
 			var polygon_in_bounds: bool = true
-			for vertex_index: int in num_verticies_per_tri:
-				var total_index: int = (tri_index * num_verticies_per_tri) + vertex_index
+			for vertex_index: int in NUM_VERTICIES_PER_TRI:
+				var total_index: int = (tri_index * NUM_VERTICIES_PER_TRI) + vertex_index
 				var new_vertex: Vector3i = Vector3i(mirrored_map.text_tri_vertices[total_index].round())
 				tri_verticies.append(new_vertex)
 				tri_normals.append(mirrored_map.text_tri_normals[total_index])
@@ -1092,19 +1102,20 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 			if not polygon_in_bounds:
 				continue
 
-			for vertex_index: int in num_verticies_per_tri:
-				var new_map_total_index: int = (new_map_textured_tri_index * num_verticies_per_tri) + vertex_index
+			for vertex_index: int in NUM_VERTICIES_PER_TRI:
+				var new_map_total_index: int = (new_map_textured_tri_index * NUM_VERTICIES_PER_TRI) + vertex_index
 				new_fft_map_data.text_tri_vertices[new_map_total_index] = tri_verticies[vertex_index]
 				new_fft_map_data.text_tri_normals[new_map_total_index] = tri_normals[vertex_index]
-				# TODO polygon texture data?
 			new_map_textured_tri_index += 1
-
+			var polygon_texture_bytes: PackedByteArray = mirrored_map.tris_texture_bytes.slice(tri_index * TEXTURE_BYTES_PER_TRI, TEXTURE_BYTES_PER_TRI)
+			new_fft_map_data.tris_texture_bytes.append_array(polygon_texture_bytes)
+			
 		# add black tris
 		for tri_index: int in mirrored_map.num_black_tris:
 			var tri_verticies: Array[Vector3i] = []
 			var polygon_in_bounds: bool = true
-			for vertex_index: int in num_verticies_per_tri:
-				var total_index: int = (tri_index * num_verticies_per_tri) + vertex_index
+			for vertex_index: int in NUM_VERTICIES_PER_TRI:
+				var total_index: int = (tri_index * NUM_VERTICIES_PER_TRI) + vertex_index
 				var new_vertex: Vector3i = Vector3i(mirrored_map.black_tri_vertices[total_index].round())
 				tri_verticies.append(new_vertex)
 
@@ -1115,8 +1126,8 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 			if not polygon_in_bounds:
 				continue
 			
-			for vertex_index: int in num_verticies_per_tri:
-				var new_map_total_index: int = (new_map_black_tri_index * num_verticies_per_tri) + vertex_index
+			for vertex_index: int in NUM_VERTICIES_PER_TRI:
+				var new_map_total_index: int = (new_map_black_tri_index * NUM_VERTICIES_PER_TRI) + vertex_index
 				new_fft_map_data.black_tri_vertices[new_map_total_index] = tri_verticies[vertex_index]
 			new_map_black_tri_index += 1
 
@@ -1125,8 +1136,8 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 			var quad_verticies: Array[Vector3i] = []
 			var quad_normals: PackedVector3Array = []
 			var polygon_in_bounds: bool = true
-			for vertex_index: int in num_verticies_per_quad:
-				var total_index: int = (quad_index * num_verticies_per_quad) + vertex_index
+			for vertex_index: int in NUM_VERTICIES_PER_QUAD:
+				var total_index: int = (quad_index * NUM_VERTICIES_PER_QUAD) + vertex_index
 				var new_vertex: Vector3i = Vector3i(mirrored_map.text_quad_vertices[total_index].round())
 				quad_verticies.append(new_vertex)
 				quad_normals.append(mirrored_map.text_quad_normals[total_index])
@@ -1137,20 +1148,21 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 			if not polygon_in_bounds:
 				continue
 
-			for vertex_index: int in num_verticies_per_quad:
-				var new_map_total_index: int = (new_map_textured_quad_index * num_verticies_per_quad) + vertex_index
+			for vertex_index: int in NUM_VERTICIES_PER_QUAD:
+				var new_map_total_index: int = (new_map_textured_quad_index * NUM_VERTICIES_PER_QUAD) + vertex_index
 				new_fft_map_data.text_quad_vertices[new_map_total_index] = quad_verticies[vertex_index]
 				new_fft_map_data.text_quad_normals[new_map_total_index] = quad_normals[vertex_index]
-				# TODO polygon texture data?
 			new_map_textured_quad_index += 1
+			var polygon_texture_bytes: PackedByteArray = mirrored_map.quads_texture_bytes.slice(quad_index * TEXTURE_BYTES_PER_QUAD, TEXTURE_BYTES_PER_QUAD)
+			new_fft_map_data.quads_texture_bytes.append_array(polygon_texture_bytes)
 
 		# add black quads
 		for quad_index: int in mirrored_map.num_black_quads:
 			var quad_verticies: Array[Vector3i] = []
 			var polygon_in_bounds: bool = true
 			
-			for vertex_index: int in num_verticies_per_quad:
-				var total_index: int = (quad_index * num_verticies_per_quad) + vertex_index
+			for vertex_index: int in NUM_VERTICIES_PER_QUAD:
+				var total_index: int = (quad_index * NUM_VERTICIES_PER_QUAD) + vertex_index
 				var new_vertex: Vector3i = Vector3i(mirrored_map.black_quad_vertices[total_index].round())
 				quad_verticies.append(new_vertex)
 
@@ -1161,15 +1173,14 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 			if not polygon_in_bounds:
 				continue
 			
-			for vertex_index: int in num_verticies_per_quad:
-				var new_map_total_index: int = (new_map_black_quad_index * num_verticies_per_quad) + vertex_index
+			for vertex_index: int in NUM_VERTICIES_PER_QUAD:
+				var new_map_total_index: int = (new_map_black_quad_index * NUM_VERTICIES_PER_QUAD) + vertex_index
 				new_fft_map_data.black_quad_vertices[new_map_total_index] = quad_verticies[vertex_index]
 			new_map_black_quad_index += 1
 
 
 		# get terrain data
 		var cropped_terrain_rect: Rect2i = cropped_intersection.grow_individual(0, -1, 0, 1) # shift rect so points on the top are not included and so points on the bottom are included
-		var tile_data_length: int = 8
 		for layer: int in [0, 1]:
 			for z: int in mirrored_map.map_length:
 				for x: int in mirrored_map.map_width:
@@ -1211,38 +1222,37 @@ static func get_mirror_fft_map_data(original_fft_map_data: FftMapData, mirror_sc
 	
 	# add textured tris
 	for tri_index: int in mirrored_fft_map.num_text_tris:
-		for vertex_index: int in 3:
-			var total_index: int = (tri_index * 3) + vertex_index
+		for vertex_index: int in NUM_VERTICIES_PER_TRI:
+			var total_index: int = (tri_index * NUM_VERTICIES_PER_TRI) + vertex_index
 			mirrored_fft_map.text_tri_vertices[total_index] = original_fft_map_data.text_tri_vertices[total_index] * mirror_scale
 			mirrored_fft_map.text_tri_normals[total_index] = original_fft_map_data.text_tri_normals[total_index] * mirror_scale
 
 	# add black tris
 	for tri_index: int in mirrored_fft_map.num_black_tris:
-		for vertex_index: int in 3:
-			var total_index: int = (tri_index * 3) + vertex_index
+		for vertex_index: int in NUM_VERTICIES_PER_TRI:
+			var total_index: int = (tri_index * NUM_VERTICIES_PER_TRI) + vertex_index
 			mirrored_fft_map.black_tri_vertices[total_index] = original_fft_map_data.black_tri_vertices[total_index] * mirror_scale
 
 	# add textured quads
 	for quad_index: int in mirrored_fft_map.num_text_quads:
-		for vertex_index: int in 4:
-			var total_index: int = (quad_index * 4) + vertex_index
+		for vertex_index: int in NUM_VERTICIES_PER_QUAD:
+			var total_index: int = (quad_index * NUM_VERTICIES_PER_QUAD) + vertex_index
 			mirrored_fft_map.text_quad_vertices[total_index] = original_fft_map_data.text_quad_vertices[total_index] * mirror_scale
 			mirrored_fft_map.text_quad_normals[total_index] = original_fft_map_data.text_quad_normals[total_index] * mirror_scale
 
 	# add black quads
 	for quad_index: int in mirrored_fft_map.num_black_quads:
-		for vertex_index: int in 4:
-			var total_index: int = (quad_index * 4) + vertex_index
+		for vertex_index: int in NUM_VERTICIES_PER_QUAD:
+			var total_index: int = (quad_index * NUM_VERTICIES_PER_QUAD) + vertex_index
 			mirrored_fft_map.black_quad_vertices[total_index] = original_fft_map_data.black_quad_vertices[total_index] * mirror_scale
 
 	# mirror terrain_tile data
-	var tile_data_length: int = 8
 	for layer: int in [0, 1]:
 		for z: int in original_fft_map_data.map_length:
 			for x: int in original_fft_map_data.map_width:
 				var tile_index: int = x + (z * original_fft_map_data.map_width)
 				var tile_data_start: int = 2 + (tile_index * tile_data_length) + (layer * 256 * 8) # each layer has space for 256 tiles, each tile data is 8 bytes
-				var tile_data: PackedByteArray = original_fft_map_data.terrain_data_bytes.slice(tile_data_start, tile_data_start + tile_data_length)
+				var tile_data: PackedByteArray = original_fft_map_data.terrain_data_bytes.slice(tile_data_start, tile_data_start + BYTES_PER_TERRAIN_TILE)
 
 				var mirrored_tile_index: int = tile_index
 				var mirrored_x: int = x
@@ -1307,7 +1317,7 @@ static func get_mirror_fft_map_data(original_fft_map_data: FftMapData, mirror_sc
 				# TODO mirror camera rotate?
 				# tile.default_camera_position_id = tile_data.decode_u8(7)
 
-				for byte_index: int in tile_data_length:
+				for byte_index: int in BYTES_PER_TERRAIN_TILE:
 					mirrored_fft_map.terrain_data_bytes.set(mirrored_tile_index + byte_index, new_tile_data.get(byte_index))
 	
 	# TODO delete overlapping polygons at seams?

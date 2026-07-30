@@ -1039,6 +1039,20 @@ func export_maps(save_path: String) -> void:
 			continue # skip map 0 - causes crash
 
 		export_map(maps_path, fft_map_data)
+		
+		if fft_map_data.unique_name == "map_022_magic_city_gariland":
+			var custom_mesh_file: PackedByteArray = FftMapData.get_adjusted_mesh_file(fft_map_data)
+			var file_path: String = "user://" + fft_map_data.unique_name + ".mesh"
+			var file = FileAccess.open(file_path, FileAccess.WRITE)
+		
+			# Verify that the file opened successfully before attempting to write
+			if file != null:
+				file.store_buffer(custom_mesh_file)
+				file.close() # Always close the file to prevent memory leaks
+				print("File saved successfully to: ", file_path)
+			else:
+				var error = FileAccess.get_open_error()
+				push_error("Failed to open file. Error code: ", error)
 
 
 func export_map(save_path: String, fft_map_data: FftMapData, export_full_color_texture: bool = false) -> void:

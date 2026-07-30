@@ -1066,9 +1066,9 @@ func get_scaled_collision_shape(collision_scale: Vector3) -> ConcavePolygonShape
 static func get_adjusted_mesh_file(fft_map_data: FftMapData) -> PackedByteArray:
 	var mirror_quadrants: PackedVector2Array = [
 		Vector2(0, 0), # vanilla location
-		Vector2(-1, 0),
-		Vector2(0, 1),
-		Vector2(-1, 1),
+		#Vector2(-1, 0),
+		#Vector2(0, 1),
+		#Vector2(-1, 1),
 	]
 	var cropped_rect: Rect2i = Rect2i(Vector2i(-10, 11), Vector2i(20, 12))
 	
@@ -1144,7 +1144,7 @@ static func get_fft_mesh_file(fft_map_data: FftMapData) -> PackedByteArray:
 			primary_mesh_textured_tri_normals.encode_s16((coordinate_index + 2) * 2, roundi(vertex_normals.z * 4096.0))
 
 	var primary_mesh_textured_quad_normals: PackedByteArray = []
-	primary_mesh_textured_tri_normals.resize(fft_map_data.num_text_tris * NUM_VERTICIES_PER_QUAD * 3 * 2) # 3 coordinates (x, y, x) per vertex, 2 bytes per coordinate
+	primary_mesh_textured_quad_normals.resize(fft_map_data.num_text_quads * NUM_VERTICIES_PER_QUAD * 3 * 2) # 3 coordinates (x, y, x) per vertex, 2 bytes per coordinate
 	for quad_index: int in fft_map_data.num_text_quads:
 		for vertex_index: int in NUM_VERTICIES_PER_QUAD:
 			var total_index: int = (quad_index * NUM_VERTICIES_PER_QUAD) + vertex_index
@@ -1273,7 +1273,7 @@ static func get_adjusted_map_data(original_fft_map_data: FftMapData, quadrants: 
 
 
 static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictionary[Vector2i, FftMapData]) -> FftMapData:
-	var new_fft_map_data: FftMapData = mirrored_map_data[Vector2i.ZERO].duplicate()
+	var new_fft_map_data: FftMapData = mirrored_map_data[Vector2i.ZERO].duplicate_deep()
 	new_fft_map_data.tris_texture_bytes = []
 	new_fft_map_data.quads_texture_bytes = []
 	var original_map_size: Vector2i = Vector2i(new_fft_map_data.map_width, new_fft_map_data.map_length)
@@ -1324,7 +1324,8 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 				new_fft_map_data.text_tri_vertices[new_map_total_index] = Vector3(tri_verticies[vertex_index])
 				new_fft_map_data.text_tri_normals[new_map_total_index] = Vector3(tri_normals[vertex_index])
 			new_map_textured_tri_index += 1
-			var polygon_texture_bytes: PackedByteArray = mirrored_map.tris_texture_bytes.slice(tri_index * TEXTURE_BYTES_PER_TRI, TEXTURE_BYTES_PER_TRI)
+			var tri_texture_bytes_start: int = tri_index * TEXTURE_BYTES_PER_TRI
+			var polygon_texture_bytes: PackedByteArray = mirrored_map.tris_texture_bytes.slice(tri_texture_bytes_start, tri_texture_bytes_start + TEXTURE_BYTES_PER_TRI)
 			new_fft_map_data.tris_texture_bytes.append_array(polygon_texture_bytes)
 
 			var polygon_tile_bytes: PackedByteArray = [
@@ -1376,7 +1377,8 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 				new_fft_map_data.text_quad_vertices[new_map_total_index] = Vector3(quad_verticies[vertex_index])
 				new_fft_map_data.text_quad_normals[new_map_total_index] = Vector3(quad_normals[vertex_index])
 			new_map_textured_quad_index += 1
-			var polygon_texture_bytes: PackedByteArray = mirrored_map.quads_texture_bytes.slice(quad_index * TEXTURE_BYTES_PER_QUAD, TEXTURE_BYTES_PER_QUAD)
+			var quad_texture_bytes_start: int = quad_index * TEXTURE_BYTES_PER_QUAD
+			var polygon_texture_bytes: PackedByteArray = mirrored_map.quads_texture_bytes.slice(quad_texture_bytes_start, quad_texture_bytes_start + TEXTURE_BYTES_PER_QUAD)
 			new_fft_map_data.quads_texture_bytes.append_array(polygon_texture_bytes)
 
 			var polygon_tile_bytes: PackedByteArray = [
@@ -1407,9 +1409,9 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 				new_fft_map_data.black_quad_vertices[new_map_total_index] = Vector3(quad_verticies[vertex_index])
 			new_map_black_quad_index += 1
 
-
 		# get terrain data
-		var cropped_terrain_rect: Rect2i = cropped_intersection.grow_individual(0, -1, 0, 1) # shift rect so points on the top are not included and so points on the bottom are included
+		var cropped_terrain_rect: Rect2i = cropped_intersection.grow_individual(0, 0, 0, 0)
+		cropped_terrain_rect.position = cropped_terrain_rect.position - Vector2i(0, 1) # shift rect so points on the top are not included and so points on the bottom are included and points on top are not
 		for layer: int in [0, 1]:
 			for z: int in mirrored_map.map_length:
 				for x: int in mirrored_map.map_width:

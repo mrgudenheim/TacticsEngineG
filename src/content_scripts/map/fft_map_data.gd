@@ -1029,9 +1029,161 @@ func get_scaled_collision_shape(collision_scale: Vector3) -> ConcavePolygonShape
 	return new_collision_shape
 
 
-func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictionary[Vector2i, FftMapData]) -> FftMapData:
-	var new_fft_map_data: FftMapData = mirrored_map_data.values()[0].duplicate
+static func save_fft_mesh_file(fft_map_data: FftMapData) -> void:
+	var mirror_quadrants: PackedVector2Array = [
+		Vector2(0, 0), # vanilla location
+		Vector2(-1, 0),
+		Vector2(0, 1),
+		Vector2(-1, 1),
+	]
+	var cropped_rect: Rect2i = Rect2i(Vector2i(-10, 11), Vector2i(20, 12))
+	
+	var adjusted_map_data: FftMapData = get_adjusted_map_data(fft_map_data, mirror_quadrants, cropped_rect)
 
+
+static func get_adjusted_map_data(original_fft_map_data: FftMapData, quadrants: PackedVector2Array, cropped_rect: Rect2i) -> FftMapData:
+	var mirrored_maps: Dictionary[Vector2i, FftMapData] = get_mirrored_expanded_map_data(original_fft_map_data, quadrants, true)
+
+	var new_fft_map_data: FftMapData = get_cropped_map_data(cropped_rect, mirrored_maps)
+	return new_fft_map_data
+
+
+static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictionary[Vector2i, FftMapData]) -> FftMapData:
+	var new_fft_map_data: FftMapData = mirrored_map_data[Vector2i.ZERO].duplicate()
+	var original_map_size: Vector2i = Vector2i(new_fft_map_data.map_width, new_fft_map_data.map_length)
+	new_fft_map_data.map_width = cropped_rect.size.x
+	new_fft_map_data.map_length = cropped_rect.size.y
+
+	var new_map_textured_tri_index: int = 0
+	var new_map_black_tri_index: int = 0
+	var new_map_textured_quad_index: int = 0
+	var new_map_black_quad_index: int = 0
+	
+	for mirrored_map_quadrant: Vector2i in mirrored_map_data.keys():
+		var mirrored_map: FftMapData = mirrored_map_data[mirrored_map_quadrant]
+
+		var quadrant_start_position: Vector2i = Vector2i.ZERO # bottom left corner of map
+		quadrant_start_position.x = mirrored_map.map_width * mirrored_map_quadrant.x
+		quadrant_start_position.y = mirrored_map.map_length * mirrored_map_quadrant.y
+		var mirrored_map_rect: Rect2i = Rect2i(quadrant_start_position, Vector2i(original_map_size))
+		var cropped_intersection: Rect2i = cropped_rect.intersection(mirrored_map_rect)
+		
+		# get polygon data
+		var num_verticies_per_tri: int = 3
+		var num_verticies_per_quad: int = 4
+		var cropped_polygon_rect: Rect2i = cropped_intersection.grow_individual(0, 0, 1, 1) # include polygons along bottom and right borders
+		cropped_polygon_rect.position = cropped_polygon_rect.position * TILE_SIDE_LENGTH
+		cropped_polygon_rect.size = cropped_polygon_rect.size * TILE_SIDE_LENGTH
+		
+		# add textured tris
+		for tri_index: int in mirrored_map.num_text_tris:
+			var tri_verticies: Array[Vector3i] = []
+			var tri_normals: PackedVector3Array = []
+			var polygon_in_bounds: bool = true
+			for vertex_index: int in num_verticies_per_tri:
+				var total_index: int = (tri_index * num_verticies_per_tri) + vertex_index
+				var new_vertex: Vector3i = Vector3i(mirrored_map.text_tri_vertices[total_index].round())
+				tri_verticies.append(new_vertex)
+				tri_normals.append(mirrored_map.text_tri_normals[total_index])
+
+				if not cropped_polygon_rect.has_point(Vector2i(new_vertex.x, new_vertex.z)):
+					polygon_in_bounds = false
+			
+			if not polygon_in_bounds:
+				continue
+
+			for vertex_index: int in num_verticies_per_tri:
+				var new_map_total_index: int = (new_map_textured_tri_index * num_verticies_per_tri) + vertex_index
+				new_fft_map_data.text_tri_vertices[new_map_total_index] = tri_verticies[vertex_index]
+				new_fft_map_data.text_tri_normals[new_map_total_index] = tri_normals[vertex_index]
+				# TODO polygon texture data?
+			new_map_textured_tri_index += 1
+
+		# add black tris
+		for tri_index: int in mirrored_map.num_black_tris:
+			var tri_verticies: Array[Vector3i] = []
+			var polygon_in_bounds: bool = true
+			for vertex_index: int in num_verticies_per_tri:
+				var total_index: int = (tri_index * num_verticies_per_tri) + vertex_index
+				var new_vertex: Vector3i = Vector3i(mirrored_map.black_tri_vertices[total_index].round())
+				tri_verticies.append(new_vertex)
+
+				if not cropped_polygon_rect.has_point(Vector2i(new_vertex.x, new_vertex.z)):
+					polygon_in_bounds = false
+					break
+			
+			if not polygon_in_bounds:
+				continue
+			
+			for vertex_index: int in num_verticies_per_tri:
+				var new_map_total_index: int = (new_map_black_tri_index * num_verticies_per_tri) + vertex_index
+				new_fft_map_data.black_tri_vertices[new_map_total_index] = tri_verticies[vertex_index]
+			new_map_black_tri_index += 1
+
+		# add textured quads
+		for quad_index: int in mirrored_map.num_text_quads:
+			var quad_verticies: Array[Vector3i] = []
+			var quad_normals: PackedVector3Array = []
+			var polygon_in_bounds: bool = true
+			for vertex_index: int in num_verticies_per_quad:
+				var total_index: int = (quad_index * num_verticies_per_quad) + vertex_index
+				var new_vertex: Vector3i = Vector3i(mirrored_map.text_quad_vertices[total_index].round())
+				quad_verticies.append(new_vertex)
+				quad_normals.append(mirrored_map.text_quad_normals[total_index])
+
+				if not cropped_polygon_rect.has_point(Vector2i(new_vertex.x, new_vertex.z)):
+					polygon_in_bounds = false
+			
+			if not polygon_in_bounds:
+				continue
+
+			for vertex_index: int in num_verticies_per_quad:
+				var new_map_total_index: int = (new_map_textured_quad_index * num_verticies_per_quad) + vertex_index
+				new_fft_map_data.text_quad_vertices[new_map_total_index] = quad_verticies[vertex_index]
+				new_fft_map_data.text_quad_normals[new_map_total_index] = quad_normals[vertex_index]
+				# TODO polygon texture data?
+			new_map_textured_quad_index += 1
+
+		# add black quads
+		for quad_index: int in mirrored_map.num_black_quads:
+			var quad_verticies: Array[Vector3i] = []
+			var polygon_in_bounds: bool = true
+			
+			for vertex_index: int in num_verticies_per_quad:
+				var total_index: int = (quad_index * num_verticies_per_quad) + vertex_index
+				var new_vertex: Vector3i = Vector3i(mirrored_map.black_quad_vertices[total_index].round())
+				quad_verticies.append(new_vertex)
+
+				if not cropped_polygon_rect.has_point(Vector2i(new_vertex.x, new_vertex.z)):
+					polygon_in_bounds = false
+					break
+			
+			if not polygon_in_bounds:
+				continue
+			
+			for vertex_index: int in num_verticies_per_quad:
+				var new_map_total_index: int = (new_map_black_quad_index * num_verticies_per_quad) + vertex_index
+				new_fft_map_data.black_quad_vertices[new_map_total_index] = quad_verticies[vertex_index]
+			new_map_black_quad_index += 1
+
+
+		# get terrain data
+		var cropped_terrain_rect: Rect2i = cropped_intersection.grow_individual(0, -1, 0, 1) # shift rect so points on the top are not included and so points on the bottom are included
+		var tile_data_length: int = 8
+		for layer: int in [0, 1]:
+			for z: int in mirrored_map.map_length:
+				for x: int in mirrored_map.map_width:
+					var relative_position: Vector2i = Vector2i(x, z) + quadrant_start_position
+					if cropped_terrain_rect.has_point(relative_position):
+						var tile_index: int = x + (z * mirrored_map.map_width)
+						var tile_data_start: int = 2 + (tile_index * tile_data_length) + (layer * 256 * 8) # each layer has space for 256 tiles, each tile data is 8 bytes
+						var tile_data: PackedByteArray = mirrored_map.terrain_data_bytes.slice(tile_data_start, tile_data_start + tile_data_length)
+
+						var final_tile_position: Vector2i = relative_position - cropped_rect.position
+						var final_tile_index: int = final_tile_position.x + (final_tile_position.y * cropped_rect.size.x)
+
+						for byte_index: int in tile_data_length:
+							new_fft_map_data.terrain_data_bytes.set(final_tile_index + byte_index, tile_data.get(byte_index))
 
 	return new_fft_map_data
 
@@ -1042,16 +1194,9 @@ static func get_mirrored_expanded_map_data(original_fft_map_data: FftMapData, qu
 	for quadrant: Vector2 in quadrants:
 		var adjusted_quadrant: Vector2i = Vector2i(roundi(quadrant.x), roundi(quadrant.y))
 		var mirror_scale: Vector3 = Vector3.ONE
-		if quadrant.x < 0:
-			adjusted_quadrant.x -= 1
-			adjusted_quadrant.x = absi(adjusted_quadrant.x)
-		if quadrant.y < 0:
-			adjusted_quadrant.y -= 1
-			adjusted_quadrant.y = absi(adjusted_quadrant.y)
-		
-		if adjusted_quadrant.x % 2 == 0:
+		if adjusted_quadrant.x % 2 != 0:
 			mirror_scale.x = -1.0
-		if adjusted_quadrant.y % 2 == 0:
+		if adjusted_quadrant.y % 2 != 0:
 			mirror_scale.z = -1.0
 
 		var mirrored_fft_map_data: FftMapData = get_mirror_fft_map_data(original_fft_map_data, mirror_scale, set_depth_zero)

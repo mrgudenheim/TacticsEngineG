@@ -241,7 +241,7 @@ func create_map(mesh_bytes: PackedByteArray, texture_bytes: PackedByteArray = []
 		# 6 bytes for each directional light color, position, 3 bytes for ambient light color, 6 bytes for gradient colors
 		var lighting_data_length: int = 18 + 18 + 3 + 6
 		var lighting_data_end: int = lighting_data_start + lighting_data_length
-		lighting_and_gradient_bytes = other_bytes.slice(lighting_data_length, lighting_data_end)
+		lighting_and_gradient_bytes = other_bytes.slice(lighting_data_start, lighting_data_end)
 		set_gradient_colors(lighting_and_gradient_bytes.slice(-6))
 
 	if terrain_data_start == 0:
@@ -1321,8 +1321,8 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 
 			for vertex_index: int in NUM_VERTICIES_PER_TRI:
 				var new_map_total_index: int = (new_map_textured_tri_index * NUM_VERTICIES_PER_TRI) + vertex_index
-				new_fft_map_data.text_tri_vertices[new_map_total_index] = tri_verticies[vertex_index]
-				new_fft_map_data.text_tri_normals[new_map_total_index] = tri_normals[vertex_index]
+				new_fft_map_data.text_tri_vertices[new_map_total_index] = Vector3(tri_verticies[vertex_index])
+				new_fft_map_data.text_tri_normals[new_map_total_index] = Vector3(tri_normals[vertex_index])
 			new_map_textured_tri_index += 1
 			var polygon_texture_bytes: PackedByteArray = mirrored_map.tris_texture_bytes.slice(tri_index * TEXTURE_BYTES_PER_TRI, TEXTURE_BYTES_PER_TRI)
 			new_fft_map_data.tris_texture_bytes.append_array(polygon_texture_bytes)
@@ -1351,7 +1351,7 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 			
 			for vertex_index: int in NUM_VERTICIES_PER_TRI:
 				var new_map_total_index: int = (new_map_black_tri_index * NUM_VERTICIES_PER_TRI) + vertex_index
-				new_fft_map_data.black_tri_vertices[new_map_total_index] = tri_verticies[vertex_index]
+				new_fft_map_data.black_tri_vertices[new_map_total_index] = Vector3(tri_verticies[vertex_index])
 			new_map_black_tri_index += 1
 
 		# add textured quads
@@ -1373,8 +1373,8 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 
 			for vertex_index: int in NUM_VERTICIES_PER_QUAD:
 				var new_map_total_index: int = (new_map_textured_quad_index * NUM_VERTICIES_PER_QUAD) + vertex_index
-				new_fft_map_data.text_quad_vertices[new_map_total_index] = quad_verticies[vertex_index]
-				new_fft_map_data.text_quad_normals[new_map_total_index] = quad_normals[vertex_index]
+				new_fft_map_data.text_quad_vertices[new_map_total_index] = Vector3(quad_verticies[vertex_index])
+				new_fft_map_data.text_quad_normals[new_map_total_index] = Vector3(quad_normals[vertex_index])
 			new_map_textured_quad_index += 1
 			var polygon_texture_bytes: PackedByteArray = mirrored_map.quads_texture_bytes.slice(quad_index * TEXTURE_BYTES_PER_QUAD, TEXTURE_BYTES_PER_QUAD)
 			new_fft_map_data.quads_texture_bytes.append_array(polygon_texture_bytes)
@@ -1404,7 +1404,7 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 			
 			for vertex_index: int in NUM_VERTICIES_PER_QUAD:
 				var new_map_total_index: int = (new_map_black_quad_index * NUM_VERTICIES_PER_QUAD) + vertex_index
-				new_fft_map_data.black_quad_vertices[new_map_total_index] = quad_verticies[vertex_index]
+				new_fft_map_data.black_quad_vertices[new_map_total_index] = Vector3(quad_verticies[vertex_index])
 			new_map_black_quad_index += 1
 
 

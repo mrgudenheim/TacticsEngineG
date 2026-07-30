@@ -1060,7 +1060,7 @@ func export_map(save_path: String, fft_map_data: FftMapData, export_full_color_t
 	var map_data_file_path: String = save_path.path_join(fft_map_data.unique_name + ".map_data.tres")
 	var error: Error = ResourceSaver.save(new_map_data, map_data_file_path)
 	if error != Error.OK:
-		push_warning("error saving map data " + fft_map_data.unique_name + ": " + str(error))
+		push_warning("error saving map data " + fft_map_data.unique_name + ": " + error_string(error))
 
 
 func export_vfx(save_path: String) -> void:

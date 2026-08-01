@@ -1268,6 +1268,12 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 	var new_fft_map_data: FftMapData = mirrored_map_data[Vector2i.ZERO].duplicate_deep()
 	new_fft_map_data.tris_texture_bytes = []
 	new_fft_map_data.quads_texture_bytes = []
+	new_fft_map_data.text_tri_vertices = []
+	new_fft_map_data.text_tri_normals = []
+	new_fft_map_data.text_quad_vertices = []
+	new_fft_map_data.text_quad_normals = []
+	new_fft_map_data.black_tri_vertices = []
+	new_fft_map_data.black_quad_vertices = []
 	var original_map_size: Vector2i = Vector2i(new_fft_map_data.map_width, new_fft_map_data.map_length)
 	new_fft_map_data.map_width = cropped_rect.size.x
 	new_fft_map_data.map_length = cropped_rect.size.y
@@ -1313,6 +1319,9 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 
 			for vertex_index: int in NUM_VERTICIES_PER_TRI:
 				var new_map_total_index: int = (new_map_textured_tri_index * NUM_VERTICIES_PER_TRI) + vertex_index
+				if new_fft_map_data.text_tri_vertices.size() > new_map_total_index - 1:
+					new_fft_map_data.text_tri_vertices.resize(new_map_total_index + 1)
+					new_fft_map_data.text_tri_normals.resize(new_map_total_index + 1)
 				new_fft_map_data.text_tri_vertices[new_map_total_index] = Vector3(tri_verticies[vertex_index])
 				new_fft_map_data.text_tri_normals[new_map_total_index] = Vector3(tri_normals[vertex_index])
 			new_map_textured_tri_index += 1
@@ -1344,6 +1353,8 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 			
 			for vertex_index: int in NUM_VERTICIES_PER_TRI:
 				var new_map_total_index: int = (new_map_black_tri_index * NUM_VERTICIES_PER_TRI) + vertex_index
+				if new_fft_map_data.black_tri_vertices.size() > new_map_total_index - 1:
+					new_fft_map_data.black_tri_vertices.resize(new_map_total_index + 1)
 				new_fft_map_data.black_tri_vertices[new_map_total_index] = Vector3(tri_verticies[vertex_index])
 			new_map_black_tri_index += 1
 
@@ -1366,6 +1377,9 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 
 			for vertex_index: int in NUM_VERTICIES_PER_QUAD:
 				var new_map_total_index: int = (new_map_textured_quad_index * NUM_VERTICIES_PER_QUAD) + vertex_index
+				if new_fft_map_data.text_quad_vertices.size() > new_map_total_index - 1:
+					new_fft_map_data.text_quad_vertices.resize(new_map_total_index + 1)
+					new_fft_map_data.text_quad_normals.resize(new_map_total_index + 1)
 				new_fft_map_data.text_quad_vertices[new_map_total_index] = Vector3(quad_verticies[vertex_index])
 				new_fft_map_data.text_quad_normals[new_map_total_index] = Vector3(quad_normals[vertex_index])
 			new_map_textured_quad_index += 1
@@ -1398,6 +1412,8 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 			
 			for vertex_index: int in NUM_VERTICIES_PER_QUAD:
 				var new_map_total_index: int = (new_map_black_quad_index * NUM_VERTICIES_PER_QUAD) + vertex_index
+				if new_fft_map_data.black_quad_vertices.size() > new_map_total_index - 1:
+					new_fft_map_data.black_quad_vertices.resize(new_map_total_index + 1)
 				new_fft_map_data.black_quad_vertices[new_map_total_index] = Vector3(quad_verticies[vertex_index])
 			new_map_black_quad_index += 1
 

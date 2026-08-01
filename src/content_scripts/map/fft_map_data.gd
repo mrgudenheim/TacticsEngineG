@@ -1265,7 +1265,7 @@ static func get_adjusted_map_data(original_fft_map_data: FftMapData, quadrants: 
 
 
 static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictionary[Vector2i, FftMapData]) -> FftMapData:
-	var new_fft_map_data: FftMapData = mirrored_map_data[Vector2i.ZERO].duplicate_deep()
+	var new_fft_map_data: FftMapData = mirrored_map_data.values()[0].duplicate_deep()
 	new_fft_map_data.tris_texture_bytes = []
 	new_fft_map_data.quads_texture_bytes = []
 	new_fft_map_data.text_tri_vertices = []
@@ -1420,8 +1420,8 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 			new_map_black_quad_index += 1
 
 		# get terrain data
-		var cropped_terrain_rect: Rect2i = cropped_intersection.grow_individual(0, 0, 0, 0)
-		cropped_terrain_rect.position = cropped_terrain_rect.position - Vector2i(0, 1) # shift rect so points on the top are not included and so points on the bottom are included
+		var cropped_terrain_rect: Rect2i = cropped_intersection.grow_individual(0, 0, 0, 1) # grow rect so terrain tiles on edge are included
+		# cropped_terrain_rect.position = cropped_terrain_rect.position - Vector2i(0, 1) # shift rect so points on the top are not included and so points on the bottom are included
 		for layer: int in [0, 1]:
 			for z: int in mirrored_map.map_length:
 				for x: int in mirrored_map.map_width:
@@ -1431,17 +1431,18 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 						var tile_data_start: int = 2 + (tile_index * BYTES_PER_TERRAIN_TILE) + (layer * 256 * BYTES_PER_TERRAIN_TILE) # each layer has space for 256 tiles, each tile data is 8 bytes
 						var tile_data: PackedByteArray = mirrored_map.terrain_data_bytes.slice(tile_data_start, tile_data_start + BYTES_PER_TERRAIN_TILE)
 
-						var final_tile_position: Vector2i = relative_position - cropped_terrain_rect.position
+						var final_tile_position: Vector2i = relative_position - cropped_intersection.position
 						var final_tile_index: int = final_tile_position.x + (final_tile_position.y * cropped_rect.size.x)
+						var final_tile_byte_start: int = 2 + (final_tile_index * BYTES_PER_TERRAIN_TILE) + (layer * 256 * BYTES_PER_TERRAIN_TILE)
 
 						for byte_index: int in BYTES_PER_TERRAIN_TILE:
-							new_fft_map_data.terrain_data_bytes.set(final_tile_index + byte_index, tile_data.get(byte_index))
-	new_fft_map_data.terrain_data_bytes.set(0, new_fft_map_data.map_width)
-	new_fft_map_data.terrain_data_bytes.set(1, new_fft_map_data.map_length)
+							new_fft_map_data.terrain_data_bytes[final_tile_byte_start + byte_index] = tile_data[byte_index]
+	new_fft_map_data.terrain_data_bytes.encode_u8(0, new_fft_map_data.map_width)
+	new_fft_map_data.terrain_data_bytes.encode_u8(1, new_fft_map_data.map_length)
 
 	var total_tiles: int = new_fft_map_data.map_width * new_fft_map_data.map_length
 	if total_tiles > 256:
-		push_warning("Total tiles > 256: " + str(total_tiles))
+		push_warning("Total tiles > 256: " + str(new_fft_map_data.map_width) + " x " + str(new_fft_map_data.map_length) + " = " + str(total_tiles))
 
 	new_fft_map_data.num_text_tris = new_map_textured_tri_index
 	new_fft_map_data.num_black_tris = new_map_black_tri_index
@@ -1480,6 +1481,7 @@ static func get_mirrored_expanded_map_data(original_fft_map_data: FftMapData, qu
 
 static func get_mirror_fft_map_data(original_fft_map_data: FftMapData, adjusted_quadrant: Vector2i, set_depth_zero: bool = false) -> FftMapData:
 	var mirrored_fft_map: FftMapData = original_fft_map_data.duplicate_deep()
+	mirrored_fft_map.terrain_data_bytes.fill(0)
 
 	var mirror_scale: Vector3 = Vector3.ONE
 	if adjusted_quadrant.x % 2 != 0:
@@ -1488,10 +1490,12 @@ static func get_mirror_fft_map_data(original_fft_map_data: FftMapData, adjusted_
 		mirror_scale.z = -1.0
 	
 	var map_translation: Vector3 = Vector3.ZERO
-	if adjusted_quadrant.x != 0:
-		map_translation.x = (adjusted_quadrant.x + 1) * mirrored_fft_map.map_width
-	if adjusted_quadrant.y != 0:
-		map_translation.z = (adjusted_quadrant.y + 1) * mirrored_fft_map.map_length
+	map_translation.x = adjusted_quadrant.x * mirrored_fft_map.map_width
+	map_translation.z = adjusted_quadrant.y * mirrored_fft_map.map_length
+	if mirror_scale.x == -1.0:
+		map_translation.x = (adjusted_quadrant.x + 1) * mirrored_fft_map.map_width # extra adjustment due to implicit translation due to scaling
+	if mirror_scale.z == -1.0:
+		map_translation.z = (adjusted_quadrant.y + 1) * mirrored_fft_map.map_length # extra adjustment due to implicit translation due to scaling
 
 	var reverse_winding: bool = false
 	if mirror_scale == Vector3(-1.0, 1.0, 1.0) or mirror_scale == Vector3(1.0, 1.0, -1.0):
@@ -1562,7 +1566,7 @@ static func get_mirror_fft_map_data(original_fft_map_data: FftMapData, adjusted_
 		for z: int in original_fft_map_data.map_length:
 			for x: int in original_fft_map_data.map_width:
 				var tile_index: int = x + (z * original_fft_map_data.map_width)
-				var tile_data_start: int = 2 + (tile_index * BYTES_PER_TERRAIN_TILE) + (layer * 256 * BYTES_PER_TERRAIN_TILE) # each layer has space for 256 tiles, each tile data is 8 bytes
+				var tile_data_start: int = 2 + (tile_index * BYTES_PER_TERRAIN_TILE) + (layer * 256 * BYTES_PER_TERRAIN_TILE) # first 2 bytes are width and length, each layer has space for 256 tiles, each tile data is 8 bytes
 				var tile_data: PackedByteArray = original_fft_map_data.terrain_data_bytes.slice(tile_data_start, tile_data_start + BYTES_PER_TERRAIN_TILE)
 
 				var mirrored_tile_index: int = tile_index
@@ -1570,7 +1574,7 @@ static func get_mirror_fft_map_data(original_fft_map_data: FftMapData, adjusted_
 				var mirrored_z: int = z
 				var slope_type: int = tile_data.decode_u8(4) # https://ffhacktics.com/wiki/Slope_Type
 				if mirror_scale.x == -1.0:
-					mirrored_x = -x + roundi(map_translation.x)
+					mirrored_x = -x + mirrored_fft_map.map_width - 1
 					if slope_type == 0x52:
 						slope_type = 0x58
 					elif slope_type == 0x58:
@@ -1593,7 +1597,7 @@ static func get_mirror_fft_map_data(original_fft_map_data: FftMapData, adjusted_
 						slope_type = 0x66
 
 				if mirror_scale.z == -1.0:
-					mirrored_z = -z + roundi(map_translation.z)
+					mirrored_z = -z + mirrored_fft_map.map_length - 1
 					if slope_type == 0x25:
 						slope_type = 0x85
 					elif slope_type == 0x85:
@@ -1628,8 +1632,11 @@ static func get_mirror_fft_map_data(original_fft_map_data: FftMapData, adjusted_
 				# TODO mirror camera rotate?
 				# tile.default_camera_position_id = tile_data.decode_u8(7)
 
+				var new_tile_bytes_start: int = 2 + (mirrored_tile_index * BYTES_PER_TERRAIN_TILE) + (layer * 256 * BYTES_PER_TERRAIN_TILE)
 				for byte_index: int in BYTES_PER_TERRAIN_TILE:
-					mirrored_fft_map.terrain_data_bytes.set(mirrored_tile_index + byte_index, new_tile_data.get(byte_index))
+					mirrored_fft_map.terrain_data_bytes[new_tile_bytes_start + byte_index] = new_tile_data[byte_index]
+	mirrored_fft_map.terrain_data_bytes.encode_u8(0, mirrored_fft_map.map_width)
+	mirrored_fft_map.terrain_data_bytes.encode_u8(1, mirrored_fft_map.map_length)
 	
 	# TODO delete overlapping polygons at seams?
 

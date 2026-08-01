@@ -1420,7 +1420,7 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 			new_map_black_quad_index += 1
 
 		# get terrain data
-		var cropped_terrain_rect: Rect2i = cropped_intersection.grow_individual(0, 0, 0, 1) # grow rect so terrain tiles on edge are included
+		var cropped_terrain_rect: Rect2i = cropped_intersection.grow_individual(0, 0, 0, 0) # grow rect so terrain tiles on edge are included
 		# cropped_terrain_rect.position = cropped_terrain_rect.position - Vector2i(0, 1) # shift rect so points on the top are not included and so points on the bottom are included
 		for layer: int in [0, 1]:
 			for z: int in mirrored_map.map_length:

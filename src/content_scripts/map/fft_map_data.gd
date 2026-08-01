@@ -1624,6 +1624,9 @@ static func get_mirror_fft_map_data(original_fft_map_data: FftMapData, adjusted_
 				var new_tile_data: PackedByteArray = tile_data.duplicate()
 				# optionally zero out all depth
 				if set_depth_zero:
+					var depth: int = tile_data.decode_u8(3) >> 5 # left 3 bits are depth
+					var height: int = tile_data.decode_u8(2)
+					new_tile_data.encode_u8(2, height + depth)
 					new_tile_data.encode_u8(3, tile_data.decode_u8(3) & 0x1F) # left 3 bits are depth, set to 0, keep right 5 bits
 
 				# mirror slope type

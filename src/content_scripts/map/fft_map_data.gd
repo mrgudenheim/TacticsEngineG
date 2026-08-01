@@ -1470,21 +1470,26 @@ static func get_mirrored_expanded_map_data(original_fft_map_data: FftMapData, qu
 	
 	for quadrant: Vector2 in quadrants:
 		var adjusted_quadrant: Vector2i = Vector2i(roundi(quadrant.x), roundi(quadrant.y))
-		var mirror_scale: Vector3 = Vector3.ONE
-		if adjusted_quadrant.x % 2 != 0:
-			mirror_scale.x = -1.0
-		if adjusted_quadrant.y % 2 != 0:
-			mirror_scale.z = -1.0
-
-		var mirrored_fft_map_data: FftMapData = get_mirror_fft_map_data(original_fft_map_data, mirror_scale, set_depth_zero)
-
-		mirrored_map_data[Vector2i(roundi(quadrant.x), roundi(quadrant.y))] = mirrored_fft_map_data
+		var mirrored_fft_map_data: FftMapData = get_mirror_fft_map_data(original_fft_map_data, adjusted_quadrant, set_depth_zero)
+		mirrored_map_data[adjusted_quadrant] = mirrored_fft_map_data
 	
 	return mirrored_map_data
 
 
-static func get_mirror_fft_map_data(original_fft_map_data: FftMapData, mirror_scale: Vector3, set_depth_zero: bool = false) -> FftMapData:
+static func get_mirror_fft_map_data(original_fft_map_data: FftMapData, adjusted_quadrant: Vector2i, set_depth_zero: bool = false) -> FftMapData:
 	var mirrored_fft_map: FftMapData = original_fft_map_data.duplicate_deep()
+
+	var mirror_scale: Vector3 = Vector3.ONE
+	if adjusted_quadrant.x % 2 != 0:
+		mirror_scale.x = -1.0
+	if adjusted_quadrant.y % 2 != 0:
+		mirror_scale.z = -1.0
+	
+	var map_translation: Vector3 = Vector3.ZERO
+	if adjusted_quadrant.x != 0:
+		map_translation.x = (adjusted_quadrant.x + 1) * mirrored_fft_map.map_width
+	if adjusted_quadrant.y != 0:
+		map_translation.z = (adjusted_quadrant.y + 1) * mirrored_fft_map.map_length
 
 	var reverse_winding: bool = false
 	if mirror_scale == Vector3(-1.0, 1.0, 1.0) or mirror_scale == Vector3(1.0, 1.0, -1.0):
@@ -1500,7 +1505,7 @@ static func get_mirror_fft_map_data(original_fft_map_data: FftMapData, mirror_sc
 			var mirror_index: int = total_index
 			if reverse_winding and [0, 2].has(vertex_index):
 				mirror_index = (tri_index * NUM_VERTICIES_PER_TRI) + NUM_VERTICIES_PER_TRI - 1 - vertex_index
-			mirrored_fft_map.text_tri_vertices[mirror_index] = original_fft_map_data.text_tri_vertices[total_index] * mirror_scale
+			mirrored_fft_map.text_tri_vertices[mirror_index] = (original_fft_map_data.text_tri_vertices[total_index] * mirror_scale) + (map_translation * TILE_SIDE_LENGTH)
 			mirrored_fft_map.text_tri_normals[mirror_index] = original_fft_map_data.text_tri_normals[total_index] * mirror_scale
 			
 			# reverse winding UVs
@@ -1518,7 +1523,7 @@ static func get_mirror_fft_map_data(original_fft_map_data: FftMapData, mirror_sc
 			var mirror_index: int = total_index
 			if reverse_winding and [0, 2].has(vertex_index):
 				mirror_index = (tri_index * NUM_VERTICIES_PER_TRI) + NUM_VERTICIES_PER_TRI - 1 - vertex_index
-			mirrored_fft_map.black_tri_vertices[mirror_index] = original_fft_map_data.black_tri_vertices[total_index] * mirror_scale
+			mirrored_fft_map.black_tri_vertices[mirror_index] = (original_fft_map_data.black_tri_vertices[total_index] * mirror_scale) + (map_translation * TILE_SIDE_LENGTH)
 
 	# add textured quads
 	for quad_index: int in mirrored_fft_map.num_text_quads:
@@ -1530,7 +1535,7 @@ static func get_mirror_fft_map_data(original_fft_map_data: FftMapData, mirror_sc
 			var mirror_index: int = total_index
 			if reverse_winding and [1, 2].has(vertex_index):
 				mirror_index = (quad_index * NUM_VERTICIES_PER_QUAD) + NUM_VERTICIES_PER_QUAD - 1 - vertex_index
-			mirrored_fft_map.text_quad_vertices[mirror_index] = original_fft_map_data.text_quad_vertices[total_index] * mirror_scale
+			mirrored_fft_map.text_quad_vertices[mirror_index] = (original_fft_map_data.text_quad_vertices[total_index] * mirror_scale) + (map_translation * TILE_SIDE_LENGTH)
 			mirrored_fft_map.text_quad_normals[mirror_index] = original_fft_map_data.text_quad_normals[total_index] * mirror_scale
 
 			# reverse winding UVs
@@ -1548,8 +1553,7 @@ static func get_mirror_fft_map_data(original_fft_map_data: FftMapData, mirror_sc
 			var mirror_index: int = total_index
 			if reverse_winding and [1, 2].has(vertex_index):
 				mirror_index = (quad_index * NUM_VERTICIES_PER_QUAD) + NUM_VERTICIES_PER_QUAD - 1 - vertex_index
-			mirrored_fft_map.black_quad_vertices[mirror_index] = original_fft_map_data.black_quad_vertices[total_index] * mirror_scale
-
+			mirrored_fft_map.black_quad_vertices[mirror_index] = (original_fft_map_data.black_quad_vertices[total_index] * mirror_scale) + (map_translation * TILE_SIDE_LENGTH)
 
 	# mirror terrain_tile data
 	for layer: int in [0, 1]:
@@ -1564,7 +1568,7 @@ static func get_mirror_fft_map_data(original_fft_map_data: FftMapData, mirror_sc
 				var mirrored_z: int = z
 				var slope_type: int = tile_data.decode_u8(4) # https://ffhacktics.com/wiki/Slope_Type
 				if mirror_scale.x == -1.0:
-					mirrored_x = -x + original_fft_map_data.map_width
+					mirrored_x = -x + roundi(map_translation.x)
 					if slope_type == 0x52:
 						slope_type = 0x58
 					elif slope_type == 0x58:
@@ -1587,7 +1591,7 @@ static func get_mirror_fft_map_data(original_fft_map_data: FftMapData, mirror_sc
 						slope_type = 0x66
 
 				if mirror_scale.z == -1.0:
-					mirrored_z = -z + original_fft_map_data.map_length
+					mirrored_z = -z + roundi(map_translation.z)
 					if slope_type == 0x25:
 						slope_type = 0x85
 					elif slope_type == 0x85:

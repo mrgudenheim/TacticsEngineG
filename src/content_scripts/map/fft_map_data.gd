@@ -1431,7 +1431,7 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 						var tile_data_start: int = 2 + (tile_index * BYTES_PER_TERRAIN_TILE) + (layer * 256 * BYTES_PER_TERRAIN_TILE) # each layer has space for 256 tiles, each tile data is 8 bytes
 						var tile_data: PackedByteArray = mirrored_map.terrain_data_bytes.slice(tile_data_start, tile_data_start + BYTES_PER_TERRAIN_TILE)
 
-						var final_tile_position: Vector2i = relative_position - cropped_intersection.position
+						var final_tile_position: Vector2i = relative_position - cropped_rect.position
 						var final_tile_index: int = final_tile_position.x + (final_tile_position.y * cropped_rect.size.x)
 						var final_tile_byte_start: int = 2 + (final_tile_index * BYTES_PER_TERRAIN_TILE) + (layer * 256 * BYTES_PER_TERRAIN_TILE)
 

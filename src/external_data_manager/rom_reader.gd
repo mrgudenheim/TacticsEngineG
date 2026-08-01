@@ -814,8 +814,59 @@ func export_data(save_path: String) -> void:
 
 	DirAccess.make_dir_recursive_absolute(save_path)
 
-	# var maps_path: String = save_path + "/maps/"
-	# export_map(maps_path, maps["map_032_slums_in_dorter"])
+	var maps_path: String = save_path + "/maps/"
+	var map_unique_name: String = "map_022_magic_city_gariland"
+	var fft_map_data: FftMapData = maps[map_unique_name]
+	export_map(maps_path, fft_map_data)
+
+	var mirror_quadrants: PackedVector2Array = [
+		Vector2(0, 0), # vanilla location
+		Vector2(-1, 0),
+		Vector2(0, 1),
+		Vector2(-1, 1),
+	]
+	var cropped_rect: Rect2i = Rect2i(Vector2i(-10, 11), Vector2i(20, 12))
+	var custom_mesh_file: PackedByteArray = FftMapData.get_adjusted_mesh_file(fft_map_data, mirror_quadrants, cropped_rect)
+	#var file_path: String = "user://" + fft_map_data.unique_name + ".mesh"
+	var file_path: String = "user://MAP022.9"
+	var file: FileAccess = FileAccess.open(file_path, FileAccess.WRITE)
+
+	# Verify that the file opened successfully before attempting to write
+	if file != null:
+		file.store_buffer(custom_mesh_file)
+		file.close() # Always close the file to prevent memory leaks
+		print("File saved successfully to: ", file_path)
+	else:
+		var error = FileAccess.get_open_error()
+		push_error("Failed to open file. Error code: ", error)
+		
+	
+	map_unique_name = "map_032_slums_in_dorter"
+	fft_map_data = maps[map_unique_name]
+	export_map(maps_path, fft_map_data)
+
+	mirror_quadrants = [
+		Vector2(0, 0), # vanilla location
+		Vector2(1, 0),
+		Vector2(0, 1),
+		Vector2(1, 1),
+	]
+	cropped_rect = Rect2i(Vector2i(0, 8), Vector2i(20, 12))
+	custom_mesh_file = FftMapData.get_adjusted_mesh_file(fft_map_data, mirror_quadrants, cropped_rect)
+	#var file_path: String = "user://" + fft_map_data.unique_name + ".mesh"
+	file_path = "user://MAP032.9"
+	file = FileAccess.open(file_path, FileAccess.WRITE)
+
+	# Verify that the file opened successfully before attempting to write
+	if file != null:
+		file.store_buffer(custom_mesh_file)
+		file.close() # Always close the file to prevent memory leaks
+		print("File saved successfully to: ", file_path)
+	else:
+		var error = FileAccess.get_open_error()
+		push_error("Failed to open file. Error code: ", error)
+	
+	return
 
 	await export_unit_spritesheets(save_path)
 	await export_other_images(save_path)
@@ -1039,20 +1090,6 @@ func export_maps(save_path: String) -> void:
 			continue # skip map 0 - causes crash
 
 		export_map(maps_path, fft_map_data)
-		
-		if fft_map_data.unique_name == "map_022_magic_city_gariland":
-			var custom_mesh_file: PackedByteArray = FftMapData.get_adjusted_mesh_file(fft_map_data)
-			var file_path: String = "user://" + fft_map_data.unique_name + ".mesh"
-			var file = FileAccess.open(file_path, FileAccess.WRITE)
-		
-			# Verify that the file opened successfully before attempting to write
-			if file != null:
-				file.store_buffer(custom_mesh_file)
-				file.close() # Always close the file to prevent memory leaks
-				print("File saved successfully to: ", file_path)
-			else:
-				var error = FileAccess.get_open_error()
-				push_error("Failed to open file. Error code: ", error)
 
 
 func export_map(save_path: String, fft_map_data: FftMapData, export_full_color_texture: bool = false) -> void:

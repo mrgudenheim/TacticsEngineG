@@ -1063,15 +1063,7 @@ func get_scaled_collision_shape(collision_scale: Vector3) -> ConcavePolygonShape
 	return new_collision_shape
 
 
-static func get_adjusted_mesh_file(fft_map_data: FftMapData) -> PackedByteArray:
-	var mirror_quadrants: PackedVector2Array = [
-		Vector2(0, 0), # vanilla location
-		#Vector2(-1, 0),
-		#Vector2(0, 1),
-		#Vector2(-1, 1),
-	]
-	var cropped_rect: Rect2i = Rect2i(Vector2i(-10, 11), Vector2i(20, 12))
-	
+static func get_adjusted_mesh_file(fft_map_data: FftMapData, mirror_quadrants: PackedVector2Array, cropped_rect: Rect2i) -> PackedByteArray:
 	var adjusted_map_data: FftMapData = get_adjusted_map_data(fft_map_data, mirror_quadrants, cropped_rect)
 	var adjusted_map_mesh_file: PackedByteArray = get_fft_mesh_file(adjusted_map_data)
 	return adjusted_map_mesh_file
@@ -1411,7 +1403,7 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 
 		# get terrain data
 		var cropped_terrain_rect: Rect2i = cropped_intersection.grow_individual(0, 0, 0, 0)
-		cropped_terrain_rect.position = cropped_terrain_rect.position - Vector2i(0, 1) # shift rect so points on the top are not included and so points on the bottom are included and points on top are not
+		cropped_terrain_rect.position = cropped_terrain_rect.position - Vector2i(0, 1) # shift rect so points on the top are not included and so points on the bottom are included
 		for layer: int in [0, 1]:
 			for z: int in mirrored_map.map_length:
 				for x: int in mirrored_map.map_width:
@@ -1421,7 +1413,7 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 						var tile_data_start: int = 2 + (tile_index * BYTES_PER_TERRAIN_TILE) + (layer * 256 * BYTES_PER_TERRAIN_TILE) # each layer has space for 256 tiles, each tile data is 8 bytes
 						var tile_data: PackedByteArray = mirrored_map.terrain_data_bytes.slice(tile_data_start, tile_data_start + BYTES_PER_TERRAIN_TILE)
 
-						var final_tile_position: Vector2i = relative_position - cropped_rect.position
+						var final_tile_position: Vector2i = relative_position - cropped_terrain_rect.position
 						var final_tile_index: int = final_tile_position.x + (final_tile_position.y * cropped_rect.size.x)
 
 						for byte_index: int in BYTES_PER_TERRAIN_TILE:
@@ -1477,32 +1469,71 @@ static func get_mirrored_expanded_map_data(original_fft_map_data: FftMapData, qu
 
 static func get_mirror_fft_map_data(original_fft_map_data: FftMapData, mirror_scale: Vector3, set_depth_zero: bool = false) -> FftMapData:
 	var mirrored_fft_map: FftMapData = original_fft_map_data.duplicate_deep()
+
+	var reverse_winding: bool = false
+	if mirror_scale == Vector3(-1.0, 1.0, 1.0) or mirror_scale == Vector3(1.0, 1.0, -1.0):
+		reverse_winding = true
 	
 	# add textured tris
 	for tri_index: int in mirrored_fft_map.num_text_tris:
+		var texture_bytes_start: int = tri_index * TEXTURE_BYTES_PER_TRI
+		var original_texture_bytes: PackedByteArray = mirrored_fft_map.tris_texture_bytes.slice(texture_bytes_start, texture_bytes_start + TEXTURE_BYTES_PER_TRI)
+
 		for vertex_index: int in NUM_VERTICIES_PER_TRI:
 			var total_index: int = (tri_index * NUM_VERTICIES_PER_TRI) + vertex_index
-			mirrored_fft_map.text_tri_vertices[total_index] = original_fft_map_data.text_tri_vertices[total_index] * mirror_scale
-			mirrored_fft_map.text_tri_normals[total_index] = original_fft_map_data.text_tri_normals[total_index] * mirror_scale
+			var mirror_index: int = total_index
+			if reverse_winding and [0, 2].has(vertex_index):
+				mirror_index = (tri_index * NUM_VERTICIES_PER_TRI) + NUM_VERTICIES_PER_TRI - 1 - vertex_index
+			mirrored_fft_map.text_tri_vertices[mirror_index] = original_fft_map_data.text_tri_vertices[total_index] * mirror_scale
+			mirrored_fft_map.text_tri_normals[mirror_index] = original_fft_map_data.text_tri_normals[total_index] * mirror_scale
+			
+			# reverse winding UVs
+			if reverse_winding and vertex_index == 1:
+				mirrored_fft_map.tris_texture_bytes[texture_bytes_start + 8] = original_texture_bytes[0]
+				mirrored_fft_map.tris_texture_bytes[texture_bytes_start + 9] = original_texture_bytes[1]
+			elif reverse_winding and vertex_index == 2:
+				mirrored_fft_map.tris_texture_bytes[texture_bytes_start + 0] = original_texture_bytes[8]
+				mirrored_fft_map.tris_texture_bytes[texture_bytes_start + 1] = original_texture_bytes[9]
 
 	# add black tris
 	for tri_index: int in mirrored_fft_map.num_black_tris:
 		for vertex_index: int in NUM_VERTICIES_PER_TRI:
 			var total_index: int = (tri_index * NUM_VERTICIES_PER_TRI) + vertex_index
-			mirrored_fft_map.black_tri_vertices[total_index] = original_fft_map_data.black_tri_vertices[total_index] * mirror_scale
+			var mirror_index: int = total_index
+			if reverse_winding and [0, 2].has(vertex_index):
+				mirror_index = (tri_index * NUM_VERTICIES_PER_TRI) + NUM_VERTICIES_PER_TRI - 1 - vertex_index
+			mirrored_fft_map.black_tri_vertices[mirror_index] = original_fft_map_data.black_tri_vertices[total_index] * mirror_scale
 
 	# add textured quads
 	for quad_index: int in mirrored_fft_map.num_text_quads:
+		var texture_bytes_start: int = quad_index * TEXTURE_BYTES_PER_QUAD
+		var original_texture_bytes: PackedByteArray = mirrored_fft_map.quads_texture_bytes.slice(texture_bytes_start, texture_bytes_start + TEXTURE_BYTES_PER_QUAD)
+		
 		for vertex_index: int in NUM_VERTICIES_PER_QUAD:
 			var total_index: int = (quad_index * NUM_VERTICIES_PER_QUAD) + vertex_index
-			mirrored_fft_map.text_quad_vertices[total_index] = original_fft_map_data.text_quad_vertices[total_index] * mirror_scale
-			mirrored_fft_map.text_quad_normals[total_index] = original_fft_map_data.text_quad_normals[total_index] * mirror_scale
+			var mirror_index: int = total_index
+			if reverse_winding and [1, 2].has(vertex_index):
+				mirror_index = (quad_index * NUM_VERTICIES_PER_QUAD) + NUM_VERTICIES_PER_QUAD - 1 - vertex_index
+			mirrored_fft_map.text_quad_vertices[mirror_index] = original_fft_map_data.text_quad_vertices[total_index] * mirror_scale
+			mirrored_fft_map.text_quad_normals[mirror_index] = original_fft_map_data.text_quad_normals[total_index] * mirror_scale
+
+			# reverse winding UVs
+			if reverse_winding and vertex_index == 1:
+				mirrored_fft_map.quads_texture_bytes[texture_bytes_start + 8] = original_texture_bytes[4]
+				mirrored_fft_map.quads_texture_bytes[texture_bytes_start + 9] = original_texture_bytes[5]
+			elif reverse_winding and vertex_index == 2:
+				mirrored_fft_map.quads_texture_bytes[texture_bytes_start + 4] = original_texture_bytes[8]
+				mirrored_fft_map.quads_texture_bytes[texture_bytes_start + 5] = original_texture_bytes[9]
 
 	# add black quads
 	for quad_index: int in mirrored_fft_map.num_black_quads:
 		for vertex_index: int in NUM_VERTICIES_PER_QUAD:
 			var total_index: int = (quad_index * NUM_VERTICIES_PER_QUAD) + vertex_index
-			mirrored_fft_map.black_quad_vertices[total_index] = original_fft_map_data.black_quad_vertices[total_index] * mirror_scale
+			var mirror_index: int = total_index
+			if reverse_winding and [1, 2].has(vertex_index):
+				mirror_index = (quad_index * NUM_VERTICIES_PER_QUAD) + NUM_VERTICIES_PER_QUAD - 1 - vertex_index
+			mirrored_fft_map.black_quad_vertices[mirror_index] = original_fft_map_data.black_quad_vertices[total_index] * mirror_scale
+
 
 	# mirror terrain_tile data
 	for layer: int in [0, 1]:

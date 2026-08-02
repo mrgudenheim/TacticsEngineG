@@ -875,7 +875,8 @@ func export_data(save_path: String) -> void:
 		push_error("Failed to open rom file. Error code: ", rom_error)
 	var rom_bytes: PackedByteArray = FileAccess.get_file_as_bytes(rom_path)
 
-	var new_file_path: String = "user://MAP032.9"
+	var new_file_path: String = "user://MAP022.9"
+	#var new_file_path: String = "user://MAP032.9"
 	var new_file_size: int = FileAccess.get_size(new_file_path)
 	var new_file: FileAccess = FileAccess.open(new_file_path, FileAccess.READ)
 	var new_file_bytes: PackedByteArray = new_file.get_buffer(new_file_size)
@@ -893,8 +894,9 @@ func export_data(save_path: String) -> void:
 	]
 	gns_entry.encode_u16(8, insert_address / 2352)
 	gns_entry.encode_u32(12, new_file_size_sectors)
-	#var gns_entry_address: int = 0x337370c # map022.gns primary mesh
-	var gns_entry_address: int = 0x3a69d0c # map032.gns primary mesh
+	
+	var gns_entry_address: int = 0x337370c # map022.gns primary mesh
+	#var gns_entry_address: int = 0x3a69d0c # map032.gns primary mesh
 	for byte_index: int in gns_entry.size():
 		patched_rom[gns_entry_address + byte_index] = gns_entry[byte_index]
 	

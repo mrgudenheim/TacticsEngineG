@@ -825,7 +825,7 @@ func export_data(save_path: String) -> void:
 		Vector2(0, 1),
 		Vector2(-1, 1),
 	]
-	var cropped_rect: Rect2i = Rect2i(Vector2i(-9, 11), Vector2i(18, 14))
+	var cropped_rect: Rect2i = Rect2i(Vector2i(-9, 8), Vector2i(18, 14))
 	var custom_mesh_file: PackedByteArray = FftMapData.get_adjusted_mesh_file(fft_map_data, mirror_quadrants, cropped_rect)
 	#var file_path: String = "user://" + fft_map_data.unique_name + ".mesh"
 	var file_path: String = "user://MAP022.9"

@@ -1112,6 +1112,7 @@ static func get_fft_mesh_file(fft_map_data: FftMapData) -> PackedByteArray:
 			primary_mesh_black_tri_verticies.encode_s16(coordinate_index * 2, roundi(vertex_coordinates.x))
 			primary_mesh_black_tri_verticies.encode_s16((coordinate_index + 1) * 2, roundi(vertex_coordinates.y))
 			primary_mesh_black_tri_verticies.encode_s16((coordinate_index + 2) * 2, roundi(vertex_coordinates.z))
+	primary_mesh_black_tri_verticies.fill(0)
 	
 	var primary_mesh_black_quad_verticies: PackedByteArray = []
 	primary_mesh_black_quad_verticies.resize(fft_map_data.num_black_quads * NUM_VERTICIES_PER_QUAD * 3 * 2) # 3 coordinates (x, y, x) per vertex, 2 bytes per coordinate
@@ -1123,6 +1124,7 @@ static func get_fft_mesh_file(fft_map_data: FftMapData) -> PackedByteArray:
 			primary_mesh_black_quad_verticies.encode_s16(coordinate_index * 2, roundi(vertex_coordinates.x))
 			primary_mesh_black_quad_verticies.encode_s16((coordinate_index + 1) * 2, roundi(vertex_coordinates.y))
 			primary_mesh_black_quad_verticies.encode_s16((coordinate_index + 2) * 2, roundi(vertex_coordinates.z))
+	primary_mesh_black_quad_verticies.fill(0)
 
 	var primary_mesh_textured_tri_normals: PackedByteArray = []
 	primary_mesh_textured_tri_normals.resize(fft_map_data.num_text_tris * NUM_VERTICIES_PER_TRI * 3 * 2) # 3 coordinates (x, y, x) per vertex, 2 bytes per coordinate

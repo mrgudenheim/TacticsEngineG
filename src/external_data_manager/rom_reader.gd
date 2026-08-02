@@ -825,13 +825,7 @@ func export_data(save_path: String) -> void:
 		Vector2(0, 1),
 		Vector2(-1, 1),
 	]
-	#var cropped_rect: Rect2i = Rect2i(Vector2i(0, 0), Vector2i(10, 15))
-	#var cropped_rect: Rect2i = Rect2i(Vector2i(-10, 0), Vector2i(10, 15))
-	#var cropped_rect: Rect2i = Rect2i(Vector2i(0, 15), Vector2i(10, 15))
-	#var cropped_rect: Rect2i = Rect2i(Vector2i(-10, 15), Vector2i(10, 15))
-	#var cropped_rect: Rect2i = Rect2i(Vector2i(-8, 0), Vector2i(16, 15))
 	var cropped_rect: Rect2i = Rect2i(Vector2i(-10, 11), Vector2i(20, 12))
-	#var cropped_rect: Rect2i = Rect2i(Vector2i(-10, 0), Vector2i(20, 30))
 	var custom_mesh_file: PackedByteArray = FftMapData.get_adjusted_mesh_file(fft_map_data, mirror_quadrants, cropped_rect)
 	#var file_path: String = "user://" + fft_map_data.unique_name + ".mesh"
 	var file_path: String = "user://MAP022.9"
@@ -868,6 +862,48 @@ func export_data(save_path: String) -> void:
 		file.store_buffer(custom_mesh_file)
 		file.close() # Always close the file to prevent memory leaks
 		print("File saved successfully to: ", file_path)
+	else:
+		var error = FileAccess.get_open_error()
+		push_error("Failed to open file. Error code: ", error)
+	
+	# insert new map mesh into ROM
+	var rom_path: String = "user://Colosseum_2026-07.bin"
+	var rom_size: int = FileAccess.get_size(rom_path)
+	var rom_file: FileAccess = FileAccess.open(rom_path, FileAccess.READ)
+	var rom_error: Error = FileAccess.get_open_error()
+	if rom_error != Error.OK:
+		push_error("Failed to open rom file. Error code: ", rom_error)
+	var rom_bytes: PackedByteArray = FileAccess.get_file_as_bytes(rom_path)
+
+	var new_file_path: String = "user://MAP022.9"
+	var new_file_size: int = FileAccess.get_size(new_file_path)
+	var new_file: FileAccess = FileAccess.open(new_file_path, FileAccess.READ)
+	var new_file_bytes: PackedByteArray = new_file.get_buffer(new_file_size)
+	
+	var insert_address: int = (0x9c96 * 2352) # address of MAP073.24
+	#var insert_address: int = (0x65FB * 2352) # address of MAP033.9, 58 KB
+	var patched_rom: PackedByteArray = insert_file(rom_bytes, new_file_bytes, insert_address)
+	# overwrite GNS to point to newly inserted file and new file size
+	var new_file_size_sectors: int = ceili(new_file_size / 2048.0) * 2048
+	var gns_entry: PackedByteArray = [
+		0x22, 0x00, 0x00, 0x00, 0x01, 0x2E, 0x33, 0x33, 0x96, 0x9C, 0x00, 0x00, 0x00, 0xD0, 0x00, 0x00, 0x55, 0x66, 0x77, 0x88,
+	]
+	gns_entry.encode_u16(8, insert_address / 2352)
+	gns_entry.encode_u32(12, new_file_size_sectors)
+	var gns_entry_address: int = 0x337370c
+	for byte_index: int in gns_entry.size():
+		patched_rom[gns_entry_address + byte_index] = gns_entry[byte_index]
+	
+	
+	var new_rom_path: String = "user://Colosseum_2026-07_map_tests.bin"
+	#var new_rom_size: int = FileAccess.get_size(rom_path)
+	var new_rom_file: FileAccess = FileAccess.open(new_rom_path, FileAccess.WRITE)
+
+	if file != null:
+		new_rom_file.seek(0)
+		new_rom_file.store_buffer(patched_rom)
+		new_rom_file.close() # Always close the file to prevent memory leaks
+		print("File saved successfully to: ", new_rom_path)
 	else:
 		var error = FileAccess.get_open_error()
 		push_error("Failed to open file. Error code: ", error)
@@ -1183,6 +1219,27 @@ func keep_60_fps(last_frame_time_msec: int, message_text: String) -> int:
 		await get_tree().process_frame
 		last_frame_time_msec = Time.get_ticks_msec()
 	return last_frame_time_msec
+
+
+static func insert_file(destination_file: PackedByteArray, file_to_insert: PackedByteArray, destination_address: int) -> PackedByteArray:
+	var new_file: PackedByteArray = destination_file.duplicate()
+	var insert_sectors: Array[PackedByteArray] = []
+	var section_size: int = 2048
+	var section_start: int = 0
+	while section_start < file_to_insert.size():
+		var new_section: PackedByteArray = file_to_insert.slice(section_start, section_start + section_size)
+		insert_sectors.append(new_section)
+		section_start += section_size
+	
+	for section_idx: int in insert_sectors.size():
+		var section: PackedByteArray = insert_sectors[section_idx]
+		var start_address: int = destination_address + 24 + (2352 * section_idx)
+
+		# Loop over the patch and overwrite the slice in the main array
+		for byte_idx: int in section.size():
+			new_file[start_address + byte_idx] = section[byte_idx]
+	
+	return new_file
 
 
 static func export_tile_meshes(path: String, scale: Vector3 = Vector3.ONE) -> void:

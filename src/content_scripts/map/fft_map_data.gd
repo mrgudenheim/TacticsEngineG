@@ -1323,22 +1323,36 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 			if not polygon_in_bounds:
 				continue
 
+			var centroid: Vector3 = Vector3.ZERO
 			for vertex_index: int in NUM_VERTICIES_PER_TRI:
 				var new_map_total_index: int = (new_map_textured_tri_index * NUM_VERTICIES_PER_TRI) + vertex_index
 				if new_fft_map_data.text_tri_vertices.size() > new_map_total_index - 1:
 					new_fft_map_data.text_tri_vertices.resize(new_map_total_index + 1)
 					new_fft_map_data.text_tri_normals.resize(new_map_total_index + 1)
-				new_fft_map_data.text_tri_vertices[new_map_total_index] = Vector3(tri_verticies[vertex_index]) + vertex_translation
+				var translated_vertex: Vector3 = Vector3(tri_verticies[vertex_index]) + vertex_translation
+				centroid += translated_vertex
+				new_fft_map_data.text_tri_vertices[new_map_total_index] = translated_vertex
 				new_fft_map_data.text_tri_normals[new_map_total_index] = Vector3(tri_normals[vertex_index])
 			new_map_textured_tri_index += 1
 			var tri_texture_bytes_start: int = tri_index * TEXTURE_BYTES_PER_TRI
 			var polygon_texture_bytes: PackedByteArray = mirrored_map.tris_texture_bytes.slice(tri_texture_bytes_start, tri_texture_bytes_start + TEXTURE_BYTES_PER_TRI)
 			new_fft_map_data.tris_texture_bytes.append_array(polygon_texture_bytes)
 
+			# var polygon_tile_bytes: PackedByteArray = [
+			# 	mirrored_map.textured_polygon_tile_bytes[tri_index * 2],
+			# 	mirrored_map.textured_polygon_tile_bytes[(tri_index * 2) + 1],
+			# ]
+			centroid = centroid / 3.0
+			var polygon_tile_x: int = roundi(centroid.x) / TILE_SIDE_LENGTH
+			var polygon_tile_z: int = (roundi(centroid.z) / TILE_SIDE_LENGTH) << 1
 			var polygon_tile_bytes: PackedByteArray = [
-				mirrored_map.textured_polygon_tile_bytes[tri_index * 2],
-				mirrored_map.textured_polygon_tile_bytes[(tri_index * 2) + 1],
+				polygon_tile_z,
+				polygon_tile_x,
 			]
+			# skip polygon if it's vertical
+			if roundi(centroid.x) % TILE_SIDE_LENGTH == 0 or roundi(centroid.z) % TILE_SIDE_LENGTH == 0:
+				polygon_tile_bytes = [0, 0]
+
 			textured_tri_tile_bytes.append_array(polygon_tile_bytes)
 			
 		# add black tris
@@ -1381,22 +1395,34 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 			if not polygon_in_bounds:
 				continue
 
+			var centroid: Vector3 = Vector3.ZERO
 			for vertex_index: int in NUM_VERTICIES_PER_QUAD:
 				var new_map_total_index: int = (new_map_textured_quad_index * NUM_VERTICIES_PER_QUAD) + vertex_index
 				if new_fft_map_data.text_quad_vertices.size() > new_map_total_index - 1:
 					new_fft_map_data.text_quad_vertices.resize(new_map_total_index + 1)
 					new_fft_map_data.text_quad_normals.resize(new_map_total_index + 1)
-				new_fft_map_data.text_quad_vertices[new_map_total_index] = Vector3(quad_verticies[vertex_index]) + vertex_translation
+				var translated_vertex: Vector3 = Vector3(quad_verticies[vertex_index]) + vertex_translation
+				centroid += translated_vertex
+				new_fft_map_data.text_quad_vertices[new_map_total_index] = translated_vertex
 				new_fft_map_data.text_quad_normals[new_map_total_index] = Vector3(quad_normals[vertex_index])
 			new_map_textured_quad_index += 1
 			var quad_texture_bytes_start: int = quad_index * TEXTURE_BYTES_PER_QUAD
 			var polygon_texture_bytes: PackedByteArray = mirrored_map.quads_texture_bytes.slice(quad_texture_bytes_start, quad_texture_bytes_start + TEXTURE_BYTES_PER_QUAD)
 			new_fft_map_data.quads_texture_bytes.append_array(polygon_texture_bytes)
 
+			# var polygon_tile_bytes: PackedByteArray = [
+			# 	mirrored_map.textured_polygon_tile_bytes[quad_index * 2],
+			# 	mirrored_map.textured_polygon_tile_bytes[(quad_index * 2) + 1],
+			# ]
+			centroid = centroid / 4.0
+			var polygon_tile_x: int = roundi(centroid.x) / TILE_SIDE_LENGTH
+			var polygon_tile_z: int = (roundi(centroid.z) / TILE_SIDE_LENGTH) << 1
 			var polygon_tile_bytes: PackedByteArray = [
-				mirrored_map.textured_polygon_tile_bytes[quad_index * 2],
-				mirrored_map.textured_polygon_tile_bytes[(quad_index * 2) + 1],
+				polygon_tile_z,
+				polygon_tile_x,
 			]
+			if roundi(centroid.x) % TILE_SIDE_LENGTH == 0 or roundi(centroid.z) % TILE_SIDE_LENGTH == 0:
+				polygon_tile_bytes = [0, 0]
 			textured_quad_tile_bytes.append_array(polygon_tile_bytes)
 
 		# add black quads

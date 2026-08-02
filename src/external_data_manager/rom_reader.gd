@@ -825,7 +825,7 @@ func export_data(save_path: String) -> void:
 		Vector2(0, 1),
 		Vector2(-1, 1),
 	]
-	var cropped_rect: Rect2i = Rect2i(Vector2i(-10, 11), Vector2i(20, 12))
+	var cropped_rect: Rect2i = Rect2i(Vector2i(-9, 11), Vector2i(18, 14))
 	var custom_mesh_file: PackedByteArray = FftMapData.get_adjusted_mesh_file(fft_map_data, mirror_quadrants, cropped_rect)
 	#var file_path: String = "user://" + fft_map_data.unique_name + ".mesh"
 	var file_path: String = "user://MAP022.9"
@@ -851,7 +851,7 @@ func export_data(save_path: String) -> void:
 		Vector2(0, 1),
 		Vector2(1, 1),
 	]
-	cropped_rect = Rect2i(Vector2i(0, 8), Vector2i(20, 12))
+	cropped_rect = Rect2i(Vector2i(1, 9), Vector2i(18, 14))
 	custom_mesh_file = FftMapData.get_adjusted_mesh_file(fft_map_data, mirror_quadrants, cropped_rect)
 	#var file_path: String = "user://" + fft_map_data.unique_name + ".mesh"
 	file_path = "user://MAP032.9"
@@ -875,7 +875,7 @@ func export_data(save_path: String) -> void:
 		push_error("Failed to open rom file. Error code: ", rom_error)
 	var rom_bytes: PackedByteArray = FileAccess.get_file_as_bytes(rom_path)
 
-	var new_file_path: String = "user://MAP022.9"
+	var new_file_path: String = "user://MAP032.9"
 	var new_file_size: int = FileAccess.get_size(new_file_path)
 	var new_file: FileAccess = FileAccess.open(new_file_path, FileAccess.READ)
 	var new_file_bytes: PackedByteArray = new_file.get_buffer(new_file_size)
@@ -885,14 +885,22 @@ func export_data(save_path: String) -> void:
 	var patched_rom: PackedByteArray = insert_file(rom_bytes, new_file_bytes, insert_address)
 	# overwrite GNS to point to newly inserted file and new file size
 	var new_file_size_sectors: int = ceili(new_file_size / 2048.0) * 2048
-	var gns_entry: PackedByteArray = [
-		0x22, 0x00, 0x00, 0x00, 0x01, 0x2E, 0x33, 0x33, 0x96, 0x9C, 0x00, 0x00, 0x00, 0xD0, 0x00, 0x00, 0x55, 0x66, 0x77, 0x88,
+	#var gns_entry: PackedByteArray = [ # map022
+		#0x22, 0x00, 0x00, 0x00, 0x01, 0x2E, 0x33, 0x33, 0x96, 0x9C, 0x00, 0x00, 0x00, 0x90, 0x00, 0x00, 0x55, 0x66, 0x77, 0x88,
+	#]
+	var gns_entry: PackedByteArray = [ # map0232
+		0x22, 0x00, 0x00, 0x00, 0x01, 0x2E, 0x33, 0x33, 0xE5, 0x64, 0x00, 0x00, 0x00, 0x88, 0x00, 0x00, 0x55, 0x66, 0x77, 0x88,
 	]
 	gns_entry.encode_u16(8, insert_address / 2352)
 	gns_entry.encode_u32(12, new_file_size_sectors)
-	var gns_entry_address: int = 0x337370c
+	#var gns_entry_address: int = 0x337370c # map022.gns primary mesh
+	var gns_entry_address: int = 0x3a69d0c # map032.gns primary mesh
 	for byte_index: int in gns_entry.size():
 		patched_rom[gns_entry_address + byte_index] = gns_entry[byte_index]
+	
+	# ENTD setup location
+	# map_022 is *116
+	# map_032 is *120
 	
 	
 	var new_rom_path: String = "user://Colosseum_2026-07_map_tests.bin"

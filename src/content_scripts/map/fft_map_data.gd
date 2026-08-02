@@ -1174,11 +1174,13 @@ static func get_fft_mesh_file(fft_map_data: FftMapData) -> PackedByteArray:
 
 	# polygon render flags
 	var polygon_render_flags_bytes: PackedByteArray = []
-	polygon_render_flags_bytes.append_array(fft_map_data.unknown_render_bytes)
-	polygon_render_flags_bytes.append_array(fft_map_data.textured_tris_flags)
-	polygon_render_flags_bytes.append_array(fft_map_data.textured_quads_flags)
-	polygon_render_flags_bytes.append_array(fft_map_data.black_tris_flags)
-	polygon_render_flags_bytes.append_array(fft_map_data.black_quads_flags)
+	polygon_render_flags_bytes.resize(896 + 1024 + 1536 + 128 + 512)
+	polygon_render_flags_bytes.fill(0)
+	# polygon_render_flags_bytes.append_array(fft_map_data.unknown_render_bytes)
+	# polygon_render_flags_bytes.append_array(fft_map_data.textured_tris_flags)
+	# polygon_render_flags_bytes.append_array(fft_map_data.textured_quads_flags)
+	# polygon_render_flags_bytes.append_array(fft_map_data.black_tris_flags)
+	# polygon_render_flags_bytes.append_array(fft_map_data.black_quads_flags)
 
 	# header
 	var next_section_start: int = 0

@@ -1349,9 +1349,9 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 				polygon_tile_z,
 				polygon_tile_x,
 			]
-			# skip polygon if it's vertical
+			# don't highlight polygon if it's vertical
 			if roundi(centroid.x) % TILE_SIDE_LENGTH == 0 or roundi(centroid.z) % TILE_SIDE_LENGTH == 0:
-				polygon_tile_bytes = [0, 0]
+				polygon_tile_bytes = [254, 255]
 
 			textured_tri_tile_bytes.append_array(polygon_tile_bytes)
 			
@@ -1421,8 +1421,9 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 				polygon_tile_z,
 				polygon_tile_x,
 			]
+			# don't highlight polygon if it's vertical
 			if roundi(centroid.x) % TILE_SIDE_LENGTH == 0 or roundi(centroid.z) % TILE_SIDE_LENGTH == 0:
-				polygon_tile_bytes = [0, 0]
+				polygon_tile_bytes = [254, 255]
 			textured_quad_tile_bytes.append_array(polygon_tile_bytes)
 
 		# add black quads

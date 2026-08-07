@@ -814,123 +814,6 @@ func export_data(save_path: String) -> void:
 
 	DirAccess.make_dir_recursive_absolute(save_path)
 
-	#var maps_path: String = save_path + "/maps/"
-	#var map_unique_name: String = "map_022_magic_city_gariland"
-	#var fft_map_data: FftMapData = maps[map_unique_name]
-	#export_map(maps_path, fft_map_data)
-#
-	#var mirror_quadrants: PackedVector2Array = [
-		#Vector2(0, 0), # vanilla location
-		#Vector2(-1, 0),
-		#Vector2(0, 1),
-		#Vector2(-1, 1),
-	#]
-	#var cropped_rect: Rect2i = Rect2i(Vector2i(-9, 8), Vector2i(18, 14))
-	#var custom_mesh_file: PackedByteArray = FftMapData.get_adjusted_mesh_file(fft_map_data, mirror_quadrants, cropped_rect)
-	##var file_path: String = "user://" + fft_map_data.unique_name + ".mesh"
-	#var file_path: String = "user://MAP022.9"
-	#var file: FileAccess = FileAccess.open(file_path, FileAccess.WRITE)
-#
-	## Verify that the file opened successfully before attempting to write
-	#if file != null:
-		#file.store_buffer(custom_mesh_file)
-		#file.close() # Always close the file to prevent memory leaks
-		#print("File saved successfully to: ", file_path)
-	#else:
-		#var error = FileAccess.get_open_error()
-		#push_error("Failed to open file. Error code: ", error)
-		#
-	#
-	#map_unique_name = "map_032_slums_in_dorter"
-	#fft_map_data = maps[map_unique_name]
-	#export_map(maps_path, fft_map_data)
-#
-	#mirror_quadrants = [
-		#Vector2(0, 0), # vanilla location
-		#Vector2(1, 0),
-		#Vector2(0, 1),
-		#Vector2(1, 1),
-	#]
-	#cropped_rect = Rect2i(Vector2i(1, 9), Vector2i(18, 14))
-	#custom_mesh_file = FftMapData.get_adjusted_mesh_file(fft_map_data, mirror_quadrants, cropped_rect)
-	##var file_path: String = "user://" + fft_map_data.unique_name + ".mesh"
-	#file_path = "user://MAP032.9"
-	#file = FileAccess.open(file_path, FileAccess.WRITE)
-#
-	## Verify that the file opened successfully before attempting to write
-	#if file != null:
-		#file.store_buffer(custom_mesh_file)
-		#file.close() # Always close the file to prevent memory leaks
-		#print("File saved successfully to: ", file_path)
-	#else:
-		#var error = FileAccess.get_open_error()
-		#push_error("Failed to open file. Error code: ", error)
-	
-	# insert new map mesh into ROM
-	var rom_path: String = "user://Colosseum_2026-07.bin"
-	var rom_size: int = FileAccess.get_size(rom_path)
-	var rom_file: FileAccess = FileAccess.open(rom_path, FileAccess.READ)
-	var rom_error: Error = FileAccess.get_open_error()
-	if rom_error != Error.OK:
-		push_error("Failed to open rom file. Error code: ", rom_error)
-	var rom_bytes: PackedByteArray = FileAccess.get_file_as_bytes(rom_path)
-
-	# insert new map022
-	var new_file_path: String = "user://MAP022.9"
-	var new_file_size: int = FileAccess.get_size(new_file_path)
-	var new_file: FileAccess = FileAccess.open(new_file_path, FileAccess.READ)
-	var new_file_bytes: PackedByteArray = new_file.get_buffer(new_file_size)
-	
-	var insert_address: int = (0x9c96 * 2352) # address of MAP073.24
-	var patched_rom: PackedByteArray = insert_file(rom_bytes, new_file_bytes, insert_address)
-	# overwrite GNS to point to newly inserted file and new file size
-	var new_file_size_sectors: int = ceili(new_file_size / 2048.0) * 2048
-	var gns_entry: PackedByteArray = [ # map022
-		0x22, 0x00, 0x00, 0x00, 0x01, 0x2E, 0x33, 0x33, 0x96, 0x9C, 0x00, 0x00, 0x00, 0x90, 0x00, 0x00, 0x55, 0x66, 0x77, 0x88,
-	]
-	gns_entry.encode_u16(8, insert_address / 2352)
-	gns_entry.encode_u32(12, new_file_size_sectors)
-	
-	var gns_entry_address: int = 0x337370c # map022.gns primary mesh
-	for byte_index: int in gns_entry.size():
-		patched_rom[gns_entry_address + byte_index] = gns_entry[byte_index]
-	
-	# insert new map032
-	new_file_path = "user://MAP032.9"
-	new_file_bytes = FileAccess.get_file_as_bytes(new_file_path)
-	insert_address = (0x65FB * 2352) # address of MAP033.9, 58 KB
-	patched_rom = insert_file(patched_rom, new_file_bytes, insert_address)
-	# overwrite GNS to point to newly inserted file and new file size
-	new_file_size_sectors = ceili(new_file_size / 2048.0) * 2048
-	gns_entry = [ # map0232
-		0x22, 0x00, 0x00, 0x00, 0x01, 0x2E, 0x33, 0x33, 0xE5, 0x64, 0x00, 0x00, 0x00, 0x88, 0x00, 0x00, 0x55, 0x66, 0x77, 0x88,
-	]
-	gns_entry.encode_u16(8, insert_address / 2352)
-	gns_entry.encode_u32(12, new_file_size_sectors)
-	gns_entry_address = 0x3a69d0c # map032.gns primary mesh
-	for byte_index: int in gns_entry.size():
-		patched_rom[gns_entry_address + byte_index] = gns_entry[byte_index]
-	
-	# ENTD setup location
-	# map_022 is *116
-	# map_032 is *120
-	
-	
-	var new_rom_path: String = "user://Colosseum_2026-07_map_tests.bin"
-	#var new_rom_size: int = FileAccess.get_size(rom_path)
-	var new_rom_file: FileAccess = FileAccess.open(new_rom_path, FileAccess.WRITE)
-
-	if new_rom_file != null:
-		new_rom_file.seek(0)
-		new_rom_file.store_buffer(patched_rom)
-		new_rom_file.close() # Always close the file to prevent memory leaks
-		print("File saved successfully to: ", new_rom_path)
-	else:
-		var error = FileAccess.get_open_error()
-		push_error("Failed to open file. Error code: ", error)
-	
-	return
-
 	await export_unit_spritesheets(save_path)
 	await export_other_images(save_path)
 	await export_text(save_path)
@@ -1240,6 +1123,62 @@ func keep_60_fps(last_frame_time_msec: int, message_text: String) -> int:
 		await get_tree().process_frame
 		last_frame_time_msec = Time.get_ticks_msec()
 	return last_frame_time_msec
+
+
+func export_mirrored_map(maps_path: String, save_file_path: String, map_unique_name: String, mirror_quadrants: PackedVector2Array, cropped_rect: Rect2i) -> void:
+	var fft_map_data: FftMapData = maps[map_unique_name]
+	export_map(maps_path, fft_map_data)
+
+	var custom_mesh_file: PackedByteArray = FftMapData.get_adjusted_mesh_file(fft_map_data, mirror_quadrants, cropped_rect)
+	var file: FileAccess = FileAccess.open(save_file_path, FileAccess.WRITE)
+
+	# Verify that the file opened successfully before attempting to write
+	if file != null:
+		file.store_buffer(custom_mesh_file)
+		file.close() # Always close the file to prevent memory leaks
+		print("File saved successfully to: ", save_file_path)
+	else:
+		var error = FileAccess.get_open_error()
+		push_error("Failed to open file. Error code: ", error)
+
+
+func insert_map_into_rom(rom_path: String, new_rom_save_path: String, map_file_to_insert_path: String, insert_sector: int, gns_entry_address: int) -> void:
+	# insert new map mesh into ROM
+	var rom_size: int = FileAccess.get_size(rom_path)
+	var rom_file: FileAccess = FileAccess.open(rom_path, FileAccess.READ)
+	var rom_error: Error = FileAccess.get_open_error()
+	if rom_error != Error.OK:
+		push_error("Failed to open rom file. Error code: ", rom_error)
+	var rom_bytes: PackedByteArray = FileAccess.get_file_as_bytes(rom_path)
+
+	# insert new map file
+	var new_file_size: int = FileAccess.get_size(map_file_to_insert_path)
+	var new_file: FileAccess = FileAccess.open(map_file_to_insert_path, FileAccess.READ)
+	var new_file_bytes: PackedByteArray = new_file.get_buffer(new_file_size)
+	
+	var insert_address: int = (insert_sector * 2352)
+	var patched_rom: PackedByteArray = insert_file(rom_bytes, new_file_bytes, insert_address)
+	# overwrite GNS to point to newly inserted file and new file size
+	var new_file_size_sectors: int = ceili(new_file_size / 2048.0) * 2048
+	var gns_entry: PackedByteArray = [ # map022
+		0x22, 0x00, 0x00, 0x00, 0x01, 0x2E, 0x33, 0x33, 0x96, 0x9C, 0x00, 0x00, 0x00, 0x90, 0x00, 0x00, 0x55, 0x66, 0x77, 0x88,
+	]
+	gns_entry.encode_u16(8, insert_address / 2352)
+	gns_entry.encode_u32(12, new_file_size_sectors)
+	
+	for byte_index: int in gns_entry.size():
+		patched_rom[gns_entry_address + byte_index] = gns_entry[byte_index]
+	
+	var new_rom_file: FileAccess = FileAccess.open(new_rom_save_path, FileAccess.WRITE)
+
+	if new_rom_file != null:
+		new_rom_file.seek(0)
+		new_rom_file.store_buffer(patched_rom)
+		new_rom_file.close() # Always close the file to prevent memory leaks
+		print("File saved successfully to: ", new_rom_save_path)
+	else:
+		var error = FileAccess.get_open_error()
+		push_error("Failed to open file. Error code: ", error)
 
 
 static func insert_file(destination_file: PackedByteArray, file_to_insert: PackedByteArray, destination_address: int) -> PackedByteArray:

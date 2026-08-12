@@ -62,7 +62,10 @@ func on_selected() -> void:
 
 func update_ui(new_job_data: JobData) -> void:
 	display_name.text = new_job_data.display_name + " (Job ID: " + str(new_job_data.job_id) + ")"
-	name = new_job_data.unique_name
+	if new_job_data.unique_name.is_empty():
+		name = "JobName"
+	else:
+		name = new_job_data.unique_name
 
 	# update stats
 	move.text = "Move: " + str(new_job_data.move)

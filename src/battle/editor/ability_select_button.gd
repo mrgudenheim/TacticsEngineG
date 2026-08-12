@@ -27,7 +27,10 @@ func on_selected() -> void:
 
 func update_ui(new_ability_data: Ability) -> void:
 	display_name.text = new_ability_data.display_name
-	name = new_ability_data.unique_name
+	if new_ability_data.unique_name.is_empty():
+		name = "AbilityName"
+	else:
+		name = new_ability_data.unique_name
 	descrption.text = new_ability_data.description
 	
 	## TODO update passive effects

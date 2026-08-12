@@ -26,7 +26,11 @@ func on_selected() -> void:
 
 func update_ui(new_item_data: ItemData) -> void:
 	display_name.text = new_item_data.display_name + " (Item ID: " + str(new_item_data.item_idx) + ")"
-	name = new_item_data.unique_name
+	if new_item_data.unique_name.is_empty():
+		name = "ItemName"
+	else:
+		name = new_item_data.unique_name
+	
 	var item_palettes: PackedColorArray = GameData.palettes["items"]
 	sprite_rect.material.set_shader_parameter("palette_colors", item_palettes.slice(new_item_data.item_palette_id * 16, (new_item_data.item_palette_id + 1) * 16))
 	

@@ -27,5 +27,8 @@ func on_selected() -> void:
 
 func update_ui(new_skillset_data: Skillset) -> void:
 	display_name.text = new_skillset_data.display_name
-	name = new_skillset_data.unique_name
+	if new_skillset_data.unique_name.is_empty():
+		name = "SkillsetName"
+	else:
+		name = new_skillset_data.unique_name
 	descrption.text = new_skillset_data.description

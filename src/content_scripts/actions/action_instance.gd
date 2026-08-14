@@ -58,7 +58,41 @@ func clear_targets(target_highlights: Dictionary[TerrainTile, Node3D]) -> void:
 
 
 func is_usable() -> bool:
-	return action.is_usable(self)
+	var action_is_usable: bool = false
+	if action.useable_strategy == null: # default usable check
+		var user_has_enough_move_points: bool = user.move_points_remaining >= action.move_points_cost
+		var user_has_enough_action_points: bool = user.action_points_remaining >= action.action_points_cost
+		var user_has_enough_mp: bool = user.mp >= action.mp_cost
+		var user_has_equipment_type: bool = false
+		if action.required_equipment_type.is_empty():
+			user_has_equipment_type = true
+		else:
+			for equipment_slot: EquipmentSlot in user.equip_slots:
+				if action.required_equipment_type.has(equipment_slot.get_item().item_type): # TODO allow actions that require combination of item types?
+					user_has_equipment_type = true
+					break
+		
+		var user_has_equipment: bool = false
+		if action.required_equipment_unique_name.is_empty():
+			user_has_equipment = true
+		else:
+			for equipment_slot: EquipmentSlot in user.equip_slots:
+				if action.required_equipment_unique_name.has(equipment_slot.item_unique_name): # TODO allow actions that require combination of items
+					user_has_equipment = true
+					break
+		
+		var action_not_prevented_by_status: bool = not action.status_prevents_use_any.any(func(status_id: String) -> bool: return user.current_status_ids.has(status_id))
+		
+		action_is_usable = (user_has_enough_move_points 
+				and user_has_enough_action_points 
+				and user_has_enough_mp
+				and action_not_prevented_by_status
+				and user_has_equipment_type
+				and user_has_equipment)
+	else: # custom usable check
+		action_is_usable = action.useable_strategy.is_usable(self)
+		
+	return action_is_usable
 
 
 func update_potential_targets() -> void:
@@ -110,7 +144,7 @@ func get_tile_highlights(tiles: Array[TerrainTile], highlight_material: Material
 
 
 func start_targeting() -> void:
-	user.global_battle_manager.game_state_label.text = user.job_nickname + "-" + user.unit_nickname + " targeting " + action.display_name
+	battle_manager.game_state_label.text = user.job_nickname + "-" + user.unit_nickname + " targeting " + action.display_name
 	
 	# cancel any current targeting
 	if is_instance_valid(user.active_action):
@@ -185,7 +219,7 @@ func get_ai_score() -> int:
 			var effect_value: int = action_effect.get_ai_value(user, target, action.element)
 			target_score += effect_value
 		
-		var evade_direction: EvadeData.Directions = action.get_evade_direction(user, target)
+		var evade_direction: EvadeData.Directions = get_evade_direction(user.tile_position, target)
 		var hit_chance_value: int = action.get_total_hit_chance(user, target, evade_direction)
 		hit_chance_value = clamp(hit_chance_value, 0, 100)
 		target_score = target_score * (hit_chance_value / 100.0)
@@ -235,8 +269,8 @@ func show_result_preview(target: Unit) -> ActionPreview:
 
 func get_hit_chance_text(target: Unit) -> String:
 	# hit chance preview
-	var evade_direction: EvadeData.Directions = action.get_evade_direction(user, target)
-	var hit_chance_value: int = action.get_total_hit_chance(user, target, evade_direction)
+	var evade_direction: EvadeData.Directions = get_evade_direction(user.tile_position, target)
+	var hit_chance_value: int = get_total_hit_chance(target, evade_direction)
 	var hit_chance_text: String = str(hit_chance_value) + "% Hit"
 	
 	return hit_chance_text
@@ -348,7 +382,10 @@ func use() -> void:
 	
 	stop_targeting()
 	
-	await action.use(self)
+	if action.use_strategy == null: # default use
+		await apply_standard()
+	else:
+		action.use_strategy.use(self)
 
 
 func pay_action_point_costs() -> void:
@@ -364,3 +401,348 @@ func face_target() -> void:
 	if submitted_targets[0] != user.tile_position:
 		var direction_to_target: Vector2i = submitted_targets[0].location - user.tile_position.location
 		user.update_unit_facing(Vector3(direction_to_target.x, 0, direction_to_target.y))
+
+
+func get_total_hit_chance(target: Unit, evade_direction: EvadeData.Directions) -> int:
+	var user_passive_effects: Array[PassiveEffect] = user.get_all_passive_effects(action.ignore_passives)
+	var target_passive_effects: Array[PassiveEffect] = target.get_all_passive_effects(action.ignore_passives)
+	
+	if not action.required_target_job_uname.is_empty():
+		var required_jobs: PackedStringArray = action.required_target_job_uname.duplicate()
+		for passive_effect: PassiveEffect in user_passive_effects:
+			required_jobs.append_array(passive_effect.add_applicable_target_jobs)
+
+		if not required_jobs.has(target.job_data.unique_name):
+			return 0
+	
+	if not action.required_target_status_uname.is_empty():
+		var required_status: PackedStringArray = action.required_target_status_uname.duplicate()
+		for passive_effect: PassiveEffect in user_passive_effects:
+			required_status.append_array(passive_effect.add_applicable_target_statuses)
+		
+		if not Utilities.has_any_elements(target.current_status_ids, required_status):
+			return 0
+
+	if not action.required_target_stat_basis.is_empty():
+		var required_basis: Array[Unit.StatBasis] = action.required_target_stat_basis.duplicate()
+		for passive_effect: PassiveEffect in user_passive_effects:
+			required_basis.append_array(passive_effect.add_applicable_target_stat_bases)
+
+		if not required_basis.has(target.stat_basis):
+			return 0
+	
+	var base_hit_chance: float = action.base_hit_formula.get_result(user, target, action.element)
+	var modified_hit_chance: float = base_hit_chance
+	if action.passive_power_modifier_applies_to_hit_chance:
+		for passive_effect: PassiveEffect in user_passive_effects:
+			modified_hit_chance = passive_effect.power_modifier_user.apply(roundi(modified_hit_chance), user)
+		for passive_effect: PassiveEffect in target_passive_effects:
+			modified_hit_chance = passive_effect.power_modifier_targeted.apply(roundi(modified_hit_chance), target)
+	else:
+		for passive_effect: PassiveEffect in user_passive_effects:
+			modified_hit_chance = passive_effect.hit_chance_modifier_user.apply(roundi(modified_hit_chance), user)
+		for passive_effect: PassiveEffect in target_passive_effects:
+			modified_hit_chance = passive_effect.hit_chance_modifier_targeted.apply(roundi(modified_hit_chance), target)
+
+	var evade_values: Dictionary[EvadeData.EvadeSource, int] = target.get_evade_values(action.applicable_evasion_type, evade_direction)
+	
+	var target_total_evade_factor: float = 1.0
+	var evade_factors: Dictionary[EvadeData.EvadeSource, float] = {}
+	if action.applicable_evasion_type != EvadeData.EvadeType.NONE:
+		for evade_source: EvadeData.EvadeSource in evade_values.keys():
+			if target_passive_effects.any(func(passive_effect: PassiveEffect) -> bool: return passive_effect.include_evade_sources.has(evade_source)):
+				var evade_value: float = evade_values[evade_source]
+				for passive_effect: PassiveEffect in user_passive_effects:
+					if passive_effect.evade_source_modifiers_user.has(evade_source):
+						evade_value = passive_effect.evade_source_modifiers_user[evade_source].apply(roundi(evade_value))
+				
+				for passive_effect: PassiveEffect in target_passive_effects:
+					if passive_effect.evade_source_modifiers_targeted.has(evade_source):
+						evade_value = passive_effect.evade_source_modifiers_targeted[evade_source].apply(roundi(evade_value))
+				
+				var evade_factor: float = max(0.0, 1 - (evade_value / 100.0))
+
+				evade_factors[evade_source] = evade_factor
+				target_total_evade_factor = target_total_evade_factor * evade_factor
+
+		target_total_evade_factor = max(0, target_total_evade_factor) # prevent negative evasion
+	
+	var total_hit_chance: int = roundi(modified_hit_chance * target_total_evade_factor)
+	
+	return roundi(total_hit_chance)
+
+
+func get_evade_direction(origin_tile: TerrainTile, target: Unit) -> EvadeData.Directions:
+	var relative_position: Vector2i = origin_tile.location - target.tile_position.location
+	var relative_facing_position: Vector2i = relative_position
+	if target.facing == Unit.Facings.NORTH:
+		pass # relative position is already correct for North facing
+	elif target.facing == Unit.Facings.EAST:
+		relative_facing_position = Vector2i(-relative_position.y, relative_position.x)
+	elif target.facing == Unit.Facings.SOUTH:
+		relative_facing_position = -relative_position
+	elif target.facing == Unit.Facings.WEST:
+		relative_facing_position = Vector2i(relative_position.y, -relative_position.x)
+	
+	# check target facing, check x>y
+	var evade_direction: EvadeData.Directions = EvadeData.Directions.FRONT
+	if relative_facing_position.y < 0:
+		evade_direction = EvadeData.Directions.BACK
+		if abs(relative_facing_position.x) >= abs(relative_facing_position.y):
+			evade_direction = EvadeData.Directions.SIDE
+	elif abs(relative_facing_position.x) > abs(relative_facing_position.y):
+		evade_direction = EvadeData.Directions.SIDE
+	
+	return evade_direction
+
+
+func get_evade_values(target: Unit, evade_direction: EvadeData.Directions) -> Dictionary[EvadeData.EvadeSource, int]:
+	var evade_values: Dictionary[EvadeData.EvadeSource, int] = {}
+	for evade_source: int in EvadeData.EvadeSource.size():
+		var evade_value: int = target.get_evade(evade_source, action.applicable_evasion_type, evade_direction)
+		evade_values[evade_source] = evade_value
+	
+	return evade_values
+
+
+func apply_standard() -> void:
+	var target_units: Array[Unit] = get_target_units(submitted_targets)
+	
+	if allow_triggering_actions:
+		for target: Unit in target_units:
+			for connection: Dictionary in target.targeted_pre_action.get_connections():
+				await connection["callable"].call(target, self)
+	
+
+	# look up animation based on weapon type and vertical angle to target
+	var mod_animation_executing_id: int = action.animation_executing_id
+	if not submitted_targets.is_empty():
+		if action.animation_executing_ids_alternate.size() != 0 and action.use_weapon_animation:
+			mod_animation_executing_id = action.animation_executing_id
+			var angle_to_target: float = ((submitted_targets[0].height_mid - user.tile_position.height_mid) 
+					/ (submitted_targets[0].location - user.tile_position.location).length())
+			if angle_to_target > 0.51:
+				mod_animation_executing_id = action.animation_executing_ids_alternate[0]
+			elif angle_to_target < -0.51:
+				mod_animation_executing_id = action.animation_executing_ids_alternate[1]
+	
+	show_shared_vfx(action.user_shared_vfx_handler_id, user)
+	user.get_tree().create_timer(2.0).timeout.connect(func() -> void: if is_instance_valid(battle_manager): battle_manager.trap_instance.stop(), CONNECT_ONE_SHOT)
+	await user.animate_start_action(action.animation_start_id, action.animation_charging_id)
+	
+	user.animate_execute_action(mod_animation_executing_id)
+	
+	await user.get_tree().create_timer(0.2).timeout # TODO delay should be based on effect/vfx data? 
+	
+	# TODO show vfx, including rock, arrow, bolt...
+	
+	var vfx_locations: Array[Node3D] = []
+	# apply effects to targets
+	for target_unit: Unit in target_units:
+		if action.vfx_data != null:
+			#vfx_data.vfx_completed.connect(func(): vfx_completed = true, CONNECT_ONE_SHOT)
+			vfx_locations.append(show_vfx(target_unit.tile_position.get_world_position()))
+		show_projectile(target_unit, action.projectile_type)
+		var evade_direction: EvadeData.Directions = get_evade_direction(user.tile_position, target_unit)
+		var total_hit_chance: int = get_total_hit_chance(target_unit, evade_direction)
+		var hit_success: bool = randi_range(0, 99) < total_hit_chance
+		if hit_success:
+			show_shared_vfx(action.target_shared_vfx_handler_id, target_unit)
+
+			for effect: ActionEffect in action.target_effects:
+				var effect_value: int = roundi(effect.base_power_formula.get_result(user, target_unit, action.element))
+				if not action.passive_power_modifier_applies_to_hit_chance:
+					# TODO check all passive_effects on user and target
+					# TODO check ignores_statuses
+					for status: StatusEffect in user.current_statuses:
+						effect_value = status.passive_effect.power_modifier_user.apply(effect_value)
+					for status: StatusEffect in target_unit.current_statuses:
+						effect_value = status.passive_effect.power_modifier_targeted.apply(effect_value)
+				
+				effect.apply(user, target_unit, effect_value)
+				
+				if action.set_target_animation_on_hit and [Unit.StatType.HP, Unit.StatType.MP].has(effect.effect_stat_type) and effect_value < 0:
+					target_unit.animate_take_hit(action.vfx_data)
+				elif action.set_target_animation_on_hit and [Unit.StatType.HP, Unit.StatType.MP].has(effect.effect_stat_type) and effect_value > 0:
+					target_unit.animate_recieve_heal(action.vfx_data)
+			
+			# apply status
+			await apply_status(target_unit, action.target_status_list, action.target_status_list_type, action.target_status_chance, action.will_remove_target_status)
+			
+			# TODO apply secondary action
+			if action.secondary_action_list_type == Action.StatusListType.RANDOM:
+				var sum_weights: int = 0
+				for secondary_action: Action.SecondaryAction in action.secondary_actions2:
+					sum_weights += secondary_action.chance
+				var rng: int = randi_range(0, sum_weights)
+				for secondary_action: Action.SecondaryAction in action.secondary_actions2:
+					if rng < secondary_action.chance:
+						var secondary_action_instance: ActionInstance = self.duplicate()
+						secondary_action_instance.action = RomReader.actions[secondary_action.action_unique_name]
+						await secondary_action_instance.use() # TODO do not use unit animations, don't check for hit again (when using magic gun)
+						break
+					else:
+						rng -= secondary_action.chance
+		else:
+			animate_evade(target_unit, evade_direction, user.tile_position.location)
+			
+			target_unit.show_popup_text("Missed!") # TODO or "Guarded"
+			#push_warning(display_name + " missed")
+	
+	# apply effects to user
+	for effect: ActionEffect in action.user_effects:
+		var effect_value: int = roundi(effect.base_power_formula.get_result(user, user, action.element))
+		effect.apply(user, user, effect_value)
+	
+	# apply status to user
+	await apply_status(user, action.user_status_list, action.user_status_list_type, action.user_status_chance, action.will_remove_user_status)
+
+	# this is needed in case the action causes the user to change animations (or SEQ entirely, ex. new status)
+	# TODO correctly time animations with end of action
+	if user.current_animation_id_fwd != user.current_idle_animation_id:
+		user.animate_return_to_idle()
+
+	# wait for applying effect animation
+	battle_manager.game_state_label.text = "Waiting for " + action.display_name + " vfx" 
+	if action.vfx_data != null and target_units.size() > 0:
+		while vfx_locations.any(func(vfx_location: Node3D) -> bool: return is_instance_valid(vfx_location)): # wait until vfx is completed
+			await user.get_tree().process_frame
+	else:
+		await user.get_tree().create_timer(0.5).timeout # TODO show based on vfx timing data? (attacks use vfx 0xFFFF?)
+	for target_unit: Unit in target_units:
+		if is_instance_valid(target_unit):
+			target_unit.return_to_idle_from_hit()
+	vfx_locations.clear()
+
+	if not is_instance_valid(user):
+		return
+
+	# pay costs
+	user.mp -= action.mp_cost
+
+	# wait for triggered actions
+	if allow_triggering_actions:
+		for target: Unit in target_units:
+			if is_instance_valid(target):
+				for connection: Dictionary in target.targeted_post_action.get_connections():
+					await connection["callable"].call(target, self)
+
+	clear() # clear all highlighting and target data
+
+	if not is_instance_valid(user):
+		return
+
+	if action.ends_turn:
+		user.is_ending_turn = true
+		#action_instance.user.end_turn()
+
+	action_completed.emit(battle_manager)
+
+
+func apply_status(unit: Unit, status_list: Array[String], status_list_type: Action.StatusListType, status_list_chance: int, will_remove_status: bool) -> void:
+	if status_list_type == Action.StatusListType.ALL:
+		var status_success: bool = randi_range(0, 99) < status_list_chance
+		if status_success:
+			for status_id: String in status_list:
+				var status_effect: StatusEffect = GameData.get_status_effect(status_id)
+				if will_remove_status and unit.current_statuses.any(func(status: StatusEffect) -> bool: return status.unique_name == status_id):
+					unit.remove_status_id(status_id)
+					unit.show_popup_text(status_effect.status_effect_name) # TODO different text for removing status
+				elif not will_remove_status:
+					unit.show_popup_text(status_effect.status_effect_name)
+					await unit.add_status(status_effect.duplicate())
+	elif status_list_type == Action.StatusListType.EACH:
+		for status_id: String in status_list:
+			var status_success: bool = randi_range(0, 99) < status_list_chance
+			if status_success:
+				var status_effect: StatusEffect = GameData.get_status_effect(status_id)
+				if will_remove_status and unit.current_statuses.any(func(status: StatusEffect) -> bool: return status.unique_name == status_id):
+					unit.remove_status_id(status_id)
+					unit.show_popup_text(status_effect.status_effect_name) # TODO different text for removing status
+				elif not will_remove_status:
+					unit.show_popup_text(status_effect.status_effect_name)
+					await unit.add_status(status_effect.duplicate())
+	elif status_list_type == Action.StatusListType.RANDOM:
+		var status_success: bool = randi_range(0, 99) < status_list_chance
+		if status_success:
+			if will_remove_status:
+				var removable_status_list: Array[String] = status_list.filter(func(status_id: String) -> bool: return unit.current_status_ids.has(status_id))
+				if not removable_status_list.is_empty():
+					var status_id: String = removable_status_list.pick_random()
+					unit.remove_status_id(status_id)
+					unit.show_popup_text(GameData.get_status_effect(status_id).status_effect_name) # TODO different text for removing status
+			elif not will_remove_status:
+				var addable_status_list: Array[String] = status_list.filter(func(status_id: String) -> bool: return not unit.current_status_ids.has(status_id))
+				if not addable_status_list.is_empty():
+					var status_id: String = addable_status_list.pick_random()
+					unit.show_popup_text(GameData.get_status_effect(status_id).status_effect_name)
+					await unit.add_status(GameData.get_status_effect(status_id).duplicate())
+
+
+func animate_evade(target_unit: Unit, evade_direction: EvadeData.Directions, user_pos: Vector2i) -> void:
+	var target_original_facing: Vector3 = target_unit.facing_vector
+	
+	var dir_to_target: Vector2i = user_pos - target_unit.tile_position.location
+	var temp_facing: Vector3 = Vector3(dir_to_target.x, 0, dir_to_target.y).normalized()
+	target_unit.update_unit_facing(temp_facing)
+	
+	# var evade_anim_id: int = -1
+	var sum_of_weight: int = 0
+	var evade_values: Dictionary[EvadeData.EvadeSource, int] = target_unit.get_evade_values(action.applicable_evasion_type, evade_direction)
+	for evade_source_value: int in evade_values.values():
+		sum_of_weight += evade_source_value
+	
+	if sum_of_weight <= 0: # missed due to action base hit chance
+		await target_unit.animate_evade(EvadeData.animation_ids[0])
+	else:
+		var rnd: int = randi_range(0, sum_of_weight)
+		for evade_source_idx: int in evade_values.size():
+			var evade_source_value: int = evade_values[evade_source_idx]
+			if rnd < evade_source_value:
+				await target_unit.animate_evade(EvadeData.animation_ids[evade_source_idx])
+				break
+			rnd -= evade_source_value
+	
+	target_unit.update_unit_facing(target_original_facing)
+
+
+func show_vfx(position: Vector3) -> Node3D:
+	if not is_instance_valid(action.vfx_data):
+		push_warning("[Action.show_vfx] vfx_data is not valid, skipping")
+		return
+
+	var parent_node: Node = user.get_parent()
+
+	var vfx_instance: VfxEffectInstance = VfxEffectInstance.new()
+	vfx_instance.name = "VfxEffectInstance"
+	vfx_instance.position = position
+	parent_node.add_child(vfx_instance)
+
+	var origin_pos: Vector3 = user.tile_position.get_world_position()
+	vfx_instance.initialize(action.vfx_data, position, origin_pos)
+	return vfx_instance
+
+
+func show_shared_vfx(shared_vfx_handler_id: int, target_unit: Unit) -> void:
+	if shared_vfx_handler_id <= 0:
+		return
+	if battle_manager == null or battle_manager.trap_instance == null:
+		return
+	var target_pos: Vector3 = target_unit.char_body.global_position
+	battle_manager.trap_instance.global_position = target_pos
+	var dir: Vector3 = (target_pos - user.char_body.global_position).normalized()
+	var trap_element: int = TrapEffectData.element_type_to_trap_id(action.element)
+	var flash_unit: Unit = target_unit if shared_vfx_handler_id in TrapEffectData.FLASH_HANDLER_IDS else null
+	battle_manager.trap_instance.play(shared_vfx_handler_id, trap_element, dir, flash_unit)
+
+
+func show_projectile(target_unit: Unit, new_projectile_type: ProjectileEffectInstance.ProjectileType) -> void:
+	if new_projectile_type == ProjectileEffectInstance.ProjectileType.NONE:
+		return
+	
+	if battle_manager == null or battle_manager.projectile_instance == null:
+		push_warning("[Action.show_projectile] battle_manager or projectile_instance is null")
+		return
+	var origin: Vector3 = user.char_body.global_position
+	var target: Vector3 = target_unit.char_body.global_position
+	battle_manager.projectile_instance.play(origin, target, new_projectile_type)

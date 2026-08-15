@@ -349,7 +349,7 @@ func _init(idx: int = -1) -> void:
 			weapon_attack_action.target_shared_vfx_handler_id = TrapEffectData.HANDLER_HIT_MELEE
 
 		if idx < 0x7a:
-			weapon_attack_action.animation_executing_id = RomReader.battle_bin_data.weapon_animation_ids[item_type].y * 2
+			weapon_attack_action.animation_executing_id = roundi(RomReader.battle_bin_data.weapon_animation_ids[item_type].y * 2)
 			weapon_attack_action.animation_executing_ids_alternate = [
 				RomReader.battle_bin_data.weapon_animation_ids[item_type].x * 2,
 				RomReader.battle_bin_data.weapon_animation_ids[item_type].z * 2,

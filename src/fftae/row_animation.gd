@@ -16,7 +16,7 @@ extends MarginContainer
 
 @export var anim_id: int:
 	get:
-		return anim_id_spinbox.value
+		return roundi(anim_id_spinbox.value)
 	set(value):
 		anim_id_spinbox.value = value
 		anim_id_spinbox.value_changed.emit(value)

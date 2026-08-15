@@ -201,7 +201,7 @@ static func create_paletted_bmp(image: Image, palette: Array[Color], local_bits_
 	var header_size: int = 54
 	var palette_data_size: int = palette_num_colors * 4
 	var new_pixel_data_start: int = header_size + palette_data_size
-	var pixel_data_size: int = pixel_count * (local_bits_per_pixel/8.0)
+	var pixel_data_size: int = roundi(pixel_count * (local_bits_per_pixel/8.0))
 	var file_size: int = header_size + palette_data_size + pixel_data_size
 	bmp_file.resize(file_size)
 	bmp_file.fill(0)

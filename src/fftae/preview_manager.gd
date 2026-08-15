@@ -143,7 +143,7 @@ func _on_face_right_check_toggled(toggled_on: bool) -> void:
 
 
 func _on_palette_spin_box_value_changed(value: float) -> void:
-	unit.animation_manager._on_palette_spin_box_value_changed(value)
+	unit.animation_manager._on_palette_spin_box_value_changed(roundi(value))
 
 
 func update_preview_slider(index: int) -> void:

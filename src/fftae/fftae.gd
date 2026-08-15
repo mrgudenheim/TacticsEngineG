@@ -361,7 +361,7 @@ func populate_frame_list(frame_list_parent: VBoxContainer, shp_local: Shp) -> vo
 		
 		var preview_image_size: Vector2i = Vector2i(120, 120)
 		var preview_image: Image = shp_local.create_blank_frame(Color.BLACK, preview_image_size)
-		var assembled_frame: Image = shp_local.get_assembled_frame(frame_index, spr.spritesheet, ui_manager.animation_id_spinbox.value, preview_manager.other_type_options.selected, preview_manager.unit.primary_weapon.wep_frame_v_offset, preview_manager.submerged_depth_options.selected, Vector2i(60, 60), 15)
+		var assembled_frame: Image = shp_local.get_assembled_frame(frame_index, spr.spritesheet, roundi(ui_manager.animation_id_spinbox.value), preview_manager.other_type_options.selected, preview_manager.unit.primary_weapon.wep_frame_v_offset, preview_manager.submerged_depth_options.selected, Vector2i(60, 60), 15)
 		assembled_frame.resize(preview_image_size.x, preview_image_size.y, Image.INTERPOLATE_NEAREST)
 		preview_image.blend_rect(assembled_frame, Rect2i(Vector2i.ZERO, preview_image_size), Vector2i.ZERO)
 		row_ui.preview_rect.texture = ImageTexture.create_from_image(preview_image)
@@ -375,7 +375,7 @@ func populate_frame_list(frame_list_parent: VBoxContainer, shp_local: Shp) -> vo
 
 
 func draw_assembled_frame(frame_index: int) -> void:
-	var assembled_image: Image = shp.get_assembled_frame(frame_index, spr.spritesheet, ui_manager.animation_id_spinbox.value, preview_manager.other_type_options.selected, preview_manager.unit.primary_weapon.wep_frame_v_offset, preview_manager.submerged_depth_options.selected)
+	var assembled_image: Image = shp.get_assembled_frame(frame_index, spr.spritesheet, roundi(ui_manager.animation_id_spinbox.value), preview_manager.other_type_options.selected, preview_manager.unit.primary_weapon.wep_frame_v_offset, preview_manager.submerged_depth_options.selected)
 	preview_manager.unit.animation_manager.unit_sprites_manager.set_primary_texture(ImageTexture.create_from_image(assembled_image))
 	var image_rotation: float = shp.get_frame(frame_index, preview_manager.submerged_depth_options.selected).y_rotation
 	(preview_manager.unit.animation_manager.unit_sprites_manager.sprite_primary.get_parent() as Node2D).rotation_degrees = image_rotation
@@ -388,7 +388,7 @@ func _on_animation_option_button_item_selected(index: int) -> void:
 
 
 func _on_insert_opcode_pressed() -> void:
-	var seq_part_id: int = ui_manager.row_spinbox.value
+	var seq_part_id: int = roundi(ui_manager.row_spinbox.value)
 	var seq_id: int = ui_manager.animation_name_options.selected
 	
 	#var previous_length: int = seq.sequences[seq_id].length
@@ -404,7 +404,7 @@ func _on_insert_opcode_pressed() -> void:
 
 
 func _on_delete_opcode_pressed() -> void:
-	var seq_part_id: int = ui_manager.row_spinbox.value
+	var seq_part_id: int = roundi(ui_manager.row_spinbox.value)
 	var seq_id: int = ui_manager.animation_name_options.selected
 	#var previous_length: int = seq.sequences[seq_id].length
 	
@@ -430,18 +430,18 @@ func _on_new_animation_pressed() -> void:
 	
 	ui_manager.animation_id_spinbox.max_value = seq.sequences.size() - 1
 	ui_manager.animation_id_spinbox.value = seq.sequences.size() - 1
-	populate_opcode_list(opcode_list_container, ui_manager.animation_id_spinbox.value)
+	populate_opcode_list(opcode_list_container, roundi(ui_manager.animation_id_spinbox.value))
 
 
 func _on_delete_animation_pressed() -> void:
-	seq.sequences.remove_at(ui_manager.animation_id_spinbox.value)
+	seq.sequences.remove_at(roundi(ui_manager.animation_id_spinbox.value))
 	ui_manager.animation_id_spinbox.max_value = seq.sequences.size() - 1
 	for pointer_index: int in seq.sequence_pointers.size():
 		if seq.sequence_pointers[pointer_index] >= ui_manager.animation_id_spinbox.max_value:
 			seq.sequence_pointers[pointer_index] = 0
 	populate_animation_list(animation_list_container, seq)
 	ui_manager.update_animation_description_options(seq)
-	populate_opcode_list(opcode_list_container, ui_manager.animation_id_spinbox.value)
+	populate_opcode_list(opcode_list_container, roundi(ui_manager.animation_id_spinbox.value))
 
 
 func _on_add_pointer_pressed() -> void:
@@ -451,7 +451,7 @@ func _on_add_pointer_pressed() -> void:
 
 
 func _on_delete_pointer_pressed() -> void:
-	seq.sequence_pointers.remove_at(ui_manager.pointer_index_spinbox.value)
+	seq.sequence_pointers.remove_at(roundi(ui_manager.pointer_index_spinbox.value))
 	ui_manager.pointer_index_spinbox.max_value = seq.sequence_pointers.size() - 1
 	populate_animation_list(animation_list_container, seq)
 
@@ -510,7 +510,7 @@ func _on_sprite_options_item_selected(index: int) -> void:
 
 func _on_animation_rewrite_check_toggled(toggled_on: bool) -> void:
 	Seq.load_opcode_data(toggled_on)
-	populate_opcode_list(opcode_list_container, ui_manager.animation_id_spinbox.value)
+	populate_opcode_list(opcode_list_container, roundi(ui_manager.animation_id_spinbox.value))
 
 
 func _on_save_frame_grid_pressed() -> void:

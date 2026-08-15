@@ -274,10 +274,10 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			var layer_priority_order: Vector4 = GameData.animation_layer_priorities[seq_part.parameters[0]]
 			# push_warning(layer_priority_order)
 			
-			get_layer_sprite3d(layer_priority_order.w).position.z = 0 * UnitSpritesManager.LAYERING_OFFSET
-			get_layer_sprite3d(layer_priority_order.x).position.z = -1 * UnitSpritesManager.LAYERING_OFFSET
-			get_layer_sprite3d(layer_priority_order.y).position.z = -2 * UnitSpritesManager.LAYERING_OFFSET
-			get_layer_sprite3d(layer_priority_order.z).position.z = -3 * UnitSpritesManager.LAYERING_OFFSET
+			get_layer_sprite3d(roundi(layer_priority_order.w)).position.z = 0 * UnitSpritesManager.LAYERING_OFFSET
+			get_layer_sprite3d(roundi(layer_priority_order.x)).position.z = -1 * UnitSpritesManager.LAYERING_OFFSET
+			get_layer_sprite3d(roundi(layer_priority_order.y)).position.z = -2 * UnitSpritesManager.LAYERING_OFFSET
+			get_layer_sprite3d(roundi(layer_priority_order.z)).position.z = -3 * UnitSpritesManager.LAYERING_OFFSET
 		elif seq_part.opcode_name == "SetFrameOffset":
 			opcode_frame_offset = seq_part.parameters[0] # use global var since SetFrameOffset is only used in animations that do not call other animations
 		elif seq_part.opcode_name == "FlipHorizontal": # does not do anything for wep or eff animations through QueueSpriteAnim

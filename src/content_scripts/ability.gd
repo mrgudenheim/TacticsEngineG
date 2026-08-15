@@ -76,7 +76,7 @@ static func create_from_json(json_string: String) -> Ability:
 
 static func create_from_dictonary(property_dict: Dictionary) -> Ability:
 	var new_ability: Ability = Ability.new()
-	for property_name in property_dict.keys():
+	for property_name: String in property_dict.keys():
 		if property_name == "slot_type":
 			var type: String = property_dict[property_name]
 			var new_slot_type: SlotType = SlotType[type]

@@ -292,7 +292,7 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 			target_sprite.frame = 32 # set to blankwd
 			target_sprite.position = unit_sprites_manager.item_initial_pos
 		elif seq_part.opcode_name == "MFItemPosFBDU":
-			var target_sprite_pivot := unit_sprites_manager.sprite_item
+			var target_sprite_pivot: Sprite3D = unit_sprites_manager.sprite_item
 			target_sprite_pivot.position = unit_sprites_manager.item_initial_pos + Vector3(-seq_part.parameters[0], -seq_part.parameters[1], 0.01) * BattleManager.SCALE # assume facing left, add 20 because it is y position from bottom of unit
 		elif seq_part.opcode_name == "LoadMFItem":
 			var item_frame_id: int = item_index # assumes loading item

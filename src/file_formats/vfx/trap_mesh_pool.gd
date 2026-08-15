@@ -4,7 +4,7 @@ extends Node3D
 
 const POOL_INITIAL_SIZE: int = 512
 const POOL_GROWTH: int = 128
-const OFFSCREEN_POS := Vector3(0, -10000, 0)
+const OFFSCREEN_POS: Vector3 = Vector3(0, -10000, 0)
 
 var meshes: Array[MeshInstance3D] = []
 var materials: Array[ShaderMaterial] = []

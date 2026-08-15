@@ -1282,7 +1282,6 @@ func update_unit_facing(dir: Vector3) -> void:
 		new_facing = Facings.SOUTH
 	
 	if new_facing != facing:
-		var temp_facing: Unit.Facings = facing
 		facing = new_facing
 		if global_battle_manager != null:
 			update_animation_facing(global_battle_manager.camera_controller.camera_facing_vector)
@@ -1661,7 +1660,6 @@ func set_sprite_by_id(new_sprite_id: int) -> void:
 
 func set_sprite_by_job(new_job_name: String) -> void:
 	var new_job_data: JobData = GameData.get_job(new_job_name)
-	var new_sprite_id: int = new_job_data.sprite_id
 	
 	# TODO get different sprite_name for female generic jobs
 	var sprite_name: String = new_job_data.sprite_name

@@ -209,6 +209,63 @@ enum UseTypes {
 	# emit_changed()
 
 
+static func create_from_json(json_string: String) -> Action:
+	var property_dict: Dictionary = JSON.parse_string(json_string)
+	var new_action: Action = create_from_dictonary(property_dict)
+	
+	return new_action
+
+
+static func create_from_dictonary(property_dict: Dictionary) -> Action:
+	var new_action: Action = Action.new()
+	for property_name: String in property_dict.keys():
+		if ["target_effects", "user_effects"].has(property_name):
+			var new_effects: Array[ActionEffect] = []
+			for effect: Dictionary in property_dict[property_name]:
+				var new_action_effect: ActionEffect = ActionEffect.create_from_dictionary(effect)
+				new_effects.append(new_action_effect)
+			new_action.set(property_name, new_effects)
+		elif property_name == "base_hit_formula":
+			var new_formula_data: FormulaData = FormulaData.create_from_dictionary(property_dict[property_name])
+			new_action.set(property_name, new_formula_data)
+		elif ["action_id", "action_idx"].has(property_name):
+			if property_dict[property_name] >= 0: # auto generate action_id if < 0
+				new_action.set(property_name, property_dict[property_name])
+				# TODO overwrite other Action at index
+		elif property_name == "projectile_type":
+			new_action.projectile_type = ProjectileEffectInstance.ProjectileType[property_dict[property_name]]
+		elif property_name == "applicable_evasion_type":
+			new_action.applicable_evasion_type = EvadeData.EvadeType[property_dict[property_name]]
+		elif property_name == "element":
+			new_action.element = ElementTypes[property_dict[property_name]]
+		elif property_name == "target_status_list_type":
+			new_action.target_status_list_type = StatusListType[property_dict[property_name]]
+		elif property_name == "user_status_list_type":
+			new_action.user_status_list_type = StatusListType[property_dict[property_name]]
+		elif property_name == "targeting_type":
+			new_action.targeting_type = TargetingTypes[property_dict[property_name]]
+		elif property_name == "use_type":
+			new_action.use_type = UseTypes[property_dict[property_name]]
+		else:
+			new_action.set(property_name, property_dict[property_name])
+
+	new_action.emit_changed()
+	return new_action
+
+
+static func get_element_types_array(element_bitflags: PackedByteArray) -> Array[ElementTypes]:
+	var elemental_types: Array[ElementTypes] = []
+	
+	for byte_idx: int in element_bitflags.size():
+		for bit_idx: int in range(7, -1, -1):
+			var byte: int = element_bitflags.decode_u8(byte_idx)
+			if byte & (2 ** bit_idx) != 0:
+				# var element_index: int = (7 - bit_idx) + (byte_idx * 8)
+				elemental_types.append(2 ** bit_idx)
+	
+	return elemental_types
+
+
 func _to_string() -> String:
 	return display_name
 
@@ -1633,60 +1690,3 @@ func to_json() -> String:
 		"script",
 	]
 	return Utilities.object_properties_to_json(self, properties_to_exclude)
-
-
-static func create_from_json(json_string: String) -> Action:
-	var property_dict: Dictionary = JSON.parse_string(json_string)
-	var new_action: Action = create_from_dictonary(property_dict)
-	
-	return new_action
-
-
-static func create_from_dictonary(property_dict: Dictionary) -> Action:
-	var new_action: Action = Action.new()
-	for property_name: String in property_dict.keys():
-		if ["target_effects", "user_effects"].has(property_name):
-			var new_effects: Array[ActionEffect] = []
-			for effect: Dictionary in property_dict[property_name]:
-				var new_action_effect: ActionEffect = ActionEffect.create_from_dictionary(effect)
-				new_effects.append(new_action_effect)
-			new_action.set(property_name, new_effects)
-		elif property_name == "base_hit_formula":
-			var new_formula_data: FormulaData = FormulaData.create_from_dictionary(property_dict[property_name])
-			new_action.set(property_name, new_formula_data)
-		elif ["action_id", "action_idx"].has(property_name):
-			if property_dict[property_name] >= 0: # auto generate action_id if < 0
-				new_action.set(property_name, property_dict[property_name])
-				# TODO overwrite other Action at index
-		elif property_name == "projectile_type":
-			new_action.projectile_type = ProjectileEffectInstance.ProjectileType[property_dict[property_name]]
-		elif property_name == "applicable_evasion_type":
-			new_action.applicable_evasion_type = EvadeData.EvadeType[property_dict[property_name]]
-		elif property_name == "element":
-			new_action.element = ElementTypes[property_dict[property_name]]
-		elif property_name == "target_status_list_type":
-			new_action.target_status_list_type = StatusListType[property_dict[property_name]]
-		elif property_name == "user_status_list_type":
-			new_action.user_status_list_type = StatusListType[property_dict[property_name]]
-		elif property_name == "targeting_type":
-			new_action.targeting_type = TargetingTypes[property_dict[property_name]]
-		elif property_name == "use_type":
-			new_action.use_type = UseTypes[property_dict[property_name]]
-		else:
-			new_action.set(property_name, property_dict[property_name])
-
-	new_action.emit_changed()
-	return new_action
-
-
-static func get_element_types_array(element_bitflags: PackedByteArray) -> Array[ElementTypes]:
-	var elemental_types: Array[ElementTypes] = []
-	
-	for byte_idx: int in element_bitflags.size():
-		for bit_idx: int in range(7, -1, -1):
-			var byte: int = element_bitflags.decode_u8(byte_idx)
-			if byte & (2 ** bit_idx) != 0:
-				# var element_index: int = (7 - bit_idx) + (byte_idx * 8)
-				elemental_types.append(2 ** bit_idx)
-	
-	return elemental_types

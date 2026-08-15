@@ -131,7 +131,7 @@ func initialize_ui() -> void:
 	ui_manager.pointer_index_spinbox.value = 6 # default to walking animation
 	#ui_manager.preview_viewport.sprite_primary.texture = ImageTexture.create_from_image(spr.spritesheet)
 	
-	var background_image: Image = shp.create_blank_frame(Color.BLACK)
+	#var background_image: Image = shp.create_blank_frame(Color.BLACK)
 	#preview_manager.unit.animation_manager.unit_sprites_manager.sprite_background.texture = ImageTexture.create_from_image(background_image)
 	#sprite_background.texture = ImageTexture.create_from_image(background_image)
 	
@@ -348,7 +348,7 @@ func populate_frame_list(frame_list_parent: VBoxContainer, shp_local: Shp) -> vo
 	var counter: int = 0
 	
 	for frame_index: int in shp_local.frame_pointers.size():
-		var pointer: int = shp_local.frame_pointers[frame_index]
+		#var pointer: int = shp_local.frame_pointers[frame_index]
 		var frame: FrameData = shp_local.frames[frame_index]
 		
 		var row_ui: FrameRow = frame_list_row_tscn.instantiate()

@@ -1138,14 +1138,14 @@ func export_mirrored_map(maps_path: String, save_file_path: String, map_unique_n
 		file.close() # Always close the file to prevent memory leaks
 		print("File saved successfully to: ", save_file_path)
 	else:
-		var error = FileAccess.get_open_error()
+		var error: Error = FileAccess.get_open_error()
 		push_error("Failed to open file. Error code: ", error)
 
 
 func insert_map_into_rom(rom_path: String, new_rom_save_path: String, map_file_to_insert_path: String, insert_sector: int, gns_entry_address: int) -> void:
 	# insert new map mesh into ROM
-	var rom_size: int = FileAccess.get_size(rom_path)
-	var rom_file: FileAccess = FileAccess.open(rom_path, FileAccess.READ)
+	#var rom_size: int = FileAccess.get_size(rom_path)
+	#var rom_file: FileAccess = FileAccess.open(rom_path, FileAccess.READ)
 	var rom_error: Error = FileAccess.get_open_error()
 	if rom_error != Error.OK:
 		push_error("Failed to open rom file. Error code: ", rom_error)
@@ -1177,7 +1177,7 @@ func insert_map_into_rom(rom_path: String, new_rom_save_path: String, map_file_t
 		new_rom_file.close() # Always close the file to prevent memory leaks
 		print("File saved successfully to: ", new_rom_save_path)
 	else:
-		var error = FileAccess.get_open_error()
+		var error: Error = FileAccess.get_open_error()
 		push_error("Failed to open file. Error code: ", error)
 
 

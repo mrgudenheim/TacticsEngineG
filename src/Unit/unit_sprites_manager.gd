@@ -2,7 +2,7 @@ class_name UnitSpritesManager
 extends Node3D
 
 const LAYERING_OFFSET: float = 0.001
-const UNIT_SPRITE_SHADER = preload("res://src/Unit/shaders/unit_sprite.gdshader")
+const UNIT_SPRITE_SHADER: Shader = preload("uid://cdcosdsn4y30b")
 
 @export var sprite_primary: Sprite3D
 @export var sprite_weapon: Sprite3D

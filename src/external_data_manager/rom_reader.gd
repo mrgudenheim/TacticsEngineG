@@ -893,12 +893,15 @@ func export_data_tables(save_path: String) -> void:
 	message.emit("Exporting data tables...")
 	await get_tree().process_frame
 	
+	var error: Error
 	for item: ItemData in items.values():
 		Utilities.save_json(item, save_path)
 	for status_effect: StatusEffect in status_effects.values():
 		Utilities.save_json(status_effect, save_path)
 		var status_file_path: String = save_path.path_join(StatusEffect.SAVE_FOLDER).path_join(".".join([status_effect.unique_name, status_effect.FILE_SUFFIX, "tres"]))
-		var error: Error = ResourceSaver.save(status_effect, status_file_path)
+		error = ResourceSaver.save(status_effect, status_file_path)
+		if error != Error.OK:
+			push_warning("error saving status: " + error_string(error))
 	for job_data: JobData in jobs_data.values():
 		Utilities.save_json(job_data, save_path)
 	for action: Action in actions.values():
@@ -929,7 +932,9 @@ func export_data_tables(save_path: String) -> void:
 				skillset.ability_names.append(abilities.keys()[ability_id])
 
 		var skillset_file_path: String = skillset_path.path_join(skillset.unique_name + ".skillset.tres")
-		var error: Error = ResourceSaver.save(skillset, skillset_file_path)
+		error = ResourceSaver.save(skillset, skillset_file_path)
+		if error != Error.OK:
+			push_warning("error saving skillset: " + error_string(error))
 	
 	var initial_unit_data: InitialUnitData = InitialUnitData.new()
 	var initial_unit_raw_stats: Array[Dictionary] = []
@@ -975,9 +980,9 @@ func export_data_tables(save_path: String) -> void:
 	initial_unit_data.initial_unit_equipment = initial_unit_equipment
 
 	var initial_unit_data_file_path: String = save_path.path_join("initial_unit_data.tres")
-	var error: Error = ResourceSaver.save(initial_unit_data, initial_unit_data_file_path)
+	error = ResourceSaver.save(initial_unit_data, initial_unit_data_file_path)
 	if error != Error.OK:
-		push_warning("error saving unit initial_unit_data: " + str(error))
+		push_warning("error saving unit initial_unit_data: " + error_string(error))
 
 
 func export_text(save_path: String) -> void:
@@ -1001,12 +1006,13 @@ func export_unit_animations(save_path: String) -> void:
 	var animation_dir_path: String = save_path.path_join("animations/")
 	DirAccess.make_dir_recursive_absolute(animation_dir_path)
 
+	var error: Error
 	for shp: Shp in shps.values():
 		if not shp.is_initialized:
 			shp.set_data_from_shp_bytes(get_file_data(shp.file_name))
 
 		var shp_file_path: String = animation_dir_path.path_join(shp.file_name.to_lower().trim_suffix(".shp") + ".shp.tres")
-		var error: Error = ResourceSaver.save(shp, shp_file_path)
+		error = ResourceSaver.save(shp, shp_file_path)
 		if error != Error.OK:
 			push_warning("error saving shp " + shp.file_name + ": " + str(error))
 
@@ -1015,14 +1021,16 @@ func export_unit_animations(save_path: String) -> void:
 			seq.set_data_from_seq_bytes(get_file_data(seq.file_name))
 
 		var seq_file_path: String = animation_dir_path.path_join(seq.file_name.to_lower().trim_suffix(".seq") + ".seq.tres")
-		var error: Error = ResourceSaver.save(seq, seq_file_path)
+		error = ResourceSaver.save(seq, seq_file_path)
 		if error != Error.OK:
 			push_warning("error saving shp " + seq.file_name + ": " + str(error))
 	
 	var animation_data: AnimationData = AnimationData.new()
 	animation_data.animation_layer_priorities = battle_bin_data.animation_layer_priorities
 	var animation_data_file_path: String = animation_dir_path.path_join("animation_data.tres")
-	var error: Error = ResourceSaver.save(animation_data, animation_data_file_path)
+	error = ResourceSaver.save(animation_data, animation_data_file_path)
+	if error != Error.OK:
+		push_warning("error saving animation data " + animation_data_file_path + ": " + error_string(error))
 
 
 func export_maps(save_path: String) -> void:
@@ -1067,6 +1075,7 @@ func export_vfx(save_path: String) -> void:
 	var vfx_path: String = save_path + "/vfx/"
 	DirAccess.make_dir_recursive_absolute(vfx_path)
 	var last_frame_time: int = Time.get_ticks_msec()
+	var error: Error
 	for vfx_file: VisualEffectData in vfx:
 		last_frame_time = await keep_60_fps(last_frame_time, "Exporting vfx: " + vfx_file.file_name)
 		
@@ -1075,9 +1084,9 @@ func export_vfx(save_path: String) -> void:
 			continue
 
 		var vfx_data_file_path: String = vfx_path.path_join(vfx_file.unique_name + ".vfx_data.tres")
-		var error: Error = ResourceSaver.save(vfx_file, vfx_data_file_path)
+		error = ResourceSaver.save(vfx_file, vfx_data_file_path)
 		if error != Error.OK:
-			push_warning("error saving map data " + vfx_file.unique_name + ": " + str(error))
+			push_warning("error saving vfx " + vfx_file.unique_name + ": " + error_string(error))
 
 		var vfx_texture_webp_file_path: String = vfx_path.path_join(vfx_file.unique_name + ".texture.webp")
 		vfx_file.texture.get_image().save_webp(vfx_texture_webp_file_path)
@@ -1087,9 +1096,9 @@ func export_vfx(save_path: String) -> void:
 	trap_effect_data.trap_spr.get_index_image().save_webp(trap_texture_webp_file_path)
 	
 	var shared_vfx_data_file_path: String = vfx_path.path_join("shared_vfx.data.tres")
-	var error: Error = ResourceSaver.save(trap_effect_data, shared_vfx_data_file_path)
+	error = ResourceSaver.save(trap_effect_data, shared_vfx_data_file_path)
 	if error != Error.OK:
-		push_warning("error saving shared vfx data: " + str(error))
+		push_warning("error saving shared vfx data: " + error_string(error))
 
 	var shared_vfx_texture_palettes_file_path: String = vfx_path.path_join("shared_vfx.palette.tres")
 	var shared_vfx_color_palette: ColorPalette = ColorPalette.new()

@@ -268,8 +268,8 @@ func populate_animation_list(animations_list_parent: VBoxContainer, seq_local: S
 	
 	ui_manager.current_animation_slots = seq_local.sequence_pointers.size()
 	
-	var time_left_in_frame: bool = true
-	get_tree().create_timer(0.017).timeout.connect(func() -> void: time_left_in_frame = false)
+	var msec_allowed_per_frame: int = 17
+	var start_time: int = Time.get_ticks_msec()
 	
 	for index: int in seq_local.sequence_pointers.size():
 		var pointer: int = seq_local.sequence_pointers[index]
@@ -303,10 +303,10 @@ func populate_animation_list(animations_list_parent: VBoxContainer, seq_local: S
 				)
 		
 		# let frame finish rendering to improve responsiveness
-		if not time_left_in_frame:
+		var delta_time_msec: int = Time.get_ticks_msec() - start_time
+		if delta_time_msec >= msec_allowed_per_frame:
 			await get_tree().process_frame
-			time_left_in_frame = true
-			get_tree().create_timer(0.017).timeout.connect(func() -> void: time_left_in_frame = false)
+			start_time = Time.get_ticks_msec()
 
 
 func populate_opcode_list(opcode_grid_parent: GridContainer, seq_id: int) -> void:

@@ -168,7 +168,7 @@ func init_text_from_file(file_name: String) -> void:
 	for idx: int in text_layout.num_offsets:
 		text_layout.offsets[idx] = offsets_bytes.decode_u32(idx * 4) + text_layout.offsets_end
 	
-	for section_name in text_layout.sections:
+	for section_name: String in text_layout.sections.keys():
 		var section_num: int = text_layout.sections[section_name]
 		var start_offset: int = text_layout.offsets[section_num]
 		if start_offset == text_layout.offsets_end and section_num != 0:

@@ -35,7 +35,8 @@ func _ready() -> void:
 	unit.primary_weapon_assigned.connect(func(weapon_unique_name: String) -> void: weapon_options.select(RomReader.items.keys().find(weapon_unique_name)))
 	# unit.primary_weapon_assigned.connect(weapon_options.select)
 
-func _process(delta: float) -> void:
+
+func _process(_delta: float) -> void:
 	if camera != null:
 		var camera_right: Vector3 = camera.basis * Vector3.RIGHT
 		position = camera.unproject_position(unit_char_body.position + (Vector3.UP * 1.0) + (camera_right * 0.35))

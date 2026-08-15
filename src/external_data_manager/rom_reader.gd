@@ -65,7 +65,7 @@ var trap_effect_data: TrapEffectData = TrapEffectData.new() # TRAP particle effe
 
 # Images
 # https://github.com/Glain/FFTPatcher/blob/master/ShishiSpriteEditor/PSXImages.xml#L148
-var frame_bin: Bmp = Bmp.new()
+var frame_bin: Bmp
 var frame_bin_texture: Texture2D
 var item_bin_texture: Texture2D
 
@@ -457,8 +457,8 @@ func init_abilities() -> void:
 
 func process_frame_bin() -> void:
 	var file_name: String = "FRAME.BIN"
-	frame_bin.file_name = file_name
 	var frame_bin_bytes: PackedByteArray = get_file_data(file_name)
+	frame_bin = Bmp.new(frame_bin_bytes, file_name)
 	
 	frame_bin.num_colors = 22 * 16
 	frame_bin.bits_per_pixel = 4

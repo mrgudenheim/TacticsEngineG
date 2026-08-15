@@ -1,7 +1,7 @@
 extends Sprite3D
 ## Sets up PSX depth-sorted multiply shader for the drop shadow.
 
-const SHADOW_SHADER = preload("res://src/shaders/psx_depth_multiply.gdshader")
+const SHADOW_SHADER: Shader = preload("uid://bh7biqmwncd5c")
 
 func _ready() -> void:
 	var mat: ShaderMaterial = ShaderMaterial.new()

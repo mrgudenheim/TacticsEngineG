@@ -19,7 +19,7 @@ var deduct_action_points: bool = true
 var current_tile_hovered: TerrainTile
 var potential_targets_are_set: bool = false
 
-var action_preview_scene: PackedScene = preload("res://src/content_scripts/actions/action_preview.tscn")
+var action_preview_scene: PackedScene = preload("uid://c8f4elqq81b37")
 var action_previews: Array[ActionPreview] = []
 
 func _init(new_action: Action, new_user: Unit, new_battle_manager: BattleManager) -> void:

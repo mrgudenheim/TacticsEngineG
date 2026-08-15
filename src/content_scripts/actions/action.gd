@@ -266,6 +266,20 @@ static func get_element_types_array(element_bitflags: PackedByteArray) -> Array[
 	return elemental_types
 
 
+static func get_modified_action(action_to_modify: Action, user: Unit) -> Action:
+	var modified_action: Action = action_to_modify.duplicate()
+	modified_action.vfx_data = action_to_modify.vfx_data
+	modified_action.user_shared_vfx_handler_id = action_to_modify.user_shared_vfx_handler_id
+	var all_passive_effects: Array[PassiveEffect] = user.get_all_passive_effects(action_to_modify.ignore_passives)
+
+	for passive_effect: PassiveEffect in all_passive_effects:
+		modified_action.ticks_charge_time = passive_effect.action_charge_time_modifier.apply(modified_action.ticks_charge_time)
+		modified_action.mp_cost = passive_effect.action_mp_modifier.apply(modified_action.mp_cost)
+		modified_action.max_targeting_range = passive_effect.action_max_range_modifier.apply(modified_action.max_targeting_range)
+
+	return modified_action
+
+
 func _to_string() -> String:
 	return display_name
 
@@ -1663,20 +1677,6 @@ func set_data_from_formula_id(new_formula_id: int) -> void:
 			ignore_passives.erase("martial_arts")
 	
 	emit_changed()
-
-
-static func get_modified_action(action_to_modify: Action, user: Unit) -> Action:
-	var modified_action: Action = action_to_modify.duplicate()
-	modified_action.vfx_data = action_to_modify.vfx_data
-	modified_action.user_shared_vfx_handler_id = action_to_modify.user_shared_vfx_handler_id
-	var all_passive_effects: Array[PassiveEffect] = user.get_all_passive_effects(action_to_modify.ignore_passives)
-
-	for passive_effect: PassiveEffect in all_passive_effects:
-		modified_action.ticks_charge_time = passive_effect.action_charge_time_modifier.apply(modified_action.ticks_charge_time)
-		modified_action.mp_cost = passive_effect.action_mp_modifier.apply(modified_action.mp_cost)
-		modified_action.max_targeting_range = passive_effect.action_max_range_modifier.apply(modified_action.max_targeting_range)
-
-	return modified_action
 
 
 func to_json() -> String:

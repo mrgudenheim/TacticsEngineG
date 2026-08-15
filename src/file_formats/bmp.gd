@@ -26,8 +26,8 @@ const BIT_DEPTH: Dictionary = {
 func _init(bmp_file: PackedByteArray = [], new_name: String = "file_name") -> void:
 	file_name = new_name
 	if bmp_file.size() == 0:
+		push_warning(new_name + " file is empty")
 		file_name = "empty_file"
-		push_warning("file is empty")
 		return
 	
 	pixel_data_start = bmp_file.decode_u32(0x000A)

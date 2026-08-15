@@ -145,7 +145,7 @@ func index_data(directory_path: String) -> void:
 
 	var file_paths: PackedStringArray = Utilities.get_file_list_recursive(directory_path, false)
 
-	push_warning("Time to find import files (ms): " + str(Time.get_ticks_msec() - start_time))
+	print_debug("Time to find import files (ms): " + str(Time.get_ticks_msec() - start_time))
 	start_time = Time.get_ticks_msec()
 	var last_frame_time: int = Time.get_ticks_msec()
 
@@ -229,7 +229,6 @@ func index_data(directory_path: String) -> void:
 
 	var import_time: int = Time.get_ticks_msec() - start_time
 	print_debug("Time to index files (ms): " + str(import_time))
-	push_warning("Time to index files (ms): " + str(import_time))
 	is_ready = true
 	data_indexed.emit()
 

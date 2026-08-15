@@ -1172,6 +1172,7 @@ func insert_map_into_rom(rom_path: String, new_rom_save_path: String, map_file_t
 	var gns_entry: PackedByteArray = [ # map022
 		0x22, 0x00, 0x00, 0x00, 0x01, 0x2E, 0x33, 0x33, 0x96, 0x9C, 0x00, 0x00, 0x00, 0x90, 0x00, 0x00, 0x55, 0x66, 0x77, 0x88,
 	]
+	@warning_ignore("integer_division")
 	gns_entry.encode_u16(8, insert_address / 2352)
 	gns_entry.encode_u32(12, new_file_size_sectors)
 	

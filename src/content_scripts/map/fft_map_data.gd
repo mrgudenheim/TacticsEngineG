@@ -1343,7 +1343,9 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 			# 	mirrored_map.textured_polygon_tile_bytes[(tri_index * 2) + 1],
 			# ]
 			centroid = centroid / 3.0
+			@warning_ignore("integer_division")
 			var polygon_tile_x: int = roundi(centroid.x) / TILE_SIDE_LENGTH
+			@warning_ignore("integer_division")
 			var polygon_tile_z: int = (roundi(centroid.z) / TILE_SIDE_LENGTH) << 1
 			var polygon_tile_bytes: PackedByteArray = [
 				polygon_tile_z,
@@ -1415,7 +1417,9 @@ static func get_cropped_map_data(cropped_rect: Rect2i, mirrored_map_data: Dictio
 			# 	mirrored_map.textured_polygon_tile_bytes[(quad_index * 2) + 1],
 			# ]
 			centroid = centroid / 4.0
+			@warning_ignore("integer_division")
 			var polygon_tile_x: int = roundi(centroid.x) / TILE_SIDE_LENGTH
+			@warning_ignore("integer_division")
 			var polygon_tile_z: int = (roundi(centroid.z) / TILE_SIDE_LENGTH) << 1
 			var polygon_tile_bytes: PackedByteArray = [
 				polygon_tile_z,

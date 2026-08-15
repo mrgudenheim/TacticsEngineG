@@ -115,11 +115,13 @@ func init_from_file() -> void:
 
 	initial_offset += num_frameset_groups * 2
 	var frame_sets_data_start: int = data_bytes.decode_u16(initial_offset) + 4
+	@warning_ignore("integer_division")
 	var num_frame_sets: int = (frame_sets_data_start - initial_offset) / 2
 
 	var framesets_so_far: int = 0
 	for group_idx: int in num_frameset_groups:
 		if group_idx > 0:
+			@warning_ignore("integer_division")
 			frameset_groups_num_framesets[group_idx - 1] = (frameset_group_offsets[group_idx] - frameset_group_offsets[group_idx - 1]) / 2
 			framesets_so_far += frameset_groups_num_framesets[group_idx - 1]
 
@@ -305,9 +307,11 @@ func init_from_file() -> void:
 		time_scale_outer.resize(600)
 		time_scale_for_each.resize(600)
 		for frame: int in range(600):
+			@warning_ignore("integer_division")
 			var byte_val: int = time_scale_curve[frame / 2]
 			time_scale_outer[frame] = (byte_val & 0x0F) if (frame % 2 == 0) else (byte_val >> 4)
 		for frame: int in range(600):
+			@warning_ignore("integer_division")
 			var byte_val: int = time_scale_curve[300 + frame / 2]
 			time_scale_for_each[frame] = (byte_val & 0x0F) if (frame % 2 == 0) else (byte_val >> 4)
 
@@ -380,6 +384,7 @@ func init_from_file() -> void:
 		vfx_spr.height = 256
 	else:
 		vfx_spr.height = image_size_bytes[1] * 2
+		@warning_ignore("integer_division")
 		vfx_spr.width = 1024 / image_color_depth
 
 	vfx_spr.has_compressed = false

@@ -8,11 +8,11 @@ extends Resource
 
 static func create_from_dictionary(property_dict: Dictionary) -> AbilitySlot:
 	var new_ability_slot: AbilitySlot = AbilitySlot.new()
-	for property_name in property_dict.keys():
+	for property_name: String in property_dict.keys():
 		if property_name == "slot_types":
-			var array = property_dict[property_name]
+			var array: Array = property_dict[property_name]
 			var new_slot_types: Array[Ability.SlotType] = []
-			for type in array:
+			for type: String in array:
 				new_slot_types.append(Ability.SlotType[type])
 			new_ability_slot.set(property_name, new_slot_types)
 		else:

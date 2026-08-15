@@ -505,6 +505,115 @@ func get_evade_values(target: Unit, evade_direction: EvadeData.Directions) -> Di
 	return evade_values
 
 
+func animate_evade(target_unit: Unit, evade_direction: EvadeData.Directions, user_pos: Vector2i) -> void:
+	var target_original_facing: Vector3 = target_unit.facing_vector
+	
+	var dir_to_target: Vector2i = user_pos - target_unit.tile_position.location
+	var temp_facing: Vector3 = Vector3(dir_to_target.x, 0, dir_to_target.y).normalized()
+	target_unit.update_unit_facing(temp_facing)
+	
+	# var evade_anim_id: int = -1
+	var sum_of_weight: int = 0
+	var evade_values: Dictionary[EvadeData.EvadeSource, int] = target_unit.get_evade_values(action.applicable_evasion_type, evade_direction)
+	for evade_source_value: int in evade_values.values():
+		sum_of_weight += evade_source_value
+	
+	if sum_of_weight <= 0: # missed due to action base hit chance
+		await target_unit.animate_evade(EvadeData.animation_ids[0])
+	else:
+		var rnd: int = randi_range(0, sum_of_weight)
+		for evade_source_idx: int in evade_values.size():
+			var evade_source_value: int = evade_values[evade_source_idx]
+			if rnd < evade_source_value:
+				await target_unit.animate_evade(EvadeData.animation_ids[evade_source_idx])
+				break
+			rnd -= evade_source_value
+	
+	target_unit.update_unit_facing(target_original_facing)
+
+
+func show_vfx(position: Vector3) -> Node3D:
+	if not is_instance_valid(action.vfx_data):
+		push_warning("[Action.show_vfx] vfx_data is not valid, skipping")
+		return
+
+	var parent_node: Node = user.get_parent()
+
+	var vfx_instance: VfxEffectInstance = VfxEffectInstance.new()
+	vfx_instance.name = "VfxEffectInstance"
+	vfx_instance.position = position
+	parent_node.add_child(vfx_instance)
+
+	var origin_pos: Vector3 = user.tile_position.get_world_position()
+	vfx_instance.initialize(action.vfx_data, position, origin_pos)
+	return vfx_instance
+
+
+func show_shared_vfx(shared_vfx_handler_id: int, target_unit: Unit) -> void:
+	if shared_vfx_handler_id <= 0:
+		return
+	if battle_manager == null or battle_manager.trap_instance == null:
+		return
+	var target_pos: Vector3 = target_unit.char_body.global_position
+	battle_manager.trap_instance.global_position = target_pos
+	var dir: Vector3 = (target_pos - user.char_body.global_position).normalized()
+	var trap_element: int = TrapEffectData.element_type_to_trap_id(action.element)
+	var flash_unit: Unit = target_unit if shared_vfx_handler_id in TrapEffectData.FLASH_HANDLER_IDS else null
+	battle_manager.trap_instance.play(shared_vfx_handler_id, trap_element, dir, flash_unit)
+
+
+func show_projectile(target_unit: Unit, new_projectile_type: ProjectileEffectInstance.ProjectileType) -> void:
+	if new_projectile_type == ProjectileEffectInstance.ProjectileType.NONE:
+		return
+	
+	if battle_manager == null or battle_manager.projectile_instance == null:
+		push_warning("[Action.show_projectile] battle_manager or projectile_instance is null")
+		return
+	var origin: Vector3 = user.char_body.global_position
+	var target: Vector3 = target_unit.char_body.global_position
+	battle_manager.projectile_instance.play(origin, target, new_projectile_type)
+
+
+func apply_status(unit: Unit, status_list: Array[String], status_list_type: Action.StatusListType, status_list_chance: int, will_remove_status: bool) -> void:
+	if status_list_type == Action.StatusListType.ALL:
+		var status_success: bool = randi_range(0, 99) < status_list_chance
+		if status_success:
+			for status_id: String in status_list:
+				var status_effect: StatusEffect = GameData.get_status_effect(status_id)
+				if will_remove_status and unit.current_statuses.any(func(status: StatusEffect) -> bool: return status.unique_name == status_id):
+					unit.remove_status_id(status_id)
+					unit.show_popup_text(status_effect.status_effect_name) # TODO different text for removing status
+				elif not will_remove_status:
+					unit.show_popup_text(status_effect.status_effect_name)
+					await unit.add_status(status_effect.duplicate())
+	elif status_list_type == Action.StatusListType.EACH:
+		for status_id: String in status_list:
+			var status_success: bool = randi_range(0, 99) < status_list_chance
+			if status_success:
+				var status_effect: StatusEffect = GameData.get_status_effect(status_id)
+				if will_remove_status and unit.current_statuses.any(func(status: StatusEffect) -> bool: return status.unique_name == status_id):
+					unit.remove_status_id(status_id)
+					unit.show_popup_text(status_effect.status_effect_name) # TODO different text for removing status
+				elif not will_remove_status:
+					unit.show_popup_text(status_effect.status_effect_name)
+					await unit.add_status(status_effect.duplicate())
+	elif status_list_type == Action.StatusListType.RANDOM:
+		var status_success: bool = randi_range(0, 99) < status_list_chance
+		if status_success:
+			if will_remove_status:
+				var removable_status_list: Array[String] = status_list.filter(func(status_id: String) -> bool: return unit.current_status_ids.has(status_id))
+				if not removable_status_list.is_empty():
+					var status_id: String = removable_status_list.pick_random()
+					unit.remove_status_id(status_id)
+					unit.show_popup_text(GameData.get_status_effect(status_id).status_effect_name) # TODO different text for removing status
+			elif not will_remove_status:
+				var addable_status_list: Array[String] = status_list.filter(func(status_id: String) -> bool: return not unit.current_status_ids.has(status_id))
+				if not addable_status_list.is_empty():
+					var status_id: String = addable_status_list.pick_random()
+					unit.show_popup_text(GameData.get_status_effect(status_id).status_effect_name)
+					await unit.add_status(GameData.get_status_effect(status_id).duplicate())
+
+
 func apply_standard() -> void:
 	var target_units: Array[Unit] = get_target_units(submitted_targets)
 	
@@ -637,112 +746,3 @@ func apply_standard() -> void:
 		#action_instance.user.end_turn()
 
 	action_completed.emit(battle_manager)
-
-
-func apply_status(unit: Unit, status_list: Array[String], status_list_type: Action.StatusListType, status_list_chance: int, will_remove_status: bool) -> void:
-	if status_list_type == Action.StatusListType.ALL:
-		var status_success: bool = randi_range(0, 99) < status_list_chance
-		if status_success:
-			for status_id: String in status_list:
-				var status_effect: StatusEffect = GameData.get_status_effect(status_id)
-				if will_remove_status and unit.current_statuses.any(func(status: StatusEffect) -> bool: return status.unique_name == status_id):
-					unit.remove_status_id(status_id)
-					unit.show_popup_text(status_effect.status_effect_name) # TODO different text for removing status
-				elif not will_remove_status:
-					unit.show_popup_text(status_effect.status_effect_name)
-					await unit.add_status(status_effect.duplicate())
-	elif status_list_type == Action.StatusListType.EACH:
-		for status_id: String in status_list:
-			var status_success: bool = randi_range(0, 99) < status_list_chance
-			if status_success:
-				var status_effect: StatusEffect = GameData.get_status_effect(status_id)
-				if will_remove_status and unit.current_statuses.any(func(status: StatusEffect) -> bool: return status.unique_name == status_id):
-					unit.remove_status_id(status_id)
-					unit.show_popup_text(status_effect.status_effect_name) # TODO different text for removing status
-				elif not will_remove_status:
-					unit.show_popup_text(status_effect.status_effect_name)
-					await unit.add_status(status_effect.duplicate())
-	elif status_list_type == Action.StatusListType.RANDOM:
-		var status_success: bool = randi_range(0, 99) < status_list_chance
-		if status_success:
-			if will_remove_status:
-				var removable_status_list: Array[String] = status_list.filter(func(status_id: String) -> bool: return unit.current_status_ids.has(status_id))
-				if not removable_status_list.is_empty():
-					var status_id: String = removable_status_list.pick_random()
-					unit.remove_status_id(status_id)
-					unit.show_popup_text(GameData.get_status_effect(status_id).status_effect_name) # TODO different text for removing status
-			elif not will_remove_status:
-				var addable_status_list: Array[String] = status_list.filter(func(status_id: String) -> bool: return not unit.current_status_ids.has(status_id))
-				if not addable_status_list.is_empty():
-					var status_id: String = addable_status_list.pick_random()
-					unit.show_popup_text(GameData.get_status_effect(status_id).status_effect_name)
-					await unit.add_status(GameData.get_status_effect(status_id).duplicate())
-
-
-func animate_evade(target_unit: Unit, evade_direction: EvadeData.Directions, user_pos: Vector2i) -> void:
-	var target_original_facing: Vector3 = target_unit.facing_vector
-	
-	var dir_to_target: Vector2i = user_pos - target_unit.tile_position.location
-	var temp_facing: Vector3 = Vector3(dir_to_target.x, 0, dir_to_target.y).normalized()
-	target_unit.update_unit_facing(temp_facing)
-	
-	# var evade_anim_id: int = -1
-	var sum_of_weight: int = 0
-	var evade_values: Dictionary[EvadeData.EvadeSource, int] = target_unit.get_evade_values(action.applicable_evasion_type, evade_direction)
-	for evade_source_value: int in evade_values.values():
-		sum_of_weight += evade_source_value
-	
-	if sum_of_weight <= 0: # missed due to action base hit chance
-		await target_unit.animate_evade(EvadeData.animation_ids[0])
-	else:
-		var rnd: int = randi_range(0, sum_of_weight)
-		for evade_source_idx: int in evade_values.size():
-			var evade_source_value: int = evade_values[evade_source_idx]
-			if rnd < evade_source_value:
-				await target_unit.animate_evade(EvadeData.animation_ids[evade_source_idx])
-				break
-			rnd -= evade_source_value
-	
-	target_unit.update_unit_facing(target_original_facing)
-
-
-func show_vfx(position: Vector3) -> Node3D:
-	if not is_instance_valid(action.vfx_data):
-		push_warning("[Action.show_vfx] vfx_data is not valid, skipping")
-		return
-
-	var parent_node: Node = user.get_parent()
-
-	var vfx_instance: VfxEffectInstance = VfxEffectInstance.new()
-	vfx_instance.name = "VfxEffectInstance"
-	vfx_instance.position = position
-	parent_node.add_child(vfx_instance)
-
-	var origin_pos: Vector3 = user.tile_position.get_world_position()
-	vfx_instance.initialize(action.vfx_data, position, origin_pos)
-	return vfx_instance
-
-
-func show_shared_vfx(shared_vfx_handler_id: int, target_unit: Unit) -> void:
-	if shared_vfx_handler_id <= 0:
-		return
-	if battle_manager == null or battle_manager.trap_instance == null:
-		return
-	var target_pos: Vector3 = target_unit.char_body.global_position
-	battle_manager.trap_instance.global_position = target_pos
-	var dir: Vector3 = (target_pos - user.char_body.global_position).normalized()
-	var trap_element: int = TrapEffectData.element_type_to_trap_id(action.element)
-	var flash_unit: Unit = target_unit if shared_vfx_handler_id in TrapEffectData.FLASH_HANDLER_IDS else null
-	battle_manager.trap_instance.play(shared_vfx_handler_id, trap_element, dir, flash_unit)
-
-
-func show_projectile(target_unit: Unit, new_projectile_type: ProjectileEffectInstance.ProjectileType) -> void:
-	if new_projectile_type == ProjectileEffectInstance.ProjectileType.NONE:
-		return
-	
-	if battle_manager == null or battle_manager.projectile_instance == null:
-		push_warning("[Action.show_projectile] battle_manager or projectile_instance is null")
-		return
-	var origin: Vector3 = user.char_body.global_position
-	var target: Vector3 = target_unit.char_body.global_position
-	battle_manager.projectile_instance.play(origin, target, new_projectile_type)

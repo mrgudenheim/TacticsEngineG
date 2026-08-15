@@ -483,8 +483,9 @@ func _on_seq_file_options_item_selected(index: int, select_shp: bool = true) -> 
 	ui_manager.pointer_index_spinbox.value = 0
 	populate_opcode_list(opcode_list_container, ui_manager.animation_name_options.selected)
 	
-	UiManager.option_button_select_text(ui_manager.shp_options, seq.shp_name)
-	ui_manager.shp_options.item_selected.emit(ui_manager.shp_options.selected)
+	if select_shp:
+		UiManager.option_button_select_text(ui_manager.shp_options, seq.shp_name)
+		ui_manager.shp_options.item_selected.emit(ui_manager.shp_options.selected)
 	preview_manager.unit.animation_manager.global_seq = RomReader.seqs_array[index]
 	preview_manager.unit.animation_manager._on_animation_changed()
 

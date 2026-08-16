@@ -63,7 +63,7 @@ var opcode_frame_offset: int = 0
 			
 			global_animation_id = value
 			#ui_manager.animation_name_options.select(value)
-			_on_animation_changed(facing_switch)
+			on_animation_changed(facing_switch)
 			#if isReady:
 				#if not global_fft_animation.sequence.seq_parts[0].isOpcode:
 					#frame_id_spinbox.value = global_fft_animation.sequence.seq_parts[0].parameters[0]

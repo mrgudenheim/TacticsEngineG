@@ -688,13 +688,13 @@ func get_assembled_frame(frame_index: int, source_image: Image, animation_ptr_in
 	var assembled_image: Image = create_blank_frame(Color.TRANSPARENT, new_frame_size)
 	
 	for subframe_index: int in range(frame.num_subframes-1, -1, -1): # reverse order to layer them correctly
-		var v_offset: int = get_v_offset(frame_index, subframe_index, animation_ptr_index, other_type_index, weapon_v_offset, submerged_depth)
+		var v_offset: int = get_v_offset(frame_index, animation_ptr_index, other_type_index, weapon_v_offset)
 		assembled_image = add_subframe(frame.subframes[subframe_index], source_image, assembled_image, v_offset, new_frame_size, y_offset)
 	
 	return assembled_image
 
 
-func get_v_offset(frame_index:int, subframe_index:int, animation_ptr_index: int, other_type_index: int, weapon_v_offset: int, submerged_depth: int) -> int:
+func get_v_offset(frame_index:int, animation_ptr_index: int, other_type_index: int, weapon_v_offset: int) -> int:
 	var v_offset: int = 0
 	#var y_top: int = get_frame(frame_index, submerged_depth).subframes[subframe_index].load_location_y
 	if frame_index >= attack_start_index:

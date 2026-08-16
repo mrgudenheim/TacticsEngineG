@@ -493,7 +493,7 @@ func get_sub_animation(length: int, sub_animation_end_part_id: int, parent_anima
 	return sub_anim
 
 
-func _on_animation_changed(facing_switch: bool = false) -> void:
+func on_animation_changed(facing_switch: bool = false) -> void:
 	reset_sprites()
 	animations.clear()
 	var new_fft_animation: FftAnimation = get_animation_from_globals(facing_switch)
@@ -527,13 +527,13 @@ func get_animation_from_globals(keep_time: bool = false) -> FftAnimation:
 func _on_is_playing_check_box_toggled(toggled_on: bool) -> void:
 	animation_is_playing = toggled_on
 	
-	if toggled_on and not animation_completed.is_connected(_on_animation_changed):
-		animation_completed.connect(_on_animation_changed)
-	elif !toggled_on and animation_completed.is_connected(_on_animation_changed):
-		animation_completed.disconnect(_on_animation_changed)
+	if toggled_on and not animation_completed.is_connected(on_animation_changed):
+		animation_completed.connect(on_animation_changed)
+	elif !toggled_on and animation_completed.is_connected(on_animation_changed):
+		animation_completed.disconnect(on_animation_changed)
 	
 	if global_seq.sequences.size() != 0:
-		_on_animation_changed()
+		on_animation_changed()
 
 
 func _on_animation_id_spin_box_value_changed(value: int) -> void:

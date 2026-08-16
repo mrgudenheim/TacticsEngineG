@@ -1762,7 +1762,7 @@ func on_sprite_selected(new_spritesheet_name: String) -> void:
 		# if animation_manager.global_animation_id >= animation_manager.global_seq.sequences.size():
 		# 	set_base_animation_ptr_id(6) # triggers on_animation_changed
 		# else:
-		animation_manager._on_animation_changed()
+		animation_manager.on_animation_changed()
 
 
 func update_prohibited_terrain(all_passive_effects: Array[PassiveEffect]) -> void:

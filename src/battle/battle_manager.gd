@@ -500,7 +500,6 @@ func spawn_unit(tile_position: TerrainTile, job_name: String, team: Team, level:
 	new_unit.update_stat_bars_scale(camera_controller.zoom)
 	camera_controller.zoom_changed.connect(new_unit.update_stat_bars_scale)
 	
-	new_unit.icon.texture = GameData.get_texture("misc") # TODO clean up status icon stuff
 	new_unit.icon2.texture = GameData.get_texture("misc")
 	
 	new_unit.generate_random_abilities()
@@ -579,7 +578,6 @@ func spawn_unit_from_unit_data(unit_data: UnitData) -> Unit:
 	new_unit.update_stat_bars_scale(camera_controller.zoom)
 	camera_controller.zoom_changed.connect(new_unit.update_stat_bars_scale)
 	
-	new_unit.icon.texture = GameData.get_texture("misc") # TODO clean up status icon stuff
 	new_unit.icon2.texture = GameData.get_texture("misc")
 	
 	new_unit.skillsets_names = unit_data.skillsets_names

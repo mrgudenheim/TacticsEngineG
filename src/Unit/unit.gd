@@ -60,7 +60,7 @@ enum Facings {
 	WEST,
 }
 
-static var unit_scene: PackedScene = load("res://src/Unit/unit.tscn")
+static var unit_scene: PackedScene = load("uid://dkudrb304m7t1")
 
 const FACING_VECTORS: Dictionary[Facings, Vector3] = {
 	Facings.NORTH: Vector3.BACK,
@@ -81,7 +81,6 @@ var ai_controller: UnitAi = UnitAi.new()
 @export var stat_bars_position: Control
 @export var stat_bars_container: Container
 @export var unit_battle_details_ui: UnitDetailsBattleUi
-@export var icon: UnitIcon
 @export var icon2: Sprite3D
 @export var icon_cycle_time: float = 1.25
 @export var icon_id: int = 0:

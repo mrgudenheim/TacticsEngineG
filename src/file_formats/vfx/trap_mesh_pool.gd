@@ -9,8 +9,13 @@ const OFFSCREEN_POS: Vector3 = Vector3(0, -10000, 0)
 var meshes: Array[MeshInstance3D] = []
 var materials: Array[ShaderMaterial] = []
 var particle_mesh_map: Dictionary[int, PackedInt32Array] = {} # uid -> PackedInt32Array
-var opaque_shader: Shader
-var blend_shaders: Array[Shader] = []
+const OPAQUE_SHADER: Shader = preload("uid://6ergs5w2jc81") 
+const BLEND_SHADERS: Array[Shader] = [ # [mode0, mode1, mode2, mode3]
+	preload("uid://ccriufgbfm7nf"),
+	preload("uid://28i4r37xgdb3"),
+	preload("uid://c7a3rve6ca12w"),
+	preload("uid://duc7ykw40x5sb"),
+]
 var texture_size: Vector2 = Vector2(256, 144)
 
 var _shared_quad: QuadMesh
@@ -27,14 +32,6 @@ func initialize() -> void:
 
 	_shared_quad = QuadMesh.new()
 	_shared_quad.size = Vector2(1.0, 1.0)
-
-	opaque_shader = preload("res://src/file_formats/vfx/shaders/effect_particle_opaque.gdshader")
-	blend_shaders = [
-		preload("res://src/file_formats/vfx/shaders/effect_particle_mode0.gdshader"),
-		preload("res://src/file_formats/vfx/shaders/effect_particle_mode1.gdshader"),
-		preload("res://src/file_formats/vfx/shaders/effect_particle_mode2.gdshader"),
-		preload("res://src/file_formats/vfx/shaders/effect_particle_mode3.gdshader"),
-	]
 
 	texture_size = trap_data.texture.get_size()
 	_palette_textures[0] = trap_data.texture
@@ -91,7 +88,7 @@ func _grow_pool(new_size: int) -> void:
 		mesh_instance.position = OFFSCREEN_POS
 
 		var mat: ShaderMaterial = ShaderMaterial.new()
-		mat.shader = opaque_shader
+		mat.shader = OPAQUE_SHADER
 		mat.render_priority = 1
 		mat.set_shader_parameter("depth_mode", VfxConstants.DepthMode.PULL_FORWARD_8)
 		if not _palette_textures.is_empty():

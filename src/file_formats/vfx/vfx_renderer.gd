@@ -8,8 +8,13 @@ extends Node3D
 
 var _shared_quad: QuadMesh
 
-var _opaque_shader: Shader
-var _blend_shaders: Array[Shader] = [] # [mode0, mode1, mode2, mode3]
+const OPAQUE_SHADER: Shader = preload("uid://6ergs5w2jc81") 
+const BLEND_SHADERS: Array[Shader] = [ # [mode0, mode1, mode2, mode3]
+	preload("uid://ccriufgbfm7nf"),
+	preload("uid://28i4r37xgdb3"),
+	preload("uid://c7a3rve6ca12w"),
+	preload("uid://duc7ykw40x5sb"),
+]
 
 var _texture_size: Vector2 = Vector2(128, 256)
 var _vfx_data: VisualEffectData
@@ -30,14 +35,6 @@ func initialize(vfx_data: VisualEffectData) -> void:
 
 	_shared_quad = QuadMesh.new()
 	_shared_quad.size = Vector2(1.0, 1.0)
-
-	_opaque_shader = preload("res://src/file_formats/vfx/shaders/effect_particle_opaque.gdshader")
-	_blend_shaders = [
-		preload("res://src/file_formats/vfx/shaders/effect_particle_mode0.gdshader"),
-		preload("res://src/file_formats/vfx/shaders/effect_particle_mode1.gdshader"),
-		preload("res://src/file_formats/vfx/shaders/effect_particle_mode2.gdshader"),
-		preload("res://src/file_formats/vfx/shaders/effect_particle_mode3.gdshader"),
-	]
 
 	if vfx_data.texture:
 		_texture_size = vfx_data.texture.get_size()
@@ -132,7 +129,7 @@ func _create_mesh_entry() -> Dictionary:
 	mesh_instance.visible = false
 
 	var mat: ShaderMaterial = ShaderMaterial.new()
-	mat.shader = _opaque_shader
+	mat.shader = OPAQUE_SHADER
 	mat.render_priority = 0
 	if _vfx_data and _vfx_data.texture:
 		mat.set_shader_parameter("effect_texture", _vfx_data.texture)
@@ -210,11 +207,11 @@ func _render_frame(
 	)
 
 	if is_opaque_pass:
-		mat.shader = _opaque_shader
+		mat.shader = OPAQUE_SHADER
 		mat.set_shader_parameter("semi_trans_on", vfx_frame.semi_transparency_on)
 	else:
 		var blend_mode: int = clampi(vfx_frame.semi_transparency_mode, 0, VfxConstants.SemiTransMode.BACK_PLUS_QUARTER)
-		mat.shader = _blend_shaders[blend_mode]
+		mat.shader = BLEND_SHADERS[blend_mode]
 
 	mat.set_shader_parameter("corner_tl", Vector2(tl_x, tl_y))
 	mat.set_shader_parameter("corner_tr", Vector2(tr_x, tr_y))

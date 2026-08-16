@@ -5,7 +5,7 @@ signal map_chunk_settings_changed(new_map_chunk_settings: MapChunkSettingsUi)
 signal map_chunk_nodes_changed(new_map_chunk_settings: MapChunkSettingsUi)
 signal deleted(new_map_chunk_settings: MapChunkSettingsUi)
 
-const SETTINGS_UI_SCENE: PackedScene = preload("res://src/battle/editor/map_chunk_settings.tscn")
+const SETTINGS_UI_SCENE: PackedScene = preload("uid://dyajlcyhtfdbr")
 
 @export var chunk_name_dropdown: OptionButton
 @export var position_edit_container: Container

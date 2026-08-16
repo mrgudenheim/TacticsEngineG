@@ -1,7 +1,7 @@
 class_name StatBar
 extends TextureProgressBar
 
-const STAT_BAR_TSCN: PackedScene = preload("res://src/Unit/stat_bar.tscn")
+const STAT_BAR_TSCN: PackedScene = preload("uid://d2jb1kiyb35fa")
 
 @export var name_label: Label
 @export var value_label: Label

@@ -27,7 +27,7 @@ func _ready() -> void:
 
 func _start() -> void:
 	# Load map for tile positions
-	var maps_container := Node3D.new()
+	var maps_container: Node3D = Node3D.new()
 	maps_container.name = "Maps"
 	add_child(maps_container)
 	var map_node: MapChunkNodes = VfxTestUtils.load_mirrored_map("map_116", maps_container)

@@ -4,7 +4,7 @@ extends HBoxContainer
 
 signal vector_changed(vector: Vector3i)
 
-const SCENE: PackedScene = preload("res://src/utilities/ui/vector3i_edit.tscn")
+const SCENE: PackedScene = preload("uid://dxvm0fphohpx4")
 
 @export var vector: Vector3i:
 	get: return Vector3i(roundi(x_spinbox.value), roundi(y_spinbox.value), roundi(z_spinbox.value))

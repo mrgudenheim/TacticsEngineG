@@ -13,7 +13,7 @@ const LINE_HALF_WIDTH: float = 0.03
 
 func initialize(pool: TrapMeshPool) -> void:
 	_pool = pool
-	_charge_line_shader = preload("res://src/file_formats/vfx/shaders/trap_charge_line.gdshader")
+	_charge_line_shader = preload("uid://ci3khdrs3kvxw")
 
 
 func setup_line_mesh(parent: Node3D) -> void:
@@ -154,10 +154,10 @@ func _render_frame(mesh_inst: MeshInstance3D, mat: ShaderMaterial, vfx_particle_
 	)
 
 	if is_opaque_pass:
-		mat.shader = _pool.opaque_shader
+		mat.shader = _pool.OPAQUE_SHADER
 	else:
 		var blend_mode: int = clampi(vfx_frame.semi_transparency_mode, 0, VfxConstants.SemiTransMode.BACK_PLUS_QUARTER)
-		mat.shader = _pool.blend_shaders[blend_mode]
+		mat.shader = _pool.BLEND_SHADERS[blend_mode]
 
 	var palette_id: int = emitter_palette.get(vfx_particle_data.emitter_index, vfx_frame.palette_id)
 	var tex: Texture2D = _pool.get_palette_texture(palette_id)

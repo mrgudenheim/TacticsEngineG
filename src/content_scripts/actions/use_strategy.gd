@@ -3,6 +3,6 @@ class_name UseStrategy
 extends Resource
 
 # TODO implement UseStrategy
-func use(action_instance: ActionInstance) -> void:
+func use(_action_instance: ActionInstance) -> void:
 	push_error("Using base UseStrategy - does nothing")
 	return

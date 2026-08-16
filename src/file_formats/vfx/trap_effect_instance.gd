@@ -233,7 +233,7 @@ func _process_tick() -> void:
 		_process_spell_charge_tick(trap_data)
 		return
 	if _active_handler is TrapSummonChargeHandler:
-		_process_summon_charge_tick(trap_data)
+		_process_summon_charge_tick()
 		return
 	_process_standard_tick(trap_data)
 
@@ -263,7 +263,7 @@ func _process_spell_charge_tick(trap_data: TrapEffectData) -> void:
 			_particles.clear())
 
 
-func _process_summon_charge_tick(trap_data: TrapEffectData) -> void:
+func _process_summon_charge_tick() -> void:
 	var handler: TrapSummonChargeHandler = _active_handler
 	handler.tick()
 	_tick_counter += 1

@@ -156,7 +156,7 @@ func on_data_ready() -> void:
 	scenario_editor.populate_option_lists()
 	scenario_editor.visible = true
 	# var default_scenario: Scenario = GameData.get_scenario("map_032_slums_in_dorter_01")
-	var default_scenario: Scenario = GameData.get_scenario("map_083_zirekile_falls_14")
+	#var default_scenario: Scenario = GameData.get_scenario("map_083_zirekile_falls_14")
 	# scenario_editor.init_scenario(default_scenario)
 	scenario_editor.init_scenario()
 	set_unit_statbars_visible(show_statbar_check.button_pressed)

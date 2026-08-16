@@ -1127,43 +1127,6 @@ func use_ability(pos: Vector3) -> void:
 	can_move = true
 
 
-func process_targeted() -> void:
-	if global_battle_manager.active_unit == self:
-		return
-	
-	# set being targeted frame
-	var targeted_frame_index: int = RomReader.battle_bin_data.targeted_front_frame_id[animation_manager.global_spr.seq_id]
-	if is_back_facing:
-		targeted_frame_index = RomReader.battle_bin_data.targeted_back_frame_id[animation_manager.global_spr.seq_id]
-	
-	#animation_manager.global_animation_ptr_id = 0
-	#debug_menu.anim_id_spin.value = 0
-	#var assembled_image: Image = animation_manager.global_shp.get_assembled_frame(targeted_frame_index, animation_manager.global_spr.spritesheet, 0, 
-		#0, 0, 0)
-	#animation_manager.unit_sprites_manager.sprite_primary.texture = ImageTexture.create_from_image(assembled_image)
-	
-	await get_tree().create_timer(0.2).timeout
-	
-	# take damage animation
-	#animation_manager.global_animation_ptr_id = taking_damage_animation_id
-	#debug_menu.anim_id_spin.value = taking_damage_animation_id
-	current_animation_id_fwd = taking_damage_animation_id
-	set_base_animation_ptr_id(current_animation_id_fwd)
-	
-	# show result / damage numbers
-	
-	# TODO await ability.vfx_completed? Or does ability_completed just need to wait to post numbers? aka WaitWeaponSheathe1/2 opcode?
-	await global_battle_manager.active_unit.ability_completed
-	# show death animation
-	#animation_manager.global_animation_ptr_id = knocked_out_animation_id
-	#debug_menu.anim_id_spin.value = knocked_out_animation_id
-	current_idle_animation_id = knocked_out_animation_id
-	current_animation_id_fwd = current_idle_animation_id
-	set_base_animation_ptr_id(current_animation_id_fwd)
-	
-	knocked_out.emit(self)
-
-
 func animate_start_action(animation_start_id: int, animation_charging_id: int) -> void:
 	if animation_start_id != 0:
 		set_base_animation_ptr_id(animation_start_id)
@@ -1820,7 +1783,3 @@ func _on_character_body_3d_input_event(_camera: Node, event: InputEvent, _event_
 	# show Unit preview ui - hp, mp, evade, equipment, statuses, status immunities, element affinity, etc. portrait/mini sprite?
 	if Input.is_action_just_pressed("secondary_action"):
 		unit_battle_details_ui.visible = !unit_battle_details_ui.visible
-	
-	# if Input.is_action_just_pressed("secondary_action") and UnitControllerRT.unit.char_body.is_on_floor():
-	# 	UnitControllerRT.unit.use_ability(char_body.position)
-	# 	process_targeted()

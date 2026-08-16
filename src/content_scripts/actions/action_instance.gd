@@ -672,9 +672,9 @@ func apply_standard() -> void:
 				effect.apply(user, target_unit, effect_value)
 				
 				if action.set_target_animation_on_hit and [Unit.StatType.HP, Unit.StatType.MP].has(effect.effect_stat_type) and effect_value < 0:
-					target_unit.animate_take_hit(action.vfx_data)
+					target_unit.animate_take_hit()
 				elif action.set_target_animation_on_hit and [Unit.StatType.HP, Unit.StatType.MP].has(effect.effect_stat_type) and effect_value > 0:
-					target_unit.animate_recieve_heal(action.vfx_data)
+					target_unit.animate_recieve_heal()
 			
 			# apply status
 			await apply_status(target_unit, action.target_status_list, action.target_status_list_type, action.target_status_chance, action.will_remove_target_status)

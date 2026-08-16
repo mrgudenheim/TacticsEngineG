@@ -879,7 +879,6 @@ func add_status(new_status: StatusEffect, ignore_immunity: bool = false) -> void
 		action_instance.submitted_targets = [tile_position] # TODO allow other targeting for status actions on turn end
 		await action_instance.use()
 	
-	var statuses_to_cancel: Array[StatusEffect] = []
 	for status_cancelled_id: String in new_status.status_cancels:
 		remove_status_id(status_cancelled_id)
 	
@@ -1137,7 +1136,7 @@ func animate_start_action(animation_start_id: int, animation_charging_id: int) -
 		await get_tree().create_timer(0.1 + (action_data.ticks_charge_time * 0.1)).timeout # TODO allow looping until changed, ie. charging a spell
 
 
-func animate_execute_action(animation_executing_id: int, vfx: VisualEffectData = null) -> void:
+func animate_execute_action(animation_executing_id: int) -> void:
 	if animation_executing_id < 0: # no animatione
 		return
 	
@@ -1153,7 +1152,7 @@ func animate_execute_action(animation_executing_id: int, vfx: VisualEffectData =
 		animate_return_to_idle()
 
 
-func animate_take_hit(vfx: VisualEffectData = null) -> void:
+func animate_take_hit() -> void:
 	set_base_animation_ptr_id(taking_damage_animation_id)
 	
 	#if vfx != null:
@@ -1165,7 +1164,7 @@ func animate_take_hit(vfx: VisualEffectData = null) -> void:
 		#animate_return_to_idle()
 
 
-func animate_recieve_heal(vfx: VisualEffectData = null) -> void:
+func animate_recieve_heal() -> void:
 	set_base_animation_ptr_id(heal_animation_id)
 	
 	#if vfx != null:

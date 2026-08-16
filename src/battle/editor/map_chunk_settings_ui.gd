@@ -63,9 +63,16 @@ func _exit_tree() -> void:
 
 
 func add_row_to_table(settings_table: Container) -> void:
+	chunk_name_dropdown.owner = null
 	chunk_name_dropdown.reparent(settings_table)
+	
+	position_edit_container.owner = null
 	position_edit_container.reparent(settings_table)
+	
+	mirror_bools_container.owner = null
 	mirror_bools_container.reparent(settings_table)
+	
+	delete_button.owner = null
 	delete_button.reparent(settings_table)
 
 

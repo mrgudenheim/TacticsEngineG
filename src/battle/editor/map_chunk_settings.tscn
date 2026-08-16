@@ -8,11 +8,11 @@ layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_mm4sl")
 chunk_name_dropdown = NodePath("MapDropdown")
-position_edit_container = NodePath("PanelContainer")
-mirror_bools_container = NodePath("PanelContainer2")
+position_edit_container = NodePath("PositionPanelContainer")
+mirror_bools_container = NodePath("MirrorPanelContainer")
 delete_button = NodePath("DeleteButton")
-position_edit = NodePath("PanelContainer/PositionVector3iEdit")
-mirror_checkboxes = [NodePath("PanelContainer2/Mirror/xCheckBox"), NodePath("PanelContainer2/Mirror/yCheckBox"), NodePath("PanelContainer2/Mirror/zCheckBox")]
+position_edit = NodePath("PositionPanelContainer/PositionVector3iEdit")
+mirror_checkboxes = [NodePath("MirrorPanelContainer/Mirror/xCheckBox"), NodePath("MirrorPanelContainer/Mirror/yCheckBox"), NodePath("MirrorPanelContainer/Mirror/zCheckBox")]
 
 [node name="MapDropdown" type="OptionButton" parent="." unique_id=1707884252]
 layout_mode = 0
@@ -25,35 +25,35 @@ search_bar_enabled = true
 search_bar_min_item_count = 10
 search_bar_fuzzy_search_max_misses = 1
 
-[node name="PanelContainer" type="PanelContainer" parent="." unique_id=1279610938]
+[node name="PositionPanelContainer" type="PanelContainer" parent="." unique_id=1279610938]
 layout_mode = 0
 offset_left = 36.0
 offset_top = 24.0
 offset_right = 202.0
 offset_bottom = 52.0
 
-[node name="PositionVector3iEdit" parent="PanelContainer" unique_id=672744780 instance=ExtResource("1_sf625")]
+[node name="PositionVector3iEdit" parent="PositionPanelContainer" unique_id=672744780 instance=ExtResource("1_sf625")]
 layout_mode = 2
 
-[node name="PanelContainer2" type="PanelContainer" parent="." unique_id=1793516974]
+[node name="MirrorPanelContainer" type="PanelContainer" parent="." unique_id=1793516974]
 layout_mode = 0
 offset_left = 206.0
 offset_top = 24.0
 offset_right = 323.0
 offset_bottom = 52.0
 
-[node name="Mirror" type="HBoxContainer" parent="PanelContainer2" unique_id=842847763]
+[node name="Mirror" type="HBoxContainer" parent="MirrorPanelContainer" unique_id=842847763]
 layout_mode = 2
 
-[node name="xCheckBox" type="CheckBox" parent="PanelContainer2/Mirror" unique_id=1130236601]
+[node name="xCheckBox" type="CheckBox" parent="MirrorPanelContainer/Mirror" unique_id=1130236601]
 layout_mode = 2
 text = "x"
 
-[node name="yCheckBox" type="CheckBox" parent="PanelContainer2/Mirror" unique_id=1381532906]
+[node name="yCheckBox" type="CheckBox" parent="MirrorPanelContainer/Mirror" unique_id=1381532906]
 layout_mode = 2
 text = "y"
 
-[node name="zCheckBox" type="CheckBox" parent="PanelContainer2/Mirror" unique_id=949348587]
+[node name="zCheckBox" type="CheckBox" parent="MirrorPanelContainer/Mirror" unique_id=949348587]
 layout_mode = 2
 text = "z"
 

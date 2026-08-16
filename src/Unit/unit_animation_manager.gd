@@ -180,12 +180,6 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 	var next_seq_part_id: int = seq_part_id + 1
 	var seq_part: SeqPart = fft_animation.sequence.seq_parts[seq_part_id]
 	
-	var frame_id_label: String = ""
-	if seq_part.is_opcode:
-		frame_id_label = seq_part.to_string()
-	else:
-		frame_id_label = str(seq_part.parameters[0])
-	
 	if fft_animation.primary_anim_opcode_part_id == 0:
 		fft_animation.primary_anim_opcode_part_id = fft_animation.sequence.seq_parts.size()
 	
@@ -194,7 +188,6 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 		var new_frame_id: int = seq_part.parameters[0]
 		var frame_id_offset: int = get_animation_frame_offset(unit_data.primary_weapon.item_type, fft_animation.shp, fft_animation.back_face_offset)
 		new_frame_id = new_frame_id + frame_id_offset + opcode_frame_offset
-		frame_id_label = str(new_frame_id)
 		
 		## clear the frame to prevent weird and inconsistent ghosting issues
 		#draw_target.frame = (draw_target.hframes * draw_target.vframes) - 1 # TODO fix this so a 255th frame can actually be made/set - set draw_target.visible = false?
@@ -314,8 +307,6 @@ func process_seq_part(fft_animation: FftAnimation, seq_part_id: int, draw_target
 					#item_frame_id = 16
 					#unit_data.debug_menu.other_type_options.select(0)
 					##other_type_index = 0
-			
-			frame_id_label = str(item_index)
 			
 			#var assembled_image: Image = item_sheet_type.get_assembled_frame(
 					#item_frame_id, item_image, global_animation_ptr_id, unit_data.debug_menu.other_type_options.selected, unit_data.primary_weapon.wep_frame_v_offset, unit_data.submerged_depth)

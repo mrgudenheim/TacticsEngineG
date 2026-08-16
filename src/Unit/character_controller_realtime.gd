@@ -12,7 +12,7 @@ enum Directions {
 	SOUTHEAST,
 	}
 
-const CameraFacingVectors: Dictionary[Directions, Vector3] = {
+const CAMERA_FACING_VECTORS: Dictionary[Directions, Vector3] = {
 	Directions.NORTHWEST: Vector3.LEFT + Vector3.FORWARD,
 	Directions.NORTHEAST: Vector3.RIGHT + Vector3.FORWARD,
 	Directions.SOUTHWEST: Vector3.LEFT + Vector3.BACK,
@@ -23,7 +23,7 @@ const CameraFacingVectors: Dictionary[Directions, Vector3] = {
 static var unit: Unit
 
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if not is_instance_valid(unit):
 		return
 	
@@ -71,7 +71,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	
 	# Handle jump
-	if Input.is_action_just_pressed("ui_accept") and unit.char_body.is_on_floor() and unit.can_move:
+	if event.is_action("ui_accept") and unit.char_body.is_on_floor() and unit.can_move:
 		unit.char_body.velocity.y = JUMP_VELOCITY
 	#elif Input.is_action_just_pressed("primary_action") and is_on_floor() and unit.can_move:
 		#push_warning("primary_action_clicked")

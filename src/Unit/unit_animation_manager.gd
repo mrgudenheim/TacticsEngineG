@@ -488,7 +488,6 @@ func on_animation_changed(facing_switch: bool = false) -> void:
 	reset_sprites()
 	animations.clear()
 	var new_fft_animation: FftAnimation = get_animation_from_globals(facing_switch)
-	var num_parts: int = new_fft_animation.sequence.seq_parts.size()
 	start_animation(new_fft_animation, unit_sprites_manager.sprite_primary, animation_is_playing, false)
 
 

@@ -173,10 +173,8 @@ func set_data_from_shp_object(shp_object: Shp) -> void:
 	frames_submerged = shp_object.frames_submerged.duplicate()
 
 
-func set_data_from_shp_file(filepath:String) -> void:
-	var new_file_name:String = filepath.get_file()
-	
-	var bytes:PackedByteArray = FileAccess.get_file_as_bytes(filepath)
+func set_data_from_shp_file(filepath: String) -> void:
+	var bytes: PackedByteArray = FileAccess.get_file_as_bytes(filepath)
 	if bytes.size() == 0:
 		push_warning("Open Error: " + filepath)
 		return

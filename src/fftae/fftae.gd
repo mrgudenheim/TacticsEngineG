@@ -268,7 +268,7 @@ func populate_animation_list(animations_list_parent: VBoxContainer, seq_local: S
 	
 	ui_manager.current_animation_slots = seq_local.sequence_pointers.size()
 	
-	var msec_allowed_per_frame: int = 17
+	var msec_allowed_per_frame: int = 17 # 60 fps
 	var start_time: int = Time.get_ticks_msec()
 	
 	for index: int in seq_local.sequence_pointers.size():
@@ -303,10 +303,7 @@ func populate_animation_list(animations_list_parent: VBoxContainer, seq_local: S
 				)
 		
 		# let frame finish rendering to improve responsiveness
-		var delta_time_msec: int = Time.get_ticks_msec() - start_time
-		if delta_time_msec >= msec_allowed_per_frame:
-			await get_tree().process_frame
-			start_time = Time.get_ticks_msec()
+		start_time = await Utilities.enforce_max_frame_time(start_time, msec_allowed_per_frame)
 
 
 func populate_opcode_list(opcode_grid_parent: GridContainer, seq_id: int) -> void:

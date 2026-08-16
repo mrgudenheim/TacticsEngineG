@@ -176,10 +176,10 @@ func get_map_path(start_tile: TerrainTile, target_tile_instance: TerrainTile, ca
 
 func get_map_path_neighbors(user: Unit, current_tile: TerrainTile, map_tiles: Dictionary[Vector2i, Array], units: Array[Unit]) -> Array[TerrainTile]:
 	var neighbors: Array[TerrainTile]
-	const adjacent_offsets: Array[Vector2i] = [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]
+	const ADJACENT_OFFSETS: Array[Vector2i] = [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]
 	
 	# check adjacent tiles
-	for offset: Vector2i in adjacent_offsets:
+	for offset: Vector2i in ADJACENT_OFFSETS:
 		var potential_xy: Vector2i = current_tile.location + offset
 		if map_tiles.has(potential_xy):
 			for tile: TerrainTile in map_tiles[potential_xy]:

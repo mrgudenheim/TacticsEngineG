@@ -99,6 +99,7 @@ func update_potential_targets() -> void:
 	clear_targets(potential_targets_highlights)
 	potential_targets.clear()
 	
+	@warning_ignore("redundant_await") # inherited targeting strategies may be coroutines
 	potential_targets = await action.targeting_strategy.get_potential_targets(self)
 	update_potential_targets_highlights()
 	

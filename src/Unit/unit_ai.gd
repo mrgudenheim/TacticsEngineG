@@ -104,7 +104,8 @@ func choose_action(unit: Unit) -> void:
 				unit.tile_position = potential_move
 				
 				for action_instance: ActionInstance in non_move_actions:
-					action_instance.potential_targets = action_instance.action.targeting_strategy.get_potential_targets(action_instance)
+					@warning_ignore("redundant_await") # inherited targeting strategies may be coroutines
+					action_instance.potential_targets = await action_instance.action.targeting_strategy.get_potential_targets(action_instance)
 					for potential_target: TerrainTile in action_instance.potential_targets: # TODO handle ai score for auto targeting
 						#action_instance.tile_hovered.emit(potential_target, action_instance, simulated_input) # set preview targets
 						#action_instance.action.targeting_strategy.target_tile(potential_target, action_instance, simulated_input)
@@ -209,7 +210,7 @@ func choose_action(unit: Unit) -> void:
 
 func action_targeted(unit: Unit, chosen_action: ActionInstance, target: TerrainTile = null, hover_target: TerrainTile = null) -> void:
 	#chosen_action.show_potential_targets() # TODO fix move targeting when updating paths/pathfinding is takes longer than delay (large maps with 10+ units)
-	@warning_ignore("redundant_await") # inherited targeting strategies are coroutines
+	@warning_ignore("redundant_await") # inherited targeting strategies may be coroutines
 	chosen_action.potential_targets = await chosen_action.action.targeting_strategy.get_potential_targets(chosen_action)
 	chosen_action.start_targeting()
 	if chosen_action.action.auto_target:

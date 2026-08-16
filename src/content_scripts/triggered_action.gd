@@ -175,7 +175,8 @@ func process_triggered_action(triggered_action_data: TriggeredActionInstance) ->
 		if not new_action_instance.is_usable():
 			return
 
-	var action_valid_targets: Array[TerrainTile] = new_action_instance.action.targeting_strategy.get_potential_targets(new_action_instance)
+	@warning_ignore("redundant_await") # inherited targeting strategies may be coroutines
+	var action_valid_targets: Array[TerrainTile] = await new_action_instance.action.targeting_strategy.get_potential_targets(new_action_instance)
 	if allow_valid_targets_only:
 		if not action_valid_targets.has(initiator.tile_position):
 			return

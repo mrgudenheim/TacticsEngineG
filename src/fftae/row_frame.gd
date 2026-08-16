@@ -14,12 +14,12 @@ extends MarginContainer
 		frame_id = value
 		frame_label.text = "%s (0x%02x)" % [value, value]
 
-@export var frame_rotation: int:
+@export var frame_rotation: float:
 	get:
 		return frame_rotation
 	set(value):
 		frame_rotation = value
-		rotation_label.text = str(value)
+		rotation_label.text = "%3.1f" % value
 		#rotation_spinbox.value_changed.emit(value)
 
 @export var subframes_text: String:

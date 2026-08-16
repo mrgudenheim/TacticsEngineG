@@ -553,7 +553,6 @@ func generate_random_abilities() -> void:
 	ability_slots[1].ability_unique_name =  random_support.unique_name
 	ability_slots[2].ability_unique_name =  random_movement.unique_name
 
-	var all_passive_effects: Array[PassiveEffect] = get_all_passive_effects()
 	update_passive_effects()
 
 

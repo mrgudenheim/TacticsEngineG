@@ -71,7 +71,7 @@ var _tick_timer: float = 0.0
 # Rendering — baked ArrayMesh per projectile_type, transformed via MeshInstance3D
 var _mesh_instance: MeshInstance3D
 var _material: StandardMaterial3D
-var _meshes: Dictionary = { } # projectile_type -> ArrayMesh (cached)
+#var _meshes: Dictionary = { } # projectile_type -> ArrayMesh (cached) # replaced by GameData.projectiles_gltf
 
 
 func _process(delta: float) -> void:

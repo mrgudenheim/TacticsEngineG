@@ -1114,7 +1114,7 @@ func use_ability(pos: Vector3) -> void:
 	#new_vfx_location.name = "VfxLocation"
 	#get_parent().add_child(new_vfx_location)
 	var action_instance: ActionInstance = ActionInstance.new(action_data, self, global_battle_manager)
-	if is_instance_valid(active_action.action.vfx_data):
+	if is_instance_valid(action_instance.action.vfx_data):
 		action_instance.show_vfx(pos)
 	
 	# TODO implement proper timeout for abilities that execute using an infinite loop animation

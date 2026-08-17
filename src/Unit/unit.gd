@@ -13,10 +13,14 @@ signal primary_weapon_assigned(item_unique_name: String)
 signal image_changed(new_image: ImageTexture)
 signal knocked_out(unit: Unit)
 signal spritesheet_changed(new_spritesheet: ImageTexture)
-signal targeted_pre_action(this_unit: Unit, action_instance: ActionInstance)
-signal targeted_post_action(this_unit: Unit, action_instance: ActionInstance)
-signal reached_tile()
-signal completed_move(this_unit: Unit, tile_moved: int)
+@warning_ignore("unused_signal")
+signal targeted_pre_action(this_unit: Unit, action_instance: ActionInstance) # emited in action_instance
+@warning_ignore("unused_signal")
+signal targeted_post_action(this_unit: Unit, action_instance: ActionInstance) # emited in action_instance
+@warning_ignore("unused_signal")
+signal reached_tile() # emited in use_move
+@warning_ignore("unused_signal")
+signal completed_move(this_unit: Unit, tile_moved: int) # emited in use_move
 signal turn_started(this_unit: Unit)
 signal turn_ended(this_unit: Unit)
 signal unit_input_event(unit_data: Unit, event: InputEvent)
@@ -1073,7 +1077,7 @@ func use_attack() -> void:
 
 func use_ability(pos: Vector3) -> void:
 	can_move = false
-	push_warning("using: " + action_data.display_name)
+	print_debug("animating: " + action_data.display_name)
 	#push_warning("Animations: " + str(PackedInt32Array([action_data.animation_start_id, action_data.animation_charging_id, action_data.animation_executing_id])))
 	if action_data.animation_start_id != 0:
 		#debug_menu.anim_id_spin.value = action_data.animation_start_id + int(is_back_facing)
@@ -1109,7 +1113,9 @@ func use_ability(pos: Vector3) -> void:
 	##new_vfx_location.position.y += 2 # TODO set position dependent on ability vfx data
 	#new_vfx_location.name = "VfxLocation"
 	#get_parent().add_child(new_vfx_location)
-	active_action.action.show_vfx(active_action, pos)
+	var action_instance: ActionInstance = ActionInstance.new(action_data, self, global_battle_manager)
+	if is_instance_valid(active_action.action.vfx_data):
+		action_instance.show_vfx(pos)
 	
 	# TODO implement proper timeout for abilities that execute using an infinite loop animation
 	# this implementation can overwrite can_move when in the middle of another ability
@@ -1280,7 +1286,8 @@ func update_animation_facing(camera_facing_vector: Vector3) -> void:
 		animation_manager.set_face_right(new_is_right_facing)
 		
 		# TODO when changing fwd/back animations, retain the current step of the animation
-		# Talcall: the direction the unit is facing gets updated on every parse of the routine, but unless the animation is changing, the instruction pointer byte doesn't get refreshed every vanilla animation is coded such that this swapping between front and back works flawlessly.
+		# Talcall: the direction the unit is facing gets updated on every parse of the routine, but unless the animation is changing, 
+		# the instruction pointer byte doesn't get refreshed every vanilla animation is coded such that this swapping between front and back works flawlessly.
 		if animation_manager.is_back_facing != is_back_facing:
 			animation_manager.is_back_facing = is_back_facing
 			var back_facing_offset: int = 1
@@ -1675,6 +1682,8 @@ func update_spritesheet_grid_texture() -> void:
 	)
 	animation_manager.unit_sprites_manager.set_primary_texture(new_grid_texture)
 	animation_manager.unit_sprites_manager.sprite_primary.material_override.set_shader_parameter("palette_colors", new_spritesheet_data.color_palette.slice(palette_idx_final * 16, (palette_idx_final + 1) * 16))
+
+	spritesheet_changed.emit(new_grid_texture)
 
 
 func on_sprite_selected(new_spritesheet_name: String) -> void:

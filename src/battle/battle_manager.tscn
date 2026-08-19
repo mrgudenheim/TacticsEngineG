@@ -15,7 +15,6 @@
 [ext_resource type="Script" uid="uid://b7qofr54bmos3" path="res://src/battle/editor/scenario_editor.gd" id="14_l2dig"]
 [ext_resource type="PackedScene" uid="uid://b2bfuf828p6i6" path="res://src/battle/editor/unit_editor.tscn" id="15_qgxlc"]
 [ext_resource type="Script" uid="uid://df08xhig8ojgj" path="res://src/battle/editor/job_select_control.gd" id="16_bp08t"]
-[ext_resource type="Script" uid="uid://cectjl7guvpqa" path="res://src/content_scripts/actions/action_button.gd" id="16_l2dig"]
 [ext_resource type="Script" uid="uid://cu0evj643fugd" path="res://src/battle/editor/item_select_control.gd" id="17_bp08t"]
 [ext_resource type="PackedScene" uid="uid://b24ja5gvetaqq" path="res://src/battle/editor/item_select_button.tscn" id="18_d5yoq"]
 [ext_resource type="Script" uid="uid://bsflrccy2sry" path="res://src/battle/editor/ability_select_control.gd" id="18_pbg35"]
@@ -197,11 +196,6 @@ grow_vertical = 0
 
 [node name="ActionButtonsList" type="VBoxContainer" parent="ActionMenu" unique_id=657770307]
 layout_mode = 2
-
-[node name="ActionButton" type="Button" parent="ActionMenu/ActionButtonsList" unique_id=1967070411]
-layout_mode = 2
-script = ExtResource("16_l2dig")
-metadata/_custom_type_script = "uid://cectjl7guvpqa"
 
 [node name="BattleEnd" type="PanelContainer" parent="." unique_id=1436038232]
 visible = false
